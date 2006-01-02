@@ -1,0 +1,19 @@
+# test_values_cmd.ggo
+
+# test values options
+
+package "test_values"
+version "1.0"
+purpose "This is just a test file
+to test options
+with the list of acceptable values"
+
+defgroup "group1"
+
+option "string-values"      s "string option with values" values="foo","foa","bar","foobar","barfoo" no
+option "string-values-def"      - "string option with values and default" values="foo","bar","foobar","barfoo" default="bar" no
+option "string-values-no-short"      - "string option with values no short" values="foo","bar","foobar","barfoo" no
+option "multistring-values"      S "multiple string option with values" values="foo","bar" no multiple
+option "multistring-values-no-short"      - "multiple string option with values no-short" typestr="BAR" values="foo","bar" no multiple
+
+groupoption "string-values-group"      - "group string option with values and default" typestr="FOO" values="foo","bar","foobar","barfoo" default="bar" group="group1"

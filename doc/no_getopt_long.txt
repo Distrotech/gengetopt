@@ -1,0 +1,53 @@
+WHAT IF GETOPT_LONG IS NOT THERE?
+
+If you use gengetopt to generate C functions for parsing command line
+arguments you have to know that these generated functions use getopt_long
+to actually read the command line and parsing it. This function is typically
+part of the standard C library, but some libraries may not include it.
+But this is not a problem: we provide C files that actually implement
+getopt_long function: getopt.c getopt1.c and gnugetopt.h.
+You'll find these files in the <prefix>/share/gengetopt directory
+where <prefix> is the one you specified during compilation.
+If no prefix had been specified, /usr/local is the default.
+If you downloaded gengetopt in binary form prefix will probably be
+/usr/local or /usr.
+
+You can rename gnugetopt.h to getopt.h and then
+simply compile these files and link them to the executable
+of you program. But if you use automake and autoconf here's a more
+elegant solution: you should download the macro you find
+at this URL:
+
+http://www.gnu.org/software/ac-archive/m4source/adl_func_getopt_long.m4
+
+and add it to acinclude.m4
+
+This macro checks if getopt_long function is in C library;
+if it is not there it adds getopt.o and getopt1.o to the objects files
+that will be linked to your executable (LIBOBJS).
+
+Then in Makefile.am of your source directory you have to add the contents
+of LIBOBJS to the LDADD of the program that has to use getopt_long;
+e.g. if the program 'foo' has to use getopt_long, you have to add
+the following line
+
+foo_LDADD = @LIBOBJS@
+
+Now these files will be compiled and linked to your program only if
+necessary.
+
+Moreover you have to add getopt.c getopt1.c and gnugetopt.h to your
+distribution. Note that it is not necessary to put these file names
+among the foo_SOURCES contents), but you have to add
+gnugetopt.h to EXTRA_DIST:
+
+EXTRA_DIST = gnugetopt.h
+
+You may want to take a look at gengetopt's configure.in and src/Makefile.am:
+they both use the techniques described here.
+
+I hope you find this document useful :-)
+
+Happy Coding!
+
+      Lorenzo Bettini www.lorenzobettini.it

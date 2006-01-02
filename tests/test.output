@@ -1,0 +1,680 @@
+./no_optgiven: '--foo' ('-i') option required
+the no_optgiven_cmd_parser2 returned successfully
+./no_optgiven2: '--foo' ('-i') option required
+foo option: 10
+bar option: hey
+arg: test1
+arg: test2
+arg: test3
+foo option: 10
+bar option: hey
+arg: test1
+arg: test2
+arg: test3
+foo-opt is given: 0
+bar-opt is given: 0
+Value of foo: 15000
+Value of bar: this is a default
+Value of foo-opt: 15000
+Value of bar-opt: this is a default
+Value of foofloat: 15000.000000
+Value of foodouble: 15000.000000
+Value of PI:     3.1415926536
+Value of foo: 15000
+Value of bar: this is a default
+specified --opt-arg
+specified --opt-arg-short
+specified --opt-arg with argument bar
+specified --opt-arg-short with argument foobar
+specified --hidden: 10
+specified --opt-arg
+specified --opt-arg-short
+./test_groups: 0 options of group grp1 were given. One is required.
+./test_groups: 2 options of group grp1 were given. One is required.
+./test_groups: 2 options of group my grp2 were given. At most one is required.
+./test_groups: 0 options of group grp1 were given. One is required.
+optA given
+optA given
+optA arg: foo
+optAmul given 4 time(s)
+optAmul arg: foo
+optAmul arg: bar
+optAmul arg: (null)
+optAmul arg: aaa
+value of required: this is a test
+value of string: another
+value of no-short_given: 1
+value of int: 100
+value of float: 3.140000
+value of multi-string_given: 8
+  value of multi-string: -1
+  value of multi-string: zero
+  value of multi-string: first
+  value of multi-string: second
+  value of multi-string: third
+  value of multi-string: fourth
+  value of multi-string: fifth
+  value of multi-string: sixth
+value of multi-string-def_given: 0
+default value of multi-string-def: this default
+value of opta: FOO
+noarg given 3 times
+noarg_noshort given 2 times
+opt-arg given: 1
+opt-arg value: not given
+saved configuration file test_conf_parser.save
+value of required: bar
+value of string: another
+value of no-short_given: 1
+value of int: 100
+value of float: 2.140000
+value of multi-string_given: 6
+  value of multi-string: first
+  value of multi-string: second
+  value of multi-string: third
+  value of multi-string: fourth
+  value of multi-string: fifth
+  value of multi-string: sixth
+value of multi-string-def_given: 0
+default value of multi-string-def: this default
+value of required: bar
+value of string: another
+value of no-short_given: 1
+value of int: 100
+value of float: 2.140000
+value of required: bar
+value of string: another
+value of no-short_given: 1
+value of int: 100
+value of float: 2.140000
+value of multi-string_given: 7
+  value of multi-string: first
+  value of multi-string: second
+  value of multi-string: 
+  value of multi-string: third
+  value of multi-string: from another file
+  value of multi-string: 
+  value of multi-string: last?
+value of multi-string-def_given: 0
+default value of multi-string-def: this default
+test_conf_parser: option `--string' requires an argument
+test_conf_parser:./test_conf_err_string.conf:3: malformed string in configuration file
+test_conf_parser:./test_conf_err_string2.conf:3: unterminated string in configuration file
+value of required: this is a test
+value of string: another
+value of no-short_given: 1
+value of int: 100
+value of float: 3.140000
+value of multi-string_given: 4
+  value of multi-string: first
+  value of multi-string: second
+  value of multi-string: 
+  value of multi-string: third
+value of multi-string-def_given: 0
+default value of multi-string-def: this default
+value of opta: BAR
+noarg given 0 times
+noarg_noshort given 0 times
+opt-arg given: 0
+opt-arg value: not given
+read configuration file: test_conf_parser.save
+value of required: this is a test
+value of string: another
+value of no-short_given: 1
+value of int: 100
+value of float: 3.140000
+value of multi-string_given: 8
+  value of multi-string: -1
+  value of multi-string: zero
+  value of multi-string: first
+  value of multi-string: second
+  value of multi-string: third
+  value of multi-string: fourth
+  value of multi-string: fifth
+  value of multi-string: sixth
+value of multi-string-def_given: 0
+default value of multi-string-def: this default
+value of opta: FOO
+noarg given 3 times
+noarg_noshort given 2 times
+opt-arg given: 1
+opt-arg value: not given
+passed string: foo
+passed string: bar
+passed string: hello
+passed string: world
+passed int: 100
+passed int: 200
+default float: 15000.000000
+passed no-short-opt: check
+passed no-short-opt: this out
+passed no-short-opt: first
+passed no-short-opt: second
+passed no-short-opt: third
+passed no-short-opt: fourth
+passed no-short-opt: fifth
+noarg given 3 times
+noarg_noshort given 2 times
+optarg_given 3 times
+optarg argument: no arg given
+optarg argument: first arg for optarg
+optarg argument: second arg for optarg
+optarg_noshort_given 2 times
+optarg_noshort argument: second arg for optarg
+optarg_noshort argument: no arg given
+./test_multiple: option requires an argument -- s
+test_sections 1.0
+
+Usage: test_sections [OPTIONS]... [FILES]...
+
+  -h, --help                   Print help and exit
+  -V, --version                Print version and exit
+  -s, --string=STRING          string option
+  -i, --int=INT                int option
+
+First section.  This section definition has no description, since the 
+description is in the definition itself, that is wrapped too:
+  -S, --short=SHORT            short option
+  -l, --long=LONG              long option
+  -f, --float=FLOAT            float option
+  -d, --double=DOUBLE          double option
+  -D, --longdouble=LONGDOUBLE  longdouble option
+
+Second section:
+  The following options belong to the second section
+  by the way this second section also has this neat description, and it is 
+  quite long so it should require some kind of line wrapping, but don't worry: 
+  gengetopt will wrap it for you! ;-)
+  -L, --longlong=LONGLONG      longlong option
+  -F, --flag                   flag option  (default=on)
+  -u, --function               function option
+
+Last section:
+      --no-short               no short option
+  -r, --required=STRING        required option
+foo-opt is given: 0
+bar-opt is given: 0
+Value of foo: 15000
+Value of bar: this is a default
+Value of foo-opt: 15000
+Value of bar-opt: this is a default
+Value of foofloat: 15000.000000
+Value of foodouble: 15000.000000
+Value of PI:     3.1415926536
+foo-opt is given: 1
+bar-opt is given: 1
+Value of foo: 15000
+Value of bar: this is a default
+Value of foo-opt: 15000
+Value of bar-opt: this is a default
+Value of foofloat: 15000.000000
+Value of foodouble: 15000.000000
+Value of PI:     3.1415926536
+foo-opt is given: 1
+bar-opt is given: 1
+Value of foo: 15000
+Value of bar: this is a default
+Value of foo-opt: 15
+Value of bar-opt: hi
+Value of foofloat: 15000.000000
+Value of foodouble: 15000.000000
+Value of PI:     3.1415926536
+foo-opt is given: 1
+bar-opt is given: 1
+Value of foo: 15000
+Value of bar: this is a default
+Value of foo-opt: 15000
+Value of bar-opt: this is a default
+Value of foofloat: 15000.000000
+Value of foodouble: 15000.000000
+Value of PI:     3.1415926536
+foo-opt is given: 1
+bar-opt is given: 1
+Value of foo: 15000
+Value of bar: this is a default
+Value of foo-opt: 15
+Value of bar-opt: hi
+Value of foofloat: 15000.000000
+Value of foodouble: 15000.000000
+Value of PI:     3.1415926536
+./default_values: invalid numeric value: a5
+specified --string-values with argument foobar
+specified --string-values with (original) argument foob
+specified --string-values-def with argument bar
+specified --string-values-no-short with argument bar
+specified --multistring-values with argument foo
+specified --multistring-values with (original) argument foo
+specified --multistring-values with argument bar
+specified --multistring-values with (original) argument b
+specified --multistring-values with argument bar
+specified --multistring-values with (original) argument bar
+specified --multistring-values with argument foo
+specified --multistring-values with (original) argument foo
+specified --multistring-values-no-short with argument foo
+specified --multistring-values-no-short with argument foo
+specified --multistring-values-no-short with argument bar
+specified --multistring-values-no-short with argument bar
+specified --multistring-values-no-short with argument bar
+specified --multistring-values-no-short with argument foo
+./test_values: ambiguous argument, "fo", for option `--string-values' (`-s')
+./test_values: invalid argument, "fooa", for option `--multistring-values' (`-S')
+./test_values: invalid argument, "fooa", for option `--string-values-no-short'
+./test_values: invalid argument, "fooa", for option `--multistring-values-no-short'
+./test_all_opts: '--dependant' ('-A') option depends on option 'opt-arg'
+specified --opt-arg with argument bar
+test_all_opts 1.0
+
+This is just a test file
+
+to test all possible
+command line type options
+
+Usage: test_all_opts [OPTIONS]...
+
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+  -s, --string=STRING           string option
+  -i, --int=INT                 int option
+  -S, --short=SHORT             short option
+  -l, --long=LONG               long option
+  -f, --float=FLOAT             float option
+  -d, --double=DOUBLE           double option
+  -D, --longdouble=LONGDOUBLE   longdouble option
+  -L, --longlong=LONGLONG       longlong option
+  -F, --flag                    flag option  (default=on)
+  -u, --function                function option
+      --no-short                no short option
+      --opt-arg[=STRING]        option with optional arg
+  -o, --opt-arg-short[=STRING]  option with optional arg (short)
+  -r, --required=STRING         required option
+  -A, --dependant=STRING        option that depends on opt-arg
+      --very-very-long-option=STRING
+                                the name of this option is long enough to make 
+                                  this description begin on a new line
+  -y, --assume-multimeth-virtual
+                                the name of this option is just as long as the 
+                                  maximum allowed, so this description begin on 
+                                  a new line
+      --file-save=STRING        save the passed options into a file
+test_all_opts 1.0
+diff wrong_dep.err.out ./wrong_dep.err
+diff wrong_flag2.err.out ./wrong_flag2.err
+diff wrong_flag.err.out ./wrong_flag.err
+diff wrong_group2.err.out ./wrong_group2.err
+diff wrong_group.err.out ./wrong_group.err
+diff wrong_type.err.out ./wrong_type.err
+no_strings 1.0
+
+Usage: no_strings [OPTIONS]... [FILES]...
+
+  -h, --help     Print help and exit
+  -V, --version  Print version and exit
+  -i, --foo=INT  foo option
+no_unamed 1.0
+
+Usage: no_unamed [OPTIONS]...
+
+  -h, --help        Print help and exit
+  -V, --version     Print version and exit
+  -i, --foo=STRING  foo string option
+no_optgiven 1.0
+
+Usage: no_optgiven [OPTIONS]... [FILES]...
+
+  -h, --help     Print help and exit
+  -V, --version  Print version and exit
+  -i, --foo=INT  foo option
+no_optgiven 1.0
+
+Usage: no_optgiven [OPTIONS]... [FILES]...
+
+  -h, --help     Print help and exit
+  -V, --version  Print version and exit
+  -i, --foo=INT  foo option
+more_than_once 1.0
+
+Usage: more_than_once [OPTIONS]... [FILES]...
+
+  -h, --help        Print help and exit
+  -V, --version     Print version and exit
+  -f, --foo=INT     foo option
+  -b, --bar=STRING  bar option
+canonize_names 1.0
+
+Usage: canonize_names [OPTIONS]...
+
+  -h, --help     Print help and exit
+  -V, --version  Print version and exit
+  -i, --foo=INT  foo option
+default_values 1.0
+
+Usage: default_values [OPTIONS]... [FILES]...
+
+  -h, --help                  Print help and exit
+  -V, --version               Print version and exit
+  -f, --foo=INT               foo option  (default=`15000')
+  -b, --bar=STRING            bar option  (default=`this is a default')
+  -F, --foo-opt[=INT]         foo option with optional arg  (default=`15000')
+  -B, --bar-opt[=STRING]      bar option with optional arg  (default=`this is a 
+                                default')
+      --foofloat=FLOAT        foo float option  (default=`15000')
+      --foodouble=DOUBLE      foo double option  (default=`15000')
+  -p, --pi=DOUBLE             PI option  (default=`3.1415926536')
+  -s, --timeout=123456789012  number of seconds after the scanning is cancelled 
+                                if no progress is shown at all.  
+                                (default=`120')
+default_values 1.0
+
+Usage: default_values [OPTIONS]...
+
+  -h, --help        Print help and exit
+  -V, --version     Print version and exit
+  -f, --foo=INT     foo option  (default=`15000')
+  -b, --bar=STRING  bar option  (default=`this is a default')
+test_all_opts 1.0
+
+This is just a test file
+
+to test all possible
+command line type options
+
+Usage: test_all_opts [OPTIONS]... [FILES]...
+
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+  -s, --string=STRING           string option
+  -i, --int=INT                 int option
+  -S, --short=SHORT             short option
+  -l, --long=LONG               long option
+  -f, --float=FLOAT             float option
+  -d, --double=DOUBLE           double option
+  -D, --longdouble=LONGDOUBLE   longdouble option
+  -L, --longlong=LONGLONG       longlong option
+  -F, --flag                    flag option  (default=on)
+  -u, --function                function option
+      --no-short                no short option
+      --opt-arg[=STRING]        option with optional arg
+  -o, --opt-arg-short[=STRING]  option with optional arg (short)
+  -r, --required=STRING         required option
+  -A, --dependant=STRING        option that depends on opt-arg
+      --very-very-long-option=STRING
+                                the name of this option is long enough to make 
+                                  this description begin on a new line
+  -y, --assume-multimeth-virtual
+                                the name of this option is just as long as the 
+                                  maximum allowed, so this description begin on 
+                                  a new line
+      --file-save=STRING        save the passed options into a file
+test_groups 1.0
+
+Usage: test_groups [OPTIONS]... [FILES]...
+
+  -h, --help              Print help and exit
+  -V, --version           Print version and exit
+
+ Group: grp1
+  an option of this group is required
+  Notice that this description is quite long so it may spawn many lines...      
+          fortunately gengetopt will wrap it for you :-)
+  -a, --opta              string a
+  -A, --optA[=STRING]     string A
+  -M, --optAmul[=STRING]  string M
+  -b, --optb              string b
+
+ Group: my grp2
+      --optc              string c
+  -d, --optd              string d
+test_conf_parser 1.0
+
+Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
+
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+
+ Group: grp1
+  an option of this group is required
+  -a, --opta=STRING             string a
+  -b, --optb=STRING             string b
+
+ Group: my grp2
+      --optc                    string c
+  -C, --optd                    string d
+  -s, --string=STRING           string option
+  -i, --int=INT                 int option
+  -S, --short=SHORT             short option
+  -l, --long=LONG               long option
+  -f, --float=FLOAT             float option
+  -d, --double=DOUBLE           double option
+  -D, --longdouble=LONGDOUBLE   longdouble option
+  -L, --longlong=LONGLONG       longlong option
+  -F, --flag                    flag option  (default=on)
+  -u, --function                function option
+      --no-short                no short option
+  -r, --required=STRING         required option
+  -c, --conf-file=STRING        config file  (default=`test_conf.conf')
+  -M, --multi-string=STRING     multiple string option
+      --multi-string-def=STRING multiple string option with default  
+                                  (default=`this default')
+  -n, --noarg                   multiple option with no arg
+      --noarg-noshort           multiple option with no arg and no short
+      --opt-arg[=STRING]        option with optional arg
+      --file-save=STRING        save the passed options into a file
+test_conf_parser 1.0
+
+Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
+
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+
+ Group: grp1
+  an option of this group is required
+  -a, --opta=STRING             string a
+  -b, --optb=STRING             string b
+
+ Group: my grp2
+      --optc                    string c
+  -C, --optd                    string d
+  -s, --string=STRING           string option
+  -i, --int=INT                 int option
+  -S, --short=SHORT             short option
+  -l, --long=LONG               long option
+  -f, --float=FLOAT             float option
+  -d, --double=DOUBLE           double option
+  -D, --longdouble=LONGDOUBLE   longdouble option
+  -L, --longlong=LONGLONG       longlong option
+  -F, --flag                    flag option  (default=on)
+  -u, --function                function option
+      --no-short                no short option
+  -r, --required=STRING         required option
+  -c, --conf-file=STRING        config file  (default=`test_conf.conf')
+  -M, --multi-string=STRING     multiple string option
+      --multi-string-def=STRING multiple string option with default  
+                                  (default=`this default')
+  -n, --noarg                   multiple option with no arg
+      --noarg-noshort           multiple option with no arg and no short
+      --opt-arg[=STRING]        option with optional arg
+      --file-save=STRING        save the passed options into a file
+test_conf_parser 1.0
+
+Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
+
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+
+ Group: grp1
+  an option of this group is required
+  -a, --opta=STRING             string a
+  -b, --optb=STRING             string b
+
+ Group: my grp2
+      --optc                    string c
+  -C, --optd                    string d
+  -s, --string=STRING           string option
+  -i, --int=INT                 int option
+  -S, --short=SHORT             short option
+  -l, --long=LONG               long option
+  -f, --float=FLOAT             float option
+  -d, --double=DOUBLE           double option
+  -D, --longdouble=LONGDOUBLE   longdouble option
+  -L, --longlong=LONGLONG       longlong option
+  -F, --flag                    flag option  (default=on)
+  -u, --function                function option
+      --no-short                no short option
+  -r, --required=STRING         required option
+  -c, --conf-file=STRING        config file  (default=`test_conf.conf')
+  -M, --multi-string=STRING     multiple string option
+      --multi-string-def=STRING multiple string option with default  
+                                  (default=`this default')
+  -n, --noarg                   multiple option with no arg
+      --noarg-noshort           multiple option with no arg and no short
+      --opt-arg[=STRING]        option with optional arg
+      --file-save=STRING        save the passed options into a file
+test_conf_parser 1.0
+
+Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
+
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+
+ Group: grp1
+  an option of this group is required
+  -a, --opta=STRING             string a
+  -b, --optb=STRING             string b
+
+ Group: my grp2
+      --optc                    string c
+  -C, --optd                    string d
+  -s, --string=STRING           string option
+  -i, --int=INT                 int option
+  -S, --short=SHORT             short option
+  -l, --long=LONG               long option
+  -f, --float=FLOAT             float option
+  -d, --double=DOUBLE           double option
+  -D, --longdouble=LONGDOUBLE   longdouble option
+  -L, --longlong=LONGLONG       longlong option
+  -F, --flag                    flag option  (default=on)
+  -u, --function                function option
+      --no-short                no short option
+  -r, --required=STRING         required option
+  -c, --conf-file=STRING        config file  (default=`test_conf.conf')
+  -M, --multi-string=STRING     multiple string option
+      --multi-string-def=STRING multiple string option with default  
+                                  (default=`this default')
+  -n, --noarg                   multiple option with no arg
+      --noarg-noshort           multiple option with no arg and no short
+      --opt-arg[=STRING]        option with optional arg
+      --file-save=STRING        save the passed options into a file
+test_conf_parser 1.0
+
+Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
+
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+
+ Group: grp1
+  an option of this group is required
+  -a, --opta=STRING             string a
+  -b, --optb=STRING             string b
+
+ Group: my grp2
+      --optc                    string c
+  -C, --optd                    string d
+  -s, --string=STRING           string option
+  -i, --int=INT                 int option
+  -S, --short=SHORT             short option
+  -l, --long=LONG               long option
+  -f, --float=FLOAT             float option
+  -d, --double=DOUBLE           double option
+  -D, --longdouble=LONGDOUBLE   longdouble option
+  -L, --longlong=LONGLONG       longlong option
+  -F, --flag                    flag option  (default=on)
+  -u, --function                function option
+      --no-short                no short option
+  -r, --required=STRING         required option
+  -c, --conf-file=STRING        config file  (default=`test_conf.conf')
+  -M, --multi-string=STRING     multiple string option
+      --multi-string-def=STRING multiple string option with default  
+                                  (default=`this default')
+  -n, --noarg                   multiple option with no arg
+      --noarg-noshort           multiple option with no arg and no short
+      --opt-arg[=STRING]        option with optional arg
+      --file-save=STRING        save the passed options into a file
+test_multiple 1.0
+
+Usage: test_multiple [OPTIONS]... [FILES]...
+
+  -h, --help                 Print help and exit
+  -V, --version              Print version and exit
+  -s, --string=STRING        string option  (default=`foo')
+  -i, --int=INT              int option
+  -S, --short=SHORT          short option
+  -l, --long=LONG            long option
+  -f, --float=FLOAT          float option  (default=`15000')
+      --no-short-opt=STRING  string option with no short
+  -n, --noarg                multiple option with no arg
+      --noarg-noshort        multiple option with no arg and no short
+  -M, --optarg[=ID]          multi with optional args
+      --optarg-noshort[=ID]  multi with optional args and no short
+      --file-save=STRING     save the passed options into a file
+test_sections 1.0
+
+Usage: test_sections [OPTIONS]... [FILES]...
+
+  -h, --help                   Print help and exit
+  -V, --version                Print version and exit
+  -s, --string=STRING          string option
+  -i, --int=INT                int option
+
+First section.  This section definition has no description, since the 
+description is in the definition itself, that is wrapped too:
+  -S, --short=SHORT            short option
+  -l, --long=LONG              long option
+  -f, --float=FLOAT            float option
+  -d, --double=DOUBLE          double option
+  -D, --longdouble=LONGDOUBLE  longdouble option
+
+Second section:
+  The following options belong to the second section
+  by the way this second section also has this neat description, and it is 
+  quite long so it should require some kind of line wrapping, but don't worry: 
+  gengetopt will wrap it for you! ;-)
+  -L, --longlong=LONGLONG      longlong option
+  -F, --flag                   flag option  (default=on)
+  -u, --function               function option
+
+Last section:
+      --no-short               no short option
+  -r, --required=STRING        required option
+test_values 1.0
+
+This is just a test file
+to test options
+with the list of acceptable values
+
+Usage: test_values [OPTIONS]... [FILES]...
+
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+  -s, --string-values=STRING    string option with values  (possible 
+                                  values="foo", "foa", "bar", "foobar", 
+                                  "barfoo")
+      --string-values-def=STRING
+                                string option with values and default  
+                                  (possible values="foo", "bar", 
+                                  "foobar", "barfoo" default=`bar')
+      --string-values-no-short=STRING
+                                string option with values no short  (possible 
+                                  values="foo", "bar", "foobar", 
+                                  "barfoo")
+  -S, --multistring-values=STRING
+                                multiple string option with values  (possible 
+                                  values="foo", "bar")
+      --multistring-values-no-short=BAR
+                                multiple string option with values no-short  
+                                  (possible values="foo", "bar")
+
+ Group: group1
+      --string-values-group=FOO group string option with values and default  
+                                  (possible values="foo", "bar", 
+                                  "foobar", "barfoo" default=`bar')
+specified --height

@@ -1,0 +1,12 @@
+Makefile.in
+Makefile
+.deps
+parser.h
+parser.cc
+scanner.cc
+gengetopt
+gengetopt-efence
+y.output
+parser.output
+temp.*
+*.temp

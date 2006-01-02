@@ -1,0 +1,5 @@
+#! @SHELL@
+
+# test values for options
+
+$* ./test_values -s foob -S foo --string-values-no-short bar --multistring-values-no-short "foo" -S b --multistring-values-no-short "foo","bar" -S bar,foo --multistring-values-no-short "bar" --multistring-values-no-short "bar","foo"

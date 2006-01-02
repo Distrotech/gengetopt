@@ -1,0 +1,3 @@
+@option_var_name@_new = (struct @option_var_name@_list *) malloc (sizeof (struct @option_var_name@_list));
+@option_var_name@_new->next = @option_var_name@_list;
+@option_var_name@_list = @option_var_name@_new;

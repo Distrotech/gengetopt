@@ -1,0 +1,8 @@
+# no_strings_cmd.ggo
+
+# This test an input file with no string options
+
+package "no_strings"
+version "1.0"
+
+option  "foo"        i "foo option" int no

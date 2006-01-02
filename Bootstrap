@@ -1,0 +1,16 @@
+First make gm.c generate header and c file
+
+create cmdline.ggo (for gengetopt itself).
+
+change gengetopt.c in order to generate cmdline.c and cmdline.h
+and function cmdline_parser
+
+include these files in the project:
+%.c: %.ggo
+	gengetopt < $<
+
+make gengetopt.c use cmdline_parser and include cmdline.h
+
+generate new gengetopt program: now it can handle command lines
+
+change gengetopt.c in order to handle new parameters

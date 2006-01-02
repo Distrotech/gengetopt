@@ -1,0 +1,5 @@
+#! @SHELL@
+
+# the next program must exit with error
+
+if $* ./test_multiple -i 100 -s "foo" -s; then false; else true; fi

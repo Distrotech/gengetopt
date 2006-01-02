@@ -1,0 +1,49 @@
+@IF@ has_short_option @THEN@
+case '@short_option@':	/* @option_comment@.  */
+@ELSE@
+/* @option_comment@.  */
+@gen_else@if (strcmp (long_options[option_index].name, "@long_option@") == 0)
+{
+@ENDIF@
+  local_args_info.@option_var_name@_given++;
+
+@IF@ option_has_type @THEN@
+  multi_token = get_multiple_arg_token(optarg);
+  multi_next = get_multiple_arg_token_next (optarg);
+
+  while (1)
+    {
+@IF@ option_has_values @THEN@
+      if ((found = check_possible_values(multi_token, @option_values@)) < 0)
+        {
+          fprintf (stderr, "%s: %s argument, \"%s\", for option `--@long_option@'@if@ has_short_option @then@ (`-@short_option@')@endif@%s\n", @package_var_name@, (found == -2) ? "ambiguous" : "invalid", multi_token, (additional_error ? additional_error : ""));
+          free (multi_token);
+          goto failure;
+        }
+
+@ENDIF@
+      @option_var_name@_new = (struct @option_var_name@_list *) malloc (sizeof (struct @option_var_name@_list));
+      @option_var_name@_new->next = @option_var_name@_list;
+      @option_var_name@_list = @option_var_name@_new;
+      @update_arg@
+
+      if (multi_next)
+        {
+          multi_token = get_multiple_arg_token(multi_next);
+          multi_next = get_multiple_arg_token_next (multi_next);
+          local_args_info.@option_var_name@_given++;
+        }
+      else
+        break;
+    }
+@ENDIF@
+@IF@ option_has_group @THEN@
+  if (!args_info->@option_var_name@_group)
+    {
+      args_info->@option_var_name@_group = 1;
+      args_info->@group_var_name@_group_counter += 1;
+    }
+@ENDIF@
+  break;@IF@ has_short_option @THEN@@else@
+}
+@ENDIF@

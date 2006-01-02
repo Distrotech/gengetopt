@@ -1,0 +1,4 @@
+case 'V':	/* Print version and exit.  */
+  @parser_name@_print_version ();
+  @parser_name@_free (&local_args_info);
+  exit (EXIT_SUCCESS);

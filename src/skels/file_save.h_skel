@@ -1,0 +1,15 @@
+@IF@ check_given @THEN@
+if (args_info->@given@) {
+@ENDIF@
+@IF@ has_arg @THEN@
+  if (args_info->@arg@) {
+    fprintf(outfile, "%s=\"%s\"\n", "@opt_name@", args_info->@arg@);
+  } else {
+    fprintf(outfile, "%s\n", "@opt_name@");
+  }
+@ELSE@
+  fprintf(outfile, "%s\n", "@opt_name@");
+@ENDIF@
+@IF@ check_given @THEN@
+}
+@ENDIF@

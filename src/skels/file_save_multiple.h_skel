@@ -1,0 +1,17 @@
+@IF@ has_arg @THEN@
+if (args_info->@opt_var@_orig)
+  {
+    for (i = 0; i < args_info->@opt_var@_given; ++i)
+      {
+        if (args_info->@opt_var@_orig [i])
+          {
+            fprintf(outfile, "%s=\"%s\"\n", "@opt_name@", args_info->@opt_var@_orig [i]);
+          }
+      }
+  }
+@ELSE@
+for (i = 0; i < args_info->@opt_var@_given; ++i)
+  {
+  @write_cmd@
+  }
+@ENDIF@

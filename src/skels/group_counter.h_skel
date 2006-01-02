@@ -1,0 +1,1 @@
+int @group_name@_group_counter; /* counter for group @group_name@ */

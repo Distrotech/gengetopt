@@ -1,0 +1,22 @@
+# Name of your program
+#package "gengetopt-sample"       # don't use package if you're using automake
+# Version of your program
+#version "1.0.1"                  # don't use version if you're using automake
+
+purpose "this is just a test program for gengetopt"
+
+# Options
+option  "str-opt"         s "A string option"      string     no
+option  "int-opt"         i "A int option"         int        yes
+option  "short-opt"       S "A short option"       short      no
+option  "long-opt"        l "A long option"        long       yes
+option  "float-opt"       f "A float option"       float      no
+option  "double-opt"      d "A double option"      double     no
+option  "long-double-opt" L "A long double option" longdouble no
+option  "long-long-opt"   y "A long long option"   longlong   no
+
+option  "func-opt"        F "A function option"    no 
+
+option  "flag-opt"        x "A flag option"        flag       off
+# This option turn on or off a flag, last column is the state of the flag when
+# program start. If user specify it, flag toggles.

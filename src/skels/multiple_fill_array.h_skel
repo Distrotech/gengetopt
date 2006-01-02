@@ -1,0 +1,14 @@
+if (local_args_info.@option_var_name@_given && @option_var_name@_list)
+  {
+    struct @option_var_name@_list *tmp;
+    args_info->@option_var_name@_arg = (@type@ *) realloc (args_info->@option_var_name@_arg, (args_info->@option_var_name@_given + local_args_info.@option_var_name@_given) * sizeof (@type@));
+    args_info->@option_var_name@_orig = (char **) realloc (args_info->@option_var_name@_orig, (args_info->@option_var_name@_given + local_args_info.@option_var_name@_given) * sizeof (char *));
+    for (i = (local_args_info.@option_var_name@_given - 1); i >= 0; --i)
+      {
+        tmp = @option_var_name@_list;
+        args_info->@option_var_name@_arg [i + args_info->@option_var_name@_given] = @option_var_name@_list->@option_var_name@_arg;
+        args_info->@option_var_name@_orig [i + args_info->@option_var_name@_given] = @option_var_name@_list->@option_var_name@_orig;
+        @option_var_name@_list = @option_var_name@_list->next;
+        free (tmp);
+      }
+  }

@@ -1,0 +1,7 @@
+struct @arg_name@_list
+{
+  @type@ @arg_name@_arg;
+  char *@arg_name@_orig;
+  struct @arg_name@_list * next;
+};
+

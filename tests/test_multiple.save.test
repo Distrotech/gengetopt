@@ -1,0 +1,22 @@
+string="foo"
+string="bar"
+string="hello"
+string="world"
+int="100"
+int="200"
+no-short-opt="check"
+no-short-opt="this out"
+no-short-opt="first"
+no-short-opt="second"
+no-short-opt="third"
+no-short-opt="fourth"
+no-short-opt="fifth"
+noarg
+noarg
+noarg
+noarg-noshort
+noarg-noshort
+optarg="first arg for optarg"
+optarg="second arg for optarg"
+optarg-noshort="second arg for optarg"
+file-save="test_multiple.save"

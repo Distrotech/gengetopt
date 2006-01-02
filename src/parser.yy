@@ -1,0 +1,385 @@
+/**
+ * Copyright (C) 1999-2005  Free Software Foundation, Inc.
+ *
+ * This file is part of GNU gengetopt
+ *
+ * GNU gengetopt is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * GNU gengetopt is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with gengetopt; see the file COPYING. If not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+
+%{
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include "my_sstream.h"
+
+#include "acceptedvalues.h"
+
+#include "argsdef.h"
+
+#include "gengetopt.h"
+#include "errorcodes.h"
+#include "ggos.h"
+#include "yyerror.h"
+
+extern int gengetopt_count_line;
+extern char * gengetopt_input_filename;
+
+static int gengetopt_package_given = 0;
+static int gengetopt_version_given = 0;
+static int gengetopt_purpose_given = 0;
+
+extern int yylex () ;
+
+//#define YYERROR_VERBOSE 1
+
+void check_result(int o, gengetopt_option *opt)
+{
+    if (o) {
+        ostringstream err;
+
+	switch (o) {
+    case NOT_ENOUGH_MEMORY: 
+        yyerror (opt, "not enough memory");
+    	break;
+    case REQ_LONG_OPTION:
+        err << "long option redefined \'" << opt->long_opt << "\'";
+        yyerror (opt, err.str().c_str());
+		break;
+    case REQ_SHORT_OPTION:
+        err << "short option redefined \'" << opt->short_opt << "\'";
+        yyerror (opt, err.str().c_str());
+        break;
+    case FOUND_BUG: 
+        yyerror (opt, "bug found!!");
+        break;
+    case GROUP_UNDEFINED: 
+        yyerror (opt, "group undefined");
+        break;
+    case INVALID_DEFAULT_VALUE: 
+        yyerror (opt, "invalid default value");
+        break;
+    case NOT_REQUESTED_TYPE: 
+        yyerror (opt, "type specification not requested");
+        break;
+    case NOT_VALID_SPECIFICATION:
+      yyerror (opt, "invalid specification for this kind of option");
+      break;
+    case SPECIFY_FLAG_STAT:
+      yyerror (opt, "you must specify the default flag status");
+      break;
+    case NOT_GROUP_OPTION:
+      yyerror (opt, "group specification for a non group option");
+      break;
+    case SPECIFY_GROUP:
+      yyerror (opt, "missing group specification");
+      break;
+    }
+  }
+}
+
+#define check_error if (o) YYERROR;
+
+%}
+
+%union {
+    char   *str;
+    char    chr;
+    int	    argtype;
+    int	    boolean;
+    class AcceptedValues *ValueList;
+    struct gengetopt_option *gengetopt_option;
+}
+
+%token		    TOK_PACKAGE		"package"
+%token              TOK_VERSION		"version"
+%token              TOK_OPTION		"option"
+%token              TOK_DEFGROUP	"defgroup"
+%token              TOK_GROUPOPTION	"groupoption"
+%token              TOK_YES		"yes"
+%token              TOK_NO		"no"
+%token              TOK_ON		"on"
+%token              TOK_OFF		"off"
+%token              TOK_FLAG		"flag"
+%token              TOK_PURPOSE		"purpose"
+%token              TOK_DEFAULT		"default"
+%token              TOK_GROUP		"group"
+%token              TOK_GROUPDESC	"groupdesc"
+%token              TOK_MULTIPLE	"multiple"
+%token              TOK_ARGOPTIONAL	"argoptional"
+%token              TOK_TYPESTR		"typestr"
+%token              TOK_SECTION		"section"
+%token              TOK_SECTIONDESC	"sectiondesc"
+%token              TOK_VALUES          "values"
+%token              TOK_HIDDEN      "hidden"
+%token              TOK_DEPENDON      "dependon"
+%token <str>        TOK_STRING
+%token <str>        TOK_MLSTRING
+%token <chr>        TOK_CHAR
+%token <argtype>    TOK_ARGTYPE
+
+%type  <boolean>    req_onoff
+%type  <boolean>    opt_yesno optional_yesno
+%type  <str>        quoted_string
+%type  <str>        opt_groupdesc
+%type  <str>        opt_sectiondesc
+%type  <ValueList>  listofvalues
+%type  <str>        acceptedvalue
+%type  <gengetopt_option> option_parts
+
+
+%% /* ====================================================================== */
+
+
+input
+	: /* empty */
+	| statement input
+	;
+
+
+statement
+	: package
+	| version
+	| purpose
+    | sectiondef
+	| option
+	| groupoption
+	| groupdef
+	;
+
+
+package
+	: TOK_PACKAGE TOK_STRING
+	    {
+	      if (gengetopt_package_given)
+		{
+		  yyerror ("package redefined");
+		  YYERROR;
+		}
+	      else
+		{
+		  gengetopt_package_given = 1;
+		  if (gengetopt_define_package ($2))
+		    {
+		      yyerror ("not enough memory");
+		      YYERROR;
+		    }
+		}
+	    }
+	;
+
+version
+	: TOK_VERSION TOK_STRING
+	    {
+	      if (gengetopt_version_given)
+		{
+		  yyerror ("version redefined");
+		  YYERROR;
+		}
+	      else
+		{
+		  gengetopt_version_given = 1;
+		  if (gengetopt_define_version ($2))
+		    {
+		      yyerror ("not enough memory");
+		      YYERROR;
+		    }
+		}
+	    }
+	;
+
+purpose
+	: TOK_PURPOSE quoted_string
+	    {
+	      if (gengetopt_purpose_given)
+		{
+		  yyerror ("purpose redefined");
+		  YYERROR;
+		}
+	      else
+		{
+		  gengetopt_purpose_given = 1;
+		  if (gengetopt_define_purpose ($2))
+		    {
+		      yyerror ("not enough memory");
+		      YYERROR;
+		    }
+		}
+	    }
+	;
+
+sectiondef
+          : TOK_SECTION quoted_string opt_sectiondesc
+              {
+                gengetopt_set_section ($2, $3);
+              }
+          ;
+
+groupdef
+	: TOK_DEFGROUP TOK_STRING opt_groupdesc optional_yesno
+	    {
+	      if (gengetopt_add_group ($2, $3, $4))
+		{
+		  yyerror ("group redefined");
+		  YYERROR;
+		}
+	    }
+	;
+
+option
+	: TOK_OPTION TOK_STRING TOK_CHAR quoted_string
+		option_parts
+	    {
+          $5->filename = gengetopt_input_filename;
+          $5->linenum = @1.first_line;
+	      $5->long_opt = strdup($2);
+	      if ($3 != '-')
+	      	$5->short_opt = $3;
+	      $5->desc = strdup($4);
+	      int o = gengetopt_check_option ($5, false);
+	      check_result(o, $5);
+          check_error;
+	      o = gengetopt_add_option ($5);
+	      check_result(o, $5);
+	      check_error;
+	    }
+	;
+
+groupoption
+	: TOK_GROUPOPTION TOK_STRING TOK_CHAR quoted_string
+                option_parts
+	    {
+          $5->filename = gengetopt_input_filename;
+          $5->linenum = @1.first_line;
+	      $5->long_opt = strdup($2);
+          if ($3 != '-')
+            $5->short_opt = $3;
+          $5->desc = strdup($4);
+          int o = gengetopt_check_option ($5, true);
+          check_result(o, $5);
+          check_error;
+          o = gengetopt_add_option ($5);
+          check_result(o, $5);
+          check_error;
+	    }
+        ;
+
+
+/* ---------------------------------------------------------------------- */
+
+quoted_string
+	: TOK_MLSTRING
+	| TOK_STRING
+	;
+
+option_parts: option_parts opt_yesno 
+			  { 
+			  	$$ = $1; 
+			  	$$->required = $2;
+			  }
+			| option_parts TOK_ARGTYPE 
+			  { 
+			  	$$ = $1; 
+			  	$$->type = $2;
+			  }
+			| option_parts TOK_TYPESTR '=' TOK_STRING
+			  { 
+			  	$$ = $1; 
+			  	$$->type_str = strdup($4);
+			  }
+			| option_parts TOK_VALUES '=' listofvalues
+			  { 
+			  	$$ = $1; 
+			  	$$->acceptedvalues = $4;
+			  }
+			| option_parts TOK_DEFAULT '=' TOK_STRING
+			  { 
+			  	$$ = $1; 
+			  	$$->default_string = strdup($4);
+			  }
+            | option_parts TOK_GROUP '=' TOK_STRING
+              { 
+                $$ = $1; 
+                $$->group_value = strdup($4);
+              }
+            | option_parts TOK_DEPENDON '=' TOK_STRING
+              { 
+                $$ = $1; 
+                $$->dependon = strdup($4);
+              }
+			| option_parts TOK_ARGOPTIONAL
+			  { 
+			  	$$ = $1; 
+			  	$$->arg_is_optional = true;
+			  }
+			| option_parts TOK_MULTIPLE
+			  { 
+			  	$$ = $1; 
+			  	$$->multiple = true;
+			  }
+      | option_parts TOK_FLAG
+        {
+          $$ = $1;
+          $$->type = ARG_FLAG;
+        }
+      | option_parts TOK_HIDDEN
+        {
+          $$ = $1;
+          $$->hidden = true;
+        }
+      | option_parts req_onoff
+        {
+          $$ = $1;
+          $$->flagstat = $2;
+        }
+      | { $$ = new gengetopt_option; }
+      ;
+
+req_onoff
+	: TOK_ON	{ $$ = 1; }
+	| TOK_OFF	{ $$ = 0; }
+	;
+
+optional_yesno
+	: /* empty */	{ $$ = 0; }
+	| TOK_YES	{ $$ = 1; }
+	| TOK_NO	{ $$ = 0; }
+	;
+
+opt_yesno
+    : TOK_YES   { $$ = 1; }
+    | TOK_NO    { $$ = 0; }
+    ;
+
+opt_groupdesc
+	: /* empty */			{ $$ = 0; }
+        | TOK_GROUPDESC '=' TOK_STRING	{ $$ = $3; }
+	;
+
+opt_sectiondesc
+        : /* empty */			{ $$ = 0; }
+        | TOK_SECTIONDESC '=' TOK_STRING	{ $$ = $3; }
+        ;
+
+listofvalues
+        : acceptedvalue { $$ = new AcceptedValues; $$->insert($1); }
+        | listofvalues ',' acceptedvalue { $1->insert($3); $$ = $1; }
+        ;
+
+acceptedvalue
+        : TOK_STRING { $$ = $1; }
+        ;
+
+%%

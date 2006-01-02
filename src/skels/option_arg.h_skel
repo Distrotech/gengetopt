@@ -1,0 +1,13 @@
+@IF@ long_long_arg @THEN@
+#ifdef HAVE_LONG_LONG
+@longlongtype@ @name@_arg;	/* @desc@@if@ has_default @then@ (default=@default_value@)@endif@.  */
+#else
+@longtype@ @name@_arg;	/* @desc@@if@ has_default @then@ (default=@default_value@)@endif@.  */
+#endif
+@origtype@ @name@_orig;	/* @desc@ original value given at command line.  */
+@ELSEIF@ flag_arg @THEN@
+@type@ @name@_flag;	/* @desc@ (default=@if@ default_on @then@on@else@off@endif@).  */
+@ELSE@
+@type@ @name@_arg;	/* @desc@@if@ has_default @then@ (default='@default_value@')@endif@.  */
+@origtype@ @name@_orig;	/* @desc@ original value given at command line.  */
+@ENDIF@

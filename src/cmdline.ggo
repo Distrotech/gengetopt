@@ -1,0 +1,77 @@
+# Copyright (C) 1999, 2000, 2001  Free Software Foundation, Inc.
+#  
+# This file is part of GNU gengetopt 
+#
+# GNU gengetopt is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by 
+# the Free Software Foundation; either version 2, or (at your option) 
+# any later version. 
+#
+# GNU gengetopt is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+# Public License for more details. 
+#
+# You should have received a copy of the GNU General Public License along 
+# with gengetopt; see the file COPYING. If not, write to the Free Software 
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. 
+
+
+# Specification file format:
+#
+# This file consist in lines of sentences with the following format:
+#
+#         package <packname>
+#         version <version>
+#         purpose <string>
+#         option <long> <short> <desc> <argtype> <required>
+#         option <long> <short> <desc> flag      <onoff>
+#         option <long> <short> <desc> no
+#         ... # ...
+#
+# Where:
+#
+# <packname> = Double quoted string.
+# <version>  = Double quoted string.
+# <purpose>  = What the program does
+#              Double quoted string (even on more than one line)
+# <long>     = Double quoted string with upper and lower case chars, digits,
+#              '-' and '.'.  No spaces allowed.
+# <short>    = A single upper or lower case char, or a digit.
+# <desc>     = String with upper and lower case chars, digits, '-', '.' and
+#              spaces.
+# <argtype>  = string, int, short, long, float, double, longdouble or longlong.
+# <required> = yes or no.
+# <onoff>    = on or off.
+# Comments begins with '#' in any place of the line and ends in the 
+# end of line.
+# The third form of option is used if the option does not take an argument;
+# it must not be required.
+
+
+# Name of our program
+package "gengetopt"       # we don't use it: we're using automake
+# Version of our program
+#version "1.0.1"           # we don't use it: we're using automake
+
+purpose "This program generates a C function that uses getopt_long function
+to parse the command line options, validate them and fill a struct."
+
+# Options
+option  "input"         i "input file (default std input)"  string typestr="filename"     no
+option  "func-name"     f "name of generated function" string typestr="name"  default="cmdline_parser"   no
+option  "arg-struct-name" a "name of generated args info struct" string typestr="name"  default="gengetopt_args_info"   no
+option  "file-name"     F "name of generated file"  string typestr="name"  default="cmdline"     no
+option  "c-extension"   c "extension of c file" string typestr="ext" default="c" no
+option  "header-extension"   H "extension of header file" string typestr="ext" default="h" no
+option  "long-help"     l "long usage line in help" no
+option  "unamed-opts"   u "accept options without names (e.g., file names)" string default="FILES" no argoptional
+option  "no-handle-help"   n "do not handle --help|-h automatically" no 
+option  "no-handle-version"  N  "do not handle --version|-V automatically" no
+option  "no-handle-error" e "do not exit on errors" no
+option  "gen-version" g "put gengetopt version in the generated file" flag on
+option  "conf-parser" C "generate a config file parser" no
+option  "set-package" - "set the package name (override package defined in the .ggo file)" string no
+option  "set-version" - "set the version number (override version defined in the .ggo file)" string no
+option  "show-help" - "show the output of --help instead of generating code" no
+option  "show-version" - "show the output of --version instead of generating code" no
