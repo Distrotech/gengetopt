@@ -158,6 +158,14 @@ header_gen_class::generate_header(ostream &stream, unsigned int indent)
   stream << "_print_help(void);";
   stream << "\n";
   stream << indent_str;
+  if (has_hidden)
+    {
+      stream << "void ";
+      generate_string (parser_name, stream, indent + indent_str.length ());
+      stream << "_print_full_help(void);";
+      stream << "\n";
+      stream << indent_str;
+    }
   stream << "void ";
   generate_string (parser_name, stream, indent + indent_str.length ());
   stream << "_print_version(void);";

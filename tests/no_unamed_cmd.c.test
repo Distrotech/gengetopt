@@ -190,7 +190,7 @@ no_unamed_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_ar
   no_unamed_cmd_parser_init (&local_args_info);
 
   optarg = 0;
-  optind = 1;
+  optind = 0;
   opterr = 1;
   optopt = '?';
 

@@ -141,10 +141,10 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << indent_str;
       stream << "\n";
       stream << indent_str;
-      stream << "struct line_list *cmd_line_list = 0;";
+      stream << "static struct line_list *cmd_line_list = 0;";
       stream << "\n";
       stream << indent_str;
-      stream << "struct line_list *cmd_line_list_tmp = 0;";
+      stream << "static struct line_list *cmd_line_list_tmp = 0;";
       stream << "\n";
       stream << indent_str;
       stream << "\n";
@@ -293,6 +293,59 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << indent_str;
   stream << "\n";
   stream << indent_str;
+  if (has_hidden)
+    {
+      stream << "void";
+      stream << "\n";
+      stream << indent_str;
+      generate_string (parser_name, stream, indent + indent_str.length ());
+      stream << "_print_full_help (void)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "{";
+      stream << "\n";
+      stream << indent_str;
+      indent = 2;
+      stream << "  ";
+      generate_string (parser_name, stream, indent + indent_str.length ());
+      stream << "_print_version ();";
+      indent = 0;
+      stream << "\n";
+      stream << indent_str;
+      if (has_purpose)
+        {
+          stream << "  printf(\"\\n%s\\n\", \"";
+          generate_string (purpose, stream, indent + indent_str.length ());
+          stream << "\");";
+          stream << "\n";
+          stream << indent_str;
+        }
+      stream << "  printf(\"\\n";
+      generate_string (usage_string, stream, indent + indent_str.length ());
+      stream << "\\n\"";
+      if (no_package)
+        {
+          stream << ", ";
+          generate_string (package_var_name, stream, indent + indent_str.length ());
+        }
+      stream << ");";
+      stream << "\n";
+      stream << indent_str;
+      indent = 2;
+      stream << "  ";
+      if (full_help_option_print.size () > 0)
+        generate_string (full_help_option_print, stream, indent + indent_str.length ());
+      else
+        generate_full_help_option_print (stream, indent + indent_str.length ());
+      indent = 0;
+      stream << "\n";
+      stream << indent_str;
+      stream << "}";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+    }
   stream << "void";
   stream << "\n";
   stream << indent_str;
@@ -958,7 +1011,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "  optarg = 0;";
   stream << "\n";
   stream << indent_str;
-  stream << "  optind = 1;";
+  stream << "  optind = 0;";
   stream << "\n";
   stream << indent_str;
   stream << "  opterr = 1;";

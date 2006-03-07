@@ -105,6 +105,8 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   virtual void generate_handle_version(ostream &stream, unsigned int indent);
   virtual void generate_help_option_print(ostream &stream,
                                           unsigned int indent);
+  virtual void generate_full_help_option_print(ostream &stream,
+                                          unsigned int indent);
   virtual void generate_long_option_struct(ostream &stream,
                                            unsigned int indent);
   virtual void generate_reset_groups(ostream &stream, unsigned int indent);
@@ -137,7 +139,7 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   const string generate_purpose();
   const string generate_usage_string(bool use_config_package = true);
 
-  OptionHelpList *generate_help_option_list();
+  OptionHelpList *generate_help_option_list(bool generate_hidden = false);
 };
 
 #endif /* _GM_H */

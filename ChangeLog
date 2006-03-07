@@ -1,3 +1,24 @@
+2006-02-25  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/gm.cc (generate_help_option_list): make sure not to use a
+	negative number as a size to create a string, bug fixed
+
+2006-02-16  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/skels/c_source.h_skel: set optind to 0 before invoking
+	getopt_long, in order to discard any internal pointers and restart from
+	scratch with the given argc, argv, rather than continue to parse
+	the command line from the previous run. (as suggested by Andre Noll)
+
+2006-02-12  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/skels/c_source.h_skel: cmd_line_list is generated as
+	static and this enables linking different parsers into the
+	same executable (as suggested by Andre Noll)
+
+	* src/gm.cc: deal with --full-help in the presence of
+	hidden options
+
 2005-12-22  Lorenzo Bettini  <bettini@lorelap>
 
 	* src/skels/update_arg.h_skel: added the check for the result

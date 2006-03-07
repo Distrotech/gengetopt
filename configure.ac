@@ -21,7 +21,7 @@ AC_INIT(reconf)
 
 AM_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE(gengetopt,2.15)
+AM_INIT_AUTOMAKE(gengetopt,2.16)
 
 dnl directory for docs (html)
 AC_SUBST(gengetoptdocdir)
@@ -146,6 +146,7 @@ AC_OUTPUT([Makefile
            doc/Makefile 
            doc/index.html tests/Makefile tests/no_optgiven.sh
            tests/valgrind_tests.sh
+           tests/valgrind_suppressions.sh
            tests/more_than_once.sh
            tests/test_all_opts.sh
            tests/test_all_opts_file_save.sh
@@ -166,6 +167,7 @@ AC_OUTPUT([Makefile
            tests/test_values.sh tests/test_values_err.sh
            tests/test_show_help.sh tests/test_err.sh tests/test_dep.sh],
           [chmod +x tests/valgrind_tests.sh
+           chmod +x tests/valgrind_suppressions.sh
            chmod +x tests/no_optgiven.sh
            chmod +x tests/more_than_once.sh
            chmod +x tests/test_all_opts.sh

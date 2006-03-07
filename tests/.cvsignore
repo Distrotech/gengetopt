@@ -30,5 +30,6 @@ test_multiple
 test_sections
 test_values
 test_redef_help
+more_cmdparsers
 *.out
 *.save

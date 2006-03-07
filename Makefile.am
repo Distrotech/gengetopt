@@ -16,7 +16,7 @@
 # with gengetopt; see the file COPYING. If not, write to the Free Software 
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-EXTRA_DIST = reconf configure TODO LICENSE NEWSold
+EXTRA_DIST = reconf configure TODO LICENSE 
 SUBDIRS = src doc tests
 
-gengetoptdoc_DATA = ChangeLog COPYING NEWS NEWSold THANKS INSTALL README LICENSE
+gengetoptdoc_DATA = ChangeLog COPYING NEWS THANKS INSTALL README LICENSE

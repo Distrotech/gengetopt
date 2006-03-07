@@ -74,4 +74,5 @@ option  "conf-parser" C "generate a config file parser" no
 option  "set-package" - "set the package name (override package defined in the .ggo file)" string no
 option  "set-version" - "set the version number (override version defined in the .ggo file)" string no
 option  "show-help" - "show the output of --help instead of generating code" no
+option  "show-full-help" - "show the output of --help (including hidden options) instead of generating code" no
 option  "show-version" - "show the output of --version instead of generating code" no

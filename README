@@ -44,13 +44,10 @@ http://www.gnu.org/prep/ftp.html ).
 
       Anonymous CVS Access
 
-This project's CVS repository can be checked out through anonymous
-(pserver) CVS with the following instruction set. When prompted for a
-password for anoncvs, simply press the Enter key.
+This project's CVS repository can be checked out through anonymous 
+(pserver) CVS with the following instruction: 
 
-cvs -d:pserver:anoncvs@subversions.gnu.org:/cvsroot/gengetopt login
-
-cvs -z3 -d:pserver:anoncvs@subversions.gnu.org:/cvsroot/gengetopt co gengetopt
+cvs -z3 -d:pserver:anonymous@cvs.savannah.gnu.org:/sources/gengetopt co gengetopt 
 
 Further instructions can be found at the address:
 http://savannah.gnu.org/projects/gengetopt .

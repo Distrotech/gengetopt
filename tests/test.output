@@ -262,6 +262,9 @@ specified --multistring-values-no-short with argument foo
 ./test_values: invalid argument, "fooa", for option `--multistring-values-no-short'
 ./test_all_opts: '--dependant' ('-A') option depends on option 'opt-arg'
 specified --opt-arg with argument bar
+arg for -r: 10
+arg for -r: 20
+arg for -a: hello
 test_all_opts 1.0
 
 This is just a test file
@@ -272,6 +275,7 @@ command line type options
 Usage: test_all_opts [OPTIONS]...
 
   -h, --help                    Print help and exit
+      --full-help               Print help, including hidden options, and exit
   -V, --version                 Print version and exit
   -s, --string=STRING           string option
   -i, --int=INT                 int option
@@ -381,6 +385,7 @@ command line type options
 Usage: test_all_opts [OPTIONS]... [FILES]...
 
   -h, --help                    Print help and exit
+      --full-help               Print help, including hidden options, and exit
   -V, --version                 Print version and exit
   -s, --string=STRING           string option
   -i, --int=INT                 int option
@@ -678,3 +683,42 @@ Usage: test_values [OPTIONS]... [FILES]...
                                   (possible values="foo", "bar", 
                                   "foobar", "barfoo" default=`bar')
 specified --height
+arg for -r: 10
+arg for -r: 20
+arg for -a: hello
+test_all_opts 1.0
+
+This is just a test file
+
+to test all possible
+command line type options
+
+Usage: test_all_opts [OPTIONS]... [FILES]...
+
+  -h, --help                    Print help and exit
+      --full-help               Print help, including hidden options, and exit
+  -V, --version                 Print version and exit
+  -s, --string=STRING           string option
+  -i, --int=INT                 int option
+  -S, --short=SHORT             short option
+  -l, --long=LONG               long option
+  -f, --float=FLOAT             float option
+  -d, --double=DOUBLE           double option
+  -D, --longdouble=LONGDOUBLE   longdouble option
+  -L, --longlong=LONGLONG       longlong option
+  -F, --flag                    flag option  (default=on)
+  -u, --function                function option
+      --no-short                no short option
+      --opt-arg[=STRING]        option with optional arg
+  -o, --opt-arg-short[=STRING]  option with optional arg (short)
+  -r, --required=STRING         required option
+  -H, --hidden=INT              hidden option
+  -A, --dependant=STRING        option that depends on opt-arg
+      --very-very-long-option=STRING
+                                the name of this option is long enough to make 
+                                  this description begin on a new line
+  -y, --assume-multimeth-virtual
+                                the name of this option is just as long as the 
+                                  maximum allowed, so this description begin on 
+                                  a new line
+      --file-save=STRING        save the passed options into a file

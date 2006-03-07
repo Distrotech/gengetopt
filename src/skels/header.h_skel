@@ -34,6 +34,9 @@ int @parser_name@2 (int argc, char * const *argv, struct @args_info@ *args_info,
 int @parser_name@_file_save(const char *filename, struct @args_info@ *args_info);
 
 void @parser_name@_print_help(void);
+@IF@ has_hidden @THEN@
+void @parser_name@_print_full_help(void);
+@ENDIF@
 void @parser_name@_print_version(void);
 
 void @parser_name@_init (struct @args_info@ *args_info);

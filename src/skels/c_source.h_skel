@@ -40,8 +40,8 @@ struct line_list
   struct line_list * next;
 };
 
-struct line_list *cmd_line_list = 0;
-struct line_list *cmd_line_list_tmp = 0;
+static struct line_list *cmd_line_list = 0;
+static struct line_list *cmd_line_list_tmp = 0;
 
 @ENDIF@
 
@@ -81,6 +81,19 @@ void
   @help_option_print:method@
 }
 
+@IF@ has_hidden @THEN@
+void
+@parser_name@_print_full_help (void)
+{
+  @parser_name@_print_version ();
+@IF@ has_purpose @THEN@
+  printf("\n%s\n", "@purpose@");
+@ENDIF@
+  printf("\n@usage_string@\n"@if@ no_package @then@, @package_var_name@@endif@);
+  @full_help_option_print:method@
+}
+
+@ENDIF@
 void
 @parser_name@_init (struct @args_info@ *args_info)
 {
@@ -297,7 +310,7 @@ int
   @parser_name@_init (&local_args_info);
 
   optarg = 0;
-  optind = 1;
+  optind = 0;
   opterr = 1;
   optopt = '?';
 

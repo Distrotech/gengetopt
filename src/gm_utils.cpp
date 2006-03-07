@@ -177,6 +177,22 @@ has_options()
 }
 
 bool
+has_hidden_options()
+{
+    struct gengetopt_option * opt = 0;
+
+    foropt
+    {
+        if (opt->hidden)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool
 has_values()
 {
   struct gengetopt_option * opt = 0;

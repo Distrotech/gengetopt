@@ -39,6 +39,7 @@ static
 void clear_given (struct gengetopt_args_info *args_info)
 {
   args_info->help_given = 0 ;
+  args_info->full_help_given = 0 ;
   args_info->version_given = 0 ;
   args_info->string_given = 0 ;
   args_info->int_given = 0 ;
@@ -103,6 +104,7 @@ test_all_opts_cmd_parser_print_help (void)
   printf("\n%s\n", "This is just a test file\n\nto test all possible\ncommand line type options");
   printf("\nUsage: test_all_opts [OPTIONS]... [FILES]...\n\n");
   printf("%s\n","  -h, --help                    Print help and exit");
+  printf("%s\n","      --full-help               Print help, including hidden options, and exit");
   printf("%s\n","  -V, --version                 Print version and exit");
   printf("%s\n","  -s, --string=STRING           string option");
   printf("%s\n","  -i, --int=INT                 int option");
@@ -118,6 +120,37 @@ test_all_opts_cmd_parser_print_help (void)
   printf("%s\n","      --opt-arg[=STRING]        option with optional arg");
   printf("%s\n","  -o, --opt-arg-short[=STRING]  option with optional arg (short)");
   printf("%s\n","  -r, --required=STRING         required option");
+  printf("%s\n","  -A, --dependant=STRING        option that depends on opt-arg");
+  printf("%s\n","      --very-very-long-option=STRING\n                                the name of this option is long enough to make \n                                  this description begin on a new line");
+  printf("%s\n","  -y, --assume-multimeth-virtual\n                                the name of this option is just as long as the \n                                  maximum allowed, so this description begin on \n                                  a new line");
+  printf("%s\n","      --file-save=STRING        save the passed options into a file");
+  
+}
+
+void
+test_all_opts_cmd_parser_print_full_help (void)
+{
+  test_all_opts_cmd_parser_print_version ();
+  printf("\n%s\n", "This is just a test file\n\nto test all possible\ncommand line type options");
+  printf("\nUsage: test_all_opts [OPTIONS]... [FILES]...\n\n");
+  printf("%s\n","  -h, --help                    Print help and exit");
+  printf("%s\n","      --full-help               Print help, including hidden options, and exit");
+  printf("%s\n","  -V, --version                 Print version and exit");
+  printf("%s\n","  -s, --string=STRING           string option");
+  printf("%s\n","  -i, --int=INT                 int option");
+  printf("%s\n","  -S, --short=SHORT             short option");
+  printf("%s\n","  -l, --long=LONG               long option");
+  printf("%s\n","  -f, --float=FLOAT             float option");
+  printf("%s\n","  -d, --double=DOUBLE           double option");
+  printf("%s\n","  -D, --longdouble=LONGDOUBLE   longdouble option");
+  printf("%s\n","  -L, --longlong=LONGLONG       longlong option");
+  printf("%s\n","  -F, --flag                    flag option  (default=on)");
+  printf("%s\n","  -u, --function                function option");
+  printf("%s\n","      --no-short                no short option");
+  printf("%s\n","      --opt-arg[=STRING]        option with optional arg");
+  printf("%s\n","  -o, --opt-arg-short[=STRING]  option with optional arg (short)");
+  printf("%s\n","  -r, --required=STRING         required option");
+  printf("%s\n","  -H, --hidden=INT              hidden option");
   printf("%s\n","  -A, --dependant=STRING        option that depends on opt-arg");
   printf("%s\n","      --very-very-long-option=STRING\n                                the name of this option is long enough to make \n                                  this description begin on a new line");
   printf("%s\n","  -y, --assume-multimeth-virtual\n                                the name of this option is just as long as the \n                                  maximum allowed, so this description begin on \n                                  a new line");
@@ -276,6 +309,9 @@ test_all_opts_cmd_parser_file_save(const char *filename, struct gengetopt_args_i
 
   if (args_info->help_given) {
     fprintf(outfile, "%s\n", "help");
+  }
+  if (args_info->full_help_given) {
+    fprintf(outfile, "%s\n", "full-help");
   }
   if (args_info->version_given) {
     fprintf(outfile, "%s\n", "version");
@@ -499,7 +535,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
   test_all_opts_cmd_parser_init (&local_args_info);
 
   optarg = 0;
-  optind = 1;
+  optind = 0;
   opterr = 1;
   optopt = '?';
 
@@ -510,6 +546,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
 
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
+        { "full-help",	0, NULL, 0 },
         { "version",	0, NULL, 'V' },
         { "string",	1, NULL, 's' },
         { "int",	1, NULL, 'i' },
@@ -828,6 +865,12 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
 
 
         case 0:	/* Long option with no short option */
+          if (strcmp (long_options[option_index].name, "full-help") == 0) {
+            test_all_opts_cmd_parser_print_full_help ();
+            test_all_opts_cmd_parser_free (&local_args_info);
+            exit (EXIT_SUCCESS);}
+          
+
           /* no short option.  */
           if (strcmp (long_options[option_index].name, "no-short") == 0)
           {

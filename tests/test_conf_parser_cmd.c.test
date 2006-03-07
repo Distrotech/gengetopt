@@ -37,8 +37,8 @@ struct line_list
   struct line_list * next;
 };
 
-struct line_list *cmd_line_list = 0;
-struct line_list *cmd_line_list_tmp = 0;
+static struct line_list *cmd_line_list = 0;
+static struct line_list *cmd_line_list_tmp = 0;
 
 
 struct multi_string_list
@@ -707,7 +707,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
   test_conf_parser_cmd_parser_init (&local_args_info);
 
   optarg = 0;
-  optind = 1;
+  optind = 0;
   opterr = 1;
   optopt = '?';
 

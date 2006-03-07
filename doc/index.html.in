@@ -62,10 +62,9 @@ home page) and I can send them to you.<br>
 </p>
 <h3><a name="mozTocId38513" class="mozTocH3"></a> Anonymous CVS Access</h3>
 This project's CVS repository can be checked out through anonymous
-(pserver) CVS with the following instruction set. When prompted for a
-password for anoncvs, simply press the Enter key.
-<pre>export CVS_RSH="ssh"</pre>
-<pre>cvs -z3 -d:ext:anoncvs@savannah.gnu.org:/cvsroot/gengetopt co gengetopt </pre>
+(pserver) CVS with the following instruction:
+<pre>
+cvs -z3 -d:pserver:anonymous@cvs.savannah.gnu.org:/sources/gengetopt co gengetopt </pre>
 Further instructions can be found at the address: <a
  href="http://savannah.gnu.org/projects/gengetopt">http://savannah.gnu.org/projects/gengetopt</a>
 .

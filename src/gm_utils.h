@@ -30,6 +30,7 @@ bool has_multiple_options_with_type();
 bool has_required();
 bool has_dependencies();
 bool has_options();
+bool has_hidden_options();
 bool has_values();
 
 /**

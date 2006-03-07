@@ -26,6 +26,7 @@ class c_source_gen_class
   string file_save_loop;
   string final_exit;
   string free;
+  string full_help_option_print;
   string generator_version;
   string getopt_string;
   string given_init;
@@ -35,6 +36,7 @@ class c_source_gen_class
   string handle_option;
   string handle_required;
   bool handle_unamed;
+  bool has_hidden;
   bool has_purpose;
   string help_option_print;
   string list_def;
@@ -57,12 +59,12 @@ class c_source_gen_class
 
  public:
   c_source_gen_class() :
-    check_possible_values (false), check_required_options (false), conf_parser (false), do_generate_strdup (false), handle_unamed (false), has_purpose (false), multiple_token_functions (false), multiple_token_vars (false), no_package (false)
+    check_possible_values (false), check_required_options (false), conf_parser (false), do_generate_strdup (false), handle_unamed (false), has_hidden (false), has_purpose (false), multiple_token_functions (false), multiple_token_vars (false), no_package (false)
   {
   }
   
-  c_source_gen_class(const string &_args_info, bool _check_possible_values, bool _check_required_options, const string &_clear_arg, const string &_command_line, bool _conf_parser, bool _do_generate_strdup, const string &_file_save_loop, const string &_final_exit, const string &_free, const string &_generator_version, const string &_getopt_string, const string &_given_init, const string &_handle_dependencies, const string &_handle_group, const string &_handle_no_short_option, const string &_handle_option, const string &_handle_required, bool _handle_unamed, bool _has_purpose, const string &_help_option_print, const string &_list_def, const string &_list_free, const string &_long_option_struct, const string &_multiple_fill_array, bool _multiple_token_functions, bool _multiple_token_vars, bool _no_package, const string &_option_values, const string &_package_var_name, const string &_parser_name, const string &_purpose, const string &_reset_groups, const string &_source_name, const string &_struct_def, const string &_update_multiple_given, const string &_usage_string, const string &_version_var_name) :
-    args_info (_args_info), check_possible_values (_check_possible_values), check_required_options (_check_required_options), clear_arg (_clear_arg), command_line (_command_line), conf_parser (_conf_parser), do_generate_strdup (_do_generate_strdup), file_save_loop (_file_save_loop), final_exit (_final_exit), free (_free), generator_version (_generator_version), getopt_string (_getopt_string), given_init (_given_init), handle_dependencies (_handle_dependencies), handle_group (_handle_group), handle_no_short_option (_handle_no_short_option), handle_option (_handle_option), handle_required (_handle_required), handle_unamed (_handle_unamed), has_purpose (_has_purpose), help_option_print (_help_option_print), list_def (_list_def), list_free (_list_free), long_option_struct (_long_option_struct), multiple_fill_array (_multiple_fill_array), multiple_token_functions (_multiple_token_functions), multiple_token_vars (_multiple_token_vars), no_package (_no_package), option_values (_option_values), package_var_name (_package_var_name), parser_name (_parser_name), purpose (_purpose), reset_groups (_reset_groups), source_name (_source_name), struct_def (_struct_def), update_multiple_given (_update_multiple_given), usage_string (_usage_string), version_var_name (_version_var_name)
+  c_source_gen_class(const string &_args_info, bool _check_possible_values, bool _check_required_options, const string &_clear_arg, const string &_command_line, bool _conf_parser, bool _do_generate_strdup, const string &_file_save_loop, const string &_final_exit, const string &_free, const string &_full_help_option_print, const string &_generator_version, const string &_getopt_string, const string &_given_init, const string &_handle_dependencies, const string &_handle_group, const string &_handle_no_short_option, const string &_handle_option, const string &_handle_required, bool _handle_unamed, bool _has_hidden, bool _has_purpose, const string &_help_option_print, const string &_list_def, const string &_list_free, const string &_long_option_struct, const string &_multiple_fill_array, bool _multiple_token_functions, bool _multiple_token_vars, bool _no_package, const string &_option_values, const string &_package_var_name, const string &_parser_name, const string &_purpose, const string &_reset_groups, const string &_source_name, const string &_struct_def, const string &_update_multiple_given, const string &_usage_string, const string &_version_var_name) :
+    args_info (_args_info), check_possible_values (_check_possible_values), check_required_options (_check_required_options), clear_arg (_clear_arg), command_line (_command_line), conf_parser (_conf_parser), do_generate_strdup (_do_generate_strdup), file_save_loop (_file_save_loop), final_exit (_final_exit), free (_free), full_help_option_print (_full_help_option_print), generator_version (_generator_version), getopt_string (_getopt_string), given_init (_given_init), handle_dependencies (_handle_dependencies), handle_group (_handle_group), handle_no_short_option (_handle_no_short_option), handle_option (_handle_option), handle_required (_handle_required), handle_unamed (_handle_unamed), has_hidden (_has_hidden), has_purpose (_has_purpose), help_option_print (_help_option_print), list_def (_list_def), list_free (_list_free), long_option_struct (_long_option_struct), multiple_fill_array (_multiple_fill_array), multiple_token_functions (_multiple_token_functions), multiple_token_vars (_multiple_token_vars), no_package (_no_package), option_values (_option_values), package_var_name (_package_var_name), parser_name (_parser_name), purpose (_purpose), reset_groups (_reset_groups), source_name (_source_name), struct_def (_struct_def), update_multiple_given (_update_multiple_given), usage_string (_usage_string), version_var_name (_version_var_name)
   {
   }
 
@@ -149,6 +151,13 @@ class c_source_gen_class
     free = _free;
   }
 
+  virtual void generate_full_help_option_print(ostream &stream, unsigned int indent) = 0;
+
+  void set_full_help_option_print(const string &_full_help_option_print)
+  {
+    full_help_option_print = _full_help_option_print;
+  }
+
   void set_generator_version(const string &_generator_version)
   {
     generator_version = _generator_version;
@@ -204,6 +213,11 @@ class c_source_gen_class
   void set_handle_unamed(bool _handle_unamed)
   {
     handle_unamed = _handle_unamed;
+  }
+
+  void set_has_hidden(bool _has_hidden)
+  {
+    has_hidden = _has_hidden;
   }
 
   void set_has_purpose(bool _has_purpose)

@@ -4,6 +4,17 @@ Copyright (C) 1999-2004  Free Software Foundation
 
 Please send gengetopt bug reports to bug-gengetopt at gnu.org
 
+Version 2.16
+
+   * a --full-help option is generated that shows also hidden options
+     (in case there are some, as suggested by Paul Biggar)
+   * multiple parsers can be linked into the same executable (even
+     when using configuration files, thanks to Andre Noll)
+   * when invoking getopt_long, discard any pointers to previously
+     scanned command lines (thanks to Andre Noll)
+   * fixed a bug in generation of help strings that might cause
+     a seg fault (reported by Paul Biggar)
+
 Version 2.15
 
    * option parts can be specified in any order

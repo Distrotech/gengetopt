@@ -45,6 +45,7 @@ extern int yyparse () ;
 
 #include "gm.h"
 #include "groups.h"
+#include "gm_utils.h"
 
 #include "skels/copyright.h"
 
@@ -153,6 +154,12 @@ main (int argc, char **argv)
     gengetopt_options.push_front(opt);
   }
 
+  if (has_hidden_options() && gengetopt_has_option(FULL_HELP_LONG_OPT, 0) == 0) {
+      gengetopt_create_option (opt, FULL_HELP_LONG_OPT, '-',
+                               FULL_HELP_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0);
+      gengetopt_options.push_front(opt);
+  }
+
   if (gengetopt_has_option(HELP_LONG_OPT, HELP_SHORT_OPT) == 0) {
     gengetopt_create_option (opt, HELP_LONG_OPT, HELP_SHORT_OPT,
                                  HELP_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0);
@@ -211,7 +218,7 @@ main (int argc, char **argv)
     {
       cout << gengetopt_package << " " << gengetopt_version << endl;
     }
-  else if (args_info.show_help_given)
+  else if (args_info.show_help_given || args_info.show_full_help_given)
     {
       cout << gengetopt_package << " " << gengetopt_version << "\n" << endl;
 
@@ -222,7 +229,9 @@ main (int argc, char **argv)
 
       output_formatted_string(cmdline_parser_creator.generate_usage_string(false));
 
-      OptionHelpList *option_list = cmdline_parser_creator.generate_help_option_list();
+      // if --show-full-help is specified we have to generate also hidden options
+      OptionHelpList *option_list =
+              cmdline_parser_creator.generate_help_option_list(args_info.show_full_help_given);
 
       std::for_each(option_list->begin(), option_list->end(),
                     output_formatted_string);
@@ -698,7 +707,7 @@ print_copyright()
 {
   copyright_gen_class copyright_g;
 
-  copyright_g.set_year ("1999, 2000, 2001, 2002, 2003, 2004");
+  copyright_g.set_year ("1999-2006");
   copyright_g.generate_copyright (cout);
 }
 

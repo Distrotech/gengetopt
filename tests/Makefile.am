@@ -83,7 +83,8 @@ test_multiple_err.sh \
 test_sections.sh \
 test_default_values.sh \
 test_values.sh test_values_err.sh \
-test_dep.sh
+test_dep.sh \
+more_cmdparsers
 
 TESTS = $(VALGRINDTESTS) \
 test_show_help.sh \
@@ -93,7 +94,10 @@ check_PROGRAMS = no_strings no_unamed no_optgiven no_optgiven2 more_than_once \
 canonize-names default_values default_cmdline test_all_opts \
 test_groups test_conf_parser test_conf_parser_ov test_conf_parser_ov2 \
 test_conf_parser_ov3 test_conf_parser_file_save \
-test_multiple test_sections test_values test_redef_help
+test_multiple test_sections test_values test_redef_help \
+more_cmdparsers
+
+hidden_options_programs = test_all_opts
 
 no_strings_SOURCES = no_strings_cmd.ggo no_strings.c
 no_unamed_SOURCES = no_unamed_cmd.ggonu no_unamed.c
@@ -114,6 +118,7 @@ test_multiple_SOURCES = test_multiple_cmd.ggo test_multiple.c
 test_sections_SOURCES = test_sections_cmd.ggo test_sections.c
 test_values_SOURCES = test_values_cmd.ggo test_values.c
 test_redef_help_SOURCES = test_redef_help_cmd.ggo test_redef_help.c
+more_cmdparsers_SOURCES = more_cmdparsers.c test_all_opts_cmd.ggo test_conf_parser_cmd.ggoconf
 
 BUILT_SOURCES = no_strings_cmd.c no_strings_cmd.h \
 no_unamed_cmd.c no_unamed_cmd.h \
@@ -175,7 +180,7 @@ test_conf_parser_err.sh.in test_conf_parser_err_string.sh.in \
 test_multiple.sh.in test_multiple_err.sh.in test_sections.sh.in test_default_values.sh.in \
 test_conf_parser_ov2.c.in test_conf_parser_ov3.c.in \
 test_values.sh.in test_values_err.sh.in test_show_help.sh.in \
-valgrind_tests.sh.in test_err.sh.in \
+valgrind_tests.sh.in valgrind_suppressions.sh.in test_err.sh.in \
 test_dep.sh.in \
 $(GENERATED_TESTS) \
 $(TESTSOUTPUT) \
@@ -202,6 +207,9 @@ $(TESTSOUTPUT):
 	done && \
 	for source in $(check_PROGRAMS); do \
 	  $(top_builddir)/tests/$$source -h >> $@ 2>&1; \
+	done && \
+	for source in $(hidden_options_programs); do \
+	  $(top_builddir)/tests/$$source --full-help >> $@ 2>&1; \
 	done
 
 store-backup: $(BUILT_SOURCES) $(TESTSOUTPUT)
@@ -231,6 +239,9 @@ check-diff:
 	done && \
 	for tests in $(check_PROGRAMS); do \
 	  $(top_builddir)/tests/$$tests -h >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	done && \
+	for tests in $(hidden_options_programs); do \
+	  $(top_builddir)/tests/$$tests --full-help >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	done && \
         echo "diff $(TESTSOUTPUT) $(TESTSOUT)"; \
         if ! diff $(TESTSOUTPUT) $(srcdir)/$(TESTSOUT); \

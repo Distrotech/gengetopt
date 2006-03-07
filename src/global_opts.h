@@ -26,6 +26,9 @@
 #define HELP_SHORT_OPT_STR "h"
 #define HELP_OPT_DESCR "Print help and exit"
 
+#define FULL_HELP_LONG_OPT "full-help"
+#define FULL_HELP_OPT_DESCR "Print help, including hidden options, and exit"
+
 #define VERSION_LONG_OPT "version"
 #define VERSION_SHORT_OPT 'V'
 #define VERSION_SHORT_OPT_STR "V"

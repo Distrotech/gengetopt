@@ -201,6 +201,8 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   set_has_purpose((gengetopt_purpose != 0));
   set_purpose(generate_purpose());
   set_no_package((gengetopt_package == 0));
+  c_source_gen_class::set_has_hidden(has_hidden_options());
+  header_gen_class::set_has_hidden(c_source_gen_class::has_hidden);
 }
 
 void
@@ -678,6 +680,25 @@ CmdlineParserCreator::generate_help_option_print(ostream &stream,
   delete option_list;
 }
 
+void
+CmdlineParserCreator::generate_full_help_option_print(ostream &stream,
+        unsigned int indent)
+{
+    // generate also hidden options
+    OptionHelpList *option_list = generate_help_option_list(true);
+
+    print_help_string_gen_class print_gen;
+
+    for (OptionHelpList::const_iterator it = option_list->begin();
+         it != option_list->end(); ++it)
+    {
+        print_gen.set_helpstring(*it);
+        print_gen.generate_print_help_string(stream, indent);
+    }
+
+    delete option_list;
+}
+
 const string
 CmdlineParserCreator::generate_purpose()
 {
@@ -692,11 +713,11 @@ CmdlineParserCreator::generate_purpose()
 }
 
 OptionHelpList *
-CmdlineParserCreator::generate_help_option_list()
+CmdlineParserCreator::generate_help_option_list(bool generate_hidden)
 {
   OptionHelpList *option_list = new OptionHelpList;
 
-  long desc_col;
+  unsigned long desc_col;
   struct gengetopt_option * opt;
 
   int           type_len;
@@ -706,10 +727,10 @@ CmdlineParserCreator::generate_help_option_list()
   /* calculate columns */
   desc_col = 0;
   foropt {
-    if (opt->hidden)
+    if (opt->hidden && !generate_hidden)
         continue;
     
-    int width = 2 + 4 + 2;  // ws + "-a, " + ws
+    unsigned int width = 2 + 4 + 2;  // ws + "-a, " + ws
 
     width += strlen (opt->long_opt) + 2;  // "--"
 
@@ -742,7 +763,7 @@ CmdlineParserCreator::generate_help_option_list()
 
   foropt
     {
-      if (opt->hidden)
+      if (opt->hidden && !generate_hidden)
         continue;  
       
       if (opt->group_value &&
@@ -847,7 +868,8 @@ CmdlineParserCreator::generate_help_option_list()
       stream << option_string;
       const char *opt_desc = opt->desc;
 
-      if (option_string.size() >= MAX_STARTING_COLUMN)
+      if ((option_string.size() >= MAX_STARTING_COLUMN) ||
+	  (desc_col <= option_string.size()))
         {
           string indent (MAX_STARTING_COLUMN, ' ');
           stream << "\\n" << indent;
@@ -1287,6 +1309,16 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
             stream << endl;
             stream << endl;
             continue;
+          }
+
+          if (strcmp(opt->long_opt, FULL_HELP_LONG_OPT) == 0) {
+              handle_help_gen_class help_gen;
+              help_gen.set_full_help(true);
+              help_gen.set_parser_name (parser_function_name);
+              help_gen.generate_handle_help (stream, indent);
+              stream << endl;
+              stream << endl;
+              continue;
           }
 
           if (opt->short_opt == VERSION_SHORT_OPT && strcmp(opt->long_opt, VERSION_LONG_OPT) == 0) {

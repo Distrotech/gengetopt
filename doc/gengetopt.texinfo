@@ -243,13 +243,10 @@ release (see below for patching from a previous version).
 @cindex CVS
 
 This project's CVS repository can be checked out through anonymous
-(pserver) CVS with the following instruction set. When prompted for a
-password for anoncvs, simply press the Enter key.
+(pserver) CVS with the following instruction:
 
 @example
-export CVS_RSH="ssh"
-
-cvs -z3 -d:ext:anoncvs@@savannah.gnu.org:/cvsroot/gengetopt co gengetopt 
+cvs -z3 -d:pserver:anonymous@@cvs.savannah.gnu.org:/sources/gengetopt co gengetopt
 @end example
 
 Further instructions can be found at the address:
@@ -464,11 +461,15 @@ once at command line; all the values for this option are stored in an
 array.  See @ref{Multiple Options}.
 
 @cindex hidden
+@cindex @code{--full-help}
 @item hidden
 
-If an option is ``hidden'' it will not appear in the output of
-@code{--help} but it can still be specified at command
-line@footnote{Since version 2.15.}.
+@anchor{hidden}If an option is ``hidden'' it will not
+appear in the output of @code{--help} but it can still be specified at
+command line@footnote{Since version 2.15.}.  In case hidden options
+are used, the command line option @code{--full-help} will also be
+generated.  This will print also the hidden options@footnote{Since
+version 2.16.}.
 
 @cindex on/off 
 @item on/off 
@@ -503,11 +504,19 @@ option <long> <short> <desc> @{typestr="<type descr>"@} @{argtype@}
 Comments begins with @code{#} in any place of the line and ends in the
 end of line.
 
+@cindex @code{-h,--help}
+@cindex @code{-V,--version}
+@anchor{addedoptions}
 Notice that the options @code{-h,--help} and @code{-V,--version} are
 added automatically; however, if you specify an option yourself that has
 @code{h} as short form or @code{help} as long form, then
 @code{-h,--help} is not added (and you have to handle the help option
 manually).  The same holds for @code{-V,--version}.
+
+@cindex @code{--full-help}
+In case hidden options are used, @xref{hidden,,Hidden options}, the
+command line option @code{--full-help} will also be generated.  This
+will print also the hidden options@footnote{Since version 2.16.}.
 
 Options can be part of sections, that provide a more meaningful
 descriptions of the options.  A @emph{section} can be defined with the
@@ -732,6 +741,7 @@ Usage: sample1 -iINT|--int-opt=INT [-h|--help] [-V|--version]
          [-F|--funct-opt] --long-opt=LONG --def-opt=STRING  [FILES]...
 
   -h, --help              Print help and exit
+      --full-help         Print help, including hidden options, and exit
   -V, --version           Print version and exit
   -s, --str-opt=filename  A string option, for a filename
   -m, --my-opt=INT        Another integer option, this time the description of
@@ -758,12 +768,18 @@ last option section:
 
 @cindex wrapping
 
-Notice how @code{filename} is printed instead of @code{STRING} for the option
-@code{--str-opt} (since @code{typestr} was used in the @file{sample1.ggo} file) and how the
-description of @code{--my-opt} is wrapped to 80 columns, and how the @code{\n} is
-actually interpreted as a newline request.
+Notice how @code{filename} is printed instead of @code{STRING} for the
+option @code{--str-opt} (since @code{typestr} was used in the
+@file{sample1.ggo} file) and how the description of @code{--my-opt} is
+wrapped to 80 columns, and how the @code{\n} is actually interpreted
+as a newline request.  Moreover, since @code{-S,--secret} is
+@cindex hidden
+an hidden option (@xref{hidden,,Hidden options}.) it is not printed;
+@cindex @code{--full-help}
+if you wanted that to be printed, you should use @code{--full-help}.
  
-If you're curious you may want to take a look at the generated C file @file{cmdline1.c}. 
+If you're curious you may want to take a look at the generated C file
+@file{cmdline1.c}.
 
 You may find other examples in @file{/prefix/share/doc/gengetopt/examples}
 or in the @file{tests} of the source tarbal.
@@ -821,6 +837,22 @@ help message, as gengetopt itself does in case of an error (try it!).
 @item --gen-version 
 is a flag (default on) that when disabled does not put in the output
 file the gengetopt version (it is useful for testing purposes).
+
+@item --show-help
+@itemx --show-full-help
+@itemx --show-version
+only make gengetopt show the output of @code{--help},
+@code{--full-help} and @code{--version} command lines without
+generating any code, @xref{addedoptions,,Automatically added options}.
+For instance, I use the @code{--show-help} option to generate a
+texinfo file with the output of help (this also shows an example of
+use of @code{--set-package} and @code{--set-version}):
+
+@example
+../src/gengetopt --show-help -i ../src/cmdline.ggo \
+   --set-package="gengetopt" \
+   --set-version="" > help_output.texinfo
+@end example
 
 @end table
 
