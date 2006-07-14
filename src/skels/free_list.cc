@@ -21,7 +21,7 @@ free_list_gen_class::generate_free_list(ostream &stream, unsigned int indent)
   stream << "\n";
   stream << indent_str;
   stream << "    struct ";
-  generate_string (list_name, stream, indent + indent_str.length ());
+  generate_string (type, stream, indent + indent_str.length ());
   stream << "_list *tmp;";
   stream << "\n";
   stream << indent_str;
@@ -42,17 +42,13 @@ free_list_gen_class::generate_free_list(ostream &stream, unsigned int indent)
     {
       stream << "        free (";
       generate_string (list_name, stream, indent + indent_str.length ());
-      stream << "_list->";
-      generate_string (list_name, stream, indent + indent_str.length ());
-      stream << "_arg);";
+      stream << "_list->arg);";
       stream << "\n";
       stream << indent_str;
     }
   stream << "        free (";
   generate_string (list_name, stream, indent + indent_str.length ());
-  stream << "_list->";
-  generate_string (list_name, stream, indent + indent_str.length ());
-  stream << "_orig);";
+  stream << "_list->orig);";
   stream << "\n";
   stream << indent_str;
   indent = 8;

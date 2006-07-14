@@ -41,6 +41,7 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   char *args_info_name;
   char *header_filename;
   char *c_filename;
+  string output_dir;
   string comment;
   char *unamed_options;
 
@@ -49,6 +50,7 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   bool no_handle_version;
   bool no_handle_error;
   bool conf_parser;
+  bool string_parser;
   bool gen_gengetopt_version;
   bool gen_strdup;
 
@@ -115,6 +117,9 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   virtual void generate_list_free(ostream &stream, unsigned int indent);
 
   virtual void generate_file_save_loop(ostream &stream, unsigned int indent);
+  virtual void generate_init_args_info(ostream &stream, unsigned int indent);
+
+  virtual void generate_custom_getopt(ostream &stream, unsigned int indent);
 
   void generateBreak(ostream &stream, unsigned int indent = 0);
 
@@ -127,9 +132,10 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
                         char *filename, char *header_ext, char *c_ext,
                         bool long_help, bool no_handle_help,
                         bool no_handle_version,
-                        bool no_handle_error, bool conf_parser,
-                        bool gen_version,
-                        const string &comment);
+                        bool no_handle_error, bool conf_parser, bool string_parser,
+                        bool gen_version, bool gen_getopt,
+                        const string &comment,
+                        const string &outdir);
 
   int generate();
 

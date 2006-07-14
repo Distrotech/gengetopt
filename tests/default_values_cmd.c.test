@@ -21,6 +21,24 @@
 
 #include "default_values_cmd.h"
 
+const char *gengetopt_args_info_purpose = "";
+
+const char *gengetopt_args_info_usage = "Usage: default_values [OPTIONS]... [FILES]...";
+
+const char *gengetopt_args_info_help[] = {
+  "  -h, --help                  Print help and exit",
+  "  -V, --version               Print version and exit",
+  "  -f, --foo=INT               foo option  (default=`15000')",
+  "  -b, --bar=STRING            bar option  (default=`this is a default')",
+  "  -F, --foo-opt[=INT]         foo option with optional arg  (default=`15000')",
+  "  -B, --bar-opt[=STRING]      bar option with optional arg  (default=`this is a \n                                default')",
+  "      --foofloat=FLOAT        foo float option  (default=`15000')",
+  "      --foodouble=DOUBLE      foo double option  (default=`15000')",
+  "  -p, --pi=DOUBLE             PI option  (default=`3.1415926536')",
+  "  -s, --timeout=123456789012  number of seconds after the scanning is cancelled \n                                if no progress is shown at all.  \n                                (default=`120')",
+    0
+};
+
 static
 void clear_given (struct gengetopt_args_info *args_info);
 static
@@ -70,6 +88,22 @@ void clear_args (struct gengetopt_args_info *args_info)
   
 }
 
+static
+void init_args_info(struct gengetopt_args_info *args_info)
+{
+  args_info->help_help = gengetopt_args_info_help[0] ;
+  args_info->version_help = gengetopt_args_info_help[1] ;
+  args_info->foo_help = gengetopt_args_info_help[2] ;
+  args_info->bar_help = gengetopt_args_info_help[3] ;
+  args_info->foo_opt_help = gengetopt_args_info_help[4] ;
+  args_info->bar_opt_help = gengetopt_args_info_help[5] ;
+  args_info->foofloat_help = gengetopt_args_info_help[6] ;
+  args_info->foodouble_help = gengetopt_args_info_help[7] ;
+  args_info->pi_help = gengetopt_args_info_help[8] ;
+  args_info->timeout_help = gengetopt_args_info_help[9] ;
+  
+}
+
 void
 default_values_cmd_parser_print_version (void)
 {
@@ -79,19 +113,15 @@ default_values_cmd_parser_print_version (void)
 void
 default_values_cmd_parser_print_help (void)
 {
+  int i = 0;
   default_values_cmd_parser_print_version ();
-  printf("\nUsage: default_values [OPTIONS]... [FILES]...\n\n");
-  printf("%s\n","  -h, --help                  Print help and exit");
-  printf("%s\n","  -V, --version               Print version and exit");
-  printf("%s\n","  -f, --foo=INT               foo option  (default=`15000')");
-  printf("%s\n","  -b, --bar=STRING            bar option  (default=`this is a default')");
-  printf("%s\n","  -F, --foo-opt[=INT]         foo option with optional arg  (default=`15000')");
-  printf("%s\n","  -B, --bar-opt[=STRING]      bar option with optional arg  (default=`this is a \n                                default')");
-  printf("%s\n","      --foofloat=FLOAT        foo float option  (default=`15000')");
-  printf("%s\n","      --foodouble=DOUBLE      foo double option  (default=`15000')");
-  printf("%s\n","  -p, --pi=DOUBLE             PI option  (default=`3.1415926536')");
-  printf("%s\n","  -s, --timeout=123456789012  number of seconds after the scanning is cancelled \n                                if no progress is shown at all.  \n                                (default=`120')");
-  
+
+  if (strlen(gengetopt_args_info_purpose) > 0)
+    printf("\n%s\n", gengetopt_args_info_purpose);
+
+  printf("\n%s\n\n", gengetopt_args_info_usage);
+  while (gengetopt_args_info_help[i])
+    printf("%s\n", gengetopt_args_info_help[i++]);
 }
 
 void
@@ -99,6 +129,7 @@ default_values_cmd_parser_init (struct gengetopt_args_info *args_info)
 {
   clear_given (args_info);
   clear_args (args_info);
+  init_args_info (args_info);
 
   args_info->inputs = NULL;
   args_info->inputs_num = 0;
@@ -546,12 +577,25 @@ default_values_cmd_parser_internal (int argc, char * const *argv, struct gengeto
   if (optind < argc)
     {
       int i = 0 ;
+      int found_prog_name = 0;
+      /* whether program name, i.e., argv[0], is in the remaining args
+         (this may happen with some implementations of getopt,
+          but surely not with the one included by gengetopt) */
 
-      args_info->inputs_num = argc - optind ;
+      i = optind;
+      while (i < argc)
+        if (argv[i++] == argv[0]) {
+          found_prog_name = 1;
+          break;
+        }
+      i = 0;
+
+      args_info->inputs_num = argc - optind - found_prog_name;
       args_info->inputs =
         (char **)(malloc ((args_info->inputs_num)*sizeof(char *))) ;
       while (optind < argc)
-        args_info->inputs[ i++ ] = gengetopt_strdup (argv[optind++]) ;
+        if (argv[optind++] != argv[0])
+          args_info->inputs[ i++ ] = gengetopt_strdup (argv[optind-1]) ;
     }
 
   return 0;

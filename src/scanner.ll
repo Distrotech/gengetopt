@@ -21,6 +21,11 @@
 
 %{
 #include <string.h>
+
+#ifndef HAVE_STRDUP
+extern "C" char *strdup (const char *s) ;
+#endif
+
 #include "argsdef.h"
 #include "parser.h"
 extern int gengetopt_count_line;
@@ -30,13 +35,20 @@ static void updateTokenInfo (int pos);
 
 #define LINEBUF_LEN 1024
 
+#define PUSH(s) yy_push_state(s);
+#define POP() yy_pop_state();
+
 int tokenpos = 0;
 char linebuf[LINEBUF_LEN] ; /* current line */
 
 %}
 
+%option stack nomain yylineno noyywrap nounput
+
 ws [ ]+
 tabs [\t]+
+
+%s SIZE_STATE
 
 %%
 
@@ -53,9 +65,9 @@ longlong	updateTokenInfo (-1); yylval.argtype = ARG_LONGLONG; return TOK_ARGTYPE
 package        	updateTokenInfo (-1); return TOK_PACKAGE;
 version        	updateTokenInfo (-1); return TOK_VERSION;
 groupoption     updateTokenInfo (-1); yylloc.first_line = gengetopt_count_line; return TOK_GROUPOPTION;
+yes|required    updateTokenInfo (-1); return TOK_YES;
+no|optional	updateTokenInfo (-1); return TOK_NO;
 option		updateTokenInfo (-1); yylloc.first_line = gengetopt_count_line; return TOK_OPTION;
-yes	        updateTokenInfo (-1); return TOK_YES;
-no		updateTokenInfo (-1); return TOK_NO;
 flag		updateTokenInfo (-1); return TOK_FLAG;
 on	        updateTokenInfo (-1); return TOK_ON;
 off	        updateTokenInfo (-1); return TOK_OFF;
@@ -75,6 +87,11 @@ dependon		updateTokenInfo (-1); return TOK_DEPENDON;
 
 "=" { updateTokenInfo (-1); return '='; }
 "," { updateTokenInfo (-1); return ','; }
+
+"(" { PUSH(SIZE_STATE); updateTokenInfo (-1); return '('; }
+<SIZE_STATE>"-" { updateTokenInfo (-1); return '-'; }
+<SIZE_STATE>[[:digit:]+] { updateTokenInfo (-1); yylval.str = strdup(yytext); return TOK_SIZE; }
+")" { POP(); updateTokenInfo (-1); return ')'; }
 
 [[:alnum:]-]	 updateTokenInfo (-1); yylval.chr = yytext[0]; return TOK_CHAR;
 \"[^\"\n]*\"	{

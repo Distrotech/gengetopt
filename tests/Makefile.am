@@ -1,4 +1,4 @@
-# Copyright (C) 1999, 2000, 2001, 2002, 2003  Free Software Foundation, Inc.
+# Copyright (C) 1999-2006  Free Software Foundation, Inc.
 #  
 # This file is part of GNU gengetopt 
 #
@@ -20,7 +20,7 @@
 # .ggonu is used in this test suite for command line parsers that have
 # to be created without --unamed-opt
 
-SUFFIXES = .ggo .ggonu .ggoconf
+SUFFIXES = .ggo .ggonu .ggoconf .ggostr
 
 # we do not generate the gengetopt version number in the output
 # file so that the number does not disturb in diffing when changing
@@ -37,6 +37,9 @@ GGO_COMPILE = $(PROGNAME) --input=$< --func-name=$*_parser --file-name=$*
 
 .ggoconf.c:
 	$(GGO_COMPILE) --unamed-opt="OTHER NAMES" --conf-parser --arg-struct-name="my_args_info"
+
+.ggostr.c:
+	$(GGO_COMPILE) --unamed-opt="OTHER NAMES" --string-parser --arg-struct-name=$*_struct --include-getopt
 
 %.err: %.ggo
 	$(PROGNAME) --unamed-opt -i $< --file-name null 2> $@ || true
@@ -69,7 +72,9 @@ LDADD = $(GETOPTLONG_O) $(STRDUP_O)
 
 EXPECT = 1
 
-VALGRINDTESTS = no_strings no_unamed no_optgiven.sh more_than_once.sh canonize-names \
+VALGRINDTESTS = no_strings no_multi_strings no_unamed no_optgiven.sh \
+more_than_once.sh canonize-names \
+no_prog_name \
 default_values default_cmdline test_all_opts.sh \
 test_all_opts_file_save.sh \
 test_groups.sh \
@@ -84,22 +89,24 @@ test_sections.sh \
 test_default_values.sh \
 test_values.sh test_values_err.sh \
 test_dep.sh \
-more_cmdparsers
+test_multiple_parsers.sh
 
 TESTS = $(VALGRINDTESTS) \
 test_show_help.sh \
 test_err.sh
 
-check_PROGRAMS = no_strings no_unamed no_optgiven no_optgiven2 more_than_once \
+check_PROGRAMS = no_strings no_multi_strings no_unamed no_optgiven \
+no_optgiven2 more_than_once no_prog_name \
 canonize-names default_values default_cmdline test_all_opts \
 test_groups test_conf_parser test_conf_parser_ov test_conf_parser_ov2 \
 test_conf_parser_ov3 test_conf_parser_file_save \
 test_multiple test_sections test_values test_redef_help \
-more_cmdparsers
+test_multiple_parsers
 
 hidden_options_programs = test_all_opts
 
 no_strings_SOURCES = no_strings_cmd.ggo no_strings.c
+no_multi_strings_SOURCES = no_multi_strings_cmd.ggo no_multi_strings.c
 no_unamed_SOURCES = no_unamed_cmd.ggonu no_unamed.c
 no_optgiven_SOURCES = no_optgiven_cmd.ggo no_optgiven.c
 no_optgiven2_SOURCES = no_optgiven_cmd.ggo no_optgiven2.c
@@ -108,6 +115,8 @@ canonize_names_SOURCES = canonize-names-cmd.ggo canonize-names.c
 default_values_SOURCES = default_values_cmd.ggo default_values.c
 default_cmdline_SOURCES = cmdline.ggo default_cmdline.c
 test_all_opts_SOURCES = test_all_opts_cmd.ggo test_all_opts.c
+no_prog_name_SOURCES = test_all_opts_cmd.ggo no_prog_name.c $(top_builddir)/src/getopt.c $(top_builddir)/src/getopt1.c
+# force using our version of getopt
 test_groups_SOURCES = test_groups_cmd.ggo test_groups.c
 test_conf_parser_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser.c
 test_conf_parser_ov_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_ov.c
@@ -118,9 +127,10 @@ test_multiple_SOURCES = test_multiple_cmd.ggo test_multiple.c
 test_sections_SOURCES = test_sections_cmd.ggo test_sections.c
 test_values_SOURCES = test_values_cmd.ggo test_values.c
 test_redef_help_SOURCES = test_redef_help_cmd.ggo test_redef_help.c
-more_cmdparsers_SOURCES = more_cmdparsers.c test_all_opts_cmd.ggo test_conf_parser_cmd.ggoconf
+test_multiple_parsers_SOURCES = test_main_cmdline_cmd.ggo test_first_cmdline_cmd.ggostr test_second_cmdline_cmd.ggostr test_multiple_parsers.c
 
 BUILT_SOURCES = no_strings_cmd.c no_strings_cmd.h \
+no_multi_strings_cmd.c no_multi_strings_cmd.h \
 no_unamed_cmd.c no_unamed_cmd.h \
 no_optgiven_cmd.c no_optgiven_cmd.h \
 more_than_once_cmd.c more_than_once_cmd.h \
@@ -133,7 +143,10 @@ test_conf_parser_cmd.c test_conf_parser_cmd.h \
 test_multiple_cmd.c test_multiple_cmd.h \
 test_sections_cmd.c \
 test_values_cmd.c test_values_cmd.h \
-test_redef_help_cmd.c test_redef_help_cmd.h
+test_redef_help_cmd.c test_redef_help_cmd.h \
+test_main_cmdline_cmd.c test_main_cmdline_cmd.h \
+test_first_cmdline_cmd.c test_first_cmdline_cmd.h \
+test_second_cmdline_cmd.c test_second_cmdline_cmd.h
 
 GENERATED_TESTS	= no_strings_cmd.c.test no_strings_cmd.h.test \
 no_unamed_cmd.c.test no_unamed_cmd.h.test \
@@ -149,7 +162,10 @@ test_multiple_cmd.c.test test_multiple_cmd.h.test \
 test_sections_cmd.c.test \
 test_values_cmd.c.test test_values_cmd.h.test \
 test_all_opts.save.test test_multiple.save.test test_conf_parser.save.test \
-test_redef_help_cmd.c.test test_redef_help_cmd.h.test
+test_redef_help_cmd.c.test test_redef_help_cmd.h.test \
+test_main_cmdline_cmd.c.test test_main_cmdline_cmd.h.test \
+test_first_cmdline_cmd.c.test test_first_cmdline_cmd.h.test \
+test_second_cmdline_cmd.c.test test_second_cmdline_cmd.h.test
 
 no_optgiven_cmd.c: no_optgiven_cmd.ggo
 	$(GGO_COMPILE) --no-handle-error -u
@@ -181,7 +197,7 @@ test_multiple.sh.in test_multiple_err.sh.in test_sections.sh.in test_default_val
 test_conf_parser_ov2.c.in test_conf_parser_ov3.c.in \
 test_values.sh.in test_values_err.sh.in test_show_help.sh.in \
 valgrind_tests.sh.in valgrind_suppressions.sh.in test_err.sh.in \
-test_dep.sh.in \
+test_dep.sh.in test_multiple_parsers.sh.in \
 $(GENERATED_TESTS) \
 $(TESTSOUTPUT) \
 suppressions.supp \

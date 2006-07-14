@@ -1,4 +1,4 @@
-# Copyright (C) 1999, 2000, 2001  Free Software Foundation, Inc.
+# Copyright (C) 1999-2006  Free Software Foundation, Inc.
 #  
 # This file is part of GNU gengetopt 
 #
@@ -21,7 +21,7 @@ AC_INIT(reconf)
 
 AM_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE(gengetopt,2.16)
+AM_INIT_AUTOMAKE(gengetopt,2.17)
 
 dnl directory for docs (html)
 AC_SUBST(gengetoptdocdir)
@@ -165,7 +165,8 @@ AC_OUTPUT([Makefile
            tests/test_multiple_err.sh
            tests/test_sections.sh tests/test_default_values.sh
            tests/test_values.sh tests/test_values_err.sh
-           tests/test_show_help.sh tests/test_err.sh tests/test_dep.sh],
+           tests/test_show_help.sh tests/test_err.sh tests/test_dep.sh
+           tests/test_multiple_parsers.sh],
           [chmod +x tests/valgrind_tests.sh
            chmod +x tests/valgrind_suppressions.sh
            chmod +x tests/no_optgiven.sh
@@ -189,4 +190,5 @@ AC_OUTPUT([Makefile
            chmod +x tests/test_values_err.sh
            chmod +x tests/test_err.sh
            chmod +x tests/test_dep.sh
-           chmod +x tests/test_show_help.sh])
+           chmod +x tests/test_show_help.sh
+           chmod +x tests/test_multiple_parsers.sh])

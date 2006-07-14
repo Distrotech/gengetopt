@@ -1,13 +1,13 @@
 if (@list_name@_list)
   {
-    struct @list_name@_list *tmp;
+    struct @type@_list *tmp;
     while (@list_name@_list)
       {
         tmp = @list_name@_list;
 @IF@ string_list @THEN@
-        free (@list_name@_list->@list_name@_arg);
+        free (@list_name@_list->arg);
 @ENDIF@
-        free (@list_name@_list->@list_name@_orig);
+        free (@list_name@_list->orig);
         @list_name@_list = @list_name@_list->next;
         free (tmp);
       }

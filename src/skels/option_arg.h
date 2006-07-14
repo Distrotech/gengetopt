@@ -20,22 +20,24 @@ class option_arg_gen_class
   string default_value;
   string desc;
   bool flag_arg;
+  bool has_arg;
   bool has_default;
   bool long_long_arg;
   string longlongtype;
   string longtype;
+  bool multiple;
   string name;
   string origtype;
   string type;
 
  public:
   option_arg_gen_class() :
-    default_on (false), flag_arg (false), has_default (false), long_long_arg (false)
+    default_on (false), flag_arg (false), has_arg (false), has_default (false), long_long_arg (false), multiple (false)
   {
   }
   
-  option_arg_gen_class(bool _default_on, const string &_default_value, const string &_desc, bool _flag_arg, bool _has_default, bool _long_long_arg, const string &_longlongtype, const string &_longtype, const string &_name, const string &_origtype, const string &_type) :
-    default_on (_default_on), default_value (_default_value), desc (_desc), flag_arg (_flag_arg), has_default (_has_default), long_long_arg (_long_long_arg), longlongtype (_longlongtype), longtype (_longtype), name (_name), origtype (_origtype), type (_type)
+  option_arg_gen_class(bool _default_on, const string &_default_value, const string &_desc, bool _flag_arg, bool _has_arg, bool _has_default, bool _long_long_arg, const string &_longlongtype, const string &_longtype, bool _multiple, const string &_name, const string &_origtype, const string &_type) :
+    default_on (_default_on), default_value (_default_value), desc (_desc), flag_arg (_flag_arg), has_arg (_has_arg), has_default (_has_default), long_long_arg (_long_long_arg), longlongtype (_longlongtype), longtype (_longtype), multiple (_multiple), name (_name), origtype (_origtype), type (_type)
   {
   }
 
@@ -82,6 +84,11 @@ class option_arg_gen_class
     flag_arg = _flag_arg;
   }
 
+  void set_has_arg(bool _has_arg)
+  {
+    has_arg = _has_arg;
+  }
+
   void set_has_default(bool _has_default)
   {
     has_default = _has_default;
@@ -100,6 +107,11 @@ class option_arg_gen_class
   void set_longtype(const string &_longtype)
   {
     longtype = _longtype;
+  }
+
+  void set_multiple(bool _multiple)
+  {
+    multiple = _multiple;
   }
 
   void set_name(const string &_name)

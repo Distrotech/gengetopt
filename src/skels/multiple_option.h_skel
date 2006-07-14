@@ -22,7 +22,7 @@ case '@short_option@':	/* @option_comment@.  */
         }
 
 @ENDIF@
-      @option_var_name@_new = (struct @option_var_name@_list *) malloc (sizeof (struct @option_var_name@_list));
+      @option_var_name@_new = (struct @type@_list *) malloc (sizeof (struct @type@_list));
       @option_var_name@_new->next = @option_var_name@_list;
       @option_var_name@_list = @option_var_name@_new;
       @update_arg@

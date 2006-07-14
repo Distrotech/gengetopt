@@ -17,7 +17,7 @@ update_arg_gen_class::generate_update_arg(ostream &stream, unsigned int indent)
       generate_string (structure, stream, indent + indent_str.length ());
       stream << "->";
       generate_string (opt_var, stream, indent + indent_str.length ());
-      stream << "_arg = ";
+      stream << "arg = ";
       generate_string (cast, stream, indent + indent_str.length ());
       stream << "strtol (";
       generate_string (optarg, stream, indent + indent_str.length ());
@@ -29,9 +29,9 @@ update_arg_gen_class::generate_update_arg(ostream &stream, unsigned int indent)
         {
           stream << "args_info->";
           generate_string (opt_var, stream, indent + indent_str.length ());
-          stream << "_flag = !(args_info->";
+          stream << "flag = !(args_info->";
           generate_string (opt_var, stream, indent + indent_str.length ());
-          stream << "_flag);";
+          stream << "flag);";
         }
       else
         {
@@ -40,7 +40,7 @@ update_arg_gen_class::generate_update_arg(ostream &stream, unsigned int indent)
               generate_string (structure, stream, indent + indent_str.length ());
               stream << "->";
               generate_string (opt_var, stream, indent + indent_str.length ());
-              stream << "_arg = ";
+              stream << "arg = ";
               generate_string (cast, stream, indent + indent_str.length ());
               stream << "strtol (";
               generate_string (optarg, stream, indent + indent_str.length ());
@@ -53,7 +53,7 @@ update_arg_gen_class::generate_update_arg(ostream &stream, unsigned int indent)
                   generate_string (structure, stream, indent + indent_str.length ());
                   stream << "->";
                   generate_string (opt_var, stream, indent + indent_str.length ());
-                  stream << "_arg = ";
+                  stream << "arg = ";
                   generate_string (cast, stream, indent + indent_str.length ());
                   stream << "strtod (";
                   generate_string (optarg, stream, indent + indent_str.length ());
@@ -69,7 +69,7 @@ update_arg_gen_class::generate_update_arg(ostream &stream, unsigned int indent)
                       generate_string (structure, stream, indent + indent_str.length ());
                       stream << "->";
                       generate_string (opt_var, stream, indent + indent_str.length ());
-                      stream << "_arg = (long long int) strtol (";
+                      stream << "arg = (long long int) strtol (";
                       generate_string (optarg, stream, indent + indent_str.length ());
                       stream << ", &stop_char, 0);";
                       stream << "\n";
@@ -80,7 +80,7 @@ update_arg_gen_class::generate_update_arg(ostream &stream, unsigned int indent)
                       generate_string (structure, stream, indent + indent_str.length ());
                       stream << "->";
                       generate_string (opt_var, stream, indent + indent_str.length ());
-                      stream << "_arg = (long) strtol (";
+                      stream << "arg = (long) strtol (";
                       generate_string (optarg, stream, indent + indent_str.length ());
                       stream << ", &stop_char, 0);";
                       stream << "\n";
@@ -96,7 +96,7 @@ update_arg_gen_class::generate_update_arg(ostream &stream, unsigned int indent)
                               generate_string (structure, stream, indent + indent_str.length ());
                               stream << "->";
                               generate_string (opt_var, stream, indent + indent_str.length ());
-                              stream << "_arg = gengetopt_strdup (";
+                              stream << "arg = gengetopt_strdup (";
                               generate_string (optarg, stream, indent + indent_str.length ());
                               stream << ");";
                             }
@@ -106,20 +106,20 @@ update_arg_gen_class::generate_update_arg(ostream &stream, unsigned int indent)
                               generate_string (structure, stream, indent + indent_str.length ());
                               stream << "->";
                               generate_string (opt_var, stream, indent + indent_str.length ());
-                              stream << "_arg)";
+                              stream << "arg)";
                               stream << "\n";
                               stream << indent_str;
                               stream << "  free (";
                               generate_string (structure, stream, indent + indent_str.length ());
                               stream << "->";
                               generate_string (opt_var, stream, indent + indent_str.length ());
-                              stream << "_arg); /* free previous string */";
+                              stream << "arg); /* free previous string */";
                               stream << "\n";
                               stream << indent_str;
                               generate_string (structure, stream, indent + indent_str.length ());
                               stream << "->";
                               generate_string (opt_var, stream, indent + indent_str.length ());
-                              stream << "_arg = gengetopt_strdup (";
+                              stream << "arg = gengetopt_strdup (";
                               generate_string (optarg, stream, indent + indent_str.length ());
                               stream << ");";
                             }
@@ -157,7 +157,7 @@ update_arg_gen_class::generate_update_arg(ostream &stream, unsigned int indent)
           generate_string (structure, stream, indent + indent_str.length ());
           stream << "->";
           generate_string (opt_var, stream, indent + indent_str.length ());
-          stream << "_orig = ";
+          stream << "orig = ";
           generate_string (orig_optarg, stream, indent + indent_str.length ());
           stream << ";";
         }
@@ -167,20 +167,20 @@ update_arg_gen_class::generate_update_arg(ostream &stream, unsigned int indent)
           generate_string (structure, stream, indent + indent_str.length ());
           stream << "->";
           generate_string (opt_var, stream, indent + indent_str.length ());
-          stream << "_orig)";
+          stream << "orig)";
           stream << "\n";
           stream << indent_str;
           stream << "  free (";
           generate_string (structure, stream, indent + indent_str.length ());
           stream << "->";
           generate_string (opt_var, stream, indent + indent_str.length ());
-          stream << "_orig); /* free previous string */";
+          stream << "orig); /* free previous string */";
           stream << "\n";
           stream << indent_str;
           generate_string (structure, stream, indent + indent_str.length ());
           stream << "->";
           generate_string (opt_var, stream, indent + indent_str.length ());
-          stream << "_orig = gengetopt_strdup (";
+          stream << "orig = gengetopt_strdup (";
           generate_string (orig_optarg, stream, indent + indent_str.length ());
           stream << ");";
         }

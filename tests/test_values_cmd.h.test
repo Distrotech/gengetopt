@@ -24,18 +24,30 @@ extern "C" {
 
 struct gengetopt_args_info
 {
+  const char *help_help; /* Print help and exit help description.  */
+  const char *version_help; /* Print version and exit help description.  */
   char * string_values_arg;	/* string option with values.  */
   char * string_values_orig;	/* string option with values original value given at command line.  */
+  const char *string_values_help; /* string option with values help description.  */
   char * string_values_def_arg;	/* string option with values and default (default='bar').  */
   char * string_values_def_orig;	/* string option with values and default original value given at command line.  */
+  const char *string_values_def_help; /* string option with values and default help description.  */
   char * string_values_no_short_arg;	/* string option with values no short.  */
   char * string_values_no_short_orig;	/* string option with values no short original value given at command line.  */
+  const char *string_values_no_short_help; /* string option with values no short help description.  */
   char ** multistring_values_arg;	/* multiple string option with values.  */
   char ** multistring_values_orig;	/* multiple string option with values original value given at command line.  */
+  int multistring_values_min; /* multiple string option with values's minimum occurreces */
+  int multistring_values_max; /* multiple string option with values's maximum occurreces */
+  const char *multistring_values_help; /* multiple string option with values help description.  */
   char ** multistring_values_no_short_arg;	/* multiple string option with values no-short.  */
   char ** multistring_values_no_short_orig;	/* multiple string option with values no-short original value given at command line.  */
+  int multistring_values_no_short_min; /* multiple string option with values no-short's minimum occurreces */
+  int multistring_values_no_short_max; /* multiple string option with values no-short's maximum occurreces */
+  const char *multistring_values_no_short_help; /* multiple string option with values no-short help description.  */
   char * string_values_group_arg;	/* group string option with values and default (default='bar').  */
   char * string_values_group_orig;	/* group string option with values and default original value given at command line.  */
+  const char *string_values_group_help; /* group string option with values and default help description.  */
   
   int help_given ;	/* Whether help was given.  */
   int version_given ;	/* Whether version was given.  */
@@ -51,9 +63,17 @@ struct gengetopt_args_info
   int group1_group_counter; /* counter for group group1 */
 } ;
 
-int test_values_cmd_parser (int argc, char * const *argv, struct gengetopt_args_info *args_info);
-int test_values_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required);
-int test_values_cmd_parser_file_save(const char *filename, struct gengetopt_args_info *args_info);
+extern const char *gengetopt_args_info_purpose;
+extern const char *gengetopt_args_info_usage;
+extern const char *gengetopt_args_info_help[];
+
+int test_values_cmd_parser (int argc, char * const *argv,
+  struct gengetopt_args_info *args_info);
+int test_values_cmd_parser2 (int argc, char * const *argv,
+  struct gengetopt_args_info *args_info,
+  int override, int initialize, int check_required);
+int test_values_cmd_parser_file_save(const char *filename,
+  struct gengetopt_args_info *args_info);
 
 void test_values_cmd_parser_print_help(void);
 void test_values_cmd_parser_print_version(void);
@@ -61,7 +81,8 @@ void test_values_cmd_parser_print_version(void);
 void test_values_cmd_parser_init (struct gengetopt_args_info *args_info);
 void test_values_cmd_parser_free (struct gengetopt_args_info *args_info);
 
-int test_values_cmd_parser_required (struct gengetopt_args_info *args_info, const char *prog_name);
+int test_values_cmd_parser_required (struct gengetopt_args_info *args_info,
+  const char *prog_name);
 
 extern char *test_values_cmd_parser_string_values_values[] ;	/* Possible values for string-values.  */
 extern char *test_values_cmd_parser_string_values_def_values[] ;	/* Possible values for string-values-def.  */

@@ -58,21 +58,24 @@ purpose "This program generates a C function that uses getopt_long function
 to parse the command line options, validate them and fill a struct."
 
 # Options
-option  "input"         i "input file (default std input)"  string typestr="filename"     no
-option  "func-name"     f "name of generated function" string typestr="name"  default="cmdline_parser"   no
-option  "arg-struct-name" a "name of generated args info struct" string typestr="name"  default="gengetopt_args_info"   no
-option  "file-name"     F "name of generated file"  string typestr="name"  default="cmdline"     no
-option  "c-extension"   c "extension of c file" string typestr="ext" default="c" no
-option  "header-extension"   H "extension of header file" string typestr="ext" default="h" no
-option  "long-help"     l "long usage line in help" no
-option  "unamed-opts"   u "accept options without names (e.g., file names)" string default="FILES" no argoptional
-option  "no-handle-help"   n "do not handle --help|-h automatically" no 
-option  "no-handle-version"  N  "do not handle --version|-V automatically" no
-option  "no-handle-error" e "do not exit on errors" no
+option  "input"         i "input file (default std input)"  string typestr="filename"     optional
+option  "func-name"     f "name of generated function" string typestr="name"  default="cmdline_parser"   optional
+option  "arg-struct-name" a "name of generated args info struct" string typestr="name"  default="gengetopt_args_info"   optional
+option  "file-name"     F "name of generated file"  string typestr="name"  default="cmdline"     optional
+option  "output-dir"     - "output directory"  string typestr="path"  optional
+option  "c-extension"   c "extension of c file" string typestr="ext" default="c" optional
+option  "header-extension"   H "extension of header file" string typestr="ext" default="h" optional
+option  "long-help"     l "long usage line in help" optional
+option  "unamed-opts"   u "accept options without names (e.g., file names)" string default="FILES" optional argoptional
+option  "no-handle-help"   n "do not handle --help|-h automatically" optional 
+option  "no-handle-version"  N  "do not handle --version|-V automatically" optional
+option  "no-handle-error" e "do not exit on errors" optional
 option  "gen-version" g "put gengetopt version in the generated file" flag on
-option  "conf-parser" C "generate a config file parser" no
-option  "set-package" - "set the package name (override package defined in the .ggo file)" string no
-option  "set-version" - "set the version number (override version defined in the .ggo file)" string no
-option  "show-help" - "show the output of --help instead of generating code" no
-option  "show-full-help" - "show the output of --help (including hidden options) instead of generating code" no
-option  "show-version" - "show the output of --version instead of generating code" no
+option  "conf-parser" C "generate a config file parser" optional
+option  "string-parser" S "generate a string parser (the string contains the command line)" optional
+option  "include-getopt" G "adds the code for getopt_long in the generated C file" optional
+option  "set-package" - "set the package name (override package defined in the .ggo file)" string optional
+option  "set-version" - "set the version number (override version defined in the .ggo file)" string optional
+option  "show-help" - "show the output of --help instead of generating code" optional
+option  "show-full-help" - "show the output of --help (including hidden options) instead of generating code" optional
+option  "show-version" - "show the output of --version instead of generating code" optional

@@ -21,6 +21,17 @@
 
 #include "no_strings_cmd.h"
 
+const char *gengetopt_args_info_purpose = "";
+
+const char *gengetopt_args_info_usage = "Usage: no_strings [OPTIONS]... [FILES]...";
+
+const char *gengetopt_args_info_help[] = {
+  "  -h, --help     Print help and exit",
+  "  -V, --version  Print version and exit",
+  "  -i, --foo=INT  foo option",
+    0
+};
+
 static
 void clear_given (struct gengetopt_args_info *args_info);
 static
@@ -48,6 +59,15 @@ void clear_args (struct gengetopt_args_info *args_info)
   
 }
 
+static
+void init_args_info(struct gengetopt_args_info *args_info)
+{
+  args_info->help_help = gengetopt_args_info_help[0] ;
+  args_info->version_help = gengetopt_args_info_help[1] ;
+  args_info->foo_help = gengetopt_args_info_help[2] ;
+  
+}
+
 void
 no_strings_cmd_parser_print_version (void)
 {
@@ -57,12 +77,15 @@ no_strings_cmd_parser_print_version (void)
 void
 no_strings_cmd_parser_print_help (void)
 {
+  int i = 0;
   no_strings_cmd_parser_print_version ();
-  printf("\nUsage: no_strings [OPTIONS]... [FILES]...\n\n");
-  printf("%s\n","  -h, --help     Print help and exit");
-  printf("%s\n","  -V, --version  Print version and exit");
-  printf("%s\n","  -i, --foo=INT  foo option");
-  
+
+  if (strlen(gengetopt_args_info_purpose) > 0)
+    printf("\n%s\n", gengetopt_args_info_purpose);
+
+  printf("\n%s\n\n", gengetopt_args_info_usage);
+  while (gengetopt_args_info_help[i])
+    printf("%s\n", gengetopt_args_info_help[i++]);
 }
 
 void
@@ -70,6 +93,7 @@ no_strings_cmd_parser_init (struct gengetopt_args_info *args_info)
 {
   clear_given (args_info);
   clear_args (args_info);
+  init_args_info (args_info);
 
   args_info->inputs = NULL;
   args_info->inputs_num = 0;
@@ -270,12 +294,25 @@ no_strings_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_a
   if (optind < argc)
     {
       int i = 0 ;
+      int found_prog_name = 0;
+      /* whether program name, i.e., argv[0], is in the remaining args
+         (this may happen with some implementations of getopt,
+          but surely not with the one included by gengetopt) */
 
-      args_info->inputs_num = argc - optind ;
+      i = optind;
+      while (i < argc)
+        if (argv[i++] == argv[0]) {
+          found_prog_name = 1;
+          break;
+        }
+      i = 0;
+
+      args_info->inputs_num = argc - optind - found_prog_name;
       args_info->inputs =
         (char **)(malloc ((args_info->inputs_num)*sizeof(char *))) ;
       while (optind < argc)
-        args_info->inputs[ i++ ] = gengetopt_strdup (argv[optind++]) ;
+        if (argv[optind++] != argv[0])
+          args_info->inputs[ i++ ] = gengetopt_strdup (argv[optind-1]) ;
     }
 
   return 0;

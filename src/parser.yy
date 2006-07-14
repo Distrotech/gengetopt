@@ -23,6 +23,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+#ifndef HAVE_STRDUP
+extern "C" char *strdup (const char *s) ;
+#endif
+
 #include "my_sstream.h"
 
 #include "acceptedvalues.h"
@@ -90,6 +95,22 @@ void check_result(int o, gengetopt_option *opt)
   }
 }
 
+/* the number of allowed occurrences of a multiple option */
+struct multiple_size
+{
+    /* these strings are allocated dynamically and NOT
+      automatically freed upon destruction */
+    char *min;
+    char *max;
+
+    /* if no limit is specified then initialized to -1.
+       if the same size is specified for min and max, it means that a precise
+       number of occurrences is required*/
+    multiple_size(char *m = "-1", char *M = "-1") :
+        min(strdup(m)), max(strdup(M))
+    {}
+};
+
 #define check_error if (o) YYERROR;
 
 %}
@@ -101,6 +122,7 @@ void check_result(int o, gengetopt_option *opt)
     int	    boolean;
     class AcceptedValues *ValueList;
     struct gengetopt_option *gengetopt_option;
+    struct multiple_size *multiple_size;
 }
 
 %token		    TOK_PACKAGE		"package"
@@ -129,6 +151,7 @@ void check_result(int o, gengetopt_option *opt)
 %token <str>        TOK_MLSTRING
 %token <chr>        TOK_CHAR
 %token <argtype>    TOK_ARGTYPE
+%token <str>        TOK_SIZE
 
 %type  <boolean>    req_onoff
 %type  <boolean>    opt_yesno optional_yesno
@@ -138,6 +161,7 @@ void check_result(int o, gengetopt_option *opt)
 %type  <ValueList>  listofvalues
 %type  <str>        acceptedvalue
 %type  <gengetopt_option> option_parts
+%type  <multiple_size> multiple_size
 
 
 %% /* ====================================================================== */
@@ -324,10 +348,13 @@ option_parts: option_parts opt_yesno
 			  	$$ = $1; 
 			  	$$->arg_is_optional = true;
 			  }
-			| option_parts TOK_MULTIPLE
+			| option_parts TOK_MULTIPLE multiple_size
 			  { 
 			  	$$ = $1; 
 			  	$$->multiple = true;
+                $$->multiple_min = $3->min;
+                $$->multiple_max = $3->max;
+                delete $3;
 			  }
       | option_parts TOK_FLAG
         {
@@ -381,5 +408,13 @@ listofvalues
 acceptedvalue
         : TOK_STRING { $$ = $1; }
         ;
+
+multiple_size
+    : { $$ = new multiple_size; }
+    | '(' TOK_SIZE ')' { $$ = new multiple_size($2, $2); }
+    | '(' TOK_SIZE '-' ')' { $$ = new multiple_size($2, "-1"); free($2); }
+    | '(' '-' TOK_SIZE  ')' { $$ = new multiple_size("-1", $3); free($3); }
+    | '(' TOK_SIZE '-' TOK_SIZE  ')' { $$ = new multiple_size($2, $4); free($2); free($4); }
+    ;
 
 %%

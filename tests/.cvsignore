@@ -8,7 +8,9 @@ Makefile.in
 .deps
 *.sh
 no_strings
+no_multi_strings
 no_unamed
+no_prog_name
 no_optgiven
 no_optgiven2
 more_than_once
@@ -33,3 +35,4 @@ test_redef_help
 more_cmdparsers
 *.out
 *.save
+test_multiple_parsers

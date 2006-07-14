@@ -1,9 +1,9 @@
 # Copyright (C) 2002 Lorenzo Bettini <http://www.lorenzobettini.it>
-#  
+#
 # This file is free software; as a special exception the author gives
-# unlimited permission to copy and/or distribute it, with or without 
+# unlimited permission to copy and/or distribute it, with or without
 # modifications, as long as this notice is preserved.
-# 
+#
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -34,7 +34,6 @@ print_help_string.cc \
 multiple_opt_list.cc multiple_opt_list.h \
 multiple_opt_struct.cc multiple_opt_struct.h \
 multiple_option.cc multiple_option.h \
-multiple_option_update.cc multiple_option_update.h \
 multiple_fill_array.cc multiple_fill_array.h \
 multiple_fill_array_default.cc multiple_fill_array_default.h \
 copyright.cc \
@@ -51,7 +50,9 @@ clear_given.cc clear_given.h \
 clear_arg.cc clear_arg.h \
 free_list.cc free_list.h \
 file_save.cc file_save.h \
-file_save_multiple.cc file_save_multiple.h
+file_save_multiple.cc file_save_multiple.h \
+init_args_info.cc init_args_info.h \
+custom_getopt_gen.cc custom_getopt_gen.h
 
 BUILT_SOURCES = header.h c_source.h header.cc c_source.cc \
 handle_help.h handle_version.h handle_help.cc handle_version.cc \
@@ -63,7 +64,6 @@ print_help_string.h print_help_string.cc \
 multiple_opt_list.cc multiple_opt_list.h \
 multiple_opt_struct.cc multiple_opt_struct.h \
 multiple_option.cc multiple_option.h \
-multiple_option_update.cc multiple_option_update.h \
 multiple_fill_array.cc multiple_fill_array.h \
 multiple_fill_array_default.cc multiple_fill_array_default.h \
 copyright.cc copyright.h \
@@ -80,7 +80,9 @@ clear_given.cc clear_given.h \
 clear_arg.cc clear_arg.h \
 free_list.cc free_list.h \
 file_save.cc file_save.h \
-file_save_multiple.cc file_save_multiple.h
+file_save_multiple.cc file_save_multiple.h \
+init_args_info.cc init_args_info.h \
+custom_getopt_gen.cc custom_getopt_gen.h
 
 EXTRA_DIST = header.h_skel c_source.h_skel handle_help.h_skel \
 handle_version.h_skel generic_option.h_skel \
@@ -88,7 +90,6 @@ required_option.h_skel dependant_option.h_skel \
 generic_option_group.h_skel group_counter.h_skel group_option.h_skel \
 print_help_string.h_skel \
 multiple_opt_list.h_skel multiple_opt_struct.h_skel multiple_option.h_skel \
-multiple_option_update.h_skel \
 multiple_fill_array.h_skel multiple_fill_array_default.h_skel \
 copyright.h_skel free_string.h_skel \
 free_multiple.h_skel free_inputs_string.h_skel \
@@ -103,6 +104,8 @@ clear_arg.h_skel \
 free_list.h_skel \
 file_save.h_skel \
 file_save_multiple.h_skel \
+init_args_info.h_skel \
+custom_getopt_gen.h_skel \
 $(BUILT_SOURCES)
 
 built-clean:

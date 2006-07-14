@@ -21,6 +21,31 @@
 
 #include "test_multiple_cmd.h"
 
+const char *gengetopt_args_info_purpose = "";
+
+const char *gengetopt_args_info_usage = "Usage: test_multiple [OPTIONS]... [FILES]...";
+
+const char *gengetopt_args_info_help[] = {
+  "  -h, --help                    Print help and exit",
+  "  -V, --version                 Print version and exit",
+  "  -s, --string=STRING           string option  (default=`foo')",
+  "  -i, --int=INT                 int option",
+  "  -S, --short=SHORT             short option",
+  "  -l, --long=LONG               long option",
+  "  -L, --limited=STRING          limited multiple option",
+  "      --limited-interval=STRING limited multiple option (with interval)",
+  "      --limited-open-right=STRING\n                                limited multiple option (with interval right \n                                  open)",
+  "      --limited-open-left=STRING\n                                limited multiple option (with interval left \n                                  open)",
+  "  -f, --float=FLOAT             float option  (default=`15000')",
+  "      --no-short-opt=STRING     string option with no short",
+  "  -n, --noarg                   multiple option with no arg",
+  "      --noarg-noshort           multiple option with no arg and no short",
+  "  -M, --optarg[=ID]             multi with optional args",
+  "      --optarg-noshort[=ID]     multi with optional args and no short",
+  "      --file-save=STRING        save the passed options into a file",
+    0
+};
+
 static
 void clear_given (struct gengetopt_args_info *args_info);
 static
@@ -32,60 +57,39 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
 static int
 test_multiple_cmd_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error);
 
-struct string_list
+struct float_list
 {
-  char * string_arg;
-  char *string_orig;
-  struct string_list * next;
+  float arg;
+  char *orig;
+  struct float_list * next;
 };
 
 struct int_list
 {
-  int int_arg;
-  char *int_orig;
+  int arg;
+  char *orig;
   struct int_list * next;
-};
-
-struct short_list
-{
-  short short_arg;
-  char *short_orig;
-  struct short_list * next;
 };
 
 struct long_list
 {
-  long long_arg;
-  char *long_orig;
+  long arg;
+  char *orig;
   struct long_list * next;
 };
 
-struct float_list
+struct short_list
 {
-  float float_arg;
-  char *float_orig;
-  struct float_list * next;
+  short arg;
+  char *orig;
+  struct short_list * next;
 };
 
-struct no_short_opt_list
+struct string_list
 {
-  char * no_short_opt_arg;
-  char *no_short_opt_orig;
-  struct no_short_opt_list * next;
-};
-
-struct optarg_list
-{
-  char * optarg_arg;
-  char *optarg_orig;
-  struct optarg_list * next;
-};
-
-struct optarg_noshort_list
-{
-  char * optarg_noshort_arg;
-  char *optarg_noshort_orig;
-  struct optarg_noshort_list * next;
+  char * arg;
+  char *orig;
+  struct string_list * next;
 };
 
 static char *
@@ -100,6 +104,10 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->int_given = 0 ;
   args_info->short_given = 0 ;
   args_info->long_given = 0 ;
+  args_info->limited_given = 0 ;
+  args_info->limited_interval_given = 0 ;
+  args_info->limited_open_right_given = 0 ;
+  args_info->limited_open_left_given = 0 ;
   args_info->float_given = 0 ;
   args_info->no_short_opt_given = 0 ;
   args_info->noarg_given = 0 ;
@@ -120,6 +128,14 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->short_orig = NULL;
   args_info->long_arg = NULL;
   args_info->long_orig = NULL;
+  args_info->limited_arg = NULL;
+  args_info->limited_orig = NULL;
+  args_info->limited_interval_arg = NULL;
+  args_info->limited_interval_orig = NULL;
+  args_info->limited_open_right_arg = NULL;
+  args_info->limited_open_right_orig = NULL;
+  args_info->limited_open_left_arg = NULL;
+  args_info->limited_open_left_orig = NULL;
   args_info->float_arg = NULL;
   args_info->float_orig = NULL;
   args_info->no_short_opt_arg = NULL;
@@ -133,6 +149,57 @@ void clear_args (struct gengetopt_args_info *args_info)
   
 }
 
+static
+void init_args_info(struct gengetopt_args_info *args_info)
+{
+  args_info->help_help = gengetopt_args_info_help[0] ;
+  args_info->version_help = gengetopt_args_info_help[1] ;
+  args_info->string_help = gengetopt_args_info_help[2] ;
+  args_info->string_min = -1;
+  args_info->string_max = -1;
+  args_info->int_help = gengetopt_args_info_help[3] ;
+  args_info->int_min = -1;
+  args_info->int_max = -1;
+  args_info->short_help = gengetopt_args_info_help[4] ;
+  args_info->short_min = -1;
+  args_info->short_max = -1;
+  args_info->long_help = gengetopt_args_info_help[5] ;
+  args_info->long_min = -1;
+  args_info->long_max = -1;
+  args_info->limited_help = gengetopt_args_info_help[6] ;
+  args_info->limited_min = 3;
+  args_info->limited_max = 3;
+  args_info->limited_interval_help = gengetopt_args_info_help[7] ;
+  args_info->limited_interval_min = 1;
+  args_info->limited_interval_max = 3;
+  args_info->limited_open_right_help = gengetopt_args_info_help[8] ;
+  args_info->limited_open_right_min = 3;
+  args_info->limited_open_right_max = -1;
+  args_info->limited_open_left_help = gengetopt_args_info_help[9] ;
+  args_info->limited_open_left_min = -1;
+  args_info->limited_open_left_max = 3;
+  args_info->float_help = gengetopt_args_info_help[10] ;
+  args_info->float_min = -1;
+  args_info->float_max = -1;
+  args_info->no_short_opt_help = gengetopt_args_info_help[11] ;
+  args_info->no_short_opt_min = -1;
+  args_info->no_short_opt_max = -1;
+  args_info->noarg_help = gengetopt_args_info_help[12] ;
+  args_info->noarg_min = -1;
+  args_info->noarg_max = -1;
+  args_info->noarg_noshort_help = gengetopt_args_info_help[13] ;
+  args_info->noarg_noshort_min = -1;
+  args_info->noarg_noshort_max = -1;
+  args_info->optarg_help = gengetopt_args_info_help[14] ;
+  args_info->optarg_min = -1;
+  args_info->optarg_max = -1;
+  args_info->optarg_noshort_help = gengetopt_args_info_help[15] ;
+  args_info->optarg_noshort_min = -1;
+  args_info->optarg_noshort_max = -1;
+  args_info->file_save_help = gengetopt_args_info_help[16] ;
+  
+}
+
 void
 test_multiple_cmd_parser_print_version (void)
 {
@@ -142,22 +209,15 @@ test_multiple_cmd_parser_print_version (void)
 void
 test_multiple_cmd_parser_print_help (void)
 {
+  int i = 0;
   test_multiple_cmd_parser_print_version ();
-  printf("\nUsage: test_multiple [OPTIONS]... [FILES]...\n\n");
-  printf("%s\n","  -h, --help                 Print help and exit");
-  printf("%s\n","  -V, --version              Print version and exit");
-  printf("%s\n","  -s, --string=STRING        string option  (default=`foo')");
-  printf("%s\n","  -i, --int=INT              int option");
-  printf("%s\n","  -S, --short=SHORT          short option");
-  printf("%s\n","  -l, --long=LONG            long option");
-  printf("%s\n","  -f, --float=FLOAT          float option  (default=`15000')");
-  printf("%s\n","      --no-short-opt=STRING  string option with no short");
-  printf("%s\n","  -n, --noarg                multiple option with no arg");
-  printf("%s\n","      --noarg-noshort        multiple option with no arg and no short");
-  printf("%s\n","  -M, --optarg[=ID]          multi with optional args");
-  printf("%s\n","      --optarg-noshort[=ID]  multi with optional args and no short");
-  printf("%s\n","      --file-save=STRING     save the passed options into a file");
-  
+
+  if (strlen(gengetopt_args_info_purpose) > 0)
+    printf("\n%s\n", gengetopt_args_info_purpose);
+
+  printf("\n%s\n\n", gengetopt_args_info_usage);
+  while (gengetopt_args_info_help[i])
+    printf("%s\n", gengetopt_args_info_help[i++]);
 }
 
 void
@@ -165,6 +225,7 @@ test_multiple_cmd_parser_init (struct gengetopt_args_info *args_info)
 {
   clear_given (args_info);
   clear_args (args_info);
+  init_args_info (args_info);
 
   args_info->inputs = NULL;
   args_info->inputs_num = 0;
@@ -241,6 +302,94 @@ test_multiple_cmd_parser_release (struct gengetopt_args_info *args_info)
       args_info->long_arg = 0;
       free (args_info->long_orig); /* free previous argument */
       args_info->long_orig = 0;
+    }
+  if (args_info->limited_arg)
+    {
+      for (i = 0; i < args_info->limited_given; ++i)
+        {
+          if (args_info->limited_arg [i])
+            {
+              free (args_info->limited_arg [i]); /* free previous argument */
+              args_info->limited_arg [i] = 0;
+            }
+          if (args_info->limited_orig [i])
+            {
+              free (args_info->limited_orig [i]); /* free previous argument */
+              args_info->limited_orig [i] = 0;
+            }
+        }
+      if (args_info->limited_arg [0])
+        free (args_info->limited_arg [0]); /* free default string */
+      free (args_info->limited_arg); /* free previous argument */
+      args_info->limited_arg = 0;
+      free (args_info->limited_orig); /* free previous argument */
+      args_info->limited_orig = 0;
+    }
+  if (args_info->limited_interval_arg)
+    {
+      for (i = 0; i < args_info->limited_interval_given; ++i)
+        {
+          if (args_info->limited_interval_arg [i])
+            {
+              free (args_info->limited_interval_arg [i]); /* free previous argument */
+              args_info->limited_interval_arg [i] = 0;
+            }
+          if (args_info->limited_interval_orig [i])
+            {
+              free (args_info->limited_interval_orig [i]); /* free previous argument */
+              args_info->limited_interval_orig [i] = 0;
+            }
+        }
+      if (args_info->limited_interval_arg [0])
+        free (args_info->limited_interval_arg [0]); /* free default string */
+      free (args_info->limited_interval_arg); /* free previous argument */
+      args_info->limited_interval_arg = 0;
+      free (args_info->limited_interval_orig); /* free previous argument */
+      args_info->limited_interval_orig = 0;
+    }
+  if (args_info->limited_open_right_arg)
+    {
+      for (i = 0; i < args_info->limited_open_right_given; ++i)
+        {
+          if (args_info->limited_open_right_arg [i])
+            {
+              free (args_info->limited_open_right_arg [i]); /* free previous argument */
+              args_info->limited_open_right_arg [i] = 0;
+            }
+          if (args_info->limited_open_right_orig [i])
+            {
+              free (args_info->limited_open_right_orig [i]); /* free previous argument */
+              args_info->limited_open_right_orig [i] = 0;
+            }
+        }
+      if (args_info->limited_open_right_arg [0])
+        free (args_info->limited_open_right_arg [0]); /* free default string */
+      free (args_info->limited_open_right_arg); /* free previous argument */
+      args_info->limited_open_right_arg = 0;
+      free (args_info->limited_open_right_orig); /* free previous argument */
+      args_info->limited_open_right_orig = 0;
+    }
+  if (args_info->limited_open_left_arg)
+    {
+      for (i = 0; i < args_info->limited_open_left_given; ++i)
+        {
+          if (args_info->limited_open_left_arg [i])
+            {
+              free (args_info->limited_open_left_arg [i]); /* free previous argument */
+              args_info->limited_open_left_arg [i] = 0;
+            }
+          if (args_info->limited_open_left_orig [i])
+            {
+              free (args_info->limited_open_left_orig [i]); /* free previous argument */
+              args_info->limited_open_left_orig [i] = 0;
+            }
+        }
+      if (args_info->limited_open_left_arg [0])
+        free (args_info->limited_open_left_arg [0]); /* free default string */
+      free (args_info->limited_open_left_arg); /* free previous argument */
+      args_info->limited_open_left_arg = 0;
+      free (args_info->limited_open_left_orig); /* free previous argument */
+      args_info->limited_open_left_orig = 0;
     }
   if (args_info->float_arg)
     {
@@ -403,6 +552,46 @@ test_multiple_cmd_parser_file_save(const char *filename, struct gengetopt_args_i
             }
         }
     }
+  if (args_info->limited_orig)
+    {
+      for (i = 0; i < args_info->limited_given; ++i)
+        {
+          if (args_info->limited_orig [i])
+            {
+              fprintf(outfile, "%s=\"%s\"\n", "limited", args_info->limited_orig [i]);
+            }
+        }
+    }
+  if (args_info->limited_interval_orig)
+    {
+      for (i = 0; i < args_info->limited_interval_given; ++i)
+        {
+          if (args_info->limited_interval_orig [i])
+            {
+              fprintf(outfile, "%s=\"%s\"\n", "limited-interval", args_info->limited_interval_orig [i]);
+            }
+        }
+    }
+  if (args_info->limited_open_right_orig)
+    {
+      for (i = 0; i < args_info->limited_open_right_given; ++i)
+        {
+          if (args_info->limited_open_right_orig [i])
+            {
+              fprintf(outfile, "%s=\"%s\"\n", "limited-open-right", args_info->limited_open_right_orig [i]);
+            }
+        }
+    }
+  if (args_info->limited_open_left_orig)
+    {
+      for (i = 0; i < args_info->limited_open_left_given; ++i)
+        {
+          if (args_info->limited_open_left_orig [i])
+            {
+              fprintf(outfile, "%s=\"%s\"\n", "limited-open-left", args_info->limited_open_left_orig [i]);
+            }
+        }
+    }
   if (args_info->float_orig)
     {
       for (i = 0; i < args_info->float_given; ++i)
@@ -494,20 +683,47 @@ static char *
 get_multiple_arg_token(const char *arg)
 {
   char *tok, *ret;
-  size_t len;
+  size_t len, num_of_escape;
+  int i, j;
 
   if (!arg)
     return NULL;
 
   tok = strchr (arg, ',');
+  num_of_escape = 0;
+
+  /* make sure it is not escaped */
+  while (tok)
+    {
+      if (*(tok-1) == '\\')
+        {
+          /* find the next one */
+          tok = strchr (tok+1, ',');
+          ++num_of_escape;
+        }
+      else
+        break;
+    }
 
   if (tok)
     len = (size_t)(tok - arg + 1);
   else
     len = strlen (arg) + 1;
 
+  len -= num_of_escape;
+
   ret = (char *) malloc (len);
-  strncpy (ret, arg, len-1);
+
+  i = 0;
+  j = 0;
+  while (arg[i] && (j < len-1))
+    {
+      if (arg[i] == '\\')
+        ++i;
+
+      ret[j++] = arg[i++];
+    }
+
   ret[len-1] = '\0';
 
   return ret;
@@ -523,12 +739,79 @@ get_multiple_arg_token_next(const char *arg)
 
   tok = strchr (arg, ',');
 
+  /* make sure it is not escaped */
+  while (tok)
+    {
+      if (*(tok-1) == '\\')
+        {
+          /* find the next one */
+          tok = strchr (tok+1, ',');
+        }
+      else
+        break;
+    }
+
   if (! tok || strlen(tok) == 1)
     return 0;
 
   return tok+1;
 }
 
+static int
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc);
+
+int
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc)
+{
+  int error = 0;
+
+  if (option_given && ! (min < 0 && max < 0))
+    {
+      if (min >= 0 && max >= 0)
+        {
+          if (min == max)
+            {
+              /* specific occurrences */
+              if (option_given != min)
+                {
+                  fprintf (stderr, "%s: %s option occurrences must be %d\n",
+                    prog_name, option_desc, min);
+                  error = 1;
+                }
+            }
+          else if (option_given < min
+              || option_given > max)
+            {
+              /* range occurrences */
+              fprintf (stderr, "%s: %s option occurrences must be between %d and %d\n",
+                prog_name, option_desc, min, max);
+              error = 1;
+            }
+        }
+      else if (min >= 0)
+        {
+          /* at least check */
+          if (option_given < min)
+            {
+              fprintf (stderr, "%s: %s option occurrences must be at least %d\n",
+                prog_name, option_desc, min);
+              error = 1;
+            }
+        }
+      else if (max >= 0)
+        {
+          /* at most check */
+          if (option_given > max)
+            {
+              fprintf (stderr, "%s: %s option occurrences must be at most %d\n",
+                prog_name, option_desc, max);
+              error = 1;
+            }
+        }
+    }
+    
+  return error;
+}
 int
 test_multiple_cmd_parser (int argc, char * const *argv, struct gengetopt_args_info *args_info)
 {
@@ -573,11 +856,57 @@ test_multiple_cmd_parser_required2 (struct gengetopt_args_info *args_info, const
 {
   int error = 0;
 
+  /* checks for required options */
+  if (check_multiple_option_occurrences(prog_name, args_info->string_given, args_info->string_min, args_info->string_max, "'--string' ('-s')"))
+     error = 1;
+  
   if (! args_info->int_given)
     {
       fprintf (stderr, "%s: '--int' ('-i') option required%s\n", prog_name, (additional_error ? additional_error : ""));
       error = 1;
     }
+  
+  if (check_multiple_option_occurrences(prog_name, args_info->int_given, args_info->int_min, args_info->int_max, "'--int' ('-i')"))
+     error = 1;
+  
+  if (check_multiple_option_occurrences(prog_name, args_info->short_given, args_info->short_min, args_info->short_max, "'--short' ('-S')"))
+     error = 1;
+  
+  if (check_multiple_option_occurrences(prog_name, args_info->long_given, args_info->long_min, args_info->long_max, "'--long' ('-l')"))
+     error = 1;
+  
+  if (check_multiple_option_occurrences(prog_name, args_info->limited_given, args_info->limited_min, args_info->limited_max, "'--limited' ('-L')"))
+     error = 1;
+  
+  if (check_multiple_option_occurrences(prog_name, args_info->limited_interval_given, args_info->limited_interval_min, args_info->limited_interval_max, "'--limited-interval'"))
+     error = 1;
+  
+  if (check_multiple_option_occurrences(prog_name, args_info->limited_open_right_given, args_info->limited_open_right_min, args_info->limited_open_right_max, "'--limited-open-right'"))
+     error = 1;
+  
+  if (check_multiple_option_occurrences(prog_name, args_info->limited_open_left_given, args_info->limited_open_left_min, args_info->limited_open_left_max, "'--limited-open-left'"))
+     error = 1;
+  
+  if (check_multiple_option_occurrences(prog_name, args_info->float_given, args_info->float_min, args_info->float_max, "'--float' ('-f')"))
+     error = 1;
+  
+  if (check_multiple_option_occurrences(prog_name, args_info->no_short_opt_given, args_info->no_short_opt_min, args_info->no_short_opt_max, "'--no-short-opt'"))
+     error = 1;
+  
+  if (check_multiple_option_occurrences(prog_name, args_info->noarg_given, args_info->noarg_min, args_info->noarg_max, "'--noarg' ('-n')"))
+     error = 1;
+  
+  if (check_multiple_option_occurrences(prog_name, args_info->noarg_noshort_given, args_info->noarg_noshort_min, args_info->noarg_noshort_max, "'--noarg-noshort'"))
+     error = 1;
+  
+  if (check_multiple_option_occurrences(prog_name, args_info->optarg_given, args_info->optarg_min, args_info->optarg_max, "'--optarg' ('-M')"))
+     error = 1;
+  
+  if (check_multiple_option_occurrences(prog_name, args_info->optarg_noshort_given, args_info->optarg_noshort_min, args_info->optarg_noshort_max, "'--optarg-noshort'"))
+     error = 1;
+  
+  
+  /* checks for dependences among options */
 
   return error;
 }
@@ -594,10 +923,14 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
   struct int_list * int_list = NULL,* int_new = NULL;
   struct short_list * short_list = NULL,* short_new = NULL;
   struct long_list * long_list = NULL,* long_new = NULL;
+  struct string_list * limited_list = NULL,* limited_new = NULL;
+  struct string_list * limited_interval_list = NULL,* limited_interval_new = NULL;
+  struct string_list * limited_open_right_list = NULL,* limited_open_right_new = NULL;
+  struct string_list * limited_open_left_list = NULL,* limited_open_left_new = NULL;
   struct float_list * float_list = NULL,* float_new = NULL;
-  struct no_short_opt_list * no_short_opt_list = NULL,* no_short_opt_new = NULL;
-  struct optarg_list * optarg_list = NULL,* optarg_new = NULL;
-  struct optarg_noshort_list * optarg_noshort_list = NULL,* optarg_noshort_new = NULL;
+  struct string_list * no_short_opt_list = NULL,* no_short_opt_new = NULL;
+  struct string_list * optarg_list = NULL,* optarg_new = NULL;
+  struct string_list * optarg_noshort_list = NULL,* optarg_noshort_new = NULL;
   int error = 0;
   struct gengetopt_args_info local_args_info;
 
@@ -623,6 +956,10 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         { "int",	1, NULL, 'i' },
         { "short",	1, NULL, 'S' },
         { "long",	1, NULL, 'l' },
+        { "limited",	1, NULL, 'L' },
+        { "limited-interval",	1, NULL, 0 },
+        { "limited-open-right",	1, NULL, 0 },
+        { "limited-open-left",	1, NULL, 0 },
         { "float",	1, NULL, 'f' },
         { "no-short-opt",	1, NULL, 0 },
         { "noarg",	0, NULL, 'n' },
@@ -634,7 +971,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
       };
 
       stop_char = 0;
-      c = getopt_long (argc, argv, "hVs:i:S:l:f:nM::", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVs:i:S:l:L:f:nM::", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -661,8 +998,8 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
               string_new = (struct string_list *) malloc (sizeof (struct string_list));
               string_new->next = string_list;
               string_list = string_new;
-              string_new->string_arg = gengetopt_strdup (multi_token);
-              string_new->string_orig = multi_token;
+              string_new->arg = gengetopt_strdup (multi_token);
+              string_new->orig = multi_token;
         
               if (multi_next)
                 {
@@ -686,12 +1023,12 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
               int_new = (struct int_list *) malloc (sizeof (struct int_list));
               int_new->next = int_list;
               int_list = int_new;
-              int_new->int_arg = strtol (multi_token, &stop_char, 0);
+              int_new->arg = strtol (multi_token, &stop_char, 0);
               if (!(stop_char && *stop_char == '\0')) {
                 fprintf(stderr, "%s: invalid numeric value: %s\n", argv[0], multi_token);
                 goto failure;
               }
-              int_new->int_orig = multi_token;
+              int_new->orig = multi_token;
         
               if (multi_next)
                 {
@@ -715,12 +1052,12 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
               short_new = (struct short_list *) malloc (sizeof (struct short_list));
               short_new->next = short_list;
               short_list = short_new;
-              short_new->short_arg = (short)strtol (multi_token, &stop_char, 0);
+              short_new->arg = (short)strtol (multi_token, &stop_char, 0);
               if (!(stop_char && *stop_char == '\0')) {
                 fprintf(stderr, "%s: invalid numeric value: %s\n", argv[0], multi_token);
                 goto failure;
               }
-              short_new->short_orig = multi_token;
+              short_new->orig = multi_token;
         
               if (multi_next)
                 {
@@ -744,18 +1081,43 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
               long_new = (struct long_list *) malloc (sizeof (struct long_list));
               long_new->next = long_list;
               long_list = long_new;
-              long_new->long_arg = strtol (multi_token, &stop_char, 0);
+              long_new->arg = strtol (multi_token, &stop_char, 0);
               if (!(stop_char && *stop_char == '\0')) {
                 fprintf(stderr, "%s: invalid numeric value: %s\n", argv[0], multi_token);
                 goto failure;
               }
-              long_new->long_orig = multi_token;
+              long_new->orig = multi_token;
         
               if (multi_next)
                 {
                   multi_token = get_multiple_arg_token(multi_next);
                   multi_next = get_multiple_arg_token_next (multi_next);
                   local_args_info.long_given++;
+                }
+              else
+                break;
+            }
+          break;
+
+        case 'L':	/* limited multiple option.  */
+          local_args_info.limited_given++;
+        
+          multi_token = get_multiple_arg_token(optarg);
+          multi_next = get_multiple_arg_token_next (optarg);
+        
+          while (1)
+            {
+              limited_new = (struct string_list *) malloc (sizeof (struct string_list));
+              limited_new->next = limited_list;
+              limited_list = limited_new;
+              limited_new->arg = gengetopt_strdup (multi_token);
+              limited_new->orig = multi_token;
+        
+              if (multi_next)
+                {
+                  multi_token = get_multiple_arg_token(multi_next);
+                  multi_next = get_multiple_arg_token_next (multi_next);
+                  local_args_info.limited_given++;
                 }
               else
                 break;
@@ -773,12 +1135,12 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
               float_new = (struct float_list *) malloc (sizeof (struct float_list));
               float_new->next = float_list;
               float_list = float_new;
-              float_new->float_arg = (float)strtod (multi_token, &stop_char);
+              float_new->arg = (float)strtod (multi_token, &stop_char);
               if (!(stop_char && *stop_char == '\0')) {
                 fprintf(stderr, "%s: invalid numeric value: %s\n", argv[0], multi_token);
                 goto failure;
               }
-              float_new->float_orig = multi_token;
+              float_new->orig = multi_token;
         
               if (multi_next)
                 {
@@ -804,15 +1166,15 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         
           while (1)
             {
-              optarg_new = (struct optarg_list *) malloc (sizeof (struct optarg_list));
+              optarg_new = (struct string_list *) malloc (sizeof (struct string_list));
               optarg_new->next = optarg_list;
               optarg_list = optarg_new;
-              optarg_new->optarg_arg = gengetopt_strdup (NULL);
-              optarg_new->optarg_orig = NULL;
+              optarg_new->arg = gengetopt_strdup (NULL);
+              optarg_new->orig = NULL;
               if (multi_token)
                 {
-                  optarg_new->optarg_arg = gengetopt_strdup (multi_token);
-                  optarg_new->optarg_orig = multi_token;
+                  optarg_new->arg = gengetopt_strdup (multi_token);
+                  optarg_new->orig = multi_token;
                 }
         
               if (multi_next)
@@ -828,8 +1190,89 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
 
 
         case 0:	/* Long option with no short option */
+          /* limited multiple option (with interval).  */
+          if (strcmp (long_options[option_index].name, "limited-interval") == 0)
+          {
+            local_args_info.limited_interval_given++;
+          
+            multi_token = get_multiple_arg_token(optarg);
+            multi_next = get_multiple_arg_token_next (optarg);
+          
+            while (1)
+              {
+                limited_interval_new = (struct string_list *) malloc (sizeof (struct string_list));
+                limited_interval_new->next = limited_interval_list;
+                limited_interval_list = limited_interval_new;
+                limited_interval_new->arg = gengetopt_strdup (multi_token);
+                limited_interval_new->orig = multi_token;
+          
+                if (multi_next)
+                  {
+                    multi_token = get_multiple_arg_token(multi_next);
+                    multi_next = get_multiple_arg_token_next (multi_next);
+                    local_args_info.limited_interval_given++;
+                  }
+                else
+                  break;
+              }
+            break;
+          }
+          /* limited multiple option (with interval right open).  */
+          else if (strcmp (long_options[option_index].name, "limited-open-right") == 0)
+          {
+            local_args_info.limited_open_right_given++;
+          
+            multi_token = get_multiple_arg_token(optarg);
+            multi_next = get_multiple_arg_token_next (optarg);
+          
+            while (1)
+              {
+                limited_open_right_new = (struct string_list *) malloc (sizeof (struct string_list));
+                limited_open_right_new->next = limited_open_right_list;
+                limited_open_right_list = limited_open_right_new;
+                limited_open_right_new->arg = gengetopt_strdup (multi_token);
+                limited_open_right_new->orig = multi_token;
+          
+                if (multi_next)
+                  {
+                    multi_token = get_multiple_arg_token(multi_next);
+                    multi_next = get_multiple_arg_token_next (multi_next);
+                    local_args_info.limited_open_right_given++;
+                  }
+                else
+                  break;
+              }
+            break;
+          }
+          /* limited multiple option (with interval left open).  */
+          else if (strcmp (long_options[option_index].name, "limited-open-left") == 0)
+          {
+            local_args_info.limited_open_left_given++;
+          
+            multi_token = get_multiple_arg_token(optarg);
+            multi_next = get_multiple_arg_token_next (optarg);
+          
+            while (1)
+              {
+                limited_open_left_new = (struct string_list *) malloc (sizeof (struct string_list));
+                limited_open_left_new->next = limited_open_left_list;
+                limited_open_left_list = limited_open_left_new;
+                limited_open_left_new->arg = gengetopt_strdup (multi_token);
+                limited_open_left_new->orig = multi_token;
+          
+                if (multi_next)
+                  {
+                    multi_token = get_multiple_arg_token(multi_next);
+                    multi_next = get_multiple_arg_token_next (multi_next);
+                    local_args_info.limited_open_left_given++;
+                  }
+                else
+                  break;
+              }
+            break;
+          }
           /* string option with no short.  */
-          if (strcmp (long_options[option_index].name, "no-short-opt") == 0)
+          else if (strcmp (long_options[option_index].name, "no-short-opt") == 0)
           {
             local_args_info.no_short_opt_given++;
           
@@ -838,11 +1281,11 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           
             while (1)
               {
-                no_short_opt_new = (struct no_short_opt_list *) malloc (sizeof (struct no_short_opt_list));
+                no_short_opt_new = (struct string_list *) malloc (sizeof (struct string_list));
                 no_short_opt_new->next = no_short_opt_list;
                 no_short_opt_list = no_short_opt_new;
-                no_short_opt_new->no_short_opt_arg = gengetopt_strdup (multi_token);
-                no_short_opt_new->no_short_opt_orig = multi_token;
+                no_short_opt_new->arg = gengetopt_strdup (multi_token);
+                no_short_opt_new->orig = multi_token;
           
                 if (multi_next)
                   {
@@ -872,15 +1315,15 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           
             while (1)
               {
-                optarg_noshort_new = (struct optarg_noshort_list *) malloc (sizeof (struct optarg_noshort_list));
+                optarg_noshort_new = (struct string_list *) malloc (sizeof (struct string_list));
                 optarg_noshort_new->next = optarg_noshort_list;
                 optarg_noshort_list = optarg_noshort_new;
-                optarg_noshort_new->optarg_noshort_arg = gengetopt_strdup (NULL);
-                optarg_noshort_new->optarg_noshort_orig = NULL;
+                optarg_noshort_new->arg = gengetopt_strdup (NULL);
+                optarg_noshort_new->orig = NULL;
                 if (multi_token)
                   {
-                    optarg_noshort_new->optarg_noshort_arg = gengetopt_strdup (multi_token);
-                    optarg_noshort_new->optarg_noshort_orig = multi_token;
+                    optarg_noshort_new->arg = gengetopt_strdup (multi_token);
+                    optarg_noshort_new->orig = multi_token;
                   }
           
                 if (multi_next)
@@ -934,8 +1377,8 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
       for (i = (local_args_info.string_given - 1); i >= 0; --i)
         {
           tmp = string_list;
-          args_info->string_arg [i + args_info->string_given] = string_list->string_arg;
-          args_info->string_orig [i + args_info->string_given] = string_list->string_orig;
+          args_info->string_arg [i + args_info->string_given] = string_list->arg;
+          args_info->string_orig [i + args_info->string_given] = string_list->orig;
           string_list = string_list->next;
           free (tmp);
         }
@@ -959,8 +1402,8 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
       for (i = (local_args_info.int_given - 1); i >= 0; --i)
         {
           tmp = int_list;
-          args_info->int_arg [i + args_info->int_given] = int_list->int_arg;
-          args_info->int_orig [i + args_info->int_given] = int_list->int_orig;
+          args_info->int_arg [i + args_info->int_given] = int_list->arg;
+          args_info->int_orig [i + args_info->int_given] = int_list->orig;
           int_list = int_list->next;
           free (tmp);
         }
@@ -974,8 +1417,8 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
       for (i = (local_args_info.short_given - 1); i >= 0; --i)
         {
           tmp = short_list;
-          args_info->short_arg [i + args_info->short_given] = short_list->short_arg;
-          args_info->short_orig [i + args_info->short_given] = short_list->short_orig;
+          args_info->short_arg [i + args_info->short_given] = short_list->arg;
+          args_info->short_orig [i + args_info->short_given] = short_list->orig;
           short_list = short_list->next;
           free (tmp);
         }
@@ -989,9 +1432,69 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
       for (i = (local_args_info.long_given - 1); i >= 0; --i)
         {
           tmp = long_list;
-          args_info->long_arg [i + args_info->long_given] = long_list->long_arg;
-          args_info->long_orig [i + args_info->long_given] = long_list->long_orig;
+          args_info->long_arg [i + args_info->long_given] = long_list->arg;
+          args_info->long_orig [i + args_info->long_given] = long_list->orig;
           long_list = long_list->next;
+          free (tmp);
+        }
+    }
+  
+  if (local_args_info.limited_given && limited_list)
+    {
+      struct string_list *tmp;
+      args_info->limited_arg = (char * *) realloc (args_info->limited_arg, (args_info->limited_given + local_args_info.limited_given) * sizeof (char *));
+      args_info->limited_orig = (char **) realloc (args_info->limited_orig, (args_info->limited_given + local_args_info.limited_given) * sizeof (char *));
+      for (i = (local_args_info.limited_given - 1); i >= 0; --i)
+        {
+          tmp = limited_list;
+          args_info->limited_arg [i + args_info->limited_given] = limited_list->arg;
+          args_info->limited_orig [i + args_info->limited_given] = limited_list->orig;
+          limited_list = limited_list->next;
+          free (tmp);
+        }
+    }
+  
+  if (local_args_info.limited_interval_given && limited_interval_list)
+    {
+      struct string_list *tmp;
+      args_info->limited_interval_arg = (char * *) realloc (args_info->limited_interval_arg, (args_info->limited_interval_given + local_args_info.limited_interval_given) * sizeof (char *));
+      args_info->limited_interval_orig = (char **) realloc (args_info->limited_interval_orig, (args_info->limited_interval_given + local_args_info.limited_interval_given) * sizeof (char *));
+      for (i = (local_args_info.limited_interval_given - 1); i >= 0; --i)
+        {
+          tmp = limited_interval_list;
+          args_info->limited_interval_arg [i + args_info->limited_interval_given] = limited_interval_list->arg;
+          args_info->limited_interval_orig [i + args_info->limited_interval_given] = limited_interval_list->orig;
+          limited_interval_list = limited_interval_list->next;
+          free (tmp);
+        }
+    }
+  
+  if (local_args_info.limited_open_right_given && limited_open_right_list)
+    {
+      struct string_list *tmp;
+      args_info->limited_open_right_arg = (char * *) realloc (args_info->limited_open_right_arg, (args_info->limited_open_right_given + local_args_info.limited_open_right_given) * sizeof (char *));
+      args_info->limited_open_right_orig = (char **) realloc (args_info->limited_open_right_orig, (args_info->limited_open_right_given + local_args_info.limited_open_right_given) * sizeof (char *));
+      for (i = (local_args_info.limited_open_right_given - 1); i >= 0; --i)
+        {
+          tmp = limited_open_right_list;
+          args_info->limited_open_right_arg [i + args_info->limited_open_right_given] = limited_open_right_list->arg;
+          args_info->limited_open_right_orig [i + args_info->limited_open_right_given] = limited_open_right_list->orig;
+          limited_open_right_list = limited_open_right_list->next;
+          free (tmp);
+        }
+    }
+  
+  if (local_args_info.limited_open_left_given && limited_open_left_list)
+    {
+      struct string_list *tmp;
+      args_info->limited_open_left_arg = (char * *) realloc (args_info->limited_open_left_arg, (args_info->limited_open_left_given + local_args_info.limited_open_left_given) * sizeof (char *));
+      args_info->limited_open_left_orig = (char **) realloc (args_info->limited_open_left_orig, (args_info->limited_open_left_given + local_args_info.limited_open_left_given) * sizeof (char *));
+      for (i = (local_args_info.limited_open_left_given - 1); i >= 0; --i)
+        {
+          tmp = limited_open_left_list;
+          args_info->limited_open_left_arg [i + args_info->limited_open_left_given] = limited_open_left_list->arg;
+          args_info->limited_open_left_orig [i + args_info->limited_open_left_given] = limited_open_left_list->orig;
+          limited_open_left_list = limited_open_left_list->next;
           free (tmp);
         }
     }
@@ -1004,8 +1507,8 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
       for (i = (local_args_info.float_given - 1); i >= 0; --i)
         {
           tmp = float_list;
-          args_info->float_arg [i + args_info->float_given] = float_list->float_arg;
-          args_info->float_orig [i + args_info->float_given] = float_list->float_orig;
+          args_info->float_arg [i + args_info->float_given] = float_list->arg;
+          args_info->float_orig [i + args_info->float_given] = float_list->orig;
           float_list = float_list->next;
           free (tmp);
         }
@@ -1023,14 +1526,14 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
   
   if (local_args_info.no_short_opt_given && no_short_opt_list)
     {
-      struct no_short_opt_list *tmp;
+      struct string_list *tmp;
       args_info->no_short_opt_arg = (char * *) realloc (args_info->no_short_opt_arg, (args_info->no_short_opt_given + local_args_info.no_short_opt_given) * sizeof (char *));
       args_info->no_short_opt_orig = (char **) realloc (args_info->no_short_opt_orig, (args_info->no_short_opt_given + local_args_info.no_short_opt_given) * sizeof (char *));
       for (i = (local_args_info.no_short_opt_given - 1); i >= 0; --i)
         {
           tmp = no_short_opt_list;
-          args_info->no_short_opt_arg [i + args_info->no_short_opt_given] = no_short_opt_list->no_short_opt_arg;
-          args_info->no_short_opt_orig [i + args_info->no_short_opt_given] = no_short_opt_list->no_short_opt_orig;
+          args_info->no_short_opt_arg [i + args_info->no_short_opt_given] = no_short_opt_list->arg;
+          args_info->no_short_opt_orig [i + args_info->no_short_opt_given] = no_short_opt_list->orig;
           no_short_opt_list = no_short_opt_list->next;
           free (tmp);
         }
@@ -1038,14 +1541,14 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
   
   if (local_args_info.optarg_given && optarg_list)
     {
-      struct optarg_list *tmp;
+      struct string_list *tmp;
       args_info->optarg_arg = (char * *) realloc (args_info->optarg_arg, (args_info->optarg_given + local_args_info.optarg_given) * sizeof (char *));
       args_info->optarg_orig = (char **) realloc (args_info->optarg_orig, (args_info->optarg_given + local_args_info.optarg_given) * sizeof (char *));
       for (i = (local_args_info.optarg_given - 1); i >= 0; --i)
         {
           tmp = optarg_list;
-          args_info->optarg_arg [i + args_info->optarg_given] = optarg_list->optarg_arg;
-          args_info->optarg_orig [i + args_info->optarg_given] = optarg_list->optarg_orig;
+          args_info->optarg_arg [i + args_info->optarg_given] = optarg_list->arg;
+          args_info->optarg_orig [i + args_info->optarg_given] = optarg_list->orig;
           optarg_list = optarg_list->next;
           free (tmp);
         }
@@ -1053,14 +1556,14 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
   
   if (local_args_info.optarg_noshort_given && optarg_noshort_list)
     {
-      struct optarg_noshort_list *tmp;
+      struct string_list *tmp;
       args_info->optarg_noshort_arg = (char * *) realloc (args_info->optarg_noshort_arg, (args_info->optarg_noshort_given + local_args_info.optarg_noshort_given) * sizeof (char *));
       args_info->optarg_noshort_orig = (char **) realloc (args_info->optarg_noshort_orig, (args_info->optarg_noshort_given + local_args_info.optarg_noshort_given) * sizeof (char *));
       for (i = (local_args_info.optarg_noshort_given - 1); i >= 0; --i)
         {
           tmp = optarg_noshort_list;
-          args_info->optarg_noshort_arg [i + args_info->optarg_noshort_given] = optarg_noshort_list->optarg_noshort_arg;
-          args_info->optarg_noshort_orig [i + args_info->optarg_noshort_given] = optarg_noshort_list->optarg_noshort_orig;
+          args_info->optarg_noshort_arg [i + args_info->optarg_noshort_given] = optarg_noshort_list->arg;
+          args_info->optarg_noshort_orig [i + args_info->optarg_noshort_given] = optarg_noshort_list->orig;
           optarg_noshort_list = optarg_noshort_list->next;
           free (tmp);
         }
@@ -1075,6 +1578,14 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
   local_args_info.short_given = 0;
   args_info->long_given += local_args_info.long_given;
   local_args_info.long_given = 0;
+  args_info->limited_given += local_args_info.limited_given;
+  local_args_info.limited_given = 0;
+  args_info->limited_interval_given += local_args_info.limited_interval_given;
+  local_args_info.limited_interval_given = 0;
+  args_info->limited_open_right_given += local_args_info.limited_open_right_given;
+  local_args_info.limited_open_right_given = 0;
+  args_info->limited_open_left_given += local_args_info.limited_open_left_given;
+  local_args_info.limited_open_left_given = 0;
   args_info->float_given += local_args_info.float_given;
   local_args_info.float_given = 0;
   args_info->no_short_opt_given += local_args_info.no_short_opt_given;
@@ -1101,12 +1612,25 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
   if (optind < argc)
     {
       int i = 0 ;
+      int found_prog_name = 0;
+      /* whether program name, i.e., argv[0], is in the remaining args
+         (this may happen with some implementations of getopt,
+          but surely not with the one included by gengetopt) */
 
-      args_info->inputs_num = argc - optind ;
+      i = optind;
+      while (i < argc)
+        if (argv[i++] == argv[0]) {
+          found_prog_name = 1;
+          break;
+        }
+      i = 0;
+
+      args_info->inputs_num = argc - optind - found_prog_name;
       args_info->inputs =
         (char **)(malloc ((args_info->inputs_num)*sizeof(char *))) ;
       while (optind < argc)
-        args_info->inputs[ i++ ] = gengetopt_strdup (argv[optind++]) ;
+        if (argv[optind++] != argv[0])
+          args_info->inputs[ i++ ] = gengetopt_strdup (argv[optind-1]) ;
     }
 
   return 0;
@@ -1118,8 +1642,8 @@ failure:
       while (string_list)
         {
           tmp = string_list;
-          free (string_list->string_arg);
-          free (string_list->string_orig);
+          free (string_list->arg);
+          free (string_list->orig);
           string_list = string_list->next;
           free (tmp);
         }
@@ -1130,7 +1654,7 @@ failure:
       while (int_list)
         {
           tmp = int_list;
-          free (int_list->int_orig);
+          free (int_list->orig);
           int_list = int_list->next;
           free (tmp);
         }
@@ -1141,7 +1665,7 @@ failure:
       while (short_list)
         {
           tmp = short_list;
-          free (short_list->short_orig);
+          free (short_list->orig);
           short_list = short_list->next;
           free (tmp);
         }
@@ -1152,8 +1676,56 @@ failure:
       while (long_list)
         {
           tmp = long_list;
-          free (long_list->long_orig);
+          free (long_list->orig);
           long_list = long_list->next;
+          free (tmp);
+        }
+    }
+  if (limited_list)
+    {
+      struct string_list *tmp;
+      while (limited_list)
+        {
+          tmp = limited_list;
+          free (limited_list->arg);
+          free (limited_list->orig);
+          limited_list = limited_list->next;
+          free (tmp);
+        }
+    }
+  if (limited_interval_list)
+    {
+      struct string_list *tmp;
+      while (limited_interval_list)
+        {
+          tmp = limited_interval_list;
+          free (limited_interval_list->arg);
+          free (limited_interval_list->orig);
+          limited_interval_list = limited_interval_list->next;
+          free (tmp);
+        }
+    }
+  if (limited_open_right_list)
+    {
+      struct string_list *tmp;
+      while (limited_open_right_list)
+        {
+          tmp = limited_open_right_list;
+          free (limited_open_right_list->arg);
+          free (limited_open_right_list->orig);
+          limited_open_right_list = limited_open_right_list->next;
+          free (tmp);
+        }
+    }
+  if (limited_open_left_list)
+    {
+      struct string_list *tmp;
+      while (limited_open_left_list)
+        {
+          tmp = limited_open_left_list;
+          free (limited_open_left_list->arg);
+          free (limited_open_left_list->orig);
+          limited_open_left_list = limited_open_left_list->next;
           free (tmp);
         }
     }
@@ -1163,43 +1735,43 @@ failure:
       while (float_list)
         {
           tmp = float_list;
-          free (float_list->float_orig);
+          free (float_list->orig);
           float_list = float_list->next;
           free (tmp);
         }
     }
   if (no_short_opt_list)
     {
-      struct no_short_opt_list *tmp;
+      struct string_list *tmp;
       while (no_short_opt_list)
         {
           tmp = no_short_opt_list;
-          free (no_short_opt_list->no_short_opt_arg);
-          free (no_short_opt_list->no_short_opt_orig);
+          free (no_short_opt_list->arg);
+          free (no_short_opt_list->orig);
           no_short_opt_list = no_short_opt_list->next;
           free (tmp);
         }
     }
   if (optarg_list)
     {
-      struct optarg_list *tmp;
+      struct string_list *tmp;
       while (optarg_list)
         {
           tmp = optarg_list;
-          free (optarg_list->optarg_arg);
-          free (optarg_list->optarg_orig);
+          free (optarg_list->arg);
+          free (optarg_list->orig);
           optarg_list = optarg_list->next;
           free (tmp);
         }
     }
   if (optarg_noshort_list)
     {
-      struct optarg_noshort_list *tmp;
+      struct string_list *tmp;
       while (optarg_noshort_list)
         {
           tmp = optarg_noshort_list;
-          free (optarg_noshort_list->optarg_noshort_arg);
-          free (optarg_noshort_list->optarg_noshort_orig);
+          free (optarg_noshort_list->arg);
+          free (optarg_noshort_list->orig);
           optarg_noshort_list = optarg_noshort_list->next;
           free (tmp);
         }

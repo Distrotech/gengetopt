@@ -11,6 +11,8 @@ bar option: hey
 arg: test1
 arg: test2
 arg: test3
+specified --required: foo
+additional: unamed
 foo-opt is given: 0
 bar-opt is given: 0
 Value of foo: 15000
@@ -163,6 +165,12 @@ optarg_noshort_given 2 times
 optarg_noshort argument: second arg for optarg
 optarg_noshort argument: no arg given
 ./test_multiple: option requires an argument -- s
+./test_multiple: '--int' ('-i') option required
+./test_multiple: '--limited' ('-L') option occurrences must be 3
+./test_multiple: '--limited-interval' option occurrences must be between 1 and 3
+./test_multiple: '--limited-open-right' option occurrences must be at least 3
+./test_multiple: '--int' ('-i') option required
+./test_multiple: '--limited-open-left' option occurrences must be at most 3
 test_sections 1.0
 
 Usage: test_sections [OPTIONS]... [FILES]...
@@ -262,9 +270,26 @@ specified --multistring-values-no-short with argument foo
 ./test_values: invalid argument, "fooa", for option `--multistring-values-no-short'
 ./test_all_opts: '--dependant' ('-A') option depends on option 'opt-arg'
 specified --opt-arg with argument bar
-arg for -r: 10
-arg for -r: 20
-arg for -a: hello
+second cmdline: -a20 -b10 --my-multi=a,b,c,d,e,f
+  --option-a: 20
+  --option-b: 10
+  --my-multi: a
+  --my-multi: b
+  --my-multi: c
+  --my-multi: d
+  --my-multi: e
+  --my-multi: f
+second cmdline: --my-multi g
+  --my-multi: g
+first cmdline: -M400 -a10 --multi 100,200,300
+  --option-a: 10
+  --multi: 400
+  --multi: 100
+  --multi: 200
+  --multi: 300
+first cmdline: -M500 -M600
+  --multi: 500
+  --multi: 600
 test_all_opts 1.0
 
 This is just a test file
@@ -302,10 +327,10 @@ Usage: test_all_opts [OPTIONS]...
       --file-save=STRING        save the passed options into a file
 test_all_opts 1.0
 diff wrong_dep.err.out ./wrong_dep.err
-diff wrong_flag2.err.out ./wrong_flag2.err
 diff wrong_flag.err.out ./wrong_flag.err
-diff wrong_group2.err.out ./wrong_group2.err
+diff wrong_flag2.err.out ./wrong_flag2.err
 diff wrong_group.err.out ./wrong_group.err
+diff wrong_group2.err.out ./wrong_group2.err
 diff wrong_type.err.out ./wrong_type.err
 no_strings 1.0
 
@@ -314,6 +339,16 @@ Usage: no_strings [OPTIONS]... [FILES]...
   -h, --help     Print help and exit
   -V, --version  Print version and exit
   -i, --foo=INT  foo option
+no multi strings 0.1
+
+Has multiple options none of which are strings
+
+Usage: no multi strings [OPTIONS]... [FILES]...
+
+  -h, --help               Print help and exit
+  -V, --version            Print version and exit
+  -t, --test=A test value  This is a test option  (default=`5')
+      --multi=Multivalue   This is a multi option
 no_unamed 1.0
 
 Usage: no_unamed [OPTIONS]...
@@ -343,6 +378,8 @@ Usage: more_than_once [OPTIONS]... [FILES]...
   -V, --version     Print version and exit
   -f, --foo=INT     foo option
   -b, --bar=STRING  bar option
+specified --required: foo
+additional: unamed
 canonize_names 1.0
 
 Usage: canonize_names [OPTIONS]...
@@ -367,9 +404,9 @@ Usage: default_values [OPTIONS]... [FILES]...
   -s, --timeout=123456789012  number of seconds after the scanning is cancelled 
                                 if no progress is shown at all.  
                                 (default=`120')
-default_values 1.0
+gengetopt 1.0
 
-Usage: default_values [OPTIONS]...
+Usage: gengetopt [OPTIONS]...
 
   -h, --help        Print help and exit
   -V, --version     Print version and exit
@@ -608,19 +645,27 @@ test_multiple 1.0
 
 Usage: test_multiple [OPTIONS]... [FILES]...
 
-  -h, --help                 Print help and exit
-  -V, --version              Print version and exit
-  -s, --string=STRING        string option  (default=`foo')
-  -i, --int=INT              int option
-  -S, --short=SHORT          short option
-  -l, --long=LONG            long option
-  -f, --float=FLOAT          float option  (default=`15000')
-      --no-short-opt=STRING  string option with no short
-  -n, --noarg                multiple option with no arg
-      --noarg-noshort        multiple option with no arg and no short
-  -M, --optarg[=ID]          multi with optional args
-      --optarg-noshort[=ID]  multi with optional args and no short
-      --file-save=STRING     save the passed options into a file
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+  -s, --string=STRING           string option  (default=`foo')
+  -i, --int=INT                 int option
+  -S, --short=SHORT             short option
+  -l, --long=LONG               long option
+  -L, --limited=STRING          limited multiple option
+      --limited-interval=STRING limited multiple option (with interval)
+      --limited-open-right=STRING
+                                limited multiple option (with interval right 
+                                  open)
+      --limited-open-left=STRING
+                                limited multiple option (with interval left 
+                                  open)
+  -f, --float=FLOAT             float option  (default=`15000')
+      --no-short-opt=STRING     string option with no short
+  -n, --noarg                   multiple option with no arg
+      --noarg-noshort           multiple option with no arg and no short
+  -M, --optarg[=ID]             multi with optional args
+      --optarg-noshort[=ID]     multi with optional args and no short
+      --file-save=STRING        save the passed options into a file
 test_sections 1.0
 
 Usage: test_sections [OPTIONS]... [FILES]...
@@ -683,9 +728,15 @@ Usage: test_values [OPTIONS]... [FILES]...
                                   (possible values="foo", "bar", 
                                   "foobar", "barfoo" default=`bar')
 specified --height
-arg for -r: 10
-arg for -r: 20
-arg for -a: hello
+gengetopt 1.0
+
+Usage: gengetopt [OPTIONS]... [FILES]...
+
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+  -F, --first-cmd=first command the first command line to parse
+  -S, --second-cmd=second command
+                                the second command line to parse
 test_all_opts 1.0
 
 This is just a test file

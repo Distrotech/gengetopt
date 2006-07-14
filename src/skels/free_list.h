@@ -18,6 +18,7 @@ class free_list_gen_class
  protected:
   string list_name;
   bool string_list;
+  string type;
 
  public:
   free_list_gen_class() :
@@ -25,8 +26,8 @@ class free_list_gen_class
   {
   }
   
-  free_list_gen_class(const string &_list_name, bool _string_list) :
-    list_name (_list_name), string_list (_string_list)
+  free_list_gen_class(const string &_list_name, bool _string_list, const string &_type) :
+    list_name (_list_name), string_list (_string_list), type (_type)
   {
   }
 
@@ -61,6 +62,11 @@ class free_list_gen_class
   void set_string_list(bool _string_list)
   {
     string_list = _string_list;
+  }
+
+  void set_type(const string &_type)
+  {
+    type = _type;
   }
 
   void generate_free_list(ostream &stream, unsigned int indent = 0);

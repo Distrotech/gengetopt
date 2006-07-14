@@ -16,6 +16,7 @@ using std::ostream;
 class multiple_fill_array_gen_class
 {
  protected:
+  string list_name;
   string option_var_name;
   string type;
 
@@ -24,8 +25,8 @@ class multiple_fill_array_gen_class
   {
   }
   
-  multiple_fill_array_gen_class(const string &_option_var_name, const string &_type) :
-    option_var_name (_option_var_name), type (_type)
+  multiple_fill_array_gen_class(const string &_list_name, const string &_option_var_name, const string &_type) :
+    list_name (_list_name), option_var_name (_option_var_name), type (_type)
   {
   }
 
@@ -50,6 +51,11 @@ class multiple_fill_array_gen_class
       }
     if (start+1 <= s.size ())
       stream << s.substr (start);
+  }
+
+  void set_list_name(const string &_list_name)
+  {
+    list_name = _list_name;
   }
 
   void set_option_var_name(const string &_option_var_name)

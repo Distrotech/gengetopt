@@ -13,7 +13,7 @@ multiple_opt_list_gen_class::generate_multiple_opt_list(ostream &stream, unsigne
   indent = 0;
 
   stream << "struct ";
-  generate_string (arg_name, stream, indent + indent_str.length ());
+  generate_string (type, stream, indent + indent_str.length ());
   stream << "_list * ";
   generate_string (arg_name, stream, indent + indent_str.length ());
   stream << "_list = NULL,* ";

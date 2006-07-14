@@ -16,7 +16,7 @@ using std::ostream;
 class multiple_opt_struct_gen_class
 {
  protected:
-  string arg_name;
+  string list_name;
   string type;
 
  public:
@@ -24,8 +24,8 @@ class multiple_opt_struct_gen_class
   {
   }
   
-  multiple_opt_struct_gen_class(const string &_arg_name, const string &_type) :
-    arg_name (_arg_name), type (_type)
+  multiple_opt_struct_gen_class(const string &_list_name, const string &_type) :
+    list_name (_list_name), type (_type)
   {
   }
 
@@ -52,9 +52,9 @@ class multiple_opt_struct_gen_class
       stream << s.substr (start);
   }
 
-  void set_arg_name(const string &_arg_name)
+  void set_list_name(const string &_list_name)
   {
-    arg_name = _arg_name;
+    list_name = _list_name;
   }
 
   void set_type(const string &_type)

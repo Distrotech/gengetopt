@@ -1,3 +1,47 @@
+2006-07-02  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/skels/header.h_skel: use the passed header extension
+
+	* src/skels/c_source.h_skel: use the passed header extension
+
+2006-05-14  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/skels/c_source.h_skel: for comma separated multi option
+	arguments, recognize the escape character
+
+2006-05-13  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/skels/custom_getopt_gen.h_skel: Andre Noll provided a
+	customized version of getopt that can be called many times without
+	affecting previously parsed arguments.
+
+2006-05-07  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/cmdline.ggo: --output-dir command line option
+
+2006-04-02  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/gm.cc: generate only one list struct for each type (not
+	one for each multiple option)
+
+2006-03-26  Lorenzo Bettini  <bettini@localhost.localdomain>
+
+	* src/skels/header.h_skel: usage string
+
+2006-03-25  Lorenzo Bettini  <bettini@localhost.localdomain>
+
+	* src/skels/check_multiple.h_skel: check for multiple option
+	occurrence range
+
+2006-03-23  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/gm.cc (generate_free): generate the index i even if
+	no multiple option is of type string
+
+2006-03-10  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/skels/header.h_skel: help strings and help fields
+
 2006-02-25  Lorenzo Bettini  <bettini@lorelap>
 
 	* src/gm.cc (generate_help_option_list): make sure not to use a

@@ -21,6 +21,32 @@
 
 #include "test_sections_cmd.h"
 
+const char *gengetopt_args_info_purpose = "";
+
+const char *gengetopt_args_info_usage = "Usage: test_sections [OPTIONS]... [FILES]...";
+
+const char *gengetopt_args_info_help[] = {
+  "  -h, --help                   Print help and exit",
+  "  -V, --version                Print version and exit",
+  "  -s, --string=STRING          string option",
+  "  -i, --int=INT                int option",
+  "\nFirst section.  This section definition has no description, since the \ndescription is in the definition itself, that is wrapped too:",
+  "  -S, --short=SHORT            short option",
+  "  -l, --long=LONG              long option",
+  "  -f, --float=FLOAT            float option",
+  "  -d, --double=DOUBLE          double option",
+  "  -D, --longdouble=LONGDOUBLE  longdouble option",
+  "\nSecond section:",
+  "  The following options belong to the second section\n  by the way this second section also has this neat description, and it is \n  quite long so it should require some kind of line wrapping, but don't worry: \n  gengetopt will wrap it for you! ;-)",
+  "  -L, --longlong=LONGLONG      longlong option",
+  "  -F, --flag                   flag option  (default=on)",
+  "  -u, --function               function option",
+  "\nLast section:",
+  "      --no-short               no short option",
+  "  -r, --required=STRING        required option",
+    0
+};
+
 static
 void clear_given (struct gengetopt_args_info *args_info);
 static
@@ -72,6 +98,26 @@ void clear_args (struct gengetopt_args_info *args_info)
   
 }
 
+static
+void init_args_info(struct gengetopt_args_info *args_info)
+{
+  args_info->help_help = gengetopt_args_info_help[0] ;
+  args_info->version_help = gengetopt_args_info_help[1] ;
+  args_info->string_help = gengetopt_args_info_help[2] ;
+  args_info->int_help = gengetopt_args_info_help[3] ;
+  args_info->short_help = gengetopt_args_info_help[5] ;
+  args_info->long_help = gengetopt_args_info_help[6] ;
+  args_info->float_help = gengetopt_args_info_help[7] ;
+  args_info->double_help = gengetopt_args_info_help[8] ;
+  args_info->longdouble_help = gengetopt_args_info_help[9] ;
+  args_info->longlong_help = gengetopt_args_info_help[12] ;
+  args_info->flag_help = gengetopt_args_info_help[13] ;
+  args_info->function_help = gengetopt_args_info_help[14] ;
+  args_info->no_short_help = gengetopt_args_info_help[16] ;
+  args_info->required_help = gengetopt_args_info_help[17] ;
+  
+}
+
 void
 test_sections_cmd_parser_print_version (void)
 {
@@ -81,27 +127,15 @@ test_sections_cmd_parser_print_version (void)
 void
 test_sections_cmd_parser_print_help (void)
 {
+  int i = 0;
   test_sections_cmd_parser_print_version ();
-  printf("\nUsage: test_sections [OPTIONS]... [FILES]...\n\n");
-  printf("%s\n","  -h, --help                   Print help and exit");
-  printf("%s\n","  -V, --version                Print version and exit");
-  printf("%s\n","  -s, --string=STRING          string option");
-  printf("%s\n","  -i, --int=INT                int option");
-  printf("%s\n","\nFirst section.  This section definition has no description, since the \ndescription is in the definition itself, that is wrapped too:");
-  printf("%s\n","  -S, --short=SHORT            short option");
-  printf("%s\n","  -l, --long=LONG              long option");
-  printf("%s\n","  -f, --float=FLOAT            float option");
-  printf("%s\n","  -d, --double=DOUBLE          double option");
-  printf("%s\n","  -D, --longdouble=LONGDOUBLE  longdouble option");
-  printf("%s\n","\nSecond section:");
-  printf("%s\n","  The following options belong to the second section\n  by the way this second section also has this neat description, and it is \n  quite long so it should require some kind of line wrapping, but don't worry: \n  gengetopt will wrap it for you! ;-)");
-  printf("%s\n","  -L, --longlong=LONGLONG      longlong option");
-  printf("%s\n","  -F, --flag                   flag option  (default=on)");
-  printf("%s\n","  -u, --function               function option");
-  printf("%s\n","\nLast section:");
-  printf("%s\n","      --no-short               no short option");
-  printf("%s\n","  -r, --required=STRING        required option");
-  
+
+  if (strlen(gengetopt_args_info_purpose) > 0)
+    printf("\n%s\n", gengetopt_args_info_purpose);
+
+  printf("\n%s\n\n", gengetopt_args_info_usage);
+  while (gengetopt_args_info_help[i])
+    printf("%s\n", gengetopt_args_info_help[i++]);
 }
 
 void
@@ -109,6 +143,7 @@ test_sections_cmd_parser_init (struct gengetopt_args_info *args_info)
 {
   clear_given (args_info);
   clear_args (args_info);
+  init_args_info (args_info);
 
   args_info->inputs = NULL;
   args_info->inputs_num = 0;
@@ -350,11 +385,15 @@ test_sections_cmd_parser_required2 (struct gengetopt_args_info *args_info, const
 {
   int error = 0;
 
+  /* checks for required options */
   if (! args_info->required_given)
     {
       fprintf (stderr, "%s: '--required' ('-r') option required%s\n", prog_name, (additional_error ? additional_error : ""));
       error = 1;
     }
+  
+  
+  /* checks for dependences among options */
 
   return error;
 }
@@ -665,12 +704,25 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
   if (optind < argc)
     {
       int i = 0 ;
+      int found_prog_name = 0;
+      /* whether program name, i.e., argv[0], is in the remaining args
+         (this may happen with some implementations of getopt,
+          but surely not with the one included by gengetopt) */
 
-      args_info->inputs_num = argc - optind ;
+      i = optind;
+      while (i < argc)
+        if (argv[i++] == argv[0]) {
+          found_prog_name = 1;
+          break;
+        }
+      i = 0;
+
+      args_info->inputs_num = argc - optind - found_prog_name;
       args_info->inputs =
         (char **)(malloc ((args_info->inputs_num)*sizeof(char *))) ;
       while (optind < argc)
-        args_info->inputs[ i++ ] = gengetopt_strdup (argv[optind++]) ;
+        if (argv[optind++] != argv[0])
+          args_info->inputs[ i++ ] = gengetopt_strdup (argv[optind-1]) ;
     }
 
   return 0;

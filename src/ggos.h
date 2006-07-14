@@ -31,6 +31,8 @@ struct gengetopt_option
   char * group_value; /* group name, if it's part of an option group */
   char * group_desc; /* group description, if it's part of an option group */
   bool multiple; /* whether this option can be given more than once */
+  char * multiple_min; /* minimum occurrences of a multiple option (-1: not specified) */
+  char * multiple_max; /* maximum occurrences of a multiple option (-1: not specified) */
   bool arg_is_optional; /* whether the argument is optional */
   bool hidden; /* whether this option will be hidden from the help output */
   char *type_str; /* Alternative name for type,

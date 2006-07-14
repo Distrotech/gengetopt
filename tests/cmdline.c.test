@@ -21,6 +21,18 @@
 
 #include "cmdline.h"
 
+const char *gengetopt_args_info_purpose = "";
+
+const char *gengetopt_args_info_usage = "Usage: " CMDLINE_PARSER_PACKAGE " [OPTIONS]...";
+
+const char *gengetopt_args_info_help[] = {
+  "  -h, --help        Print help and exit",
+  "  -V, --version     Print version and exit",
+  "  -f, --foo=INT     foo option  (default=`15000')",
+  "  -b, --bar=STRING  bar option  (default=`this is a default')",
+    0
+};
+
 static
 void clear_given (struct gengetopt_args_info *args_info);
 static
@@ -52,6 +64,16 @@ void clear_args (struct gengetopt_args_info *args_info)
   
 }
 
+static
+void init_args_info(struct gengetopt_args_info *args_info)
+{
+  args_info->help_help = gengetopt_args_info_help[0] ;
+  args_info->version_help = gengetopt_args_info_help[1] ;
+  args_info->foo_help = gengetopt_args_info_help[2] ;
+  args_info->bar_help = gengetopt_args_info_help[3] ;
+  
+}
+
 void
 cmdline_parser_print_version (void)
 {
@@ -61,13 +83,15 @@ cmdline_parser_print_version (void)
 void
 cmdline_parser_print_help (void)
 {
+  int i = 0;
   cmdline_parser_print_version ();
-  printf("\nUsage: default_values [OPTIONS]...\n\n");
-  printf("%s\n","  -h, --help        Print help and exit");
-  printf("%s\n","  -V, --version     Print version and exit");
-  printf("%s\n","  -f, --foo=INT     foo option  (default=`15000')");
-  printf("%s\n","  -b, --bar=STRING  bar option  (default=`this is a default')");
-  
+
+  if (strlen(gengetopt_args_info_purpose) > 0)
+    printf("\n%s\n", gengetopt_args_info_purpose);
+
+  printf("\n%s\n\n", gengetopt_args_info_usage);
+  while (gengetopt_args_info_help[i])
+    printf("%s\n", gengetopt_args_info_help[i++]);
 }
 
 void
@@ -75,6 +99,7 @@ cmdline_parser_init (struct gengetopt_args_info *args_info)
 {
   clear_given (args_info);
   clear_args (args_info);
+  init_args_info (args_info);
 }
 
 static void

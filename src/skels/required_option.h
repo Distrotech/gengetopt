@@ -16,17 +16,19 @@ using std::ostream;
 class required_option_gen_class
 {
  protected:
+  bool checkrange;
   string option_descr;
   string option_var_name;
   string package_var_name;
 
  public:
-  required_option_gen_class()
+  required_option_gen_class() :
+    checkrange (false)
   {
   }
   
-  required_option_gen_class(const string &_option_descr, const string &_option_var_name, const string &_package_var_name) :
-    option_descr (_option_descr), option_var_name (_option_var_name), package_var_name (_package_var_name)
+  required_option_gen_class(bool _checkrange, const string &_option_descr, const string &_option_var_name, const string &_package_var_name) :
+    checkrange (_checkrange), option_descr (_option_descr), option_var_name (_option_var_name), package_var_name (_package_var_name)
   {
   }
 
@@ -51,6 +53,11 @@ class required_option_gen_class
       }
     if (start+1 <= s.size ())
       stream << s.substr (start);
+  }
+
+  void set_checkrange(bool _checkrange)
+  {
+    checkrange = _checkrange;
   }
 
   void set_option_descr(const string &_option_descr)

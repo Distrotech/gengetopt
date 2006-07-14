@@ -19,7 +19,20 @@
 
 #include "getopt.h"
 
-#include "@source_name@.h"
+#include "@source_name@.@header_file_ext@"
+
+const char *@args_info@_purpose = "@purpose@";
+
+const char *@args_info@_usage = "Usage:@if@ no_package @then@ " @package_var_name@ "@endif@ @usage_string@";
+
+const char *@args_info@_help[] = {
+  @help_option_print:method@  0
+};
+@IF@ has_hidden @THEN@
+const char *@args_info@_full_help[] = {
+  @full_help_option_print:method@  0
+};
+@ENDIF@
 
 static
 void clear_given (struct @args_info@ *args_info);
@@ -33,7 +46,7 @@ static int
 static int
 @parser_name@_required2 (struct @args_info@ *args_info, const char *prog_name, const char *additional_error);
 @ENDIF@
-@IF@ conf_parser @THEN@
+@IF@ cmd_list @THEN@
 struct line_list
 {
   char * string_arg;
@@ -42,6 +55,21 @@ struct line_list
 
 static struct line_list *cmd_line_list = 0;
 static struct line_list *cmd_line_list_tmp = 0;
+
+static void
+free_cmd_list(void)
+{
+  /* free the list of a previous call */
+  if (cmd_line_list)
+    {
+      while (cmd_line_list) {
+        cmd_line_list_tmp = cmd_line_list;
+        cmd_line_list = cmd_line_list->next;
+        free (cmd_line_list_tmp->string_arg);
+        free (cmd_line_list_tmp);
+      }
+    }
+}
 
 @ENDIF@
 
@@ -64,6 +92,12 @@ void clear_args (struct @args_info@ *args_info)
   @clear_arg:method@
 }
 
+static
+void init_args_info(struct @args_info@ *args_info)
+{
+  @init_args_info:method@
+}
+
 void
 @parser_name@_print_version (void)
 {
@@ -73,24 +107,30 @@ void
 void
 @parser_name@_print_help (void)
 {
+  int i = 0;
   @parser_name@_print_version ();
-@IF@ has_purpose @THEN@
-  printf("\n%s\n", "@purpose@");
-@ENDIF@
-  printf("\n@usage_string@\n"@if@ no_package @then@, @package_var_name@@endif@);
-  @help_option_print:method@
+
+  if (strlen(@args_info@_purpose) > 0)
+    printf("\n%s\n", @args_info@_purpose);
+
+  printf("\n%s\n\n", @args_info@_usage);
+  while (@args_info@_help[i])
+    printf("%s\n", @args_info@_help[i++]);
 }
 
 @IF@ has_hidden @THEN@
 void
 @parser_name@_print_full_help (void)
 {
+  int i = 0;
   @parser_name@_print_version ();
-@IF@ has_purpose @THEN@
-  printf("\n%s\n", "@purpose@");
-@ENDIF@
-  printf("\n@usage_string@\n"@if@ no_package @then@, @package_var_name@@endif@);
-  @full_help_option_print:method@
+
+  if (strlen(@args_info@_purpose) > 0)
+    printf("\n%s\n", @args_info@_purpose);
+
+  printf("\n%s\n\n", @args_info@_usage);
+  while (@args_info@_full_help[i])
+    printf("%s\n", @args_info@_full_help[i++]);
 }
 
 @ENDIF@
@@ -99,6 +139,7 @@ void
 {
   clear_given (args_info);
   clear_args (args_info);
+  init_args_info (args_info);
 @IF@ handle_unamed @THEN@
 
   args_info->inputs = NULL;
@@ -138,18 +179,6 @@ void
 @parser_name@_free (struct @args_info@ *args_info)
 {
   @parser_name@_release (args_info);
-  @IF@ conf_parser @THEN@
-  if (cmd_line_list)
-    {
-      /* free the list of a previous call */
-      while (cmd_line_list) {
-        cmd_line_list_tmp = cmd_line_list;
-        cmd_line_list = cmd_line_list->next;
-        free (cmd_line_list_tmp->string_arg);
-        free (cmd_line_list_tmp);
-      }
-    }
-@ENDIF@
 }
 
 @IF@ check_possible_values @THEN@
@@ -212,20 +241,47 @@ static char *
 get_multiple_arg_token(const char *arg)
 {
   char *tok, *ret;
-  size_t len;
+  size_t len, num_of_escape;
+  int i, j;
 
   if (!arg)
     return NULL;
 
   tok = strchr (arg, ',');
+  num_of_escape = 0;
+
+  /* make sure it is not escaped */
+  while (tok)
+    {
+      if (*(tok-1) == '\\')
+        {
+          /* find the next one */
+          tok = strchr (tok+1, ',');
+          ++num_of_escape;
+        }
+      else
+        break;
+    }
 
   if (tok)
     len = (size_t)(tok - arg + 1);
   else
     len = strlen (arg) + 1;
 
+  len -= num_of_escape;
+
   ret = (char *) malloc (len);
-  strncpy (ret, arg, len-1);
+
+  i = 0;
+  j = 0;
+  while (arg[i] && (j < len-1))
+    {
+      if (arg[i] == '\\')
+        ++i;
+
+      ret[j++] = arg[i++];
+    }
+
   ret[len-1] = '\0';
 
   return ret;
@@ -241,12 +297,81 @@ get_multiple_arg_token_next(const char *arg)
 
   tok = strchr (arg, ',');
 
+  /* make sure it is not escaped */
+  while (tok)
+    {
+      if (*(tok-1) == '\\')
+        {
+          /* find the next one */
+          tok = strchr (tok+1, ',');
+        }
+      else
+        break;
+    }
+
   if (! tok || strlen(tok) == 1)
     return 0;
 
   return tok+1;
 }
 
+@ENDIF@
+@IF@ multiple_options @THEN@
+static int
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc);
+
+int
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc)
+{
+  int error = 0;
+
+  if (option_given && ! (min < 0 && max < 0))
+    {
+      if (min >= 0 && max >= 0)
+        {
+          if (min == max)
+            {
+              /* specific occurrences */
+              if (option_given != min)
+                {
+                  fprintf (stderr, "%s: %s option occurrences must be %d\n",
+                    prog_name, option_desc, min);
+                  error = 1;
+                }
+            }
+          else if (option_given < min
+              || option_given > max)
+            {
+              /* range occurrences */
+              fprintf (stderr, "%s: %s option occurrences must be between %d and %d\n",
+                prog_name, option_desc, min, max);
+              error = 1;
+            }
+        }
+      else if (min >= 0)
+        {
+          /* at least check */
+          if (option_given < min)
+            {
+              fprintf (stderr, "%s: %s option occurrences must be at least %d\n",
+                prog_name, option_desc, min);
+              error = 1;
+            }
+        }
+      else if (max >= 0)
+        {
+          /* at most check */
+          if (option_given > max)
+            {
+              fprintf (stderr, "%s: %s option occurrences must be at most %d\n",
+                prog_name, option_desc, max);
+              error = 1;
+            }
+        }
+    }
+    
+  return error;
+}
 @ENDIF@
 @reset_groups:method{iteration=true}@
 int
@@ -286,12 +411,17 @@ int
 {
   int error = 0;
 
-  @handle_required:method{iteration=true}@
+  /* checks for required options */
+  @handle_required:method@
+  /* checks for dependences among options */
   @handle_dependencies:method{iteration=true}@
 
   return error;
 }
 
+@ENDIF@
+@IF@ include_getopt @THEN@
+@custom_getopt:method@
 @ENDIF@
 int
 @parser_name@_internal (int argc, char * const *argv, struct @args_info@ *args_info, int override, int initialize, int check_required, const char *additional_error)
@@ -328,7 +458,21 @@ int
       };
 
       stop_char = 0;
+      @IF@ include_getopt @THEN@
+      custom_optarg = optarg;
+      custom_optind = optind;
+      custom_opterr = opterr;
+      custom_optopt = optopt;
+
+      c = custom_getopt_long (argc, argv, "@getopt_string@", long_options, &option_index);
+
+      optarg = custom_optarg;
+      optind = custom_optind;
+      opterr = custom_opterr;
+      optopt = custom_optopt;
+      @ELSE@
       c = getopt_long (argc, argv, "@getopt_string@", long_options, &option_index);
+      @ENDIF@
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -369,12 +513,32 @@ int
   if (optind < argc)
     {
       int i = 0 ;
+      int found_prog_name = 0;
+      /* whether program name, i.e., argv[0], is in the remaining args
+         (this may happen with some implementations of getopt,
+          but surely not with the one included by gengetopt) */
 
-      args_info->inputs_num = argc - optind ;
+@IF@ include_getopt @THEN@
+@ELSE@
+      i = optind;
+      while (i < argc)
+        if (argv[i++] == argv[0]) {
+          found_prog_name = 1;
+          break;
+        }
+      i = 0;
+@ENDIF@
+
+      args_info->inputs_num = argc - optind - found_prog_name;
       args_info->inputs =
         (char **)(malloc ((args_info->inputs_num)*sizeof(char *))) ;
       while (optind < argc)
+@IF@ include_getopt @THEN@
         args_info->inputs[ i++ ] = gengetopt_strdup (argv[optind++]) ;
+@ELSE@
+        if (argv[optind++] != argv[0])
+          args_info->inputs[ i++ ] = gengetopt_strdup (argv[optind-1]) ;
+@ENDIF@
     }
 
 @ENDIF@
@@ -550,6 +714,100 @@ int
 conf_failure:
   if (file)
     fclose(file);
+
+  free_cmd_list();
   @final_exit@
 }
+@ENDIF@
+@IF@ generate_string_parser @THEN@
+
+static unsigned int
+@parser_name@_create_argv(const char *cmdline_, char ***argv_ptr, const char *prog_name)
+{
+  char *cmdline, *p;
+  size_t n = 0, j;
+  int i;
+
+  if (prog_name) {
+    cmd_line_list_tmp = (struct line_list *) malloc (sizeof (struct line_list));
+    cmd_line_list_tmp->next = cmd_line_list;
+    cmd_line_list = cmd_line_list_tmp;
+    cmd_line_list->string_arg = gengetopt_strdup (prog_name);
+
+    ++n;
+  }
+
+  cmdline = gengetopt_strdup(cmdline_);
+  p = cmdline;
+
+  while (p && strlen(p))
+    {
+      j = strcspn(p, " \t");
+      ++n;
+      if (j && j < strlen(p))
+        {
+          p[j] = '\0';
+
+          cmd_line_list_tmp = (struct line_list *) malloc (sizeof (struct line_list));
+          cmd_line_list_tmp->next = cmd_line_list;
+          cmd_line_list = cmd_line_list_tmp;
+          cmd_line_list->string_arg = gengetopt_strdup (p);
+
+          p += (j+1);
+          p += strspn(p, " \t");
+        }
+      else
+        {
+          cmd_line_list_tmp = (struct line_list *) malloc (sizeof (struct line_list));
+          cmd_line_list_tmp->next = cmd_line_list;
+          cmd_line_list = cmd_line_list_tmp;
+          cmd_line_list->string_arg = gengetopt_strdup (p);
+
+          break;
+        }
+    }
+
+  *argv_ptr = (char **) malloc((n + 1) * sizeof(char *));
+  cmd_line_list_tmp = cmd_line_list;
+  for (i = (n-1); i >= 0; --i)
+    {
+      (*argv_ptr)[i] = cmd_line_list_tmp->string_arg;
+      cmd_line_list_tmp = cmd_line_list_tmp->next;
+    }
+
+  (*argv_ptr)[n] = NULL;
+
+  free(cmdline);
+  return n;
+}
+
+int
+@parser_name@_string(const char *cmdline, struct @args_info@ *args_info, const char *prog_name)
+{
+  return @parser_name@_string2(cmdline, args_info, prog_name, 0, 1, 1);
+}
+
+int
+@parser_name@_string2(const char *cmdline, struct @args_info@ *args_info, const char *prog_name,
+    int override, int initialize, int check_required)
+{
+  char **argv_ptr = 0;
+  int result;
+  unsigned int argc;
+  
+  argc = @parser_name@_create_argv(cmdline, &argv_ptr, prog_name);
+  
+  result =
+    @parser_name@_internal (argc, argv_ptr, args_info, override, initialize, check_required, 0);
+  
+  if (argv_ptr)
+    {
+      free (argv_ptr);
+    }
+
+  free_cmd_list();
+  
+  @final_exit@
+}
+
 @ENDIF@

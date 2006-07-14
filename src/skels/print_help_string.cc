@@ -12,9 +12,9 @@ print_help_string_gen_class::generate_print_help_string(ostream &stream, unsigne
   string indent_str (indent, ' ');
   indent = 0;
 
-  stream << "printf(\"%s\\n\",\"";
+  stream << "\"";
   generate_string (helpstring, stream, indent + indent_str.length ());
-  stream << "\");";
+  stream << "\",";
   stream << "\n";
   stream << indent_str;
 }

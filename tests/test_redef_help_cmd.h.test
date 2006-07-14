@@ -24,6 +24,8 @@ extern "C" {
 
 struct gengetopt_args_info
 {
+  const char *height_help; /* height help description.  */
+  const char *vavoom_help; /* vavoom instead of version help description.  */
   
   int height_given ;	/* Whether height was given.  */
   int vavoom_given ;	/* Whether vavoom was given.  */
@@ -32,9 +34,17 @@ struct gengetopt_args_info
   unsigned inputs_num ; /* unamed options number */
 } ;
 
-int test_redef_help_cmd_parser (int argc, char * const *argv, struct gengetopt_args_info *args_info);
-int test_redef_help_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required);
-int test_redef_help_cmd_parser_file_save(const char *filename, struct gengetopt_args_info *args_info);
+extern const char *gengetopt_args_info_purpose;
+extern const char *gengetopt_args_info_usage;
+extern const char *gengetopt_args_info_help[];
+
+int test_redef_help_cmd_parser (int argc, char * const *argv,
+  struct gengetopt_args_info *args_info);
+int test_redef_help_cmd_parser2 (int argc, char * const *argv,
+  struct gengetopt_args_info *args_info,
+  int override, int initialize, int check_required);
+int test_redef_help_cmd_parser_file_save(const char *filename,
+  struct gengetopt_args_info *args_info);
 
 void test_redef_help_cmd_parser_print_help(void);
 void test_redef_help_cmd_parser_print_version(void);
@@ -42,7 +52,8 @@ void test_redef_help_cmd_parser_print_version(void);
 void test_redef_help_cmd_parser_init (struct gengetopt_args_info *args_info);
 void test_redef_help_cmd_parser_free (struct gengetopt_args_info *args_info);
 
-int test_redef_help_cmd_parser_required (struct gengetopt_args_info *args_info, const char *prog_name);
+int test_redef_help_cmd_parser_required (struct gengetopt_args_info *args_info,
+  const char *prog_name);
 
 
 #ifdef __cplusplus

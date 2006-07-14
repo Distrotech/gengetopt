@@ -28,6 +28,7 @@ class multiple_option_gen_class
   string option_var_name;
   string package_var_name;
   string short_option;
+  string type;
   string update_arg;
 
  public:
@@ -36,8 +37,8 @@ class multiple_option_gen_class
   {
   }
   
-  multiple_option_gen_class(const string &_gen_else, const string &_group_var_name, bool _has_short_option, const string &_long_option, const string &_option_comment, bool _option_has_group, bool _option_has_type, bool _option_has_values, const string &_option_values, const string &_option_var_name, const string &_package_var_name, const string &_short_option, const string &_update_arg) :
-    gen_else (_gen_else), group_var_name (_group_var_name), has_short_option (_has_short_option), long_option (_long_option), option_comment (_option_comment), option_has_group (_option_has_group), option_has_type (_option_has_type), option_has_values (_option_has_values), option_values (_option_values), option_var_name (_option_var_name), package_var_name (_package_var_name), short_option (_short_option), update_arg (_update_arg)
+  multiple_option_gen_class(const string &_gen_else, const string &_group_var_name, bool _has_short_option, const string &_long_option, const string &_option_comment, bool _option_has_group, bool _option_has_type, bool _option_has_values, const string &_option_values, const string &_option_var_name, const string &_package_var_name, const string &_short_option, const string &_type, const string &_update_arg) :
+    gen_else (_gen_else), group_var_name (_group_var_name), has_short_option (_has_short_option), long_option (_long_option), option_comment (_option_comment), option_has_group (_option_has_group), option_has_type (_option_has_type), option_has_values (_option_has_values), option_values (_option_values), option_var_name (_option_var_name), package_var_name (_package_var_name), short_option (_short_option), type (_type), update_arg (_update_arg)
   {
   }
 
@@ -122,6 +123,11 @@ class multiple_option_gen_class
   void set_short_option(const string &_short_option)
   {
     short_option = _short_option;
+  }
+
+  void set_type(const string &_type)
+  {
+    type = _type;
   }
 
   void set_update_arg(const string &_update_arg)

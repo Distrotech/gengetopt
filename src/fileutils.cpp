@@ -35,7 +35,7 @@ create_filename (char *name, char *ext)
 }
 
 ofstream *
-open_fstream (char *filename)
+open_fstream (const char *filename)
 {
   ofstream *fstream = new ofstream (filename);
 

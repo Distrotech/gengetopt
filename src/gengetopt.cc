@@ -88,6 +88,7 @@ main (int argc, char **argv)
   char *cmdline_filename ; /* name of generated file */
   char *c_ext ; /* extenstion of c file */
   char *header_ext  ; /* extenstion of header file */
+  string output_dir; /* output directory (default empty -> current dir)*/
 
   int i;
   FILE *input_file ;
@@ -135,7 +136,7 @@ main (int argc, char **argv)
         gengetopt_free ();
         return 1;
   }
-  
+
   if (! check_dependencies()) {
     gengetopt_free();
     return 1;
@@ -189,6 +190,9 @@ main (int argc, char **argv)
       command_line << argv[i] << " ";
     }
 
+  if (args_info.output_dir_given)
+      output_dir = args_info.output_dir_arg;
+    
   CmdlineParserCreator cmdline_parser_creator
     (cmdline_parser_name,
      args_info.arg_struct_name_arg,
@@ -201,8 +205,11 @@ main (int argc, char **argv)
      args_info.no_handle_version_given,
      args_info.no_handle_error_given,
      args_info.conf_parser_given,
+     args_info.string_parser_given,
      args_info.gen_version_flag,
-     command_line.str ());
+     args_info.include_getopt_given,
+     command_line.str (),
+     output_dir);
 
   if (! gengetopt_package && (args_info.show_version_given || args_info.show_help_given))
     {
@@ -227,7 +234,8 @@ main (int argc, char **argv)
         cout << endl;
       }
 
-      output_formatted_string(cmdline_parser_creator.generate_usage_string(false));
+      output_formatted_string("Usage: " +
+        cmdline_parser_creator.generate_usage_string(false) + "\n");
 
       // if --show-full-help is specified we have to generate also hidden options
       OptionHelpList *option_list =
@@ -480,7 +488,7 @@ gengetopt_check_option (gengetopt_option *n, bool groupoption)
     {
       if (! groupoption)
         return NOT_GROUP_OPTION;
-        
+
       n->required = 0;
       groups_collection_t::const_iterator it =
         gengetopt_groups.find(string(n->group_value));
@@ -524,7 +532,7 @@ gengetopt_check_option (gengetopt_option *n, bool groupoption)
       char *end_of_string, *expected_eos;
 
       expected_eos = (char *) (n->default_string + strlen(n->default_string));
-      
+
       switch ( n->type )
         {
         case ARG_INT :
@@ -614,7 +622,7 @@ gengetopt_has_option (gengetopt_option * opt)
        it != gengetopt_options.end(); ++it)
     {
       n = *it;
-      if (!strcmp (n->long_opt, opt->long_opt)) 
+      if (!strcmp (n->long_opt, opt->long_opt))
         return REQ_LONG_OPTION;
       if (opt->short_opt && n->short_opt == opt->short_opt)
         return REQ_SHORT_OPTION;
@@ -623,7 +631,7 @@ gengetopt_has_option (gengetopt_option * opt)
   return 0;
 }
 
-bool 
+bool
 check_dependencies()
 {
   gengetopt_option * n;
@@ -639,7 +647,7 @@ check_dependencies()
             result = false;
             continue;
         }
-        
+
         bool found = false;
         for (gengetopt_option_list::const_iterator it2 = gengetopt_options.begin();
             it2 != gengetopt_options.end(); ++it2)
@@ -649,14 +657,14 @@ check_dependencies()
                 break;
             }
         }
-        
+
         if (! found) {
             yyerror (n, "option depends on undefined option");
             result = false;
         }
-    }  
+    }
   }
-  
+
   return result;
 }
 

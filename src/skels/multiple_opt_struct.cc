@@ -13,7 +13,7 @@ multiple_opt_struct_gen_class::generate_multiple_opt_struct(ostream &stream, uns
   indent = 0;
 
   stream << "struct ";
-  generate_string (arg_name, stream, indent + indent_str.length ());
+  generate_string (list_name, stream, indent + indent_str.length ());
   stream << "_list";
   stream << "\n";
   stream << indent_str;
@@ -23,19 +23,15 @@ multiple_opt_struct_gen_class::generate_multiple_opt_struct(ostream &stream, uns
   indent = 2;
   stream << "  ";
   generate_string (type, stream, indent + indent_str.length ());
-  stream << " ";
-  generate_string (arg_name, stream, indent + indent_str.length ());
-  stream << "_arg;";
+  stream << " arg;";
   indent = 0;
   stream << "\n";
   stream << indent_str;
-  stream << "  char *";
-  generate_string (arg_name, stream, indent + indent_str.length ());
-  stream << "_orig;";
+  stream << "  char *orig;";
   stream << "\n";
   stream << indent_str;
   stream << "  struct ";
-  generate_string (arg_name, stream, indent + indent_str.length ());
+  generate_string (list_name, stream, indent + indent_str.length ());
   stream << "_list * next;";
   stream << "\n";
   stream << indent_str;

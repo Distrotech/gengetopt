@@ -101,9 +101,9 @@ multiple_option_gen_class::generate_multiple_option(ostream &stream, unsigned in
       stream << "      ";
       generate_string (option_var_name, stream, indent + indent_str.length ());
       stream << "_new = (struct ";
-      generate_string (option_var_name, stream, indent + indent_str.length ());
+      generate_string (type, stream, indent + indent_str.length ());
       stream << "_list *) malloc (sizeof (struct ";
-      generate_string (option_var_name, stream, indent + indent_str.length ());
+      generate_string (type, stream, indent + indent_str.length ());
       stream << "_list));";
       stream << "\n";
       stream << indent_str;

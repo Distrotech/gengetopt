@@ -9,22 +9,22 @@ purpose "This is just a test file
 to test all possible
 command line type options"
 
-option "string"      s "string option" string no
-option "int"         i "int option" int no
-option "short"       S "short option" short no
-option "long"        l "long option" long no
-option "float"       f "float option" float no
-option "double"      d "double option" double no
-option "longdouble"  D "longdouble option" longdouble no
-option "longlong"    L "longlong option" longlong no
+option "string"      s "string option" string optional
+option "int"         i "int option" int optional
+option "short"       S "short option" short optional
+option "long"        l "long option" long optional
+option "float"       f "float option" float optional
+option "double"      d "double option" double optional
+option "longdouble"  D "longdouble option" longdouble optional
+option "longlong"    L "longlong option" longlong optional
 option "flag"        F "flag option" on flag
-option "function"    u "function option" no
-option "no-short"    - "no short option" no
-option "opt-arg"     - "option with optional arg" argoptional string no 
-option "opt-arg-short"     o "option with optional arg (short)" no string argoptional
+option "function"    u "function option" optional
+option "no-short"    - "no short option" optional
+option "opt-arg"     - "option with optional arg" argoptional string optional 
+option "opt-arg-short"     o "option with optional arg (short)" optional string argoptional
 option "required"    r "required option" string yes
-option "hidden"      H "hidden option" int no hidden
-option "dependant"   A "option that depends on opt-arg" string no dependon="opt-arg"
-option "very-very-long-option" - "the name of this option is long enough to make this description begin on a new line" string no
-option "assume-multimeth-virtual" y "the name of this option is just as long as the maximum allowed, so this description begin on a new line" no
-option "file-save"   - "save the passed options into a file" string no
+option "hidden"      H "hidden option" int optional hidden
+option "dependant"   A "option that depends on opt-arg" string optional dependon="opt-arg"
+option "very-very-long-option" - "the name of this option is long enough to make this description begin on a new line" string optional
+option "assume-multimeth-virtual" y "the name of this option is just as long as the maximum allowed, so this description begin on a new line" optional
+option "file-save"   - "save the passed options into a file" string optional

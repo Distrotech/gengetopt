@@ -68,7 +68,8 @@ info_TEXINFOS = gengetopt.texinfo
 
 GENERATEDINFOS = cmdline1.h.texinfo main1.cc.texinfo test_conf_parser.c.texinfo \
 test_conf_parser_ov2.c.texinfo help_output.texinfo \
-multiple_example.c.texinfo
+multiple_example.c.texinfo \
+test_multiple_parsers.c.texinfo
 
 BUILT_SOURCES = $(GENERATEDINFOS)
 
@@ -89,6 +90,9 @@ test_conf_parser.c.texinfo: $(top_srcdir)/tests/test_conf_parser.c
 test_conf_parser_ov2.c.texinfo: $(top_srcdir)/tests/test_conf_parser_ov2.c
 	cat $(top_srcdir)/tests/test_conf_parser_ov2.c | sed -f $(srcdir)/input.sed > $@
 
+test_multiple_parsers.c.texinfo: $(top_srcdir)/tests/test_multiple_parsers.c
+	cat $(top_srcdir)/tests/test_multiple_parsers.c | sed -f $(srcdir)/input.sed > $@
+
 %.c.texinfo: %.c
 	touch $@
 else
@@ -103,6 +107,9 @@ test_conf_parser.c.texinfo: $(top_srcdir)/tests/test_conf_parser.c
 
 test_conf_parser_ov2.c.texinfo: $(top_srcdir)/tests/test_conf_parser_ov2.c
 	$(RUNSOURCEHIGHLIGHT) $(top_srcdir)/tests/test_conf_parser_ov2.c
+
+test_multiple_parsers.c.texinfo: $(top_srcdir)/tests/test_multiple_parsers.c
+	$(RUNSOURCEHIGHLIGHT) $(top_srcdir)/tests/test_multiple_parsers.c
 
 %.c.texinfo: %.c
 	$(RUNSOURCEHIGHLIGHT) $< 

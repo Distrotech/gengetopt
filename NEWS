@@ -1,8 +1,24 @@
 gengetopt -- History of visible changes.
 
-Copyright (C) 1999-2004  Free Software Foundation
+Copyright (C) 1999-2006  Free Software Foundation
 
 Please send gengetopt bug reports to bug-gengetopt at gnu.org
+
+Version 2.17
+
+   * fixed bug in generating parser where no multiple option is of
+     type string (reported by Dave Swegen)
+   * fixed bug: the passed header file extension is used when including the
+     header file name in the generated C source
+   * range of occurrences for multiple options
+   * help and usage strings are generated and accessible (the same that are
+     printed by --help)
+   * reduced size for multiple option parsers
+   * fixed a problem with the internal variable optind with non glibc
+     version of getopt. (thanks to Gyozo Papp)
+   * --output-dir command line option (suggested by Gyozo Papp)
+   * --string-parser generate a parser that interprets a passed string
+     as command line arguments (suggested by Andre Noll)
 
 Version 2.16
 

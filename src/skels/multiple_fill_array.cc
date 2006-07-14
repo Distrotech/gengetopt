@@ -23,7 +23,7 @@ multiple_fill_array_gen_class::generate_multiple_fill_array(ostream &stream, uns
   stream << "\n";
   stream << indent_str;
   stream << "    struct ";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
+  generate_string (list_name, stream, indent + indent_str.length ());
   stream << "_list *tmp;";
   stream << "\n";
   stream << indent_str;
@@ -72,9 +72,7 @@ multiple_fill_array_gen_class::generate_multiple_fill_array(ostream &stream, uns
   generate_string (option_var_name, stream, indent + indent_str.length ());
   stream << "_given] = ";
   generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_list->";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_arg;";
+  stream << "_list->arg;";
   stream << "\n";
   stream << indent_str;
   stream << "        args_info->";
@@ -83,9 +81,7 @@ multiple_fill_array_gen_class::generate_multiple_fill_array(ostream &stream, uns
   generate_string (option_var_name, stream, indent + indent_str.length ());
   stream << "_given] = ";
   generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_list->";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_orig;";
+  stream << "_list->orig;";
   stream << "\n";
   stream << indent_str;
   indent = 8;

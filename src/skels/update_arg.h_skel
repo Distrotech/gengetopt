@@ -1,18 +1,18 @@
 @IF@ int_arg @THEN@
-@structure@->@opt_var@_arg = @cast@strtol (@optarg@, &stop_char, 0);@ELSEIF@ flag_arg @THEN@
-args_info->@opt_var@_flag = !(args_info->@opt_var@_flag);@ELSEIF@ long_arg @THEN@
-@structure@->@opt_var@_arg = @cast@strtol (@optarg@, &stop_char, 0);@ELSEIF@ float_arg @THEN@
-@structure@->@opt_var@_arg = @cast@strtod (@optarg@, &stop_char);@ELSEIF@ longlong_arg @THEN@
+@structure@->@opt_var@arg = @cast@strtol (@optarg@, &stop_char, 0);@ELSEIF@ flag_arg @THEN@
+args_info->@opt_var@flag = !(args_info->@opt_var@flag);@ELSEIF@ long_arg @THEN@
+@structure@->@opt_var@arg = @cast@strtol (@optarg@, &stop_char, 0);@ELSEIF@ float_arg @THEN@
+@structure@->@opt_var@arg = @cast@strtod (@optarg@, &stop_char);@ELSEIF@ longlong_arg @THEN@
 #ifdef HAVE_LONG_LONG
-@structure@->@opt_var@_arg = (long long int) strtol (@optarg@, &stop_char, 0);
+@structure@->@opt_var@arg = (long long int) strtol (@optarg@, &stop_char, 0);
 #else
-@structure@->@opt_var@_arg = (long) strtol (@optarg@, &stop_char, 0);
+@structure@->@opt_var@arg = (long) strtol (@optarg@, &stop_char, 0);
 #endif@ELSEIF@ string_arg @THEN@
 @IF@ no_free @THEN@
-@structure@->@opt_var@_arg = gengetopt_strdup (@optarg@);@ELSE@
-if (@structure@->@opt_var@_arg)
-  free (@structure@->@opt_var@_arg); /* free previous string */
-@structure@->@opt_var@_arg = gengetopt_strdup (@optarg@);@ENDIF@
+@structure@->@opt_var@arg = gengetopt_strdup (@optarg@);@ELSE@
+if (@structure@->@opt_var@arg)
+  free (@structure@->@opt_var@arg); /* free previous string */
+@structure@->@opt_var@arg = gengetopt_strdup (@optarg@);@ENDIF@
 @ENDIF@
 @IF@ numeric @THEN@
 
@@ -23,8 +23,8 @@ if (!(stop_char && *stop_char == '\0')) {
 @IF@ has_arg @THEN@
 
 @IF@ no_free @THEN@
-@structure@->@opt_var@_orig = @orig_optarg@;@ELSE@
-if (@structure@->@opt_var@_orig)
-  free (@structure@->@opt_var@_orig); /* free previous string */
-@structure@->@opt_var@_orig = gengetopt_strdup (@orig_optarg@);@ENDIF@
+@structure@->@opt_var@orig = @orig_optarg@;@ELSE@
+if (@structure@->@opt_var@orig)
+  free (@structure@->@opt_var@orig); /* free previous string */
+@structure@->@opt_var@orig = gengetopt_strdup (@orig_optarg@);@ENDIF@
 @ENDIF@

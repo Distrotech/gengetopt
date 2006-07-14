@@ -1,1 +1,1 @@
-struct @arg_name@_list * @arg_name@_list = NULL,* @arg_name@_new = NULL;
+struct @type@_list * @arg_name@_list = NULL,* @arg_name@_new = NULL;

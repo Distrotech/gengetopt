@@ -18,6 +18,6 @@
 using std::ofstream;
 
 char *create_filename (char *name, char *ext);
-ofstream *open_fstream (char *filename);
+ofstream *open_fstream (const char *filename);
 
 #endif

@@ -25,3 +25,6 @@ const char * arg_names [] = { (const char*)0, (const char*)0, "STRING", "INT", "
 
 const char * arg_types [] = { (const char*)0, "int", "char *", "int", "short", "long", "float", "double", "long double", "long long int" };
 
+const char * arg_types_names [] = { (const char*)0, "int", "string", "int", "short", "long", "float", "double", "long_double", "long_long_int" };
+
+

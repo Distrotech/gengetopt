@@ -32,8 +32,12 @@
 #define ARG_LONGDOUBLE	8
 #define ARG_LONGLONG	9
 
+/* symbolic names for argument types */
 extern const char * arg_names [];
+/* corresponding C types */
 extern const char * arg_types [];
+/* string representation of types */
+extern const char * arg_types_names [];
 
 #define ARGS_STRUCT "args_info"
 

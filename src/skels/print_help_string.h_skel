@@ -1,1 +1,1 @@
-printf("%s\n","@helpstring@");
+"@helpstring@",

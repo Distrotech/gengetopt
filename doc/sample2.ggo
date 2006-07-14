@@ -6,16 +6,16 @@
 purpose "this is just a test program for gengetopt"
 
 # Options
-option  "str-opt"         s "A string option"      string     no
-option  "int-opt"         i "A int option"         int        yes
-option  "short-opt"       S "A short option"       short      no
-option  "long-opt"        l "A long option"        long       yes
-option  "float-opt"       f "A float option"       float      no
-option  "double-opt"      d "A double option"      double     no
-option  "long-double-opt" L "A long double option" longdouble no
-option  "long-long-opt"   y "A long long option"   longlong   no
+option  "str-opt"         s "A string option"      string     optional
+option  "int-opt"         i "A int option"         int        required
+option  "short-opt"       S "A short option"       short      optional
+option  "long-opt"        l "A long option"        long       required
+option  "float-opt"       f "A float option"       float      optional
+option  "double-opt"      d "A double option"      double     optional
+option  "long-double-opt" L "A long double option" longdouble optional
+option  "long-long-opt"   y "A long long option"   longlong   optional
 
-option  "func-opt"        F "A function option"    no 
+option  "func-opt"        F "A function option"    optional 
 
 option  "flag-opt"        x "A flag option"        flag       off
 # This option turn on or off a flag, last column is the state of the flag when

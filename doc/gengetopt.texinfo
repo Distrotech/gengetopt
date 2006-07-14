@@ -28,36 +28,27 @@
 
 @set myhomepage @uref{http://www.lorenzobettini.it}
 
-@ifinfo
-This file documents GNU Gengetopt, a tool to write option parsers for C programs.
+@copying
+This manual is for GNU Gengetopt
+(version @value{VERSION}, @value{UPDATED}),
+a tool to write command line option parsers for C programs.
 
-This edition is for Gengetopt version @value{VERSION}.
+Copyright @copyright{} 2001 - 2006 Free Software Foundation, Inc.
 
-Copyright @copyright{} 2001-2005 Free Software Foundation, Inc.
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.1 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with the Front-Cover Texts being ``A GNU Manual,''
+and with the Back-Cover Texts as in (a) below.  A copy of the
+license is included in the section entitled ``GNU Free Documentation
+License.''
 
-Permission is granted to make and distribute verbatim copies of
-this manual provided the copyright notice and this permission notice
-are preserved on all copies.
-
-@ignore
-Permission is granted to process this file through TeX and print the
-results, provided the printed document carries copying permission
-notice identical to this one except for the removal of this paragraph
-(this paragraph not being relevant to the printed manual).
-
-@end ignore
-Permission is granted to copy and distribute modified versions of this
-manual under the conditions for verbatim copying, provided that the entire
-resulting derived work is distributed under the terms of a permission
-notice identical to this one.
-
-Permission is granted to copy and distribute translations of this manual
-into another language, under the above conditions for modified versions,
-except that this permission notice may be stated in a translation approved
-by the Free Software Foundation.
-@end ifinfo
-
-@c @shorttitlepage Gengetopt
+(a) The FSF's Back-Cover Text is: ``You have freedom to copy and modify
+this GNU Manual, like GNU software.  Copies published by the Free
+Software Foundation raise funds for GNU development.''
+@end quotation
+@end copying
 
 @titlepage
 @title GNU Gengetopt
@@ -69,45 +60,30 @@ by the Free Software Foundation.
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2001-2005 Free Software Foundation, Inc.
-
-This is Edition @value{EDITION} of the Gengetopt manual.
-
-It documents GNU Gengetopt version @value{VERSION}.
-
-@c I don't think FSF will be printing this anytime soon :-)
-@c Published by the Free Software Foundation @*
-@c 59 Temple Place Suite 330 @*
-@c Boston, MA 02111-1307 @*
-@c USA @*
-@c ISBN ...
-
-Permission is granted to make and distribute verbatim copies of
-this manual provided the copyright notice and this permission notice
-are preserved on all copies.
-
-Permission is granted to copy and distribute modified versions of this
-manual under the conditions for verbatim copying, provided that the entire
-resulting derived work is distributed under the terms of a permission
-notice identical to this one.
-
-Permission is granted to copy and distribute translations of this manual
-into another language, under the above conditions for modified versions,
-except that this permission notice may be stated in a translation approved
-by the Free Software Foundation.
+@insertcopying
 @end titlepage
+
+@contents
 
 @ifnottex
 @node Top, Audience, (dir), (dir)
 @top Gengetopt
 
-Gengetopt is a tool to write option parsing code for C programs.
+Gengetopt is a tool to write command line option parsing code for C programs.
 
 This is Edition @value{EDITION} of the Gengetopt manual.
 
 It documents GNU Gengetopt version @value{VERSION}.
+
+@insertcopying
 @end ifnottex
 
+@c All the nodes can be updated using the EMACS command
+@c texinfo-every-node-update, which is normally bound to C-c C-u C-e.
+@c @node Top, Introduction, (dir), (dir)
+
+@c All the menus can be updated with the EMACS command
+@c texinfo-all-menus-update, which is normally bound to C-c C-u C-a.
 @menu
 * Audience::                    What is gengetopt and who it is for.
 * Copying::                     Your rights.
@@ -118,6 +94,7 @@ It documents GNU Gengetopt version @value{VERSION}.
 * Group options::               Mutual exclusive options
 * Configuration files::         Parsing a configuration file
 * Multiple Options::            Multiple options
+* String Parsers and Multiple Parsers::  Using multiple parsers in the same program
 * No getopt_long::              What if getopt_long is not available?
 * Bugs::                        What is lame and/or buggy in Gengetopt @value{VERSION}
 * Mailing Lists::               For discussions and announces
@@ -295,9 +272,9 @@ Moreover @emph{Gengen}
 (@uref{http://www.lorenzobettini.it/software/gengen}) is used for
 automatically generating the code that generates the command line parser.
 
-Actually, you don't need all these tools above to build source-highlight
+Actually, you don't need all these tools above to build gengetopt
 because I provide generated sources, unless you want to develop
-source-highlight.
+gengetopt.
 
 The code generated by gengetopt relies on the @code{getopt_long}
 function that is usually in the standard C library; however, there may
@@ -437,10 +414,14 @@ specified).  If this option is given at command line but not the option
 it depends on, an error will be generated.
 
 @cindex required 
+@cindex optional
 @item required 
 
-@code{yes} or @code{no}.  This specifies whether such option must be
-given at each program invocation.
+@code{required} or @code{optional}.  This specifies whether such option
+must be given at each program invocation.  These keywords were
+introduced in release 2.17.  Before, you had to use the keywords
+@code{yes} or @code{no}.  You can still use these keywords but their use
+is not advised since they are not much explicative.
 
 @cindex argoptional 
 @item argoptional 
@@ -458,7 +439,9 @@ nor @code{--bar 15}.
 
 If this flag is specified then this option can be specified more than
 once at command line; all the values for this option are stored in an
-array.  See @ref{Multiple Options}.
+array.  You can also specify the number of occurrences that a multiple
+option must be specified.  Notice that this is independent from the
+@code{required} flag.  See @ref{Multiple Options}.
 
 @cindex hidden
 @cindex @code{--full-help}
@@ -543,26 +526,26 @@ Here's an example of such a file (the file is called @file{sample1.ggo})
 @example
 # file sample1.ggo 
 option  "str-opt"     s "A string option, for a filename" \
-     string typestr="filename" no 
+     string typestr="filename" optional 
 option  "my-opt"      m "Another integer option, \
      this time the description of the \
      option should be quite long to require wrapping... possibly \
-     more than one wrapping :-) especially if I\nrequire a line break" int no 
-option  "int-opt"     i "A int option"         int        yes 
+     more than one wrapping :-) especially if I\nrequire a line break" int optional 
+option  "int-opt"     i "A int option"         int        required 
 section "more involved options" \
      sectiondesc="the following options\nare more complex"
 option  "flag-opt"    - "A flag option"        flag       off
-option  "funct-opt"   F "A function option"    no 
+option  "funct-opt"   F "A function option"    optional 
 section "last option section"
-option  "long-opt"    - "A long option"        long       no 
+option  "long-opt"    - "A long option"        long       optional 
 option  "def-opt"     - "A string option with default" \
-     string default="Hello" no
+     string default="Hello" optional
 option  "enum-opt"    - "A string option with list of values" \
-     values="foo","bar","hello","bye" default="hello" no
+     values="foo","bar","hello","bye" default="hello" optional
 option  "secret"         S "hidden option will not appear in --help" \
-     int no hidden
+     int optional hidden
 option  "dependant"      D "option that depends on str-opt" \
-     int no dependon="str-opt"
+     int optional dependon="str-opt"
 @end example
 
 The simplest way to use gengetopt is to pass this file as the standard input, i.e.: 
@@ -617,24 +600,46 @@ function in the following).  However, apart from very specific command
 line processing, the user might hardly need the @code{<option>_orig}
 field, and can be always safely use @code{<option>_arg}.
 
+The @code{<option>_help} contains the string (concerning this very
+option) that is printed when @code{--help} command line is given.
+
 If it is of @code{flag} type, only the field @code{<option>_flag}
 is generated.
+
+The strings @code{cmdline_parser_purpose} and
+@code{cmdline_parser_usage} contain the @code{purpose} as specified in
+the input file and the generated ``usage'' string as printed when
+@code{--help} command line is given.  Finally, the string array
+@code{cmdline_parser_help} contains the strings (one for each option)
+printed when @code{--help} command line is given (this array is
+terminated by a null string element).  If hidden options are used also
+the @code{cmdline_parser_full_help} array is available (containing also
+help strings concerning hidden options).  All these strings can be used
+by the programmer to build a customized help output@footnote{These
+strings and the @code{<option>_help} were introduced in the release
+2.17.}.
 
 Even if @code{<option>_given} is 0, the corresponding
 @code{<option>_arg} is set to default value (if one has been specified
 for @code{<option>}).  However, in this case, the @code{<option>_orig}
 is set to @code{NULL}.
 
-Notice that by default the generated function is called @code{cmdline_parser}
-(see the command line options below, to override this name), and it
-takes the arguments that main receives and a pointer to such a struct,
-that it will be filled.
+Notice that by default the generated function is called
+@code{cmdline_parser} (see the command line options below, to override
+this name), and it takes the arguments that main receives and a
+pointer to such a struct, that it will be filled.  Another version,
+@code{cmdline_parser2}, can be specified more arguments.  Since you
+typically need this second version only in conjunction with other
+``kinds'' of parsers such as configuration files and multiple parsers,
+you can find more details about it in @ref{Configuration files}.
 
-@code{cmdline_parser_free} can be called to deallocate memory allocated by the
-parser for string and multiple options.
+@b{IMPORTANT}: The array passed to the parser function (that in turn
+is passed to @code{getopt_long} is expected to have in the first
+element (of index 0) the name of the program that was invoked.  This
+will be used, for instance, for printing possible errors.
 
-Notice that after calling this function, the parsing functions should
-not be called anymore.
+@code{cmdline_parser_free} can be called to deallocate memory
+allocated by the parser for string and multiple options.
 
 @code{cmdline_parser_init} can be called to initialize the struct (it is
 not mandatory, since it is done automatically by the command line
@@ -726,7 +731,7 @@ While the next one raises an ambiguity error (between @code{"bar"}
 and @code{"bye"}):
 
 @example
-$ ./sample1 -i 10 --enum-opt h
+$ ./sample1 -i 10 --enum-opt b
 ...
 ./sample1: ambiguous argument, "b", for option `--enum-opt'
 @end example
@@ -801,6 +806,10 @@ The options should be clear; in particular:
 
 @item --func-name 
 if no @code{--func-name} is given, @code{cmdline_parser} is taken by default;
+
+@item --output-dir
+if no @code{--output-dir}@footnote{Since version 2.17.} is given, the
+files are generated in the current directory;
  
 @item --arg-struct-name 
 allows to specify the name of the generated struct for command line
@@ -837,6 +846,19 @@ help message, as gengetopt itself does in case of an error (try it!).
 @item --gen-version 
 is a flag (default on) that when disabled does not put in the output
 file the gengetopt version (it is useful for testing purposes).
+
+@item --conf-parser
+Detailed in @ref{Configuration files}.
+
+@item --string-parser
+Detailed in @ref{String Parsers and Multiple Parsers}.
+
+@item --include-getopt
+Adds the code for @code{getopt_long} into the generated parser C file.
+This will make your generated parser much bigger, but it will be
+compiled in any system, even if @code{getopt_long} is not part of the C
+library where your program is being compiled.  See also @ref{No
+getopt_long}.
 
 @item --show-help
 @itemx --show-full-help
@@ -1064,7 +1086,7 @@ Here's an example (taken from the test @file{test_group_cmd.ggo}):
 
 @example 
 defgroup "my grp2"
-defgroup "grp1" groupdesc="an option of this group is required" yes
+defgroup "grp1" groupdesc="an option of this group is required" required
 groupoption "opta" a "string a" group="grp1" multiple
 groupoption "optA" A "string A" string group="grp1" argoptional
 groupoption "optAmul" M "string M" string group="grp1" argoptional multiple
@@ -1093,12 +1115,14 @@ test_groups: 2 options of group my grp2 were given. At most one is required
 @chapter Configuration files
 @cindex configuration files
 
+@cindex @code{-C,--conf-parser}
 It is often useful to specify command line options directly in a
-configuration file, so that the value of some options are read from this
-file if they are not given as command line options.  When the command
-line option @code{--conf-parser} is given to gengetopt, apart from the standard
-command line option parser, also this additional parser is generated
-(its name is @code{<commandline_parser>_configfile}):
+configuration file, so that the value of some options are read from
+this file if they are not given as command line options.  When the
+command line option @code{-C|--conf-parser} is given to gengetopt,
+apart from the standard command line option parser, also this
+additional parser is generated (its name is
+@code{<commandline_parser>_configfile}):
 
 @example
 int
@@ -1245,7 +1269,7 @@ files with lines that are longer, you can compile the generated C file
 by specifying an explicit value for this constant with the @code{-D}
 command line option of @code{gcc}.
 
-@node Multiple Options, No getopt_long, Configuration files, Top
+@node Multiple Options, String Parsers and Multiple Parsers, Configuration files, Top
 @chapter Multiple Options
 @cindex multiple options
 
@@ -1265,8 +1289,8 @@ For instance, if the gengetopt file is as follows
 
 @example
 # test options that can be given more than once
-option "string"      s "string option" string no multiple
-option "int"         i "int option" int no multiple
+option "string"      s "string option" string optional multiple
+option "int"         i "int option" int optional multiple
 @end example
 
 @noindent
@@ -1293,29 +1317,253 @@ passed int: 200
 passed int: 100
 @end example
 
-You can also pass arguments to a multiple option separated by commas, as in the following:
+You can also pass arguments to a multiple option separated by commas (if
+you need to actually specify the comma operator as part of the argument
+you can escape it with @code{\}), as in the following:
 
 @example
 ./test_multiple -s"foo","bar","hello" -i100,200 -s "world"
 @end example
 
-@node No getopt_long, Bugs, Multiple Options, Top
+You can specify the number of occurrences of multiple options by using
+the following syntax (that must be given after the @code{multiple}
+keyword):
+
+@table @code
+@item (number)
+requires that the multiple option, if given, must be given exactly
+@code{number} times
+
+@item (number1-number2)
+requires that the multiple option, if given, must be given not less than
+@code{number1} times and no more than @code{number2} times
+
+@item (number-)
+requires that the multiple option, if given, must be given not less than
+@code{number} times
+
+@item (-number)
+requires that the multiple option, if given, must be given not more than
+@code{number} times
+@end table
+
+Here are some examples:
+
+@example
+option "string"      s "string option" string optional multiple(4)
+@end example
+
+@example
+option "string"      s "string option" string optional multiple(1-4)
+@end example
+
+@example
+option "string"      s "string option" string optional multiple(-5)
+@end example
+
+Notice that this is independent from the @code{required} flag.
+
+@node String Parsers and Multiple Parsers, No getopt_long, Multiple Options, Top
+@chapter String Parsers and Multiple Parsers
+@cindex multiple parsers
+@cindex string parsers
+
+The parsers generated by gengetopt (indeed the C and header files) are
+self-contained and different parsers can be linked in the same
+program, without interferences.  This is useful, e.g., in cases where
+a specific command line option argument has a complex syntax that
+accepts options itself according to terminology already defined, the
+one handled by @code{getopt_long}, see @ref{Terminology}.  Another
+case when multiple parsers can be useful is when your command behaves
+differently according to a specific command line option.
+
+Obviously there exists only one instance of command line arguments
+passed to the @code{main} function (namely the variables @code{argc}
+and @code{argv}) so passing the same arguments to different command
+line parsers is likely to generate errors: the different command line
+parsers are likely to have different syntaxes for accepted options.
+
+@cindex @code{-S,--string-parser}
+For this reason gengetopt can generate parser functions that take a
+string containing the further options to parse, instead of taking an
+array.  This additional parser will have the parser name and the
+suffix @code{_string}.  If you want these additional parsers to be
+generated you have to pass the command line option
+@code{-S|--string-parser} to gengetopt (see @ref{Invoking gengetopt}).
+The two functions will be:
+
+@example
+int <parser_name>_string (const char *cmdline, 
+    struct test_first_cmdline_cmd_struct *args_info,
+    const char *prog_name);
+int <parser_name>_string2 (const char *cmdline,
+    struct test_first_cmdline_cmd_struct *args_info,
+    const char *prog_name,
+    int override, int initialize, int check_required);
+@end example
+
+The second one allows you to specify more details about the parsing
+(this is the same as for configuration files, thus we refer to that
+section for the details of the two functions and default values, see
+@ref{Configuration files}).
+
+Of course, these functions can be used in general to simulate the
+invocation of a program with specific command line options (stored in
+the first string argument), or in general to parse options that are
+all stored in a string (instead of a vector).
+
+The first argument of these parsers is a string containing the options
+to parse (remember that this must respect the option format handled by
+@code{getopt_long}, see @ref{Terminology}).  The second one is the
+pointer to the struct that will be filled with passed options and
+arguments, as usual.  The third option is the program name: this will
+be used when errors have to be printed.  This last argument can be
+null: in this case, the first element of the first string argument is
+considered the program name.
+
+Let's show these functionalities with an example.  Consider a program
+that accepts two command line options (required in this case):
+
+@example
+# test for multiple parsers, this is the main file
+# test_main_cmdline_cmd.ggo
+
+option "first-cmd" F "the first command line to parse" required \
+       typestr="first command" string multiple
+option "second-cmd" S "the second command line to parse" required \
+       typestr="second command" string multiple
+@end example
+
+@noindent
+These two options accept strings as argument that in turn are
+considered command line arguments, according to specific syntaxes.
+The first one is:
+
+@example
+# test for multiple parsers, this is the first command line file
+# test_first_cmdline_cmd.ggostr
+
+option "option-a" a "option a of the first command line to parse"
+optional int option "multi" M \
+         "multiple option of the first command line to parse" \
+         optional string multiple
+@end example
+
+@noindent
+and the second one is:
+
+@example
+# test for multiple parsers, this is the second command line file
+# test_second_cmdline_cmd.ggostr
+
+option "option-a" a "option a of the second command line to parse" \
+       optional string
+option "option-b" b "option a of the second command line to parse" \
+       optional string
+option "my-multi" M \
+       "multiple option of the second command line to parse" \
+       optional string multiple
+@end example
+
+These last two files are processed with gengetopt using the
+@code{--string-parser}.  Let's put everything together in this main
+file:
+
+@include test_multiple_parsers.c.texinfo
+
+Notice that in the @code{for} loops we always free the elements of the
+argument structures in order to avoid memory leaks.
+
+Now if you can run this program as follows (notice that we use the comma
+separated arguments for multiple option arguments but we escape it with
+@code{\} because otherwise, e.g., 200 and 300 would be intended as
+further arguments of @code{--first-cmd} instead of @code{--multi}, see
+@ref{Multiple Options}):
+
+@example
+./test_multiple_parsers \
+        --first-cmd="-M400 -a10 --multi 100\,200\,300" \
+        --second-cmd="-a20 -b10 --my-multi=a\,b\,c\,d\,e\,f" \
+        -F"-M500 -M600" -S"--my-multi g"
+second cmdline: -a20 -b10 --my-multi=a,b,c,d,e,f
+  --option-a: 20
+  --option-b: 10
+  --my-multi: a
+  --my-multi: b
+  --my-multi: c
+  --my-multi: d
+  --my-multi: e
+  --my-multi: f
+second cmdline: --my-multi g
+  --my-multi: g
+first cmdline: -M400 -a10 --multi 100,200,300
+  --option-a: 10
+  --multi: 400
+  --multi: 100
+  --multi: 200
+  --multi: 300
+first cmdline: -M500 -M600
+  --multi: 500
+  --multi: 600
+@end example
+
+@node No getopt_long, Bugs, String Parsers and Multiple Parsers, Top
 @chapter What if getopt_long is not available?
 @cindex getopt_long
-@cindex automake
-@cindex autoconf
 
 If you use gengetopt to generate C functions for parsing command line
 arguments you have to know that these generated functions use
 @code{getopt_long} to actually read the command line and parsing it.
 This function is typically part of the standard C library, but some
-implementations may not include it.   But this is not a problem: we
+implementations may not include it.  If you want your program to be
+portable on several systems, and be compilable with many C compilers,
+you can rely on one of the following solutions.
+
+@menu
+* Include the getopt_long code into the parser::  
+* Use automake/autoconf::       
+@end menu
+
+@node Include the getopt_long code into the parser, Use automake/autoconf, No getopt_long, No getopt_long
+@section Include the @code{getopt_long} code into the generated parser
+
+Since version 2.17, gengetopt can include into the generated C parser
+file the code of @code{getopt_long}, so that the include code will be
+used to actually parse the command line arguments, instead of that taken
+from the C library.
+
+This solution is actually quite easy, but it has two main drawbacks:
+
+@itemize
+@item 
+The generate C file of the parser will be much bigger;
+
+@item
+You won't be able to use the latest version of @code{getopt_long}
+of the C library
+@end itemize
+
+It is up to you to choose between this and the automake/autoconf based
+solution.
+
+Actually, this solution has the advantage that your program won't behave
+strangely when used with another implementation of @code{getopt_long}.
+
+I prefer the automake/autoconf based solution, as described in @ref{Use
+automake/autoconf}, which is also the one I adopt for gengetopt itself.
+
+@node Use automake/autoconf,  , Include the getopt_long code into the parser, No getopt_long
+@section Use automake/autoconf to check for the existence of @code{getopt_long}
+
+@cindex automake
+@cindex autoconf
+But this is not a problem: we
 provide C files that actually implement getopt_long function:
 @file{getopt.c} @file{getopt1.c} and @file{gnugetopt.h}.   You'll find
 these files in the @file{<install prefix>/share/gengetopt} directory
 where @file{<install prefix>} is the one you specified during
-compilation.   If no prefix had been specified, @file{/usr/local} is the
-default.   If you downloaded gengetopt in binary form prefix will
+compilation.   If no prefix had been specified, @file{/usr/local} is
+the default.   If you downloaded gengetopt in binary form prefix will
 probably be @file{/usr/local} or @file{/usr}.
 
 You can rename @file{gnugetopt.h} to @file{getopt.h} and then
@@ -1381,6 +1629,56 @@ you out, although he may not have time to fix your problems.
 
 The list of todos in the @file{TODO}.
 
+@menu
+* Getopt and subsequent calls::  
+@end menu
+
+@node Getopt and subsequent calls,  , Bugs, Bugs
+@section Getopt and subsequent calls
+
+It seems that @code{getopt_long}, at least the version in the GNU
+library, if invoked with different @code{argv} arrays, might access
+memory in a bad way leading to crashes or unexpected behaviors.  This
+happens because it keeps pointers to locations of the previous arrays
+if not initiliazed each time by setting @code{optind =
+0}@footnote{@code{optind} is the global variable in getopt
+implementation that is the index in ARGV of the next element to be
+scanned.  This is used for communication to and from the caller and
+for communication between successive calls to @code{getopt_long}.}.
+Unfortunately this initialization behavior seems to be part only of
+the implementation of GNU library and actually it is not documented
+(you can see it by taking a look into the source of @file{getopt.c});
+other implementations of @code{getopt_long} might not be affected by
+this problem; alternatively, as reported by a user, @code{optind = 0}
+leads some @code{getopt_long} implementations to consider the program
+name as a command line option (since it is in position 0), which is
+bad anyway!
+
+Probably this is usually not a problem since you usually parse only the
+command line, thus you only invoke the command line parser only once,
+and only with one instance of array (i.e., the @code{argv} passed to
+@code{main}).  However, it can lead to problems when you use advanced
+features, as in the case of configuration file parsing (see
+@ref{Configuration files}) and multiple parsers (see @ref{String Parsers
+and Multiple Parsers}).
+
+To deal with this problem, in case one uses configuration parsers
+(@code{-C,--conf-parser}) or string parsers
+(@code{-S,--string-parser}) a customized version of
+@code{getopt_long}, called indeed 
+@cindex @code{custom_getopt_long}
+@code{custom_getopt_long} is
+inserted in the generated C file.  This version does not suffer from
+the problem above (and of course does not interfere with the standard
+@code{getopt_long}, which will be used to parse the actual command
+line arguments).
+
+Of course this is transparent to the programmer, and we report this
+detail here only because the inserted @code{custom_getopt_long} will
+add about 20k of C code in the generated file, so don't panic if you
+start to use configuration or string parsers and your program gets a
+little bigger than before :-).
+
 @node Mailing Lists, Index, Bugs, Top
 @chapter Mailing Lists
 @cindex mailing list
@@ -1409,6 +1707,5 @@ the instructions, or send me an e-mail and I'll subscribe you.
 
 @printindex cp
 
-@contents
 @bye
 

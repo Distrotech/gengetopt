@@ -1,7 +1,7 @@
-struct @arg_name@_list
+struct @list_name@_list
 {
-  @type@ @arg_name@_arg;
-  char *@arg_name@_orig;
-  struct @arg_name@_list * next;
+  @type@ arg;
+  char *orig;
+  struct @list_name@_list * next;
 };
 

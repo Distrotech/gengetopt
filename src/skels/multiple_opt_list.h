@@ -17,14 +17,15 @@ class multiple_opt_list_gen_class
 {
  protected:
   string arg_name;
+  string type;
 
  public:
   multiple_opt_list_gen_class()
   {
   }
   
-  multiple_opt_list_gen_class(const string &_arg_name) :
-    arg_name (_arg_name)
+  multiple_opt_list_gen_class(const string &_arg_name, const string &_type) :
+    arg_name (_arg_name), type (_type)
   {
   }
 
@@ -54,6 +55,11 @@ class multiple_opt_list_gen_class
   void set_arg_name(const string &_arg_name)
   {
     arg_name = _arg_name;
+  }
+
+  void set_type(const string &_type)
+  {
+    type = _type;
   }
 
   void generate_multiple_opt_list(ostream &stream, unsigned int indent = 0);

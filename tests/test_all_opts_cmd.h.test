@@ -24,41 +24,63 @@ extern "C" {
 
 struct gengetopt_args_info
 {
+  const char *help_help; /* Print help and exit help description.  */
+  const char *full_help_help; /* Print help, including hidden options, and exit help description.  */
+  const char *version_help; /* Print version and exit help description.  */
   char * string_arg;	/* string option.  */
   char * string_orig;	/* string option original value given at command line.  */
+  const char *string_help; /* string option help description.  */
   int int_arg;	/* int option.  */
   char * int_orig;	/* int option original value given at command line.  */
+  const char *int_help; /* int option help description.  */
   short short_arg;	/* short option.  */
   char * short_orig;	/* short option original value given at command line.  */
+  const char *short_help; /* short option help description.  */
   long long_arg;	/* long option.  */
   char * long_orig;	/* long option original value given at command line.  */
+  const char *long_help; /* long option help description.  */
   float float_arg;	/* float option.  */
   char * float_orig;	/* float option original value given at command line.  */
+  const char *float_help; /* float option help description.  */
   double double_arg;	/* double option.  */
   char * double_orig;	/* double option original value given at command line.  */
+  const char *double_help; /* double option help description.  */
   long double longdouble_arg;	/* longdouble option.  */
   char * longdouble_orig;	/* longdouble option original value given at command line.  */
+  const char *longdouble_help; /* longdouble option help description.  */
   #ifdef HAVE_LONG_LONG
   long long int longlong_arg;	/* longlong option.  */
   #else
   long longlong_arg;	/* longlong option.  */
   #endif
   char * longlong_orig;	/* longlong option original value given at command line.  */
+  const char *longlong_help; /* longlong option help description.  */
   int flag_flag;	/* flag option (default=on).  */
+  const char *flag_help; /* flag option help description.  */
+  const char *function_help; /* function option help description.  */
+  const char *no_short_help; /* no short option help description.  */
   char * opt_arg_arg;	/* option with optional arg.  */
   char * opt_arg_orig;	/* option with optional arg original value given at command line.  */
+  const char *opt_arg_help; /* option with optional arg help description.  */
   char * opt_arg_short_arg;	/* option with optional arg (short).  */
   char * opt_arg_short_orig;	/* option with optional arg (short) original value given at command line.  */
+  const char *opt_arg_short_help; /* option with optional arg (short) help description.  */
   char * required_arg;	/* required option.  */
   char * required_orig;	/* required option original value given at command line.  */
+  const char *required_help; /* required option help description.  */
   int hidden_arg;	/* hidden option.  */
   char * hidden_orig;	/* hidden option original value given at command line.  */
+  const char *hidden_help; /* hidden option help description.  */
   char * dependant_arg;	/* option that depends on opt-arg.  */
   char * dependant_orig;	/* option that depends on opt-arg original value given at command line.  */
+  const char *dependant_help; /* option that depends on opt-arg help description.  */
   char * very_very_long_option_arg;	/* the name of this option is long enough to make this description begin on a new line.  */
   char * very_very_long_option_orig;	/* the name of this option is long enough to make this description begin on a new line original value given at command line.  */
+  const char *very_very_long_option_help; /* the name of this option is long enough to make this description begin on a new line help description.  */
+  const char *assume_multimeth_virtual_help; /* the name of this option is just as long as the maximum allowed, so this description begin on a new line help description.  */
   char * file_save_arg;	/* save the passed options into a file.  */
   char * file_save_orig;	/* save the passed options into a file original value given at command line.  */
+  const char *file_save_help; /* save the passed options into a file help description.  */
   
   int help_given ;	/* Whether help was given.  */
   int full_help_given ;	/* Whether full-help was given.  */
@@ -87,9 +109,18 @@ struct gengetopt_args_info
   unsigned inputs_num ; /* unamed options number */
 } ;
 
-int test_all_opts_cmd_parser (int argc, char * const *argv, struct gengetopt_args_info *args_info);
-int test_all_opts_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required);
-int test_all_opts_cmd_parser_file_save(const char *filename, struct gengetopt_args_info *args_info);
+extern const char *gengetopt_args_info_purpose;
+extern const char *gengetopt_args_info_usage;
+extern const char *gengetopt_args_info_help[];
+extern const char *gengetopt_args_info_full_help[];
+
+int test_all_opts_cmd_parser (int argc, char * const *argv,
+  struct gengetopt_args_info *args_info);
+int test_all_opts_cmd_parser2 (int argc, char * const *argv,
+  struct gengetopt_args_info *args_info,
+  int override, int initialize, int check_required);
+int test_all_opts_cmd_parser_file_save(const char *filename,
+  struct gengetopt_args_info *args_info);
 
 void test_all_opts_cmd_parser_print_help(void);
 void test_all_opts_cmd_parser_print_full_help(void);
@@ -98,7 +129,8 @@ void test_all_opts_cmd_parser_print_version(void);
 void test_all_opts_cmd_parser_init (struct gengetopt_args_info *args_info);
 void test_all_opts_cmd_parser_free (struct gengetopt_args_info *args_info);
 
-int test_all_opts_cmd_parser_required (struct gengetopt_args_info *args_info, const char *prog_name);
+int test_all_opts_cmd_parser_required (struct gengetopt_args_info *args_info,
+  const char *prog_name);
 
 
 #ifdef __cplusplus

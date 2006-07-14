@@ -84,28 +84,55 @@ option_arg_gen_class::generate_option_arg(ostream &stream, unsigned int indent)
         }
       else
         {
-          generate_string (type, stream, indent + indent_str.length ());
-          stream << " ";
-          generate_string (name, stream, indent + indent_str.length ());
-          stream << "_arg;	/* ";
-          generate_string (desc, stream, indent + indent_str.length ());
-          if (has_default)
+          if (has_arg)
             {
-              stream << " (default='";
-              generate_string (default_value, stream, indent + indent_str.length ());
-              stream << "')";
+              generate_string (type, stream, indent + indent_str.length ());
+              stream << " ";
+              generate_string (name, stream, indent + indent_str.length ());
+              stream << "_arg;	/* ";
+              generate_string (desc, stream, indent + indent_str.length ());
+              if (has_default)
+                {
+                  stream << " (default='";
+                  generate_string (default_value, stream, indent + indent_str.length ());
+                  stream << "')";
+                }
+              stream << ".  */";
+              stream << "\n";
+              stream << indent_str;
+              generate_string (origtype, stream, indent + indent_str.length ());
+              stream << " ";
+              generate_string (name, stream, indent + indent_str.length ());
+              stream << "_orig;	/* ";
+              generate_string (desc, stream, indent + indent_str.length ());
+              stream << " original value given at command line.  */";
+              stream << "\n";
+              stream << indent_str;
             }
-          stream << ".  */";
-          stream << "\n";
-          stream << indent_str;
-          generate_string (origtype, stream, indent + indent_str.length ());
-          stream << " ";
-          generate_string (name, stream, indent + indent_str.length ());
-          stream << "_orig;	/* ";
-          generate_string (desc, stream, indent + indent_str.length ());
-          stream << " original value given at command line.  */";
-          stream << "\n";
-          stream << indent_str;
         }
     }
+  if (multiple)
+    {
+      stream << "int ";
+      generate_string (name, stream, indent + indent_str.length ());
+      stream << "_min; /* ";
+      generate_string (desc, stream, indent + indent_str.length ());
+      stream << "'s minimum occurreces */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "int ";
+      generate_string (name, stream, indent + indent_str.length ());
+      stream << "_max; /* ";
+      generate_string (desc, stream, indent + indent_str.length ());
+      stream << "'s maximum occurreces */";
+      stream << "\n";
+      stream << indent_str;
+    }
+  stream << "const char *";
+  generate_string (name, stream, indent + indent_str.length ());
+  stream << "_help; /* ";
+  generate_string (desc, stream, indent + indent_str.length ());
+  stream << " help description.  */";
+  stream << "\n";
+  stream << indent_str;
 }

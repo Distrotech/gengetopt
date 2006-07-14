@@ -55,7 +55,13 @@ multiple option, may be specified more than once, but for which only
 the last use is significant.   The classic example is the @option{-O}
 switch present in most C compilers:
 
-Document the use of more than one parser in the same executable
-
 Test no-handle-help, no-handle-version, also in the presence
 of hidden options
+
+in .ggo add the
+cmdline
+that allows to specifiy the command line options to gengetopt
+to generate the parser from this .ggo file.
+Use string parsers for this.
+
+maintainer-mode
