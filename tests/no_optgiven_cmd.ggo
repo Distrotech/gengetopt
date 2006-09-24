@@ -5,4 +5,6 @@
 package "no_optgiven"
 version "1.0"
 
+args "--no-handle-error -u"
+
 option  "foo"        i "foo option" int yes

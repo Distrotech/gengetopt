@@ -65,6 +65,8 @@ int gengetopt_count_line = 1;
 char * gengetopt_input_filename = 0;
 char *current_section = 0;
 char *current_section_desc = 0;
+char *current_text = 0;
+char *current_args = 0;
 
 int canonize_vars (void);
 
@@ -93,11 +95,10 @@ main (int argc, char **argv)
   int i;
   FILE *input_file ;
 
-  if (cmdline_parser (argc, argv, &args_info) != 0)
-    {
+  if (cmdline_parser (argc, argv, &args_info) != 0) {
       fprintf (stderr, "Run gengetopt --help to see the list of options.\n");
       exit(1) ;
-    }
+  }
 
   if (args_info.help_given)
   {
@@ -137,6 +138,15 @@ main (int argc, char **argv)
         return 1;
   }
 
+  if (current_args) {
+    // parse the arguments passed in the "args" part of the input file
+    // by possibily overriding those given at command line
+    if (cmdline_parser_string2 (current_args, &args_info, "gengetopt", 1, 0, 0) != 0) {
+      fprintf (stderr, "Error in the args specification of the input_file.\n");
+      exit(1) ;
+    }
+  }
+
   if (! check_dependencies()) {
     gengetopt_free();
     return 1;
@@ -167,6 +177,13 @@ main (int argc, char **argv)
     gengetopt_options.push_front(opt);
   }
 
+  // check whether there's pending text after all options and
+  // in case, set it to the last option
+  if (current_text && gengetopt_options.size()) {
+    gengetopt_options.back()->text_after = current_text;
+    gengetopt_set_text(0);
+  }
+
   if (canonize_vars ()) {
         gengetopt_free ();
         return 1;
@@ -186,13 +203,15 @@ main (int argc, char **argv)
 
   ostringstream command_line;
   for ( i = 0; i < argc ; ++i )
-    {
       command_line << argv[i] << " ";
-    }
+
+  // add also possible args specification in the input file
+  if (current_args)
+    command_line << current_args;
 
   if (args_info.output_dir_given)
       output_dir = args_info.output_dir_arg;
-    
+
   CmdlineParserCreator cmdline_parser_creator
     (cmdline_parser_name,
      args_info.arg_struct_name_arg,
@@ -265,6 +284,9 @@ output_formatted_string(const string &s)
       if (*it == '\\' && ((it+1) != s.end()) && *(it+1) == 'n') {
         cout << "\n";
         ++it;
+      } else if (*it == '\\' && ((it+1) != s.end()) && *(it+1) == '"') {
+        cout << "\"";
+        ++it;
       } else
         cout << *it;
     }
@@ -326,6 +348,47 @@ gengetopt_set_section (const char * s, const char *desc)
     current_section_desc = strdup (desc);
   else
     current_section_desc = 0;
+}
+
+void
+gengetopt_set_text (const char * desc)
+{
+  /*
+  no need to free it, since it will be then owned by the
+  option only
+
+  if (current_text)
+    free (current_text);
+  */
+
+  // the current text is reset
+  if (!desc) {
+    current_text = 0;
+    return;
+  }
+
+  if (current_text) {
+    // a previous text was collected, so we append the new text
+    // to the current one.
+    string buffer = current_text;
+    buffer += desc;
+    current_text = strdup(buffer.c_str());
+    return;
+  }
+
+  // otherwise simply copy the passed text
+  current_text = strdup (desc);
+}
+
+void gengetopt_set_args(const char *a)
+{
+  if (current_args)
+    free(current_args);
+
+  if (a)
+    current_args = strdup(a);
+  else
+    current_args = 0;
 }
 
 int
@@ -483,6 +546,10 @@ gengetopt_check_option (gengetopt_option *n, bool groupoption)
     n->section = strdup (current_section);
   if (current_section_desc)
     n->section_desc = strdup (current_section_desc);
+
+  n->text_before = current_text;
+  // reset the description
+  gengetopt_set_text(0);
 
   if (n->group_value != 0)
     {

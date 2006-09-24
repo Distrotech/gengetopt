@@ -41,11 +41,14 @@ struct gengetopt_option
   char *section; /* the section of this option */
   char *section_desc; /* the description associated with the possible section */
   char *dependon; /* the name of the option this one depends on */
-  
+
+  char *text_before; /* a possible text specified before this option */
+  char *text_after; /* a possible text specified after this option */
+
   /* parser information */
   char *filename; /* source file */
   int linenum; /* line number */
-  
+
   gengetopt_option() :
     short_opt(0), long_opt(0), desc(0), type(ARG_NO),
     flagstat(-1),
@@ -54,6 +57,7 @@ struct gengetopt_option
     multiple(false), arg_is_optional(false), hidden(false),
     type_str(0), acceptedvalues(0),
     section(0), section_desc(0), dependon(0),
+    text_before(0), text_after(0),
     filename(0), linenum(0)
     {
     }

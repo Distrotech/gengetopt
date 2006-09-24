@@ -32,6 +32,9 @@ struct gengetopt_args_info
   char * string_values_def_arg;	/* string option with values and default (default='bar').  */
   char * string_values_def_orig;	/* string option with values and default original value given at command line.  */
   const char *string_values_def_help; /* string option with values and default help description.  */
+  char * string_values_def_argopt_arg;	/* string option with values and default and optional argument (default='foobar').  */
+  char * string_values_def_argopt_orig;	/* string option with values and default and optional argument original value given at command line.  */
+  const char *string_values_def_argopt_help; /* string option with values and default and optional argument help description.  */
   char * string_values_no_short_arg;	/* string option with values no short.  */
   char * string_values_no_short_orig;	/* string option with values no short original value given at command line.  */
   const char *string_values_no_short_help; /* string option with values no short help description.  */
@@ -40,6 +43,11 @@ struct gengetopt_args_info
   int multistring_values_min; /* multiple string option with values's minimum occurreces */
   int multistring_values_max; /* multiple string option with values's maximum occurreces */
   const char *multistring_values_help; /* multiple string option with values help description.  */
+  char ** multistring_values_def_arg;	/* multiple string option with values and default (default='foo').  */
+  char ** multistring_values_def_orig;	/* multiple string option with values and default original value given at command line.  */
+  int multistring_values_def_min; /* multiple string option with values and default's minimum occurreces */
+  int multistring_values_def_max; /* multiple string option with values and default's maximum occurreces */
+  const char *multistring_values_def_help; /* multiple string option with values and default help description.  */
   char ** multistring_values_no_short_arg;	/* multiple string option with values no-short.  */
   char ** multistring_values_no_short_orig;	/* multiple string option with values no-short original value given at command line.  */
   int multistring_values_no_short_min; /* multiple string option with values no-short's minimum occurreces */
@@ -53,8 +61,10 @@ struct gengetopt_args_info
   int version_given ;	/* Whether version was given.  */
   int string_values_given ;	/* Whether string-values was given.  */
   int string_values_def_given ;	/* Whether string-values-def was given.  */
+  int string_values_def_argopt_given ;	/* Whether string-values-def-argopt was given.  */
   int string_values_no_short_given ;	/* Whether string-values-no-short was given.  */
   unsigned int multistring_values_given ;	/* Whether multistring-values was given.  */
+  unsigned int multistring_values_def_given ;	/* Whether multistring-values-def was given.  */
   unsigned int multistring_values_no_short_given ;	/* Whether multistring-values-no-short was given.  */
   int string_values_group_given ;	/* Whether string-values-group was given.  */
 
@@ -86,8 +96,10 @@ int test_values_cmd_parser_required (struct gengetopt_args_info *args_info,
 
 extern char *test_values_cmd_parser_string_values_values[] ;	/* Possible values for string-values.  */
 extern char *test_values_cmd_parser_string_values_def_values[] ;	/* Possible values for string-values-def.  */
+extern char *test_values_cmd_parser_string_values_def_argopt_values[] ;	/* Possible values for string-values-def-argopt.  */
 extern char *test_values_cmd_parser_string_values_no_short_values[] ;	/* Possible values for string-values-no-short.  */
 extern char *test_values_cmd_parser_multistring_values_values[] ;	/* Possible values for multistring-values.  */
+extern char *test_values_cmd_parser_multistring_values_def_values[] ;	/* Possible values for multistring-values-def.  */
 extern char *test_values_cmd_parser_multistring_values_no_short_values[] ;	/* Possible values for multistring-values-no-short.  */
 extern char *test_values_cmd_parser_string_values_group_values[] ;	/* Possible values for string-values-group.  */
 

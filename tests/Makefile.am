@@ -27,6 +27,8 @@ SUFFIXES = .ggo .ggonu .ggoconf .ggostr
 # gengetopt version
 PROGNAME = $(top_builddir)/src/gengetopt$(EXEEXT) --gen-version
 
+PROGNAMESHOWHELP = $(PROGNAME) --show-help --long-help
+
 GGO_COMPILE = $(PROGNAME) --input=$< --func-name=$*_parser --file-name=$*
 
 .ggo.c:
@@ -167,8 +169,11 @@ test_main_cmdline_cmd.c.test test_main_cmdline_cmd.h.test \
 test_first_cmdline_cmd.c.test test_first_cmdline_cmd.h.test \
 test_second_cmdline_cmd.c.test test_second_cmdline_cmd.h.test
 
+# the original command line used to be:
+# $(GGO_COMPILE) --no-handle-error -u
+# but now are in the input .ggo file
 no_optgiven_cmd.c: no_optgiven_cmd.ggo
-	$(GGO_COMPILE) --no-handle-error -u
+	$(GGO_COMPILE)
 
 # using $(top_builddir) should test also the removal of leading path
 # for the generation of the #ifndef in the generated header file
@@ -226,7 +231,8 @@ $(TESTSOUTPUT):
 	done && \
 	for source in $(hidden_options_programs); do \
 	  $(top_builddir)/tests/$$source --full-help >> $@ 2>&1; \
-	done
+	done && \
+	$(PROGNAMESHOWHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $@ 2>&1;
 
 store-backup: $(BUILT_SOURCES) $(TESTSOUTPUT)
 	rm -f *.test; \
@@ -259,6 +265,7 @@ check-diff:
 	for tests in $(hidden_options_programs); do \
 	  $(top_builddir)/tests/$$tests --full-help >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	done && \
+	$(PROGNAMESHOWHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
         echo "diff $(TESTSOUTPUT) $(TESTSOUT)"; \
         if ! diff $(TESTSOUTPUT) $(srcdir)/$(TESTSOUT); \
         then errors=1; fi; \

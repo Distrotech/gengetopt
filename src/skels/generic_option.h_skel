@@ -11,7 +11,7 @@ case '@short_option@':	/* @option_comment@.  */
       goto failure;
     }
 @IF@ option_has_values @THEN@
-  if ((found = check_possible_values(optarg, @option_values@)) < 0)
+  if ((found = check_possible_values((optarg ? optarg : @IF@ defaultval:string != "" @THEN@ "@defaultval@" @ELSE@ 0 @ENDIF@), @option_values@)) < 0)
     {
       fprintf (stderr, "%s: %s argument, \"%s\", for option `--@long_option@'@if@ has_short_option @then@ (`-@short_option@')@endif@%s\n", @package_var_name@, (found == -2) ? "ambiguous" : "invalid", optarg, (additional_error ? additional_error : ""));
       goto failure;

@@ -248,7 +248,8 @@ Value of PI:     3.1415926536
 ./default_values: invalid numeric value: a5
 specified --string-values with argument foobar
 specified --string-values with (original) argument foob
-specified --string-values-def with argument bar
+(un)specified --string-values-def with argument bar
+specified --string-values-def-argopt with argument foobar
 specified --string-values-no-short with argument bar
 specified --multistring-values with argument foo
 specified --multistring-values with (original) argument foo
@@ -258,6 +259,10 @@ specified --multistring-values with argument bar
 specified --multistring-values with (original) argument bar
 specified --multistring-values with argument foo
 specified --multistring-values with (original) argument foo
+specified --multistring-values-def with argument bar
+specified --multistring-values-def with (original) argument bar
+specified --multistring-values-def with argument foo
+specified --multistring-values-def with (original) argument (null)
 specified --multistring-values-no-short with argument foo
 specified --multistring-values-no-short with argument foo
 specified --multistring-values-no-short with argument bar
@@ -302,6 +307,7 @@ Usage: test_all_opts [OPTIONS]...
   -h, --help                    Print help and exit
       --full-help               Print help, including hidden options, and exit
   -V, --version                 Print version and exit
+  
   -s, --string=STRING           string option
   -i, --int=INT                 int option
   -S, --short=SHORT             short option
@@ -316,7 +322,21 @@ Usage: test_all_opts [OPTIONS]...
       --opt-arg[=STRING]        option with optional arg
   -o, --opt-arg-short[=STRING]  option with optional arg (short)
   -r, --required=STRING         required option
+  
+  Before the dependant option there is a hidden option, so it shouldn't be 
+  visible in the output of --help, but it will be visible in the output of 
+  --full-help.
+
   -A, --dependant=STRING        option that depends on opt-arg
+  
+  This is a text line just to write something in the output
+  
+  Notice that a text line can contain line breaks, just like this very text, 
+  and that, just like all the other texts, it is wrapped by gengetopt 
+  automatically if it's too long.
+  
+  Moreover, text can be specified more than once in the input file.
+
       --very-very-long-option=STRING
                                 the name of this option is long enough to make 
                                   this description begin on a new line
@@ -325,7 +345,50 @@ Usage: test_all_opts [OPTIONS]...
                                   maximum allowed, so this description begin on 
                                   a new line
       --file-save=STRING        save the passed options into a file
+  
+  A text after all options.
 test_all_opts 1.0
+test_values 1.0
+
+This is just a test file
+to test options
+with the list of acceptable values
+
+Usage: test_values [OPTIONS]...
+
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+  -s, --string-values=STRING    string option with values  (possible 
+                                  values="foo", "foa", "bar", "foobar", 
+                                  "barfoo")
+      --string-values-def=STRING
+                                string option with values and default  
+                                  (possible values="foo", "bar", 
+                                  "foobar", "barfoo" default=`bar')
+      --string-values-def-argopt[=STRING]
+                                string option with values and default and 
+                                  optional argument  (possible values="foo", 
+                                  "bar", "foobar", "barfoo" 
+                                  default=`foobar')
+      --string-values-no-short=STRING
+                                string option with values no short  (possible 
+                                  values="foo", "bar", "foobar", 
+                                  "barfoo")
+  -S, --multistring-values=STRING
+                                multiple string option with values  (possible 
+                                  values="foo", "bar")
+      --multistring-values-def[=STRING]
+                                multiple string option with values and default  
+                                  (possible values="foo", "bar" 
+                                  default=`foo')
+      --multistring-values-no-short=BAR
+                                multiple string option with values no-short  
+                                  (possible values="foo", "bar")
+
+ Group: group1
+      --string-values-group=FOO group string option with values and default  
+                                  (possible values="foo", "bar", 
+                                  "foobar", "barfoo" default=`bar')
 diff wrong_dep.err.out ./wrong_dep.err
 diff wrong_flag.err.out ./wrong_flag.err
 diff wrong_flag2.err.out ./wrong_flag2.err
@@ -424,6 +487,7 @@ Usage: test_all_opts [OPTIONS]... [FILES]...
   -h, --help                    Print help and exit
       --full-help               Print help, including hidden options, and exit
   -V, --version                 Print version and exit
+  
   -s, --string=STRING           string option
   -i, --int=INT                 int option
   -S, --short=SHORT             short option
@@ -438,7 +502,21 @@ Usage: test_all_opts [OPTIONS]... [FILES]...
       --opt-arg[=STRING]        option with optional arg
   -o, --opt-arg-short[=STRING]  option with optional arg (short)
   -r, --required=STRING         required option
+  
+  Before the dependant option there is a hidden option, so it shouldn't be 
+  visible in the output of --help, but it will be visible in the output of 
+  --full-help.
+
   -A, --dependant=STRING        option that depends on opt-arg
+  
+  This is a text line just to write something in the output
+  
+  Notice that a text line can contain line breaks, just like this very text, 
+  and that, just like all the other texts, it is wrapped by gengetopt 
+  automatically if it's too long.
+  
+  Moreover, text can be specified more than once in the input file.
+
       --very-very-long-option=STRING
                                 the name of this option is long enough to make 
                                   this description begin on a new line
@@ -447,12 +525,16 @@ Usage: test_all_opts [OPTIONS]... [FILES]...
                                   maximum allowed, so this description begin on 
                                   a new line
       --file-save=STRING        save the passed options into a file
+  
+  A text after all options.
 test_groups 1.0
 
 Usage: test_groups [OPTIONS]... [FILES]...
 
   -h, --help              Print help and exit
   -V, --version           Print version and exit
+
+some groups just for testing:
 
  Group: grp1
   an option of this group is required
@@ -653,6 +735,8 @@ Usage: test_multiple [OPTIONS]... [FILES]...
   -l, --long=LONG               long option
   -L, --limited=STRING          limited multiple option
       --limited-interval=STRING limited multiple option (with interval)
+      --big-limited-interval=STRING
+                                limited multiple option (with interval)
       --limited-open-right=STRING
                                 limited multiple option (with interval right 
                                   open)
@@ -712,6 +796,11 @@ Usage: test_values [OPTIONS]... [FILES]...
                                 string option with values and default  
                                   (possible values="foo", "bar", 
                                   "foobar", "barfoo" default=`bar')
+      --string-values-def-argopt[=STRING]
+                                string option with values and default and 
+                                  optional argument  (possible values="foo", 
+                                  "bar", "foobar", "barfoo" 
+                                  default=`foobar')
       --string-values-no-short=STRING
                                 string option with values no short  (possible 
                                   values="foo", "bar", "foobar", 
@@ -719,6 +808,10 @@ Usage: test_values [OPTIONS]... [FILES]...
   -S, --multistring-values=STRING
                                 multiple string option with values  (possible 
                                   values="foo", "bar")
+      --multistring-values-def[=STRING]
+                                multiple string option with values and default  
+                                  (possible values="foo", "bar" 
+                                  default=`foo')
       --multistring-values-no-short=BAR
                                 multiple string option with values no-short  
                                   (possible values="foo", "bar")
@@ -749,6 +842,7 @@ Usage: test_all_opts [OPTIONS]... [FILES]...
   -h, --help                    Print help and exit
       --full-help               Print help, including hidden options, and exit
   -V, --version                 Print version and exit
+  
   -s, --string=STRING           string option
   -i, --int=INT                 int option
   -S, --short=SHORT             short option
@@ -763,8 +857,22 @@ Usage: test_all_opts [OPTIONS]... [FILES]...
       --opt-arg[=STRING]        option with optional arg
   -o, --opt-arg-short[=STRING]  option with optional arg (short)
   -r, --required=STRING         required option
+  
+  Before the dependant option there is a hidden option, so it shouldn't be 
+  visible in the output of --help, but it will be visible in the output of 
+  --full-help.
+
   -H, --hidden=INT              hidden option
   -A, --dependant=STRING        option that depends on opt-arg
+  
+  This is a text line just to write something in the output
+  
+  Notice that a text line can contain line breaks, just like this very text, 
+  and that, just like all the other texts, it is wrapped by gengetopt 
+  automatically if it's too long.
+  
+  Moreover, text can be specified more than once in the input file.
+
       --very-very-long-option=STRING
                                 the name of this option is long enough to make 
                                   this description begin on a new line
@@ -773,3 +881,57 @@ Usage: test_all_opts [OPTIONS]... [FILES]...
                                   maximum allowed, so this description begin on 
                                   a new line
       --file-save=STRING        save the passed options into a file
+  
+  A text after all options.
+test_all_opts 1.0
+
+This is just a test file
+
+to test all possible
+command line type options
+
+Usage: test_all_opts -rSTRING|--required=STRING [-h|--help] [--full-help] [-V|--version] -sSTRING|--string=STRING -iINT|--int=INT -SSHORT|--short=SHORT -lLONG|--long=LONG -fFLOAT|--float=FLOAT -dDOUBLE|--double=DOUBLE -DLONGDOUBLE|--longdouble=LONGDOUBLE -LLONGLONG|--longlong=LONGLONG [-F|--flag] [-u|--function] [--no-short] --opt-arg=STRING -oSTRING|--opt-arg-short=STRING -ASTRING|--dependant=STRING --very-very-long-option=STRING [-y|--assume-multimeth-virtual] --file-save=STRING 
+
+  -h, --help                    Print help and exit
+      --full-help               Print help, including hidden options, and exit
+  -V, --version                 Print version and exit
+  
+  -s, --string=STRING           string option
+  -i, --int=INT                 int option
+  -S, --short=SHORT             short option
+  -l, --long=LONG               long option
+  -f, --float=FLOAT             float option
+  -d, --double=DOUBLE           double option
+  -D, --longdouble=LONGDOUBLE   longdouble option
+  -L, --longlong=LONGLONG       longlong option
+  -F, --flag                    flag option  (default=on)
+  -u, --function                function option
+      --no-short                no short option
+      --opt-arg[=STRING]        option with optional arg
+  -o, --opt-arg-short[=STRING]  option with optional arg (short)
+  -r, --required=STRING         required option
+  
+  Before the dependant option there is a hidden option, so it shouldn't be 
+  visible in the output of --help, but it will be visible in the output of 
+  --full-help.
+
+  -A, --dependant=STRING        option that depends on opt-arg
+  
+  This is a text line just to write something in the output
+  
+  Notice that a text line can contain line breaks, just like this very text, 
+  and that, just like all the other texts, it is wrapped by gengetopt 
+  automatically if it's too long.
+  
+  Moreover, text can be specified more than once in the input file.
+
+      --very-very-long-option=STRING
+                                the name of this option is long enough to make 
+                                  this description begin on a new line
+  -y, --assume-multimeth-virtual
+                                the name of this option is just as long as the 
+                                  maximum allowed, so this description begin on 
+                                  a new line
+      --file-save=STRING        save the passed options into a file
+  
+  A text after all options.

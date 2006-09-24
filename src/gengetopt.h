@@ -27,7 +27,28 @@
 int gengetopt_define_package (char * s) ;
 int gengetopt_define_version (char * s) ;
 int gengetopt_define_purpose (char * s) ;
+/**
+ * Sets the "global" section specification that will be then set
+ * in the following options
+ * @param s The section
+ * @param sd The section description
+ */
 void gengetopt_set_section (const char * s, const char *sd) ;
+
+/**
+ * Sets the "global" text string that will be inserted in
+ * a specific field of the next option
+ * @param desc The text string
+ */
+void gengetopt_set_text (const char * desc) ;
+
+/**
+ * Sets the "global" text string containing the arguments
+ * that complement the command line arguments of gengetopt.
+ * @param args
+ */
+void gengetopt_set_args (const char *args);
+
 int gengetopt_add_group (const char * s, const char *desc, int required) ;
 int gengetopt_has_option (const char * long_opt, char short_opt);
 int gengetopt_add_option (const char * long_opt, char short_opt,

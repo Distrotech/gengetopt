@@ -1,20 +1,20 @@
 # Copyright (C) 1999, 2000, 2001  Free Software Foundation, Inc.
-#  
-# This file is part of GNU gengetopt 
 #
-# GNU gengetopt is free software; you can redistribute it and/or modify 
-# it under the terms of the GNU General Public License as published by 
-# the Free Software Foundation; either version 2, or (at your option) 
-# any later version. 
+# This file is part of GNU gengetopt
 #
-# GNU gengetopt is distributed in the hope that it will be useful, but 
-# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# GNU gengetopt is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# GNU gengetopt is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-# Public License for more details. 
+# Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along 
-# with gengetopt; see the file COPYING. If not, write to the Free Software 
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. 
+# You should have received a copy of the GNU General Public License along
+# with gengetopt; see the file COPYING. If not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 
 # Specification file format:
@@ -43,7 +43,7 @@
 # <argtype>  = string, int, short, long, float, double, longdouble or longlong.
 # <required> = yes or no.
 # <onoff>    = on or off.
-# Comments begins with '#' in any place of the line and ends in the 
+# Comments begins with '#' in any place of the line and ends in the
 # end of line.
 # The third form of option is used if the option does not take an argument;
 # it must not be required.
@@ -57,6 +57,9 @@ package "gengetopt"       # we don't use it: we're using automake
 purpose "This program generates a C function that uses getopt_long function
 to parse the command line options, validate them and fill a struct."
 
+# options that will be added to command line options of gengetopt
+args "--no-handle-version --no-handle-help --no-handle-error --string-parser"
+
 # Options
 option  "input"         i "input file (default std input)"  string typestr="filename"     optional
 option  "func-name"     f "name of generated function" string typestr="name"  default="cmdline_parser"   optional
@@ -67,15 +70,26 @@ option  "c-extension"   c "extension of c file" string typestr="ext" default="c"
 option  "header-extension"   H "extension of header file" string typestr="ext" default="h" optional
 option  "long-help"     l "long usage line in help" optional
 option  "unamed-opts"   u "accept options without names (e.g., file names)" string default="FILES" optional argoptional
-option  "no-handle-help"   n "do not handle --help|-h automatically" optional 
+
+text "\nThe parser generated is thought to be used to parse the command line arguments."
+text "  However, you can also generate parsers for configuration files, or strings"
+text " that contain the arguments to parse, by using the following two options.\n"
+
+option  "conf-parser" C "generate a config file parser" optional
+option  "string-parser" S "generate a string parser (the string contains the command line)" optional
+
+text ""
+
+option  "include-getopt" G "adds the code for getopt_long in the generated C file" optional
+
+option  "no-handle-help"   n "do not handle --help|-h automatically" optional
 option  "no-handle-version"  N  "do not handle --version|-V automatically" optional
 option  "no-handle-error" e "do not exit on errors" optional
 option  "gen-version" g "put gengetopt version in the generated file" flag on
-option  "conf-parser" C "generate a config file parser" optional
-option  "string-parser" S "generate a string parser (the string contains the command line)" optional
-option  "include-getopt" G "adds the code for getopt_long in the generated C file" optional
 option  "set-package" - "set the package name (override package defined in the .ggo file)" string optional
 option  "set-version" - "set the version number (override version defined in the .ggo file)" string optional
 option  "show-help" - "show the output of --help instead of generating code" optional
 option  "show-full-help" - "show the output of --help (including hidden options) instead of generating code" optional
 option  "show-version" - "show the output of --version instead of generating code" optional
+
+text "\nPlease refer to the manual for further explanations."

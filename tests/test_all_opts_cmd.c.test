@@ -29,6 +29,7 @@ const char *gengetopt_args_info_help[] = {
   "  -h, --help                    Print help and exit",
   "      --full-help               Print help, including hidden options, and exit",
   "  -V, --version                 Print version and exit",
+  "  ",
   "  -s, --string=STRING           string option",
   "  -i, --int=INT                 int option",
   "  -S, --short=SHORT             short option",
@@ -43,16 +44,20 @@ const char *gengetopt_args_info_help[] = {
   "      --opt-arg[=STRING]        option with optional arg",
   "  -o, --opt-arg-short[=STRING]  option with optional arg (short)",
   "  -r, --required=STRING         required option",
+  "  \n  Before the dependant option there is a hidden option, so it shouldn't be \n  visible in the output of --help, but it will be visible in the output of \n  --full-help.\n",
   "  -A, --dependant=STRING        option that depends on opt-arg",
+  "  \n  This is a text line just to write something in the output\n  \n  Notice that a text line can contain line breaks, just like this very text, \n  and that, just like all the other texts, it is wrapped by gengetopt \n  automatically if it's too long.\n  \n  Moreover, text can be specified more than once in the input file.\n",
   "      --very-very-long-option=STRING\n                                the name of this option is long enough to make \n                                  this description begin on a new line",
   "  -y, --assume-multimeth-virtual\n                                the name of this option is just as long as the \n                                  maximum allowed, so this description begin on \n                                  a new line",
   "      --file-save=STRING        save the passed options into a file",
+  "  \n  A text after all options.",
     0
 };
 const char *gengetopt_args_info_full_help[] = {
   "  -h, --help                    Print help and exit",
   "      --full-help               Print help, including hidden options, and exit",
   "  -V, --version                 Print version and exit",
+  "  ",
   "  -s, --string=STRING           string option",
   "  -i, --int=INT                 int option",
   "  -S, --short=SHORT             short option",
@@ -67,11 +72,14 @@ const char *gengetopt_args_info_full_help[] = {
   "      --opt-arg[=STRING]        option with optional arg",
   "  -o, --opt-arg-short[=STRING]  option with optional arg (short)",
   "  -r, --required=STRING         required option",
+  "  \n  Before the dependant option there is a hidden option, so it shouldn't be \n  visible in the output of --help, but it will be visible in the output of \n  --full-help.\n",
   "  -H, --hidden=INT              hidden option",
   "  -A, --dependant=STRING        option that depends on opt-arg",
+  "  \n  This is a text line just to write something in the output\n  \n  Notice that a text line can contain line breaks, just like this very text, \n  and that, just like all the other texts, it is wrapped by gengetopt \n  automatically if it's too long.\n  \n  Moreover, text can be specified more than once in the input file.\n",
   "      --very-very-long-option=STRING\n                                the name of this option is long enough to make \n                                  this description begin on a new line",
   "  -y, --assume-multimeth-virtual\n                                the name of this option is just as long as the \n                                  maximum allowed, so this description begin on \n                                  a new line",
   "      --file-save=STRING        save the passed options into a file",
+  "  \n  A text after all options.",
     0
 };
 

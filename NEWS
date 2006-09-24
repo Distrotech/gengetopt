@@ -4,6 +4,17 @@ Copyright (C) 1999-2006  Free Software Foundation
 
 Please send gengetopt bug reports to bug-gengetopt at gnu.org
 
+Version 2.18
+
+   * default values for enumerated options with optional arguments are
+     correctly handled.
+   * sections are printed in the help output before group specifications
+   * can insert text in the output of --help
+   * can specify gengetopt command line options in the input file itself
+     with "args" specification
+   * fixed bug in parsing of multiple option dimensions
+   * fixed bug in generation of long help string
+
 Version 2.17
 
    * fixed bug in generating parser where no multiple option is of
@@ -132,7 +143,7 @@ Version 2.11
 Version 2.10
 
    * correctly refer to the provided strdup if it is not in the
-     standard library (thanks to Bert Deknuydt) 
+     standard library (thanks to Bert Deknuydt)
    * handle spaces in group names (reported by Matthew K. Junker)
    * package and version defined in a .ggo file have the precedence
      over PACKAGE and VERSION (reported by Kat Manton)

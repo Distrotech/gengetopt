@@ -56,7 +56,7 @@ void check_result(int o, gengetopt_option *opt)
         ostringstream err;
 
 	switch (o) {
-    case NOT_ENOUGH_MEMORY: 
+    case NOT_ENOUGH_MEMORY:
         yyerror (opt, "not enough memory");
     	break;
     case REQ_LONG_OPTION:
@@ -67,16 +67,16 @@ void check_result(int o, gengetopt_option *opt)
         err << "short option redefined \'" << opt->short_opt << "\'";
         yyerror (opt, err.str().c_str());
         break;
-    case FOUND_BUG: 
+    case FOUND_BUG:
         yyerror (opt, "bug found!!");
         break;
-    case GROUP_UNDEFINED: 
+    case GROUP_UNDEFINED:
         yyerror (opt, "group undefined");
         break;
-    case INVALID_DEFAULT_VALUE: 
+    case INVALID_DEFAULT_VALUE:
         yyerror (opt, "invalid default value");
         break;
-    case NOT_REQUESTED_TYPE: 
+    case NOT_REQUESTED_TYPE:
         yyerror (opt, "type specification not requested");
         break;
     case NOT_VALID_SPECIFICATION:
@@ -144,6 +144,8 @@ struct multiple_size
 %token              TOK_TYPESTR		"typestr"
 %token              TOK_SECTION		"section"
 %token              TOK_SECTIONDESC	"sectiondesc"
+%token              TOK_TEXT    	"text"
+%token              TOK_ARGS    	"args"
 %token              TOK_VALUES          "values"
 %token              TOK_HIDDEN      "hidden"
 %token              TOK_DEPENDON      "dependon"
@@ -176,9 +178,11 @@ input
 statement
 	: package
 	| version
+	| args
 	| purpose
-    | sectiondef
+        | sectiondef
 	| option
+	| text
 	| groupoption
 	| groupdef
 	;
@@ -251,6 +255,20 @@ sectiondef
               }
           ;
 
+text
+  : TOK_TEXT quoted_string
+{
+  gengetopt_set_text($2);
+}
+;
+
+args
+  : TOK_ARGS TOK_STRING
+{
+  gengetopt_set_args($2);
+}
+;
+
 groupdef
 	: TOK_DEFGROUP TOK_STRING opt_groupdesc optional_yesno
 	    {
@@ -308,49 +326,49 @@ quoted_string
 	| TOK_STRING
 	;
 
-option_parts: option_parts opt_yesno 
-			  { 
-			  	$$ = $1; 
+option_parts: option_parts opt_yesno
+			  {
+			  	$$ = $1;
 			  	$$->required = $2;
 			  }
-			| option_parts TOK_ARGTYPE 
-			  { 
-			  	$$ = $1; 
+			| option_parts TOK_ARGTYPE
+			  {
+			  	$$ = $1;
 			  	$$->type = $2;
 			  }
 			| option_parts TOK_TYPESTR '=' TOK_STRING
-			  { 
-			  	$$ = $1; 
+			  {
+			  	$$ = $1;
 			  	$$->type_str = strdup($4);
 			  }
 			| option_parts TOK_VALUES '=' listofvalues
-			  { 
-			  	$$ = $1; 
+			  {
+			  	$$ = $1;
 			  	$$->acceptedvalues = $4;
 			  }
 			| option_parts TOK_DEFAULT '=' TOK_STRING
-			  { 
-			  	$$ = $1; 
+			  {
+			  	$$ = $1;
 			  	$$->default_string = strdup($4);
 			  }
             | option_parts TOK_GROUP '=' TOK_STRING
-              { 
-                $$ = $1; 
+              {
+                $$ = $1;
                 $$->group_value = strdup($4);
               }
             | option_parts TOK_DEPENDON '=' TOK_STRING
-              { 
-                $$ = $1; 
+              {
+                $$ = $1;
                 $$->dependon = strdup($4);
               }
 			| option_parts TOK_ARGOPTIONAL
-			  { 
-			  	$$ = $1; 
+			  {
+			  	$$ = $1;
 			  	$$->arg_is_optional = true;
 			  }
 			| option_parts TOK_MULTIPLE multiple_size
-			  { 
-			  	$$ = $1; 
+			  {
+			  	$$ = $1;
 			  	$$->multiple = true;
                 $$->multiple_min = $3->min;
                 $$->multiple_max = $3->max;

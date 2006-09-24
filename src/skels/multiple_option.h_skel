@@ -14,7 +14,7 @@ case '@short_option@':	/* @option_comment@.  */
   while (1)
     {
 @IF@ option_has_values @THEN@
-      if ((found = check_possible_values(multi_token, @option_values@)) < 0)
+      if ((found = check_possible_values((multi_token ? multi_token : @IF@ defaultval:string != "" @THEN@ "@defaultval@" @ELSE@ 0 @ENDIF@), @option_values@)) < 0)
         {
           fprintf (stderr, "%s: %s argument, \"%s\", for option `--@long_option@'@if@ has_short_option @then@ (`-@short_option@')@endif@%s\n", @package_var_name@, (found == -2) ? "ambiguous" : "invalid", multi_token, (additional_error ? additional_error : ""));
           free (multi_token);

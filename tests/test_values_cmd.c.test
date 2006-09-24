@@ -30,8 +30,10 @@ const char *gengetopt_args_info_help[] = {
   "  -V, --version                 Print version and exit",
   "  -s, --string-values=STRING    string option with values  (possible \n                                  values=\"foo\", \"foa\", \"bar\", \"foobar\", \n                                  \"barfoo\")",
   "      --string-values-def=STRING\n                                string option with values and default  \n                                  (possible values=\"foo\", \"bar\", \n                                  \"foobar\", \"barfoo\" default=`bar')",
+  "      --string-values-def-argopt[=STRING]\n                                string option with values and default and \n                                  optional argument  (possible values=\"foo\", \n                                  \"bar\", \"foobar\", \"barfoo\" \n                                  default=`foobar')",
   "      --string-values-no-short=STRING\n                                string option with values no short  (possible \n                                  values=\"foo\", \"bar\", \"foobar\", \n                                  \"barfoo\")",
   "  -S, --multistring-values=STRING\n                                multiple string option with values  (possible \n                                  values=\"foo\", \"bar\")",
+  "      --multistring-values-def[=STRING]\n                                multiple string option with values and default  \n                                  (possible values=\"foo\", \"bar\" \n                                  default=`foo')",
   "      --multistring-values-no-short=BAR\n                                multiple string option with values no-short  \n                                  (possible values=\"foo\", \"bar\")",
   "\n Group: group1",
   "      --string-values-group=FOO group string option with values and default  \n                                  (possible values=\"foo\", \"bar\", \n                                  \"foobar\", \"barfoo\" default=`bar')",
@@ -58,8 +60,10 @@ struct string_list
 
 char *test_values_cmd_parser_string_values_values[] = {"foo", "foa", "bar", "foobar", "barfoo", 0} ;	/* Possible values for string-values.  */
 char *test_values_cmd_parser_string_values_def_values[] = {"foo", "bar", "foobar", "barfoo", 0} ;	/* Possible values for string-values-def.  */
+char *test_values_cmd_parser_string_values_def_argopt_values[] = {"foo", "bar", "foobar", "barfoo", 0} ;	/* Possible values for string-values-def-argopt.  */
 char *test_values_cmd_parser_string_values_no_short_values[] = {"foo", "bar", "foobar", "barfoo", 0} ;	/* Possible values for string-values-no-short.  */
 char *test_values_cmd_parser_multistring_values_values[] = {"foo", "bar", 0} ;	/* Possible values for multistring-values.  */
+char *test_values_cmd_parser_multistring_values_def_values[] = {"foo", "bar", 0} ;	/* Possible values for multistring-values-def.  */
 char *test_values_cmd_parser_multistring_values_no_short_values[] = {"foo", "bar", 0} ;	/* Possible values for multistring-values-no-short.  */
 char *test_values_cmd_parser_string_values_group_values[] = {"foo", "bar", "foobar", "barfoo", 0} ;	/* Possible values for string-values-group.  */
 
@@ -73,8 +77,10 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->version_given = 0 ;
   args_info->string_values_given = 0 ;
   args_info->string_values_def_given = 0 ;
+  args_info->string_values_def_argopt_given = 0 ;
   args_info->string_values_no_short_given = 0 ;
   args_info->multistring_values_given = 0 ;
+  args_info->multistring_values_def_given = 0 ;
   args_info->multistring_values_no_short_given = 0 ;
   args_info->string_values_group_given = 0 ;
   args_info->group1_group_counter = 0 ;
@@ -87,10 +93,14 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->string_values_orig = NULL;
   args_info->string_values_def_arg = gengetopt_strdup ("bar");
   args_info->string_values_def_orig = NULL;
+  args_info->string_values_def_argopt_arg = gengetopt_strdup ("foobar");
+  args_info->string_values_def_argopt_orig = NULL;
   args_info->string_values_no_short_arg = NULL;
   args_info->string_values_no_short_orig = NULL;
   args_info->multistring_values_arg = NULL;
   args_info->multistring_values_orig = NULL;
+  args_info->multistring_values_def_arg = NULL;
+  args_info->multistring_values_def_orig = NULL;
   args_info->multistring_values_no_short_arg = NULL;
   args_info->multistring_values_no_short_orig = NULL;
   args_info->string_values_group_arg = gengetopt_strdup ("bar");
@@ -105,14 +115,18 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->string_values_help = gengetopt_args_info_help[2] ;
   args_info->string_values_def_help = gengetopt_args_info_help[3] ;
-  args_info->string_values_no_short_help = gengetopt_args_info_help[4] ;
-  args_info->multistring_values_help = gengetopt_args_info_help[5] ;
+  args_info->string_values_def_argopt_help = gengetopt_args_info_help[4] ;
+  args_info->string_values_no_short_help = gengetopt_args_info_help[5] ;
+  args_info->multistring_values_help = gengetopt_args_info_help[6] ;
   args_info->multistring_values_min = -1;
   args_info->multistring_values_max = -1;
-  args_info->multistring_values_no_short_help = gengetopt_args_info_help[6] ;
+  args_info->multistring_values_def_help = gengetopt_args_info_help[7] ;
+  args_info->multistring_values_def_min = -1;
+  args_info->multistring_values_def_max = -1;
+  args_info->multistring_values_no_short_help = gengetopt_args_info_help[8] ;
   args_info->multistring_values_no_short_min = -1;
   args_info->multistring_values_no_short_max = -1;
-  args_info->string_values_group_help = gengetopt_args_info_help[7] ;
+  args_info->string_values_group_help = gengetopt_args_info_help[9] ;
   
 }
 
@@ -172,6 +186,16 @@ test_values_cmd_parser_release (struct gengetopt_args_info *args_info)
       free (args_info->string_values_def_orig); /* free previous argument */
       args_info->string_values_def_orig = 0;
     }
+  if (args_info->string_values_def_argopt_arg)
+    {
+      free (args_info->string_values_def_argopt_arg); /* free previous argument */
+      args_info->string_values_def_argopt_arg = 0;
+    }
+  if (args_info->string_values_def_argopt_orig)
+    {
+      free (args_info->string_values_def_argopt_orig); /* free previous argument */
+      args_info->string_values_def_argopt_orig = 0;
+    }
   if (args_info->string_values_no_short_arg)
     {
       free (args_info->string_values_no_short_arg); /* free previous argument */
@@ -203,6 +227,28 @@ test_values_cmd_parser_release (struct gengetopt_args_info *args_info)
       args_info->multistring_values_arg = 0;
       free (args_info->multistring_values_orig); /* free previous argument */
       args_info->multistring_values_orig = 0;
+    }
+  if (args_info->multistring_values_def_arg)
+    {
+      for (i = 0; i < args_info->multistring_values_def_given; ++i)
+        {
+          if (args_info->multistring_values_def_arg [i])
+            {
+              free (args_info->multistring_values_def_arg [i]); /* free previous argument */
+              args_info->multistring_values_def_arg [i] = 0;
+            }
+          if (args_info->multistring_values_def_orig [i])
+            {
+              free (args_info->multistring_values_def_orig [i]); /* free previous argument */
+              args_info->multistring_values_def_orig [i] = 0;
+            }
+        }
+      if (args_info->multistring_values_def_arg [0])
+        free (args_info->multistring_values_def_arg [0]); /* free default string */
+      free (args_info->multistring_values_def_arg); /* free previous argument */
+      args_info->multistring_values_def_arg = 0;
+      free (args_info->multistring_values_def_orig); /* free previous argument */
+      args_info->multistring_values_def_orig = 0;
     }
   if (args_info->multistring_values_no_short_arg)
     {
@@ -280,6 +326,13 @@ test_values_cmd_parser_file_save(const char *filename, struct gengetopt_args_inf
       fprintf(outfile, "%s\n", "string-values-def");
     }
   }
+  if (args_info->string_values_def_argopt_given) {
+    if (args_info->string_values_def_argopt_orig) {
+      fprintf(outfile, "%s=\"%s\"\n", "string-values-def-argopt", args_info->string_values_def_argopt_orig);
+    } else {
+      fprintf(outfile, "%s\n", "string-values-def-argopt");
+    }
+  }
   if (args_info->string_values_no_short_given) {
     if (args_info->string_values_no_short_orig) {
       fprintf(outfile, "%s=\"%s\"\n", "string-values-no-short", args_info->string_values_no_short_orig);
@@ -294,6 +347,16 @@ test_values_cmd_parser_file_save(const char *filename, struct gengetopt_args_inf
           if (args_info->multistring_values_orig [i])
             {
               fprintf(outfile, "%s=\"%s\"\n", "multistring-values", args_info->multistring_values_orig [i]);
+            }
+        }
+    }
+  if (args_info->multistring_values_def_orig)
+    {
+      for (i = 0; i < args_info->multistring_values_def_given; ++i)
+        {
+          if (args_info->multistring_values_def_orig [i])
+            {
+              fprintf(outfile, "%s=\"%s\"\n", "multistring-values-def", args_info->multistring_values_def_orig [i]);
             }
         }
     }
@@ -583,6 +646,9 @@ test_values_cmd_parser_required2 (struct gengetopt_args_info *args_info, const c
   if (check_multiple_option_occurrences(prog_name, args_info->multistring_values_given, args_info->multistring_values_min, args_info->multistring_values_max, "'--multistring-values' ('-S')"))
      error = 1;
   
+  if (check_multiple_option_occurrences(prog_name, args_info->multistring_values_def_given, args_info->multistring_values_def_min, args_info->multistring_values_def_max, "'--multistring-values-def'"))
+     error = 1;
+  
   if (check_multiple_option_occurrences(prog_name, args_info->multistring_values_no_short_given, args_info->multistring_values_no_short_min, args_info->multistring_values_no_short_max, "'--multistring-values-no-short'"))
      error = 1;
   
@@ -601,6 +667,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
   int i;        /* Counter */
 
   struct string_list * multistring_values_list = NULL,* multistring_values_new = NULL;
+  struct string_list * multistring_values_def_list = NULL,* multistring_values_def_new = NULL;
   struct string_list * multistring_values_no_short_list = NULL,* multistring_values_no_short_new = NULL;
   int error = 0;
   struct gengetopt_args_info local_args_info;
@@ -626,8 +693,10 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
         { "version",	0, NULL, 'V' },
         { "string-values",	1, NULL, 's' },
         { "string-values-def",	1, NULL, 0 },
+        { "string-values-def-argopt",	2, NULL, 0 },
         { "string-values-no-short",	1, NULL, 0 },
         { "multistring-values",	1, NULL, 'S' },
+        { "multistring-values-def",	2, NULL, 0 },
         { "multistring-values-no-short",	1, NULL, 0 },
         { "string-values-group",	1, NULL, 0 },
         { NULL,	0, NULL, 0 }
@@ -656,7 +725,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
               fprintf (stderr, "%s: `--string-values' (`-s') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
             }
-          if ((found = check_possible_values(optarg, test_values_cmd_parser_string_values_values)) < 0)
+          if ((found = check_possible_values((optarg ? optarg : 0 ), test_values_cmd_parser_string_values_values)) < 0)
             {
               fprintf (stderr, "%s: %s argument, \"%s\", for option `--string-values' (`-s')%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", optarg, (additional_error ? additional_error : ""));
               goto failure;
@@ -681,7 +750,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
         
           while (1)
             {
-              if ((found = check_possible_values(multi_token, test_values_cmd_parser_multistring_values_values)) < 0)
+              if ((found = check_possible_values((multi_token ? multi_token : 0 ), test_values_cmd_parser_multistring_values_values)) < 0)
                 {
                   fprintf (stderr, "%s: %s argument, \"%s\", for option `--multistring-values' (`-S')%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", multi_token, (additional_error ? additional_error : ""));
                   free (multi_token);
@@ -715,7 +784,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
                 fprintf (stderr, "%s: `--string-values-def' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
                 goto failure;
               }
-            if ((found = check_possible_values(optarg, test_values_cmd_parser_string_values_def_values)) < 0)
+            if ((found = check_possible_values((optarg ? optarg : 0 ), test_values_cmd_parser_string_values_def_values)) < 0)
               {
                 fprintf (stderr, "%s: %s argument, \"%s\", for option `--string-values-def'%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", optarg, (additional_error ? additional_error : ""));
                 goto failure;
@@ -731,6 +800,33 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
               free (args_info->string_values_def_orig); /* free previous string */
             args_info->string_values_def_orig = gengetopt_strdup (optarg);
           }
+          /* string option with values and default and optional argument.  */
+          else if (strcmp (long_options[option_index].name, "string-values-def-argopt") == 0)
+          {
+            if (local_args_info.string_values_def_argopt_given)
+              {
+                fprintf (stderr, "%s: `--string-values-def-argopt' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
+                goto failure;
+              }
+            if ((found = check_possible_values((optarg ? optarg : "foobar" ), test_values_cmd_parser_string_values_def_argopt_values)) < 0)
+              {
+                fprintf (stderr, "%s: %s argument, \"%s\", for option `--string-values-def-argopt'%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", optarg, (additional_error ? additional_error : ""));
+                goto failure;
+              }
+            if (args_info->string_values_def_argopt_given && ! override)
+              continue;
+            local_args_info.string_values_def_argopt_given = 1;
+            args_info->string_values_def_argopt_given = 1;
+            if (test_values_cmd_parser_string_values_def_argopt_values[found])
+              {
+                if (args_info->string_values_def_argopt_arg)
+                  free (args_info->string_values_def_argopt_arg); /* free previous string */
+                args_info->string_values_def_argopt_arg = gengetopt_strdup (test_values_cmd_parser_string_values_def_argopt_values[found]);
+                if (args_info->string_values_def_argopt_orig)
+                  free (args_info->string_values_def_argopt_orig); /* free previous string */
+                args_info->string_values_def_argopt_orig = gengetopt_strdup (optarg);
+              }
+          }
           /* string option with values no short.  */
           else if (strcmp (long_options[option_index].name, "string-values-no-short") == 0)
           {
@@ -739,7 +835,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
                 fprintf (stderr, "%s: `--string-values-no-short' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
                 goto failure;
               }
-            if ((found = check_possible_values(optarg, test_values_cmd_parser_string_values_no_short_values)) < 0)
+            if ((found = check_possible_values((optarg ? optarg : 0 ), test_values_cmd_parser_string_values_no_short_values)) < 0)
               {
                 fprintf (stderr, "%s: %s argument, \"%s\", for option `--string-values-no-short'%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", optarg, (additional_error ? additional_error : ""));
                 goto failure;
@@ -755,6 +851,45 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
               free (args_info->string_values_no_short_orig); /* free previous string */
             args_info->string_values_no_short_orig = gengetopt_strdup (optarg);
           }
+          /* multiple string option with values and default.  */
+          else if (strcmp (long_options[option_index].name, "multistring-values-def") == 0)
+          {
+            local_args_info.multistring_values_def_given++;
+          
+            multi_token = get_multiple_arg_token(optarg);
+            multi_next = get_multiple_arg_token_next (optarg);
+          
+            while (1)
+              {
+                if ((found = check_possible_values((multi_token ? multi_token : "foo" ), test_values_cmd_parser_multistring_values_def_values)) < 0)
+                  {
+                    fprintf (stderr, "%s: %s argument, \"%s\", for option `--multistring-values-def'%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", multi_token, (additional_error ? additional_error : ""));
+                    free (multi_token);
+                    goto failure;
+                  }
+          
+                multistring_values_def_new = (struct string_list *) malloc (sizeof (struct string_list));
+                multistring_values_def_new->next = multistring_values_def_list;
+                multistring_values_def_list = multistring_values_def_new;
+                multistring_values_def_new->arg = gengetopt_strdup (NULL);
+                multistring_values_def_new->orig = NULL;
+                if (test_values_cmd_parser_multistring_values_def_values[found])
+                  {
+                    multistring_values_def_new->arg = gengetopt_strdup (test_values_cmd_parser_multistring_values_def_values[found]);
+                    multistring_values_def_new->orig = multi_token;
+                  }
+          
+                if (multi_next)
+                  {
+                    multi_token = get_multiple_arg_token(multi_next);
+                    multi_next = get_multiple_arg_token_next (multi_next);
+                    local_args_info.multistring_values_def_given++;
+                  }
+                else
+                  break;
+              }
+            break;
+          }
           /* multiple string option with values no-short.  */
           else if (strcmp (long_options[option_index].name, "multistring-values-no-short") == 0)
           {
@@ -765,7 +900,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           
             while (1)
               {
-                if ((found = check_possible_values(multi_token, test_values_cmd_parser_multistring_values_no_short_values)) < 0)
+                if ((found = check_possible_values((multi_token ? multi_token : 0 ), test_values_cmd_parser_multistring_values_no_short_values)) < 0)
                   {
                     fprintf (stderr, "%s: %s argument, \"%s\", for option `--multistring-values-no-short'%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", multi_token, (additional_error ? additional_error : ""));
                     free (multi_token);
@@ -797,7 +932,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
                 fprintf (stderr, "%s: `--string-values-group' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
                 goto failure;
               }
-            if ((found = check_possible_values(optarg, test_values_cmd_parser_string_values_group_values)) < 0)
+            if ((found = check_possible_values((optarg ? optarg : 0 ), test_values_cmd_parser_string_values_group_values)) < 0)
               {
                 fprintf (stderr, "%s: %s argument, \"%s\", for option `--string-values-group'%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", optarg, (additional_error ? additional_error : ""));
                 goto failure;
@@ -850,6 +985,31 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
         }
     }
   
+  if (local_args_info.multistring_values_def_given && multistring_values_def_list)
+    {
+      struct string_list *tmp;
+      args_info->multistring_values_def_arg = (char * *) realloc (args_info->multistring_values_def_arg, (args_info->multistring_values_def_given + local_args_info.multistring_values_def_given) * sizeof (char *));
+      args_info->multistring_values_def_orig = (char **) realloc (args_info->multistring_values_def_orig, (args_info->multistring_values_def_given + local_args_info.multistring_values_def_given) * sizeof (char *));
+      for (i = (local_args_info.multistring_values_def_given - 1); i >= 0; --i)
+        {
+          tmp = multistring_values_def_list;
+          args_info->multistring_values_def_arg [i + args_info->multistring_values_def_given] = multistring_values_def_list->arg;
+          args_info->multistring_values_def_orig [i + args_info->multistring_values_def_given] = multistring_values_def_list->orig;
+          multistring_values_def_list = multistring_values_def_list->next;
+          free (tmp);
+        }
+    }
+  else /* set the default value */
+    {
+      if (! args_info->multistring_values_def_arg && ! args_info->multistring_values_def_given)
+        {
+          args_info->multistring_values_def_arg = (char * *) malloc (sizeof (char *));
+          args_info->multistring_values_def_arg [0] = gengetopt_strdup("foo");
+          args_info->multistring_values_def_orig = (char **) malloc (sizeof (char *));
+          args_info->multistring_values_def_orig [0] = NULL;
+        }
+    }
+  
   if (local_args_info.multistring_values_no_short_given && multistring_values_no_short_list)
     {
       struct string_list *tmp;
@@ -868,6 +1028,8 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
 
   args_info->multistring_values_given += local_args_info.multistring_values_given;
   local_args_info.multistring_values_given = 0;
+  args_info->multistring_values_def_given += local_args_info.multistring_values_def_given;
+  local_args_info.multistring_values_def_given = 0;
   args_info->multistring_values_no_short_given += local_args_info.multistring_values_no_short_given;
   local_args_info.multistring_values_no_short_given = 0;
   
@@ -917,6 +1079,18 @@ failure:
           free (multistring_values_list->arg);
           free (multistring_values_list->orig);
           multistring_values_list = multistring_values_list->next;
+          free (tmp);
+        }
+    }
+  if (multistring_values_def_list)
+    {
+      struct string_list *tmp;
+      while (multistring_values_def_list)
+        {
+          tmp = multistring_values_def_list;
+          free (multistring_values_def_list->arg);
+          free (multistring_values_def_list->orig);
+          multistring_values_def_list = multistring_values_def_list->next;
           free (tmp);
         }
     }

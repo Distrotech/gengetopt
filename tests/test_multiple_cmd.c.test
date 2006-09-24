@@ -34,6 +34,7 @@ const char *gengetopt_args_info_help[] = {
   "  -l, --long=LONG               long option",
   "  -L, --limited=STRING          limited multiple option",
   "      --limited-interval=STRING limited multiple option (with interval)",
+  "      --big-limited-interval=STRING\n                                limited multiple option (with interval)",
   "      --limited-open-right=STRING\n                                limited multiple option (with interval right \n                                  open)",
   "      --limited-open-left=STRING\n                                limited multiple option (with interval left \n                                  open)",
   "  -f, --float=FLOAT             float option  (default=`15000')",
@@ -106,6 +107,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->long_given = 0 ;
   args_info->limited_given = 0 ;
   args_info->limited_interval_given = 0 ;
+  args_info->big_limited_interval_given = 0 ;
   args_info->limited_open_right_given = 0 ;
   args_info->limited_open_left_given = 0 ;
   args_info->float_given = 0 ;
@@ -132,6 +134,8 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->limited_orig = NULL;
   args_info->limited_interval_arg = NULL;
   args_info->limited_interval_orig = NULL;
+  args_info->big_limited_interval_arg = NULL;
+  args_info->big_limited_interval_orig = NULL;
   args_info->limited_open_right_arg = NULL;
   args_info->limited_open_right_orig = NULL;
   args_info->limited_open_left_arg = NULL;
@@ -172,31 +176,34 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->limited_interval_help = gengetopt_args_info_help[7] ;
   args_info->limited_interval_min = 1;
   args_info->limited_interval_max = 3;
-  args_info->limited_open_right_help = gengetopt_args_info_help[8] ;
+  args_info->big_limited_interval_help = gengetopt_args_info_help[8] ;
+  args_info->big_limited_interval_min = 1;
+  args_info->big_limited_interval_max = 30;
+  args_info->limited_open_right_help = gengetopt_args_info_help[9] ;
   args_info->limited_open_right_min = 3;
   args_info->limited_open_right_max = -1;
-  args_info->limited_open_left_help = gengetopt_args_info_help[9] ;
+  args_info->limited_open_left_help = gengetopt_args_info_help[10] ;
   args_info->limited_open_left_min = -1;
   args_info->limited_open_left_max = 3;
-  args_info->float_help = gengetopt_args_info_help[10] ;
+  args_info->float_help = gengetopt_args_info_help[11] ;
   args_info->float_min = -1;
   args_info->float_max = -1;
-  args_info->no_short_opt_help = gengetopt_args_info_help[11] ;
+  args_info->no_short_opt_help = gengetopt_args_info_help[12] ;
   args_info->no_short_opt_min = -1;
   args_info->no_short_opt_max = -1;
-  args_info->noarg_help = gengetopt_args_info_help[12] ;
+  args_info->noarg_help = gengetopt_args_info_help[13] ;
   args_info->noarg_min = -1;
   args_info->noarg_max = -1;
-  args_info->noarg_noshort_help = gengetopt_args_info_help[13] ;
+  args_info->noarg_noshort_help = gengetopt_args_info_help[14] ;
   args_info->noarg_noshort_min = -1;
   args_info->noarg_noshort_max = -1;
-  args_info->optarg_help = gengetopt_args_info_help[14] ;
+  args_info->optarg_help = gengetopt_args_info_help[15] ;
   args_info->optarg_min = -1;
   args_info->optarg_max = -1;
-  args_info->optarg_noshort_help = gengetopt_args_info_help[15] ;
+  args_info->optarg_noshort_help = gengetopt_args_info_help[16] ;
   args_info->optarg_noshort_min = -1;
   args_info->optarg_noshort_max = -1;
-  args_info->file_save_help = gengetopt_args_info_help[16] ;
+  args_info->file_save_help = gengetopt_args_info_help[17] ;
   
 }
 
@@ -346,6 +353,28 @@ test_multiple_cmd_parser_release (struct gengetopt_args_info *args_info)
       args_info->limited_interval_arg = 0;
       free (args_info->limited_interval_orig); /* free previous argument */
       args_info->limited_interval_orig = 0;
+    }
+  if (args_info->big_limited_interval_arg)
+    {
+      for (i = 0; i < args_info->big_limited_interval_given; ++i)
+        {
+          if (args_info->big_limited_interval_arg [i])
+            {
+              free (args_info->big_limited_interval_arg [i]); /* free previous argument */
+              args_info->big_limited_interval_arg [i] = 0;
+            }
+          if (args_info->big_limited_interval_orig [i])
+            {
+              free (args_info->big_limited_interval_orig [i]); /* free previous argument */
+              args_info->big_limited_interval_orig [i] = 0;
+            }
+        }
+      if (args_info->big_limited_interval_arg [0])
+        free (args_info->big_limited_interval_arg [0]); /* free default string */
+      free (args_info->big_limited_interval_arg); /* free previous argument */
+      args_info->big_limited_interval_arg = 0;
+      free (args_info->big_limited_interval_orig); /* free previous argument */
+      args_info->big_limited_interval_orig = 0;
     }
   if (args_info->limited_open_right_arg)
     {
@@ -569,6 +598,16 @@ test_multiple_cmd_parser_file_save(const char *filename, struct gengetopt_args_i
           if (args_info->limited_interval_orig [i])
             {
               fprintf(outfile, "%s=\"%s\"\n", "limited-interval", args_info->limited_interval_orig [i]);
+            }
+        }
+    }
+  if (args_info->big_limited_interval_orig)
+    {
+      for (i = 0; i < args_info->big_limited_interval_given; ++i)
+        {
+          if (args_info->big_limited_interval_orig [i])
+            {
+              fprintf(outfile, "%s=\"%s\"\n", "big-limited-interval", args_info->big_limited_interval_orig [i]);
             }
         }
     }
@@ -881,6 +920,9 @@ test_multiple_cmd_parser_required2 (struct gengetopt_args_info *args_info, const
   if (check_multiple_option_occurrences(prog_name, args_info->limited_interval_given, args_info->limited_interval_min, args_info->limited_interval_max, "'--limited-interval'"))
      error = 1;
   
+  if (check_multiple_option_occurrences(prog_name, args_info->big_limited_interval_given, args_info->big_limited_interval_min, args_info->big_limited_interval_max, "'--big-limited-interval'"))
+     error = 1;
+  
   if (check_multiple_option_occurrences(prog_name, args_info->limited_open_right_given, args_info->limited_open_right_min, args_info->limited_open_right_max, "'--limited-open-right'"))
      error = 1;
   
@@ -925,6 +967,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
   struct long_list * long_list = NULL,* long_new = NULL;
   struct string_list * limited_list = NULL,* limited_new = NULL;
   struct string_list * limited_interval_list = NULL,* limited_interval_new = NULL;
+  struct string_list * big_limited_interval_list = NULL,* big_limited_interval_new = NULL;
   struct string_list * limited_open_right_list = NULL,* limited_open_right_new = NULL;
   struct string_list * limited_open_left_list = NULL,* limited_open_left_new = NULL;
   struct float_list * float_list = NULL,* float_new = NULL;
@@ -958,6 +1001,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         { "long",	1, NULL, 'l' },
         { "limited",	1, NULL, 'L' },
         { "limited-interval",	1, NULL, 0 },
+        { "big-limited-interval",	1, NULL, 0 },
         { "limited-open-right",	1, NULL, 0 },
         { "limited-open-left",	1, NULL, 0 },
         { "float",	1, NULL, 'f' },
@@ -1217,6 +1261,33 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
               }
             break;
           }
+          /* limited multiple option (with interval).  */
+          else if (strcmp (long_options[option_index].name, "big-limited-interval") == 0)
+          {
+            local_args_info.big_limited_interval_given++;
+          
+            multi_token = get_multiple_arg_token(optarg);
+            multi_next = get_multiple_arg_token_next (optarg);
+          
+            while (1)
+              {
+                big_limited_interval_new = (struct string_list *) malloc (sizeof (struct string_list));
+                big_limited_interval_new->next = big_limited_interval_list;
+                big_limited_interval_list = big_limited_interval_new;
+                big_limited_interval_new->arg = gengetopt_strdup (multi_token);
+                big_limited_interval_new->orig = multi_token;
+          
+                if (multi_next)
+                  {
+                    multi_token = get_multiple_arg_token(multi_next);
+                    multi_next = get_multiple_arg_token_next (multi_next);
+                    local_args_info.big_limited_interval_given++;
+                  }
+                else
+                  break;
+              }
+            break;
+          }
           /* limited multiple option (with interval right open).  */
           else if (strcmp (long_options[option_index].name, "limited-open-right") == 0)
           {
@@ -1469,6 +1540,21 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         }
     }
   
+  if (local_args_info.big_limited_interval_given && big_limited_interval_list)
+    {
+      struct string_list *tmp;
+      args_info->big_limited_interval_arg = (char * *) realloc (args_info->big_limited_interval_arg, (args_info->big_limited_interval_given + local_args_info.big_limited_interval_given) * sizeof (char *));
+      args_info->big_limited_interval_orig = (char **) realloc (args_info->big_limited_interval_orig, (args_info->big_limited_interval_given + local_args_info.big_limited_interval_given) * sizeof (char *));
+      for (i = (local_args_info.big_limited_interval_given - 1); i >= 0; --i)
+        {
+          tmp = big_limited_interval_list;
+          args_info->big_limited_interval_arg [i + args_info->big_limited_interval_given] = big_limited_interval_list->arg;
+          args_info->big_limited_interval_orig [i + args_info->big_limited_interval_given] = big_limited_interval_list->orig;
+          big_limited_interval_list = big_limited_interval_list->next;
+          free (tmp);
+        }
+    }
+  
   if (local_args_info.limited_open_right_given && limited_open_right_list)
     {
       struct string_list *tmp;
@@ -1582,6 +1668,8 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
   local_args_info.limited_given = 0;
   args_info->limited_interval_given += local_args_info.limited_interval_given;
   local_args_info.limited_interval_given = 0;
+  args_info->big_limited_interval_given += local_args_info.big_limited_interval_given;
+  local_args_info.big_limited_interval_given = 0;
   args_info->limited_open_right_given += local_args_info.limited_open_right_given;
   local_args_info.limited_open_right_given = 0;
   args_info->limited_open_left_given += local_args_info.limited_open_left_given;
@@ -1702,6 +1790,18 @@ failure:
           free (limited_interval_list->arg);
           free (limited_interval_list->orig);
           limited_interval_list = limited_interval_list->next;
+          free (tmp);
+        }
+    }
+  if (big_limited_interval_list)
+    {
+      struct string_list *tmp;
+      while (big_limited_interval_list)
+        {
+          tmp = big_limited_interval_list;
+          free (big_limited_interval_list->arg);
+          free (big_limited_interval_list->orig);
+          big_limited_interval_list = big_limited_interval_list->next;
           free (tmp);
         }
     }

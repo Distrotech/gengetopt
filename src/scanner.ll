@@ -82,15 +82,17 @@ argoptional	updateTokenInfo (-1); return TOK_ARGOPTIONAL;
 sectiondesc     updateTokenInfo (-1); return TOK_SECTIONDESC;
 section         updateTokenInfo (-1); return TOK_SECTION;
 values          updateTokenInfo (-1); return TOK_VALUES;
-hidden			updateTokenInfo (-1); return TOK_HIDDEN;
-dependon		updateTokenInfo (-1); return TOK_DEPENDON;
+hidden		updateTokenInfo (-1); return TOK_HIDDEN;
+dependon	updateTokenInfo (-1); return TOK_DEPENDON;
+text    	updateTokenInfo (-1); return TOK_TEXT;
+args    	updateTokenInfo (-1); return TOK_ARGS;
 
 "=" { updateTokenInfo (-1); return '='; }
 "," { updateTokenInfo (-1); return ','; }
 
 "(" { PUSH(SIZE_STATE); updateTokenInfo (-1); return '('; }
 <SIZE_STATE>"-" { updateTokenInfo (-1); return '-'; }
-<SIZE_STATE>[[:digit:]+] { updateTokenInfo (-1); yylval.str = strdup(yytext); return TOK_SIZE; }
+<SIZE_STATE>[[:digit:]]+ { updateTokenInfo (-1); yylval.str = strdup(yytext); return TOK_SIZE; }
 ")" { POP(); updateTokenInfo (-1); return ')'; }
 
 [[:alnum:]-]	 updateTokenInfo (-1); yylval.chr = yytext[0]; return TOK_CHAR;

@@ -1,3 +1,21 @@
+2006-09-23  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/scanner.ll: correctly handle size specification of multiple
+	options (bug fixed by Christian Ch'Gans)
+
+	* src/gm.cc (generate_usage_string): handle no argument options
+	and flag options in generation of long help
+
+2006-09-03  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/gm.cc (generate_help_option_list): first print the section
+
+2006-09-02  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/gengetopt.cc (output_formatted_string): remove the \ from
+	a " (so that the " is actually printed on the screen instead of
+	\")
+
 2006-07-02  Lorenzo Bettini  <bettini@lorelap>
 
 	* src/skels/header.h_skel: use the passed header extension

@@ -56,6 +56,11 @@ struct gengetopt_args_info
   int limited_interval_min; /* limited multiple option (with interval)'s minimum occurreces */
   int limited_interval_max; /* limited multiple option (with interval)'s maximum occurreces */
   const char *limited_interval_help; /* limited multiple option (with interval) help description.  */
+  char ** big_limited_interval_arg;	/* limited multiple option (with interval).  */
+  char ** big_limited_interval_orig;	/* limited multiple option (with interval) original value given at command line.  */
+  int big_limited_interval_min; /* limited multiple option (with interval)'s minimum occurreces */
+  int big_limited_interval_max; /* limited multiple option (with interval)'s maximum occurreces */
+  const char *big_limited_interval_help; /* limited multiple option (with interval) help description.  */
   char ** limited_open_right_arg;	/* limited multiple option (with interval right open).  */
   char ** limited_open_right_orig;	/* limited multiple option (with interval right open) original value given at command line.  */
   int limited_open_right_min; /* limited multiple option (with interval right open)'s minimum occurreces */
@@ -104,6 +109,7 @@ struct gengetopt_args_info
   unsigned int long_given ;	/* Whether long was given.  */
   unsigned int limited_given ;	/* Whether limited was given.  */
   unsigned int limited_interval_given ;	/* Whether limited-interval was given.  */
+  unsigned int big_limited_interval_given ;	/* Whether big-limited-interval was given.  */
   unsigned int limited_open_right_given ;	/* Whether limited-open-right was given.  */
   unsigned int limited_open_left_given ;	/* Whether limited-open-left was given.  */
   unsigned int float_given ;	/* Whether float was given.  */

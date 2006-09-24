@@ -61,8 +61,7 @@ AM_LFLAGS = -i
 # which is not built yet; so we simply touch cmdline.c (and this is safe)
 %.c: %.ggo
 	if test -f $(PROGNAME); then \
-	$(PROGNAME) --input=$< --no-handle-version --no-handle-help \
-        --no-handle-error; \
+	$(PROGNAME) --input=$< ; \
 	else touch $@ ; fi
 
 # automatically generate gengetopt_strdup() from the replacement function

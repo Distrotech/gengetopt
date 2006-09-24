@@ -12,6 +12,7 @@
     <description/>
     <secondaryLanguages/>
     <versioncontrol>kdevcvsservice</versioncontrol>
+    <defaultencoding/>
   </general>
   <kdevautoproject>
     <general>
@@ -22,7 +23,7 @@
       <mainprogram>src/gengetopt</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs>-i ~/tmp/gengetopt/prova.ggo --file-name=prova_cmd</programargs>
+      <programargs>-i ~/tmp/gengetopt/prova.ggo --show-help</programargs>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
@@ -66,7 +67,7 @@
   <kdevdebugger>
     <general>
       <dbgshell/>
-      <programargs>--input=../tests/no_strings_cmd.ggo --func-name=no_strings_cmd_parser --file-name=no_strings_cmd --unamed-opt</programargs>
+      <programargs>--input=$HOME/tmp/gengetopt/prova.ggo --show-help</programargs>
       <gdbpath/>
       <configGdbScript/>
       <runShellScript/>
@@ -161,6 +162,14 @@
       <codeCompletionDelay>250</codeCompletionDelay>
       <argumentsHintDelay>400</argumentsHintDelay>
       <headerCompletionDelay>250</headerCompletionDelay>
+      <showOnlyAccessibleItems>false</showOnlyAccessibleItems>
+      <completionBoxItemOrder>0</completionBoxItemOrder>
+      <howEvaluationContextMenu>true</howEvaluationContextMenu>
+      <showCommentWithArgumentHint>true</showCommentWithArgumentHint>
+      <statusBarTypeEvaluation>false</statusBarTypeEvaluation>
+      <namespaceAliases>std=_GLIBCXX_STD</namespaceAliases>
+      <processPrimaryTypes>true</processPrimaryTypes>
+      <processFunctionArguments>false</processFunctionArguments>
     </codecompletion>
     <creategettersetter>
       <prefixGet/>
@@ -170,6 +179,18 @@
       <inlineGet>true</inlineGet>
       <inlineSet>true</inlineSet>
     </creategettersetter>
+    <qt>
+      <used>false</used>
+      <version>3</version>
+      <includestyle>3</includestyle>
+      <root/>
+      <designerintegration>EmbeddedKDevDesigner</designerintegration>
+    </qt>
+    <splitheadersource>
+      <enabled>false</enabled>
+      <synchronize>true</synchronize>
+      <orientation>Vertical</orientation>
+    </splitheadersource>
   </kdevcppsupport>
   <kdevfileview>
     <groups>
