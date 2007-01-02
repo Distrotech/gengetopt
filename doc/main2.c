@@ -31,6 +31,12 @@ main (int argc, char **argv)
       my_cmdline_parser_print_help ();
     }
 
+  if (args_info.full_help_given)
+    {
+      printf ("This is a simple test for gengetopt\n");
+      my_cmdline_parser_print_full_help ();
+    }
+
   if (args_info.version_given)
     {
       printf ("Here is the version\n");

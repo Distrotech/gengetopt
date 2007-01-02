@@ -27,9 +27,9 @@ struct gengetopt_args_info
   const char *help_help; /* Print help and exit help description.  */
   const char *full_help_help; /* Print help, including hidden options, and exit help description.  */
   const char *version_help; /* Print version and exit help description.  */
-  char * string_arg;	/* string option.  */
-  char * string_orig;	/* string option original value given at command line.  */
-  const char *string_help; /* string option help description.  */
+  char * string_arg;	/*  string option.  */
+  char * string_orig;	/*  string option original value given at command line.  */
+  const char *string_help; /*  string option help description.  */
   int int_arg;	/* int option.  */
   char * int_orig;	/* int option original value given at command line.  */
   const char *int_help; /* int option help description.  */

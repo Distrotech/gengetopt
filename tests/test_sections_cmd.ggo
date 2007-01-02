@@ -7,7 +7,7 @@ version "1.0"
 
 option "string"      s "string option" string no
 option "int"         i "int option" int no
-section "First section.  This section definition has no description, since the description is in the definition itself, that is wrapped too"
+section "First section.  This \"section\" definition has no description, since the description is in the definition itself, that is wrapped too"
 option "short"       S "short option" short no
 option "long"        l "long option" long no
 option "float"       f "float option" float no

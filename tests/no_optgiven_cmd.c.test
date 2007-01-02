@@ -25,6 +25,8 @@ const char *gengetopt_args_info_purpose = "";
 
 const char *gengetopt_args_info_usage = "Usage: no_optgiven [OPTIONS]... [FILES]...";
 
+const char *gengetopt_args_info_description = "";
+
 const char *gengetopt_args_info_help[] = {
   "  -h, --help     Print help and exit",
   "  -V, --version  Print version and exit",
@@ -86,6 +88,10 @@ no_optgiven_cmd_parser_print_help (void)
     printf("\n%s\n", gengetopt_args_info_purpose);
 
   printf("\n%s\n\n", gengetopt_args_info_usage);
+
+  if (strlen(gengetopt_args_info_description) > 0)
+    printf("%s\n", gengetopt_args_info_description);
+
   while (gengetopt_args_info_help[i])
     printf("%s\n", gengetopt_args_info_help[i++]);
 }

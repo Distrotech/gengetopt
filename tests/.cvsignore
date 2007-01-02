@@ -36,3 +36,5 @@ more_cmdparsers
 *.out
 *.save
 test_multiple_parsers
+test_conf_inc.conf
+test_conf.conf

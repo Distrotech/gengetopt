@@ -1,8 +1,25 @@
 gengetopt -- History of visible changes.
 
-Copyright (C) 1999-2006  Free Software Foundation
+Copyright (C) 1999-2007  Free Software Foundation
 
 Please send gengetopt bug reports to bug-gengetopt at gnu.org
+
+For details about the new features, you can take a look at:
+http://tronprog.blogspot.com/search/label/gengetopt
+
+Version 2.19
+
+   * strings can spawn more than one line and contain escaped "
+   * usage string can be specified (instead of being generated automatically).
+   * description string can be specified that will be printed after the
+     usage string.
+   * automatically created usage strings are wrapped.
+   * with --long-help the optional options are correctly printed between []
+   * --show-required, to explicitly print in the help output whether an
+     option is mandatory
+   * configuration files can include other configuration files
+     (thanks to David Bird)
+   * --no-handle-help handles also --full-help (thanks to Gyozo Papp) 
 
 Version 2.18
 

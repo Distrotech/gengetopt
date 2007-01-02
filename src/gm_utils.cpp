@@ -16,6 +16,8 @@
 #include "argsdef.h"
 #include "groups.h"
 
+#include "strdup.h"
+
 extern groups_collection_t gengetopt_groups;
 
 /*

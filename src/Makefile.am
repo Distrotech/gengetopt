@@ -31,20 +31,25 @@ gengetopt_SOURCES = parser.yy scanner.ll argsdef.c cmdline.c gengetopt.cc gm.cc 
 	yyerror.cc gm_utils.cpp fileutils.cpp acceptedvalues.cpp ggos.cpp
 #confparsergen.cc
 
-gengetopt_LDADD = @LIBOBJS@ @LEXLIB@ skels/libgen.a
+#gengetopt_LDADD = @LIBOBJS@ @LEXLIB@ skels/libgen.a
+
+# these are for gnulib
+AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl
+
+LDADD = $(top_builddir)/gl/libgnu.a @LEXLIB@ skels/libgen.a
 
 EXTRA_DIST = parser.h argsdef.h gengetopt.h ggos.h gm.h gnugetopt.h \
-cmdline.ggo cmdline.h cxxconfig.h my_sstream.h my_string.h my_map.h \
+cmdline.ggo cmdline.h my_sstream.h my_string.h my_map.h \
 global_opts.h \
 ggo_options.h \
-groups.h
+groups.h \
+$(pkgdata_DATA)
 
 # version of gengetopt linked to the ElectricFence library
-EXTRA_PROGRAMS = gengetopt-efence
-
-gengetopt_efence_SOURCES = $(gengetopt_SOURCES)
-
-gengetopt_efence_LDADD = -lefence $(gengetopt_LDADD)
+# don't use it anymore: use valgrind
+#EXTRA_PROGRAMS = gengetopt-efence
+#gengetopt_efence_SOURCES = $(gengetopt_SOURCES)
+#gengetopt_efence_LDADD = -lefence $(gengetopt_LDADD)
 
 PROGNAME = $(top_builddir)/src/gengetopt$(EXEEXT)
 

@@ -25,6 +25,8 @@ const char *gengetopt_args_info_purpose = "";
 
 const char *gengetopt_args_info_usage = "Usage: canonize_names [OPTIONS]...";
 
+const char *gengetopt_args_info_description = "";
+
 const char *gengetopt_args_info_help[] = {
   "  -h, --help     Print help and exit",
   "  -V, --version  Print version and exit",
@@ -84,6 +86,10 @@ canonize_names_cmd_parser_print_help (void)
     printf("\n%s\n", gengetopt_args_info_purpose);
 
   printf("\n%s\n\n", gengetopt_args_info_usage);
+
+  if (strlen(gengetopt_args_info_description) > 0)
+    printf("%s\n", gengetopt_args_info_description);
+
   while (gengetopt_args_info_help[i])
     printf("%s\n", gengetopt_args_info_help[i++]);
 }

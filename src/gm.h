@@ -44,6 +44,7 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   string output_dir;
   string comment;
   char *unamed_options;
+  string show_required_string;
 
   bool long_help;
   bool no_handle_help;
@@ -96,7 +97,8 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   virtual void generate_struct_def(ostream &stream, unsigned int indent);
   virtual void generate_option_values(ostream &stream, unsigned int indent);
 
-  virtual void generate_handle_help(ostream &stream, unsigned int indent);
+  virtual void generate_handle_help(ostream &stream, unsigned int indent,
+                                    bool full_help = false);
   virtual void generate_handle_no_short_option(ostream &stream,
                                                unsigned int indent);
   virtual void generate_handle_option(ostream &stream, unsigned int indent);
@@ -135,7 +137,8 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
                         bool no_handle_error, bool conf_parser, bool string_parser,
                         bool gen_version, bool gen_getopt,
                         const string &comment,
-                        const string &outdir);
+                        const string &outdir,
+                        const string &show_required);
 
   int generate();
 
@@ -143,6 +146,7 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   virtual void generate_multiple_fill_array(ostream &stream, unsigned int indent);
   virtual void generate_update_multiple_given(ostream &stream, unsigned int indent);
   const string generate_purpose();
+  const string generate_description();
   const string generate_usage_string(bool use_config_package = true);
 
   OptionHelpList *generate_help_option_list(bool generate_hidden = false);

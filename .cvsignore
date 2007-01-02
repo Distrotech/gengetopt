@@ -26,3 +26,4 @@ Doxyfile
 debug
 gengetopt.kdevelop.pcs
 gengetopt.kdevses
+config.rpath

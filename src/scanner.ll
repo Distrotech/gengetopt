@@ -22,16 +22,22 @@
 %{
 #include <string.h>
 
-#ifndef HAVE_STRDUP
-extern "C" char *strdup (const char *s) ;
-#endif
+#include "strdup.h"
 
 #include "argsdef.h"
 #include "parser.h"
 extern int gengetopt_count_line;
 
+#include "my_sstream.h"
+
 static void update_count_line (char *str);
 static void updateTokenInfo (int pos);
+
+// the buffer for strings (possibly spanning more lines)
+static std::ostringstream buff;
+
+static void buffer(const char *s);
+static char *flush_buffer();
 
 #define LINEBUF_LEN 1024
 
@@ -41,6 +47,16 @@ static void updateTokenInfo (int pos);
 int tokenpos = 0;
 char linebuf[LINEBUF_LEN] ; /* current line */
 
+//#define DEBUG_SCANNER
+#ifdef DEBUG_SCANNER
+#include <iostream> // for debug
+#define DEB(s) std::cerr << s << std::endl;
+#define DEB2(s,s2) std::cerr << s << ": " << s2 << std::endl;
+#else
+#define DEB(s)
+#define DEB2(s,s2)
+#endif
+
 %}
 
 %option stack nomain yylineno noyywrap nounput
@@ -48,78 +64,69 @@ char linebuf[LINEBUF_LEN] ; /* current line */
 ws [ ]+
 tabs [\t]+
 
-%s SIZE_STATE
+%s SIZE_STATE STRING_STATE
 
 %%
 
 
-string		updateTokenInfo (-1); yylval.argtype = ARG_STRING; return TOK_ARGTYPE;
-int		updateTokenInfo (-1); yylval.argtype = ARG_INT; return TOK_ARGTYPE;
-short		updateTokenInfo (-1); yylval.argtype = ARG_SHORT; return TOK_ARGTYPE;
-long		updateTokenInfo (-1); yylval.argtype = ARG_LONG; return TOK_ARGTYPE;
-float		updateTokenInfo (-1); yylval.argtype = ARG_FLOAT; return TOK_ARGTYPE;
-double		updateTokenInfo (-1); yylval.argtype = ARG_DOUBLE; return TOK_ARGTYPE;
-longdouble	updateTokenInfo (-1); yylval.argtype = ARG_LONGDOUBLE; return TOK_ARGTYPE;
-longlong	updateTokenInfo (-1); yylval.argtype = ARG_LONGLONG; return TOK_ARGTYPE;
+<INITIAL>string		updateTokenInfo (-1); yylval.argtype = ARG_STRING; return TOK_ARGTYPE;
+<INITIAL>int		updateTokenInfo (-1); yylval.argtype = ARG_INT; return TOK_ARGTYPE;
+<INITIAL>short		updateTokenInfo (-1); yylval.argtype = ARG_SHORT; return TOK_ARGTYPE;
+<INITIAL>long		updateTokenInfo (-1); yylval.argtype = ARG_LONG; return TOK_ARGTYPE;
+<INITIAL>float		updateTokenInfo (-1); yylval.argtype = ARG_FLOAT; return TOK_ARGTYPE;
+<INITIAL>double		updateTokenInfo (-1); yylval.argtype = ARG_DOUBLE; return TOK_ARGTYPE;
+<INITIAL>longdouble	updateTokenInfo (-1); yylval.argtype = ARG_LONGDOUBLE; return TOK_ARGTYPE;
+<INITIAL>longlong	updateTokenInfo (-1); yylval.argtype = ARG_LONGLONG; return TOK_ARGTYPE;
 
-package        	updateTokenInfo (-1); return TOK_PACKAGE;
-version        	updateTokenInfo (-1); return TOK_VERSION;
-groupoption     updateTokenInfo (-1); yylloc.first_line = gengetopt_count_line; return TOK_GROUPOPTION;
-yes|required    updateTokenInfo (-1); return TOK_YES;
-no|optional	updateTokenInfo (-1); return TOK_NO;
-option		updateTokenInfo (-1); yylloc.first_line = gengetopt_count_line; return TOK_OPTION;
-flag		updateTokenInfo (-1); return TOK_FLAG;
-on	        updateTokenInfo (-1); return TOK_ON;
-off	        updateTokenInfo (-1); return TOK_OFF;
-purpose		updateTokenInfo (-1); return TOK_PURPOSE;
-default		updateTokenInfo (-1); return TOK_DEFAULT;
-typestr		updateTokenInfo (-1); return TOK_TYPESTR;
-group		updateTokenInfo (-1); return TOK_GROUP;
-groupdesc	updateTokenInfo (-1); return TOK_GROUPDESC;
-defgroup	updateTokenInfo (-1); return TOK_DEFGROUP;
-multiple	updateTokenInfo (-1); return TOK_MULTIPLE;
-argoptional	updateTokenInfo (-1); return TOK_ARGOPTIONAL;
-sectiondesc     updateTokenInfo (-1); return TOK_SECTIONDESC;
-section         updateTokenInfo (-1); return TOK_SECTION;
-values          updateTokenInfo (-1); return TOK_VALUES;
-hidden		updateTokenInfo (-1); return TOK_HIDDEN;
-dependon	updateTokenInfo (-1); return TOK_DEPENDON;
-text    	updateTokenInfo (-1); return TOK_TEXT;
-args    	updateTokenInfo (-1); return TOK_ARGS;
+<INITIAL>package        	updateTokenInfo (-1); return TOK_PACKAGE;
+<INITIAL>version        	updateTokenInfo (-1); return TOK_VERSION;
+<INITIAL>groupoption     updateTokenInfo (-1); yylloc.first_line = gengetopt_count_line; return TOK_GROUPOPTION;
+<INITIAL>yes|required    updateTokenInfo (-1); return TOK_YES;
+<INITIAL>no|optional	updateTokenInfo (-1); return TOK_NO;
+<INITIAL>option		updateTokenInfo (-1); yylloc.first_line = gengetopt_count_line; return TOK_OPTION;
+<INITIAL>flag		updateTokenInfo (-1); return TOK_FLAG;
+<INITIAL>on	        updateTokenInfo (-1); return TOK_ON;
+<INITIAL>off	        updateTokenInfo (-1); return TOK_OFF;
+<INITIAL>purpose	updateTokenInfo (-1); return TOK_PURPOSE;
+<INITIAL>description	updateTokenInfo (-1); return TOK_DESCRIPTION;
+<INITIAL>usage		updateTokenInfo (-1); return TOK_USAGE;
+<INITIAL>default	updateTokenInfo (-1); return TOK_DEFAULT;
+<INITIAL>typestr	updateTokenInfo (-1); return TOK_TYPESTR;
+<INITIAL>group		updateTokenInfo (-1); return TOK_GROUP;
+<INITIAL>groupdesc	updateTokenInfo (-1); return TOK_GROUPDESC;
+<INITIAL>defgroup	updateTokenInfo (-1); return TOK_DEFGROUP;
+<INITIAL>multiple	updateTokenInfo (-1); return TOK_MULTIPLE;
+<INITIAL>argoptional	updateTokenInfo (-1); return TOK_ARGOPTIONAL;
+<INITIAL>sectiondesc     updateTokenInfo (-1); return TOK_SECTIONDESC;
+<INITIAL>section         updateTokenInfo (-1); return TOK_SECTION;
+<INITIAL>values          updateTokenInfo (-1); return TOK_VALUES;
+<INITIAL>hidden		updateTokenInfo (-1); return TOK_HIDDEN;
+<INITIAL>dependon	updateTokenInfo (-1); return TOK_DEPENDON;
+<INITIAL>text    	updateTokenInfo (-1); return TOK_TEXT;
+<INITIAL>args    	updateTokenInfo (-1); return TOK_ARGS;
 
-"=" { updateTokenInfo (-1); return '='; }
-"," { updateTokenInfo (-1); return ','; }
+<INITIAL>"=" { updateTokenInfo (-1); return '='; }
+<INITIAL>"," { updateTokenInfo (-1); return ','; }
 
-"(" { PUSH(SIZE_STATE); updateTokenInfo (-1); return '('; }
+<INITIAL>"(" { PUSH(SIZE_STATE); updateTokenInfo (-1); return '('; }
 <SIZE_STATE>"-" { updateTokenInfo (-1); return '-'; }
 <SIZE_STATE>[[:digit:]]+ { updateTokenInfo (-1); yylval.str = strdup(yytext); return TOK_SIZE; }
-")" { POP(); updateTokenInfo (-1); return ')'; }
+<SIZE_STATE>")" { POP(); updateTokenInfo (-1); return ')'; }
 
-[[:alnum:]-]	 updateTokenInfo (-1); yylval.chr = yytext[0]; return TOK_CHAR;
-\"[^\"\n]*\"	{
-  /* if you add or remove symbols, change canonize_vars
-     function */
-  updateTokenInfo (-1);
-  yytext [strlen(yytext) - 1] = 0;
-  yylval.str = yytext + 1;
-  return TOK_STRING;
-}
+<INITIAL>[[:alnum:]-]	 updateTokenInfo (-1); yylval.chr = yytext[0]; return TOK_CHAR;
 
-\"[^\"]*\"	{
-  /* if you add or remove symbols, change canonize_vars
-     function */
-  updateTokenInfo (-1);
-  yytext [strlen(yytext) - 1] = 0;
-  yylval.str = yytext + 1;
-  update_count_line (yylval.str);
-  return TOK_MLSTRING;
-}
+<INITIAL>\" { updateTokenInfo (-1); DEB("start string"); PUSH(STRING_STATE) ; }
+<STRING_STATE>\n+ {  update_count_line (yytext); buffer( yytext ) ; }
+<STRING_STATE>\\{ws}*\n { update_count_line (yytext); /* a line break */ }
+<STRING_STATE>\\\" { updateTokenInfo (-1); buffer(yytext); }
+<STRING_STATE>\" { updateTokenInfo (-1); DEB("end string"); POP() ; yylval.str = flush_buffer(); return TOK_STRING; }
+<STRING_STATE>[^\n] {  updateTokenInfo (-1); buffer( yytext ) ; }
 
-{ws}           updateTokenInfo (-1);
-{tabs}         updateTokenInfo (8*yyleng);
+<INITIAL>{ws}           updateTokenInfo (-1);
+<INITIAL>{tabs}         updateTokenInfo (8*yyleng);
 
 #[^\n]*		/* comments begin with # in any place */
-\n.*		update_count_line (0); yyless(1) ; /* give back all but the \n to rescan */
+<INITIAL>\n.*		update_count_line (0); yyless(1) ; /* give back all but the \n to rescan */
 
 \r              {}
 
@@ -139,8 +146,11 @@ update_count_line (char *str)
     {
       char *p;
       for (p = str; *p; ++p)
-        if (*p == '\n')
+        if (*p == '\n') {
           ++gengetopt_count_line;
+          tokenpos = 0 ; /* reset token position */
+          strncpy (linebuf, ( (p+1) ? p+1 : ""), LINEBUF_LEN - 1);
+        }
     }
   else
     {
@@ -157,4 +167,16 @@ updateTokenInfo( int pos )
     tokenpos += pos ;
   else
     tokenpos += yyleng ;
+}
+
+void buffer(const char *s)
+{
+  buff << s;
+}
+
+char *flush_buffer()
+{
+  char *ret = strdup(buff.str().c_str());
+  buff.str("");
+  return ret;
 }

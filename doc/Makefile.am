@@ -24,19 +24,6 @@ GGO_FILES = $(srcdir)/sample1.ggo $(srcdir)/sample2.ggo
 # we don't have to link to anything
 LIBS =
 
-# check if we need to link with getopt.o and strdup.o
-if NO_GETOPTLONG
-GETOPTLONG_O = $(top_builddir)/src/getopt.o $(top_builddir)/src/getopt1.o
-else
-GETOPTLONG_O =
-endif
-
-if NO_STRDUP
-STRDUP_O = $(top_builddir)/src/strdup.o
-else
-STRDUP_O =
-endif
-
 # man page
 man_MANS = gengetopt.1
 
@@ -53,9 +40,10 @@ EXTRA_PROGRAMS = sample1 sample2
 sample1_SOURCES = cmdline1.c main1.cc
 sample2_SOURCES = cmdline2.c main2.c
 
-LDADD = $(GETOPTLONG_O) $(STRDUP_O)
+# these are for gnulib
+AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl
 
-INCLUDES = -I@top_srcdir@/src/
+LDADD = $(top_builddir)/gl/libgnu.a
 
 gengetoptdoc_DATA = gengetopt.html index.html 
 
@@ -69,7 +57,8 @@ info_TEXINFOS = gengetopt.texinfo
 GENERATEDINFOS = cmdline1.h.texinfo main1.cc.texinfo test_conf_parser.c.texinfo \
 test_conf_parser_ov2.c.texinfo help_output.texinfo \
 multiple_example.c.texinfo \
-test_multiple_parsers.c.texinfo
+test_multiple_parsers.c.texinfo \
+sample1.ggo.texinfo sample1.output.texinfo 
 
 BUILT_SOURCES = $(GENERATEDINFOS)
 
@@ -85,16 +74,20 @@ if NO_SOURCEHIGHLIGHT
 	touch $@
 
 test_conf_parser.c.texinfo: $(top_srcdir)/tests/test_conf_parser.c
-	cat $(top_srcdir)/tests/test_conf_parser.c | sed -f $(srcdir)/input.sed > $@
+	touch $@
 
 test_conf_parser_ov2.c.texinfo: $(top_srcdir)/tests/test_conf_parser_ov2.c
-	cat $(top_srcdir)/tests/test_conf_parser_ov2.c | sed -f $(srcdir)/input.sed > $@
+	touch $@
 
 test_multiple_parsers.c.texinfo: $(top_srcdir)/tests/test_multiple_parsers.c
-	cat $(top_srcdir)/tests/test_multiple_parsers.c | sed -f $(srcdir)/input.sed > $@
+	touch $@
 
 %.c.texinfo: %.c
 	touch $@
+
+%.ggo.texinfo: %.ggo
+	cat $< | sed -f $(srcdir)/input.sed > $@
+
 else
 %.h.texinfo: %.h
 	$(RUNSOURCEHIGHLIGHT) $< 
@@ -113,10 +106,17 @@ test_multiple_parsers.c.texinfo: $(top_srcdir)/tests/test_multiple_parsers.c
 
 %.c.texinfo: %.c
 	$(RUNSOURCEHIGHLIGHT) $< 
+
+%.ggo.texinfo: %.ggo
+	$(RUNSOURCEHIGHLIGHT) $< --failsafe
 endif
 
 help_output.texinfo: $(top_srcdir)/src/cmdline.ggo
 	$(PROGNAME) --show-help -i $(top_srcdir)/src/cmdline.ggo --set-package="gengetopt" --set-version="" > $@
+
+sample1.output.texinfo: sample1.ggo
+	$(MAKE) $(AM_MAKEFLAGS) sample1$(EXEEXT)
+	./sample1$(EXEEXT) --help | sed -f $(srcdir)/input.sed > $@
 
 EXTRA_DIST = sample1.ggo sample2.ggo samples.stamp \
              cmdline1.c cmdline1.h cmdline2.c cmdline2.h \
@@ -128,7 +128,7 @@ EXTRA_DIST = sample1.ggo sample2.ggo samples.stamp \
 
 cmdline1.h: cmdline1.c
 cmdline1.c: sample1.ggo
-	$(PROGNAME) -i $(srcdir)/sample1.ggo -Fcmdline1 --long-help -u
+	$(PROGNAME) -i $(srcdir)/sample1.ggo -Fcmdline1 --long-help -u --show-required
 
 cmdline2.c: sample2.ggo
 	$(PROGNAME) --input=$(srcdir)/sample2.ggo --func-name=my_cmdline_parser --file-name=cmdline2 --unamed-opts --no-handle-help --no-handle-version

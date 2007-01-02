@@ -15,7 +15,7 @@
 rm -f config.cache
 # rm -f acconfig.h
 echo "- aclocal."
-aclocal
+aclocal -I gl/m4
 echo "- autoconf."
 autoconf
 # echo "- acconfig."

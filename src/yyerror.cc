@@ -8,9 +8,10 @@ This file is licensed to you under the license specified in the included file
   Called by yyparse on error.
  */
 
-#include "yyerror.h" 
+#include "yyerror.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <iostream>
 
 extern int gengetopt_count_line;
@@ -29,6 +30,10 @@ yyerror (const char *s)
     (gengetopt_input_filename ? gengetopt_input_filename : "gengetopt");
 
   fprintf (stderr, "%s:%d: %s %s\n", source, gengetopt_count_line, s, yytext);
+
+  if (!linebuf || !strlen(linebuf))
+    return;
+
   fprintf (stderr, "%s:%d: %s\n", source, gengetopt_count_line, linebuf);
   fprintf (stderr, "%s:%d: %*s\n", source, gengetopt_count_line,
            tokenpos + 1, "^");

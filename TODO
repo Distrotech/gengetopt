@@ -15,14 +15,6 @@ The current maintainer is taking patches. See the file `AUTHORS'.
 --------
 LORENZO
 --------
-if configure doesn't find getopt, it should say to the programmer
-that we provide getopt.c getopt1.c and getopt.h, which will be installed
-in $(prefix)/share/gengetopt
-
-write texinfo documentation
-
-Check if non-required options are all generated within [] when long
-help is required
 
 remove some rules in parser.y by using possible empty symbols
 (such as argtype...)
@@ -54,8 +46,5 @@ Duplicate options: A @dfn{duplicate option} is an option that, like a
 multiple option, may be specified more than once, but for which only
 the last use is significant.   The classic example is the @option{-O}
 switch present in most C compilers:
-
-Test no-handle-help, no-handle-version, also in the presence
-of hidden options
 
 maintainer-mode

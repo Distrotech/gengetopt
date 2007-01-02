@@ -27,6 +27,7 @@
 #define HELP_OPT_DESCR "Print help and exit"
 
 #define FULL_HELP_LONG_OPT "full-help"
+#define FULL_HELP_LONG_OPT_FIELD "full_help"
 #define FULL_HELP_OPT_DESCR "Print help, including hidden options, and exit"
 
 #define VERSION_LONG_OPT "version"

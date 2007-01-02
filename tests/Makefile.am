@@ -32,7 +32,7 @@ PROGNAMESHOWHELP = $(PROGNAME) --show-help --long-help
 GGO_COMPILE = $(PROGNAME) --input=$< --func-name=$*_parser --file-name=$*
 
 .ggo.c:
-	$(GGO_COMPILE) --unamed-opt
+	$(GGO_COMPILE) --unamed-opt --show-required
 
 .ggonu.c:
 	$(PROGNAME) --input $< --func-name $*_parser --file-name $*
@@ -49,20 +49,6 @@ GGO_COMPILE = $(PROGNAME) --input=$< --func-name=$*_parser --file-name=$*
 # we don't have to link to anything
 LIBS =
 
-# check if we need to link with getopt.o and strdup.o
-if NO_GETOPTLONG
-GETOPTLONG_O = $(top_builddir)/src/getopt.o $(top_builddir)/src/getopt1.o
-else
-GETOPTLONG_O =
-endif
-
-if NO_STRDUP
-STRDUP_O = $(top_builddir)/src/strdup.o
-else
-STRDUP_O =
-endif
-
-INCLUDES = -I@top_srcdir@/src/
 
 # INCLUDES is added to LDFLAGS because .ggo file are sources, and thus
 # the .c files are passed to the linker, which also compiles, thus
@@ -70,7 +56,11 @@ INCLUDES = -I@top_srcdir@/src/
 AM_LDFLAGS = $(DEFS) $(INCLUDES)
 
 #LDADD = $(GETOPTLONG_O) $(STRDUP_O) -lefence
-LDADD = $(GETOPTLONG_O) $(STRDUP_O)
+
+# these are for gnulib
+AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl
+
+LDADD = $(top_builddir)/gl/libgnu.a
 
 EXPECT = 1
 
@@ -117,7 +107,7 @@ canonize_names_SOURCES = canonize-names-cmd.ggo canonize-names.c
 default_values_SOURCES = default_values_cmd.ggo default_values.c
 default_cmdline_SOURCES = cmdline.ggo default_cmdline.c
 test_all_opts_SOURCES = test_all_opts_cmd.ggo test_all_opts.c
-no_prog_name_SOURCES = test_all_opts_cmd.ggo no_prog_name.c $(top_builddir)/src/getopt.c $(top_builddir)/src/getopt1.c
+no_prog_name_SOURCES = test_all_opts_cmd.ggo no_prog_name.c 
 # force using our version of getopt
 test_groups_SOURCES = test_groups_cmd.ggo test_groups.c
 test_conf_parser_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser.c
@@ -151,6 +141,7 @@ test_first_cmdline_cmd.c test_first_cmdline_cmd.h \
 test_second_cmdline_cmd.c test_second_cmdline_cmd.h
 
 GENERATED_TESTS	= no_strings_cmd.c.test no_strings_cmd.h.test \
+no_multi_strings_cmd.c.test no_multi_strings_cmd.h.test \
 no_unamed_cmd.c.test no_unamed_cmd.h.test \
 no_optgiven_cmd.c.test no_optgiven_cmd.h.test \
 more_than_once_cmd.c.test more_than_once_cmd.h.test \
@@ -206,7 +197,9 @@ test_dep.sh.in test_multiple_parsers.sh.in \
 $(GENERATED_TESTS) \
 $(TESTSOUTPUT) \
 suppressions.supp \
-test_conf.conf test_conf2.conf test_conf3.conf test_conf_err.conf \
+test_conf.conf.in \
+test_conf_inc.conf.in test_conf_inc_inc.conf test_conf_inc2.conf \
+test_conf2.conf test_conf3.conf test_conf_err.conf \
 test_conf_err_string.conf test_conf_err_string2.conf \
 $(ERRFILES) $(ERRGGOFILES)
 

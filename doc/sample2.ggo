@@ -17,6 +17,8 @@ option  "long-long-opt"   y "A long long option"   longlong   optional
 
 option  "func-opt"        F "A function option"    optional 
 
+option  "hidden-opt"        N "A hidden option"    optional hidden
+
 option  "flag-opt"        x "A flag option"        flag       off
 # This option turn on or off a flag, last column is the state of the flag when
 # program start. If user specify it, flag toggles.

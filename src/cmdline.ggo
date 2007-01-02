@@ -61,6 +61,11 @@ to parse the command line options, validate them and fill a struct."
 args "--no-handle-version --no-handle-help --no-handle-error --string-parser"
 
 # Options
+
+section "Main options"
+
+text ""
+
 option  "input"         i "input file (default std input)"  string typestr="filename"     optional
 option  "func-name"     f "name of generated function" string typestr="name"  default="cmdline_parser"   optional
 option  "arg-struct-name" a "name of generated args info struct" string typestr="name"  default="gengetopt_args_info"   optional
@@ -71,20 +76,25 @@ option  "header-extension"   H "extension of header file" string typestr="ext" d
 option  "long-help"     l "long usage line in help" optional
 option  "unamed-opts"   u "accept options without names (e.g., file names)" string default="FILES" optional argoptional
 
-text "\nThe parser generated is thought to be used to parse the command line arguments."
-text "  However, you can also generate parsers for configuration files, or strings"
-text " that contain the arguments to parse, by using the following two options.\n"
+text "\nThe parser generated is thought to be used to parse the command line arguments. "
+text "However, you can also generate parsers for configuration files, or strings "
+text "that contain the arguments to parse, by using the following two options.\n"
 
 option  "conf-parser" C "generate a config file parser" optional
 option  "string-parser" S "generate a string parser (the string contains the command line)" optional
 
 text ""
 
+section "Additional options"
+
 option  "include-getopt" G "adds the code for getopt_long in the generated C file" optional
 
 option  "no-handle-help"   n "do not handle --help|-h automatically" optional
 option  "no-handle-version"  N  "do not handle --version|-V automatically" optional
 option  "no-handle-error" e "do not exit on errors" optional
+option  "show-required"   - "in the output of help will specify which options are mandatory, \
+by using the optional passed string" string default="(mandatory)" optional argoptional
+
 option  "gen-version" g "put gengetopt version in the generated file" flag on
 option  "set-package" - "set the package name (override package defined in the .ggo file)" string optional
 option  "set-version" - "set the version number (override version defined in the .ggo file)" string optional

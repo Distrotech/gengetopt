@@ -25,6 +25,8 @@ const char *test_second_cmdline_cmd_struct_purpose = "";
 
 const char *test_second_cmdline_cmd_struct_usage = "Usage: " TEST_SECOND_CMDLINE_CMD_PARSER_PACKAGE " [OPTIONS]... [OTHER NAMES]...";
 
+const char *test_second_cmdline_cmd_struct_description = "";
+
 const char *test_second_cmdline_cmd_struct_help[] = {
   "  -h, --help             Print help and exit",
   "  -V, --version          Print version and exit",
@@ -130,6 +132,10 @@ test_second_cmdline_cmd_parser_print_help (void)
     printf("\n%s\n", test_second_cmdline_cmd_struct_purpose);
 
   printf("\n%s\n\n", test_second_cmdline_cmd_struct_usage);
+
+  if (strlen(test_second_cmdline_cmd_struct_description) > 0)
+    printf("%s\n", test_second_cmdline_cmd_struct_description);
+
   while (test_second_cmdline_cmd_struct_help[i])
     printf("%s\n", test_second_cmdline_cmd_struct_help[i++]);
 }

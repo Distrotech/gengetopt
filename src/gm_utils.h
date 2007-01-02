@@ -35,12 +35,22 @@ bool has_values();
 
 /**
  * Whether the specified option deals with number
- * 
- * @param opt 
- * @return 
+ *
+ * @param opt
+ * @return
  */
 bool is_numeric(const gengetopt_option *opt);
 
+/**
+ * Performs word wrapping on the passed string (and return the result in the first
+ * parameter).
+ *
+ * @param wrapped the output parameter
+ * @param from_column the string start from this column
+ * @param second_indent an additional indentation for lines after the
+ * first one
+ * @param orig the original string that must be wrapped
+ */
 void wrap_cstr (string &wrapped, unsigned int from_column, unsigned int second_indent, const string &orig);
 
 #endif

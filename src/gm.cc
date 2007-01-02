@@ -76,9 +76,13 @@ extern "C"
 #include "gm_utils.h"
 #include "fileutils.h"
 
+/*
 #ifndef HAVE_STRDUP
 extern "C" char *strdup (const char *s) ;
 #endif
+*/
+
+#include "strdup.h"
 
 #define MAX_STARTING_COLUMN 32
 
@@ -93,6 +97,8 @@ using std::set;
 extern char * gengetopt_package;
 extern char * gengetopt_version;
 extern char * gengetopt_purpose;
+extern char * gengetopt_description;
+extern char * gengetopt_usage;
 extern char * gengetopt_input_filename;
 
 extern groups_collection_t gengetopt_groups;
@@ -105,7 +111,8 @@ static void
 generate_help_desc_print(ostream &stream,
                          unsigned int desc_column,
                          const char *descript, const char *defval,
-                         const string &values);
+                         const string &values,
+                         const string &show_required_string);
 
 CmdlineParserCreator::CmdlineParserCreator (char *function_name,
                                             char *struct_name,
@@ -121,12 +128,14 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
                                             bool gen_version,
                                             bool gen_getopt,
                                             const string &comment_,
-                                            const string &outdir) :
+                                            const string &outdir,
+                                            const string &show_required) :
   filename (filename_),
   args_info_name (struct_name),
   output_dir (outdir),
   comment (comment_),
   unamed_options (unamed_options_),
+  show_required_string (show_required),
   long_help (long_help_), no_handle_help (no_handle_help_),
   no_handle_version (no_handle_version_), no_handle_error (no_handle_error_),
   conf_parser (conf_parser_), string_parser (string_parser_),
@@ -217,6 +226,7 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   set_handle_unamed(unamed_options);
   set_check_required_options(has_required() || has_dependencies() || has_multiple_options());
   set_purpose(generate_purpose());
+  set_description(generate_description());
   set_no_package((gengetopt_package == 0));
   c_source_gen_class::set_has_hidden(has_hidden_options());
   header_gen_class::set_has_hidden(c_source_gen_class::has_hidden);
@@ -543,6 +553,11 @@ CmdlineParserCreator::generate_option_values(ostream &stream,
 const string
 CmdlineParserCreator::generate_usage_string(bool use_config_package)
 {
+  // if specified by the programmer, the usage string has the precedence
+  if (gengetopt_usage) {
+    return gengetopt_usage;
+  }
+
   struct gengetopt_option * opt;
   ostringstream usage;
   const char   *type_str;
@@ -559,14 +574,13 @@ CmdlineParserCreator::generate_usage_string(bool use_config_package)
           switch (opt->type) {
           case ARG_NO:
           case ARG_FLAG:
-            usage << "[";
             if (opt->short_opt)
               {
                 usage << "-" << opt->short_opt << "|";
               }
-            usage << "--" << opt->long_opt << "] ";
+            usage << "--" << opt->long_opt;
             break;
-          
+
           case ARG_INT:
           case ARG_SHORT:
           case ARG_LONG:
@@ -594,16 +608,17 @@ CmdlineParserCreator::generate_usage_string(bool use_config_package)
             abort ();
           }
       foropt
-        if (!opt->required && !opt->hidden)
+      if (!opt->required && !opt->hidden) {
+        usage << "[";
+
           switch (opt->type) {
           case ARG_NO:
           case ARG_FLAG:
-            usage << "[";
             if (opt->short_opt)
               {
                 usage << "-" << opt->short_opt << "|";
               }
-            usage << "--" << opt->long_opt << "] ";
+            usage << "--" << opt->long_opt;
             break;
           case ARG_INT:
           case ARG_SHORT:
@@ -624,12 +639,16 @@ CmdlineParserCreator::generate_usage_string(bool use_config_package)
                       << type_str << "|";
               }
             usage << "--" << opt->long_opt << "=" <<
-              type_str << " ";
+              type_str;
             break;
           default: fprintf (stderr, "gengetopt: bug found in %s:%d!!\n",
                             __FILE__, __LINE__);
             abort ();
           }
+
+          usage << "] ";
+
+      }
     }
   else
     { /* if not long help we generate it as GNU standards */
@@ -639,20 +658,24 @@ CmdlineParserCreator::generate_usage_string(bool use_config_package)
   if ( unamed_options )
     usage << " [" << unamed_options << "]...";
 
-  return usage.str ();
+  string wrapped;
+
+  wrap_cstr ( wrapped, strlen("Usage: "), 2, usage.str() );
+
+  return wrapped;
 }
 
 static void
 generate_help_desc_print(ostream &stream,
                          unsigned int desc_column,
                          const char *descript, const char *defval,
-                         const string &values)
+                         const string &values,
+                         const string &show_required_string)
 {
   string desc;
   string desc_with_default = descript;
 
-  if (defval || values.size())
-    {
+  if (defval || values.size()) {
       desc_with_default += "  (";
 
       if (values.size()) {
@@ -668,7 +691,10 @@ generate_help_desc_print(ostream &stream,
       }
 
       desc_with_default += ")";
-    }
+  }
+
+  if (show_required_string != "")
+    desc_with_default += " " + show_required_string;
 
   wrap_cstr ( desc, desc_column, 2, desc_with_default );
 
@@ -781,6 +807,20 @@ CmdlineParserCreator::generate_purpose()
   return wrapped_purpose;
 }
 
+const string
+CmdlineParserCreator::generate_description()
+{
+  string wrapped_description;
+
+  if (gengetopt_description != NULL)
+    {
+      wrap_cstr(wrapped_description, 0, 0, gengetopt_description);
+    }
+
+  return wrapped_description;
+}
+
+
 OptionHelpList *
 CmdlineParserCreator::generate_help_option_list(bool generate_hidden)
 {
@@ -879,8 +919,8 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden)
         // a possible description to be printed before this option
         if (opt->text_before)
         {
-          string wrapped_desc ( 2, ' ');
-          wrap_cstr ( wrapped_desc, 2, 0, opt->text_before);
+          string wrapped_desc;
+          wrap_cstr ( wrapped_desc, 0, 0, opt->text_before);
 
           option_list->push_back(wrapped_desc);
         }
@@ -957,7 +997,8 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden)
             }
 
           generate_help_desc_print(stream, desc_col, opt_desc, def_val,
-            (opt->acceptedvalues ? opt->acceptedvalues->toString() : ""));
+            (opt->acceptedvalues ? opt->acceptedvalues->toString() : ""),
+            (opt->required && show_required_string != "" ? show_required_string : ""));
 
           option_list->push_back(stream.str());
           stream.str("");
@@ -966,8 +1007,8 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden)
         // a possible description to be printed after this option
         if (opt->text_after)
         {
-          string wrapped_desc ( 2, ' ');
-          wrap_cstr ( wrapped_desc, 2, 0, opt->text_after);
+          string wrapped_desc;
+          wrap_cstr ( wrapped_desc, 0, 0, opt->text_after);
 
           option_list->push_back(wrapped_desc);
         }
@@ -1309,17 +1350,24 @@ CmdlineParserCreator::generate_getopt_string()
 
 void
 CmdlineParserCreator::generate_handle_help(ostream &stream,
-                                           unsigned int indent)
+                                           unsigned int indent,
+                                           bool full_help)
 {
  if (no_handle_help)
    {
      generic_option_gen_class help_gen;
-     help_gen.set_long_option (HELP_LONG_OPT);
-     help_gen.set_short_option (HELP_SHORT_OPT_STR);
-     help_gen.set_option_comment (HELP_OPT_DESCR);
-     help_gen.set_option_var_name (HELP_LONG_OPT);
+     if (full_help) {
+        help_gen.set_long_option (FULL_HELP_LONG_OPT);
+	help_gen.set_option_comment (FULL_HELP_OPT_DESCR);
+        help_gen.set_option_var_name (FULL_HELP_LONG_OPT_FIELD);
+     } else {
+        help_gen.set_long_option (HELP_LONG_OPT);
+	help_gen.set_short_option (HELP_SHORT_OPT_STR);
+	help_gen.set_option_comment (HELP_OPT_DESCR);
+	help_gen.set_option_var_name (HELP_LONG_OPT);
+     }
      help_gen.set_package_var_name (EXE_NAME);
-     help_gen.set_has_short_option (true);
+     help_gen.set_has_short_option (!full_help);
 
      help_gen.generate_generic_option (stream, indent);
 
@@ -1332,6 +1380,7 @@ CmdlineParserCreator::generate_handle_help(ostream &stream,
    {
      handle_help_gen_class help_gen;
      help_gen.set_parser_name (parser_function_name);
+     help_gen.set_full_help(full_help);
      help_gen.generate_handle_help (stream, indent);
    }
 }
@@ -1424,13 +1473,10 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
           }
 
           if (strcmp(opt->long_opt, FULL_HELP_LONG_OPT) == 0) {
-              handle_help_gen_class help_gen;
-              help_gen.set_full_help(true);
-              help_gen.set_parser_name (parser_function_name);
-              help_gen.generate_handle_help (stream, indent);
-              stream << endl;
-              stream << endl;
-              continue;
+            generate_handle_help(stream, indent, true);
+            stream << endl;
+            stream << endl;
+            continue;
           }
 
           if (opt->short_opt == VERSION_SHORT_OPT && strcmp(opt->long_opt, VERSION_LONG_OPT) == 0) {

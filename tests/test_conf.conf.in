@@ -15,16 +15,10 @@ string another
 # multiple options
 M "second"
 
-multi-string    "third"
+include "test_conf_inc.conf"
 
 n
 
-noarg-noshort
-
-n
-
-n
-
-multi-string "fourth,fifth,sixth"
+include "@srcdir@/test_conf_inc2.conf"
 
 noarg-noshort

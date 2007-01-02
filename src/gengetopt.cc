@@ -51,14 +51,20 @@ extern int yyparse () ;
 
 #include "yyerror.h"
 
+/*
 #ifndef HAVE_STRDUP
 extern "C" char *strdup (const char *s) ;
 #endif
+*/
+
+#include "strdup.h"
 
 gengetopt_option_list gengetopt_options;
 char * gengetopt_package = NULL;
 char * gengetopt_version = NULL;
 char * gengetopt_purpose = NULL;
+char * gengetopt_description = NULL;
+char * gengetopt_usage = NULL;
 groups_collection_t gengetopt_groups;
 
 int gengetopt_count_line = 1;
@@ -228,7 +234,8 @@ main (int argc, char **argv)
      args_info.gen_version_flag,
      args_info.include_getopt_given,
      command_line.str (),
-     output_dir);
+     output_dir,
+     (args_info.show_required_given ? args_info.show_required_arg : ""));
 
   if (! gengetopt_package && (args_info.show_version_given || args_info.show_help_given))
     {
@@ -255,6 +262,11 @@ main (int argc, char **argv)
 
       output_formatted_string("Usage: " +
         cmdline_parser_creator.generate_usage_string(false) + "\n");
+
+      if (gengetopt_description) {
+        output_formatted_string(cmdline_parser_creator.generate_description());
+        cout << endl;
+      }
 
       // if --show-full-help is specified we have to generate also hidden options
       OptionHelpList *option_list =
@@ -319,6 +331,23 @@ gengetopt_define_purpose (char * s)
 {
   gengetopt_purpose = strdup (s);
   if (gengetopt_purpose == NULL)
+    return 1;
+  return 0;
+}
+
+int
+gengetopt_define_description (char * s)
+{
+  gengetopt_description = strdup (s);
+  if (gengetopt_description == NULL)
+    return 1;
+  return 0;
+}
+
+int gengetopt_define_usage (char * s)
+{
+  gengetopt_usage = strdup (s);
+  if (gengetopt_usage == NULL)
     return 1;
   return 0;
 }

@@ -5,4 +5,6 @@
 package "no_strings"
 version "1.0"
 
-option  "foo"        i "foo option" int no
+usage "no_strings [--foo|-i] <additional files>"
+
+option  "foo"        i "foo option" int optional

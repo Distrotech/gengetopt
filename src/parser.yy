@@ -24,9 +24,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifndef HAVE_STRDUP
-extern "C" char *strdup (const char *s) ;
-#endif
+#include "strdup.h"
 
 #include "my_sstream.h"
 
@@ -45,6 +43,8 @@ extern char * gengetopt_input_filename;
 static int gengetopt_package_given = 0;
 static int gengetopt_version_given = 0;
 static int gengetopt_purpose_given = 0;
+static int gengetopt_usage_given = 0;
+static int gengetopt_description_given = 0;
 
 extern int yylex () ;
 
@@ -136,6 +136,8 @@ struct multiple_size
 %token              TOK_OFF		"off"
 %token              TOK_FLAG		"flag"
 %token              TOK_PURPOSE		"purpose"
+%token              TOK_DESCRIPTION	"description"
+%token              TOK_USAGE		"usage"
 %token              TOK_DEFAULT		"default"
 %token              TOK_GROUP		"group"
 %token              TOK_GROUPDESC	"groupdesc"
@@ -180,6 +182,8 @@ statement
 	| version
 	| args
 	| purpose
+	| description
+	| usage
         | sectiondef
 	| option
 	| text
@@ -247,6 +251,47 @@ purpose
 		}
 	    }
 	;
+
+description
+	: TOK_DESCRIPTION quoted_string
+	    {
+	      if (gengetopt_description_given)
+		{
+		  yyerror ("description redefined");
+		  YYERROR;
+		}
+	      else
+		{
+		  gengetopt_description_given = 1;
+		  if (gengetopt_define_description ($2))
+		    {
+		      yyerror ("not enough memory");
+		      YYERROR;
+		    }
+		}
+	    }
+	;
+
+usage
+  : TOK_USAGE quoted_string
+  {
+      if (gengetopt_usage_given)
+      {
+	  yyerror ("usage redefined");
+	  YYERROR;
+      }
+      else
+      {
+	  gengetopt_usage_given = 1;
+	  if (gengetopt_define_usage ($2))
+          {
+	      yyerror ("not enough memory");
+	      YYERROR;
+          }
+      }
+  }
+;
+
 
 sectiondef
           : TOK_SECTION quoted_string opt_sectiondesc

@@ -25,6 +25,8 @@ const char *@args_info@_purpose = "@purpose@";
 
 const char *@args_info@_usage = "Usage:@if@ no_package @then@ " @package_var_name@ "@endif@ @usage_string@";
 
+const char *@args_info@_description = "@description@";
+
 const char *@args_info@_help[] = {
   @help_option_print:method@  0
 };
@@ -114,6 +116,10 @@ void
     printf("\n%s\n", @args_info@_purpose);
 
   printf("\n%s\n\n", @args_info@_usage);
+
+  if (strlen(@args_info@_description) > 0)
+    printf("%s\n", @args_info@_description);
+
   while (@args_info@_help[i])
     printf("%s\n", @args_info@_help[i++]);
 }
@@ -129,6 +135,10 @@ void
     printf("\n%s\n", @args_info@_purpose);
 
   printf("\n%s\n\n", @args_info@_usage);
+
+  if (strlen(@args_info@_description) > 0)
+    printf("%s\n", @args_info@_description);
+
   while (@args_info@_full_help[i])
     printf("%s\n", @args_info@_full_help[i++]);
 }
@@ -559,35 +569,24 @@ failure:
 #define CONFIG_FILE_LINE_BUFFER_SIZE (CONFIG_FILE_LINE_SIZE+3)
 /* 3 is for "--" and "=" */
 
-char my_argv[CONFIG_FILE_LINE_BUFFER_SIZE+1];
-
-int
-@parser_name@_configfile (char * const filename, struct @args_info@ *args_info, int override, int initialize, int check_required)
+static int
+_@parser_name@_configfile (char * const filename, int *my_argc)
 {
   FILE* file;
+  char my_argv[CONFIG_FILE_LINE_BUFFER_SIZE+1];
   char linebuf[CONFIG_FILE_LINE_SIZE];
   int line_num = 0;
-  int i, result, equal;
+  int result = 0, equal;
   char *fopt, *farg;
   char *str_index;
   size_t len, next_token;
   char delimiter;
-  int my_argc = 0;
-  char **my_argv_arg;
-  char *additional_error;
-
-  /* store the program name */
-  cmd_line_list_tmp = (struct line_list *) malloc (sizeof (struct line_list));
-  cmd_line_list_tmp->next = cmd_line_list;
-  cmd_line_list = cmd_line_list_tmp;
-  cmd_line_list->string_arg = gengetopt_strdup (@package_var_name@);
 
   if ((file = fopen(filename, "r")) == NULL)
     {
       fprintf (stderr, "%s: Error opening configuration file '%s'\n",
                @package_var_name@, filename);
-      result = EXIT_FAILURE;
-      goto conf_failure;
+      return EXIT_FAILURE;
     }
 
   while ((fgets(linebuf, CONFIG_FILE_LINE_SIZE, file)) != NULL)
@@ -600,11 +599,11 @@ int
           fprintf (stderr, "%s:%s:%d: Line too long in configuration file\n",
                    @package_var_name@, filename, line_num);
           result = EXIT_FAILURE;
-          goto conf_failure;
+          break;
         }
 
       /* find first non-whitespace character in the line */
-      next_token = strspn ( linebuf, " \t\r\n");
+      next_token = strspn (linebuf, " \t\r\n");
       str_index  = linebuf + next_token;
 
       if ( str_index[0] == '\0' || str_index[0] == '#')
@@ -628,6 +627,7 @@ int
 
       /* advance pointers to the next token after the end of fopt */
       next_token += strspn (fopt + next_token, " \t\r\n");
+
       /* check for the presence of equal sign, and if so, skip it */
       if ( !equal )
         if ((equal = (fopt[next_token] == '=')))
@@ -649,7 +649,7 @@ int
                  "%s:%s:%d: unterminated string in configuration file\n",
                  @package_var_name@, filename, line_num);
               result = EXIT_FAILURE;
-              goto conf_failure;
+              break;
             }
         }
       else
@@ -672,20 +672,28 @@ int
                  "%s:%s:%d: malformed string in configuration file\n",
                  @package_var_name@, filename, line_num);
               result = EXIT_FAILURE;
-              goto conf_failure;
+              break;
             }
         }
 
     noarg:
-      ++my_argc;
+      if (!strcmp(fopt,"include")) {
+        if (farg && *farg) {
+          result = _@parser_name@_configfile(farg, my_argc);
+        } else {
+          fprintf(stderr, "%s:%s:%d: include requires a filename argument.\n",
+                  @package_var_name@, filename, line_num);
+        }
+        continue;
+      }
       len = strlen(fopt);
-
       strcat (my_argv, len > 1 ? "--" : "-");
       strcat (my_argv, fopt);
-      if (len > 1 && ((farg &&*farg) || equal))
-          strcat (my_argv, "=");
+      if (len > 1 && ((farg && *farg) || equal))
+        strcat (my_argv, "=");
       if (farg && *farg)
-          strcat (my_argv, farg);
+        strcat (my_argv, farg);
+      ++(*my_argc);
 
       cmd_line_list_tmp = (struct line_list *) malloc (sizeof (struct line_list));
       cmd_line_list_tmp->next = cmd_line_list;
@@ -693,27 +701,51 @@ int
       cmd_line_list->string_arg = gengetopt_strdup(my_argv);
     } /* while */
 
-  ++my_argc; /* for program name */
-  my_argv_arg = (char **) malloc((my_argc+1) * sizeof(char *));
-  cmd_line_list_tmp = cmd_line_list;
-  for (i = my_argc - 1; i >= 0; --i) {
-    my_argv_arg[i] = cmd_line_list_tmp->string_arg;
-    cmd_line_list_tmp = cmd_line_list_tmp->next;
-  }
-  my_argv_arg[my_argc] = 0;
-
-  additional_error = (char *)malloc(strlen(filename) + strlen(ADDITIONAL_ERROR) + 1);
-  strcpy (additional_error, ADDITIONAL_ERROR);
-  strcat (additional_error, filename);
-  result =
-    @parser_name@_internal (my_argc, my_argv_arg, args_info, override, initialize, check_required, additional_error);
-
-  free (additional_error);
-  free (my_argv_arg);
-
-conf_failure:
   if (file)
     fclose(file);
+  return result;
+}
+
+int
+@parser_name@_configfile (char * const filename,
+                           struct @args_info@ *args_info,
+                           int override, int initialize, int check_required)
+{
+  int i, result;
+  int my_argc = 1;
+  char **my_argv_arg;
+  char *additional_error;
+
+  /* store the program name */
+  cmd_line_list_tmp = (struct line_list *) malloc (sizeof (struct line_list));
+  cmd_line_list_tmp->next = cmd_line_list;
+  cmd_line_list = cmd_line_list_tmp;
+  cmd_line_list->string_arg = gengetopt_strdup (@package_var_name@);
+
+  result = _@parser_name@_configfile(filename, &my_argc);
+
+  if (result != EXIT_FAILURE) {
+    my_argv_arg = (char **) malloc((my_argc+1) * sizeof(char *));
+    cmd_line_list_tmp = cmd_line_list;
+
+    for (i = my_argc - 1; i >= 0; --i) {
+      my_argv_arg[i] = cmd_line_list_tmp->string_arg;
+      cmd_line_list_tmp = cmd_line_list_tmp->next;
+    }
+
+    my_argv_arg[my_argc] = 0;
+
+    additional_error = (char *)malloc(strlen(filename) + strlen(ADDITIONAL_ERROR) + 1);
+    strcpy (additional_error, ADDITIONAL_ERROR);
+    strcat (additional_error, filename);
+    result =
+      @parser_name@_internal (my_argc, my_argv_arg, args_info,
+                              override, initialize, check_required,
+                              additional_error);
+
+    free (additional_error);
+    free (my_argv_arg);
+  }
 
   free_cmd_list();
   @final_exit@

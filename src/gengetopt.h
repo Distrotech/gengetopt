@@ -27,6 +27,9 @@
 int gengetopt_define_package (char * s) ;
 int gengetopt_define_version (char * s) ;
 int gengetopt_define_purpose (char * s) ;
+int gengetopt_define_description (char * s) ;
+int gengetopt_define_usage (char * s) ;
+
 /**
  * Sets the "global" section specification that will be then set
  * in the following options

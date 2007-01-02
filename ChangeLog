@@ -1,3 +1,24 @@
+2006-12-19  Lorenzo Bettini  <bettini@prog.dsi.unifi.it>
+
+	* src/gm.cc (generate_handle_help): also handle full-help
+
+2006-12-11  Lorenzo Bettini  <bettini@lorelap>
+
+	* configure.ac: use of Gnulib
+
+2006-11-17  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/parser.yy: Added description string
+
+2006-10-05  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/skels/c_source.h_skel (_configfile): handle configuration
+	file inclusione (thanks to David Bird)
+
+2006-09-30  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/scanner.ll: strings can spawn more lines
+
 2006-09-23  Lorenzo Bettini  <bettini@lorelap>
 
 	* src/scanner.ll: correctly handle size specification of multiple
