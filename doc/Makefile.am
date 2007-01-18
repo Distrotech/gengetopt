@@ -130,14 +130,15 @@ cmdline1.h: cmdline1.c
 cmdline1.c: sample1.ggo
 	$(PROGNAME) -i $(srcdir)/sample1.ggo -Fcmdline1 --long-help -u --show-required
 
+cmdline2.h: cmdline2.c
 cmdline2.c: sample2.ggo
 	$(PROGNAME) --input=$(srcdir)/sample2.ggo --func-name=my_cmdline_parser --file-name=cmdline2 --unamed-opts --no-handle-help --no-handle-version
 
-cmdline1.o: cmdline1.c
-	$(CC) $(DEFS) $(CFLAGS) $(DEFAULT_INCLUDES) $(INCLUDES) -c cmdline1.c
+#cmdline1.o: cmdline1.c
+#	$(CC) $(DEFS) $(CFLAGS) $(DEFAULT_INCLUDES) $(INCLUDES) -c cmdline1.c
 
 cmdline2.o: cmdline2.c
-	$(CC) $(DEFS) $(CFLAGS) $(DEFAULT_INCLUDES) $(INCLUDES) -DMY_CMDLINE_PARSER_PACKAGE=\"sample2\" -DMY_CMDLINE_PARSER_VERSION=\"2.0\" -c cmdline2.c
+	$(COMPILE) -DMY_CMDLINE_PARSER_PACKAGE=\"sample2\" -DMY_CMDLINE_PARSER_VERSION=\"2.0\" -c cmdline2.c
 
 # session for tests
 RUN_SAMPLE1 = ./sample1$(EXEEXT) -i 10 --flag-opt cmdline?.c

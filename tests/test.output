@@ -304,7 +304,9 @@ Usage: test_all_opts [OPTIONS]...
 This is just a test file
 
 to test all possible
-command line type options
+command line type options.
+
+In ggo files comments start with # and end at EOL
 
 
   -h, --help                    Print help and exit
@@ -487,7 +489,9 @@ Usage: test_all_opts [OPTIONS]... [FILES]...
 This is just a test file
 
 to test all possible
-command line type options
+command line type options.
+
+In ggo files comments start with # and end at EOL
 
   -h, --help                    Print help and exit
       --full-help               Print help, including hidden options, and exit
@@ -844,7 +848,9 @@ Usage: test_all_opts [OPTIONS]... [FILES]...
 This is just a test file
 
 to test all possible
-command line type options
+command line type options.
+
+In ggo files comments start with # and end at EOL
 
   -h, --help                    Print help and exit
       --full-help               Print help, including hidden options, and exit
@@ -906,7 +912,9 @@ Usage: test_all_opts -rSTRING|--required=STRING [-h|--help] [--full-help]
 This is just a test file
 
 to test all possible
-command line type options
+command line type options.
+
+In ggo files comments start with # and end at EOL
 
 
   -h, --help                    Print help and exit

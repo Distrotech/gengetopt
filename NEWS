@@ -7,6 +7,13 @@ Please send gengetopt bug reports to bug-gengetopt at gnu.org
 For details about the new features, you can take a look at:
 http://tronprog.blogspot.com/search/label/gengetopt
 
+Version 2.19.1
+
+   * fixed compilation problem that can make 'make check' fail on some systems
+     lacking getopt_long.
+   * fixed a test problem when not using GNU sed
+   * in strings # comments are not considered (thanks to Matthew K. Junker)
+
 Version 2.19
 
    * strings can spawn more than one line and contain escaped "

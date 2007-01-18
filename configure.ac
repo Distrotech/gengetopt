@@ -21,7 +21,7 @@ AC_INIT(reconf)
 
 AM_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE(gengetopt,2.19)
+AM_INIT_AUTOMAKE(gengetopt,2.19.1)
 
 dnl directory for docs (html)
 AC_SUBST(gengetoptdocdir)

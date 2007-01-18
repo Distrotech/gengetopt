@@ -564,8 +564,8 @@ is the same as
 option <long> <short> "<desc>" @{typestr="<type descr>"@} @{argtype@} 
 @end example
 
-Comments begins with @code{#} in any place of the line and ends in the
-end of line.
+Comments begin with @code{#} in any place (but in strings) of the line
+and ends in the end of line.
 
 @cindex @code{-h,--help}
 @cindex @code{-V,--version}

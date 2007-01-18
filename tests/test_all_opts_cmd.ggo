@@ -8,7 +8,9 @@ purpose "This is just a gengetopt's test file"
 description "This is just a test file
 
 to test all possible
-command line type options
+command line type options.
+
+In ggo files comments start with # and end at EOL
 "
 
 # this empty text will simply add a line break in the help output

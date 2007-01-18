@@ -4,12 +4,6 @@
 #ifdef HAVE_CONFIG_H
 #	include "config.h"
 #endif
-/* Check for configure's getopt check result.  */
-#ifndef HAVE_GETOPT_LONG
-#	include "getopt.h"
-#else
-#	include <getopt.h>
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>

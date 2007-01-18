@@ -25,7 +25,7 @@ const char *gengetopt_args_info_purpose = "This is just a gengetopt's test file"
 
 const char *gengetopt_args_info_usage = "Usage: test_all_opts [OPTIONS]... [FILES]...";
 
-const char *gengetopt_args_info_description = "This is just a test file\n\nto test all possible\ncommand line type options\n";
+const char *gengetopt_args_info_description = "This is just a test file\n\nto test all possible\ncommand line type options.\n\nIn ggo files comments start with # and end at EOL\n";
 
 const char *gengetopt_args_info_help[] = {
   "  -h, --help                    Print help and exit",

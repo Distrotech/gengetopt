@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2004-2006 Free Software Foundation, Inc.
+# Copyright (C) 2004-2007 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -92,6 +92,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strdup.c
   lib/strdup.h
   m4/getopt.m4
+  m4/gnulib-common.m4
   m4/onceonly_2_57.m4
   m4/strdup.m4
   m4/unistd_h.m4

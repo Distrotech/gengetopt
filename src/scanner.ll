@@ -125,7 +125,7 @@ tabs [\t]+
 <INITIAL>{ws}           updateTokenInfo (-1);
 <INITIAL>{tabs}         updateTokenInfo (8*yyleng);
 
-#[^\n]*		/* comments begin with # in any place */
+<INITIAL,SIZE_STATE>#[^\n]*	/* comments begin with # in any place (but strings) */
 <INITIAL>\n.*		update_count_line (0); yyless(1) ; /* give back all but the \n to rescan */
 
 \r              {}
