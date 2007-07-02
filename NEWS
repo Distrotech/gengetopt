@@ -7,6 +7,20 @@ Please send gengetopt bug reports to bug-gengetopt at gnu.org
 For details about the new features, you can take a look at:
 http://tronprog.blogspot.com/search/label/gengetopt
 
+Version 2.20
+
+   * if --include-getopt is specified the generated parser is actually
+     independent of getopt.h (bug fixed thanks to Tiago Menezes)
+   * in help output do not generated a section if all its options are hidden
+     (thanks to Edsko de Vries)
+   * --default-optional permits specifying that all options are by default
+     optional (unless explicitely specified)
+   * fixed a bug when generating --full-help handling in case
+     --no-handle-help is specified (thanks to Thomas Boehne)
+   * fixed a bug in the included getopt code when --include-getopt is specified
+   * fixed a bug when using args entry in the .ggo file 
+     (thanks to Christian Gagneraud)
+
 Version 2.19.1
 
    * fixed compilation problem that can make 'make check' fail on some systems

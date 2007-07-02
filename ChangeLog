@@ -1,3 +1,52 @@
+2007-07-01  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/gengetopt.cc (main): store args_info values after having
+	examined also the (possible) args entry in the .ggo file (bug fixed)
+
+2007-06-16  Lorenzo Bettini  <bettini@lorelap>
+
+	* doc/gengetopt.texinfo (Configuration files): fixed override
+	semantics documentation
+
+2007-06-08  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/skels/custom_getopt_gen.h_skel: does not check 
+	d->custom_optind == 1 as an initialization condition since it
+	is not correct
+
+2007-05-04  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/gm.cc (generate_handle_help): correctly generate the return
+	inside the if in case of no_handle_help and full-help
+
+	* configure.ac: removed AC_C_CONST since obsolescent
+
+	* src/cxxconfig.h: removed
+
+2007-04-15  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/cmdline.ggo: --default-optional added
+
+	* src/ggos.cpp: required default depends on --default-optional
+
+	* src/global_options.h: (struct GlobalOptions) contains options
+	concerning the program (typically passed on the command line)
+
+	* src/gm.cc (generate_help_option_list): don't generate a section
+	if all of its options are hidden
+
+2007-04-12  Lorenzo Bettini  <bettini@work>
+
+	* src/skels/custom_getopt_gen.h_skel: declare all the needed structures and variables
+
+	* src/skels/c_source.h_skel: don't include getopt.h if --include-getopt is specified
+
+2007-01-20  Lorenzo Bettini  <bettini@lorelap>
+
+	* autogen.sh: added (replaces reconf) for bootstrapping autotools
+
+	* configure.ac: use libtool now
+
 2007-01-12  Lorenzo Bettini  <bettini@lorelap>
 
 	* src/scanner.ll: # comments not in strings (thanks to 

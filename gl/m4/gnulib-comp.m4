@@ -34,18 +34,12 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([AC_LIBOBJ], m4_defn([gl_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl_LIBSOURCES]))
-  AM_CONDITIONAL([GL_COND_LIBTOOL], [false])
-  gl_cond_libtool=false
-  gl_libdeps=
-  gl_ltlibdeps=
+  AM_CONDITIONAL([GL_COND_LIBTOOL], [true])
+  gl_cond_libtool=true
   gl_source_base='gl'
   gl_GETOPT
   gl_FUNC_STRDUP
   gl_HEADER_UNISTD
-  LIBGNU_LIBDEPS="$gl_libdeps"
-  AC_SUBST([LIBGNU_LIBDEPS])
-  LIBGNU_LTLIBDEPS="$gl_ltlibdeps"
-  AC_SUBST([LIBGNU_LTLIBDEPS])
   m4_popdef([AC_LIBSOURCES])
   m4_popdef([AC_REPLACE_FUNCS])
   m4_popdef([AC_LIBOBJ])

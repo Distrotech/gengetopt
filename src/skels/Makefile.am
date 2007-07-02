@@ -25,9 +25,9 @@ endif
 
 INCLUDES = -I@top_srcdir@/src
 
-noinst_LIBRARIES = libgen.a
+noinst_LTLIBRARIES = libgen.la
 
-libgen_a_SOURCES = header.cc c_source.cc handle_help.cc handle_version.cc \
+libgen_la_SOURCES = header.cc c_source.cc handle_help.cc handle_version.cc \
 generic_option.cc required_option.cc dependant_option.cc \
 generic_option_group.cc group_counter.cc group_option.cc \
 print_help_string.cc \

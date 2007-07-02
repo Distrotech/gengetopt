@@ -27,3 +27,5 @@ debug
 gengetopt.kdevelop.pcs
 gengetopt.kdevses
 config.rpath
+libtool
+ltmain.sh

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 1999-2006  Free Software Foundation, Inc.
+ * Copyright (C) 1999-2007  Free Software Foundation, Inc.
  *
  * This file is part of GNU gengetopt
  *
@@ -872,8 +872,11 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden)
 
   foropt
     {
+	  // if the option is hidden, avoid to print a section containing only
+	  // hidden options
       if (opt->section &&
-          (!curr_section || strcmp (curr_section, opt->section)))
+          (!curr_section || strcmp (curr_section, opt->section)) &&
+          (!opt->hidden || generate_hidden))
       {
         curr_section = opt->section;
 
@@ -1356,25 +1359,30 @@ CmdlineParserCreator::generate_handle_help(ostream &stream,
  if (no_handle_help)
    {
      generic_option_gen_class help_gen;
+          
+     // we use the update_arg parameter to call the free function
+     // and to return 0
+     string indent_str (indent + 2, ' ');
+     const string final_instructions =
+         parser_function_name + 
+         string("_free (&local_args_info);\nreturn 0;");
+
+     help_gen.set_update_arg(final_instructions);     
+     
      if (full_help) {
         help_gen.set_long_option (FULL_HELP_LONG_OPT);
-	help_gen.set_option_comment (FULL_HELP_OPT_DESCR);
-        help_gen.set_option_var_name (FULL_HELP_LONG_OPT_FIELD);
+        help_gen.set_option_comment (FULL_HELP_OPT_DESCR);
+        help_gen.set_option_var_name (FULL_HELP_LONG_OPT_FIELD);        
      } else {
         help_gen.set_long_option (HELP_LONG_OPT);
-	help_gen.set_short_option (HELP_SHORT_OPT_STR);
-	help_gen.set_option_comment (HELP_OPT_DESCR);
-	help_gen.set_option_var_name (HELP_LONG_OPT);
+        help_gen.set_short_option (HELP_SHORT_OPT_STR);
+        help_gen.set_option_comment (HELP_OPT_DESCR);
+        help_gen.set_option_var_name (HELP_LONG_OPT);
      }
      help_gen.set_package_var_name (EXE_NAME);
      help_gen.set_has_short_option (!full_help);
 
      help_gen.generate_generic_option (stream, indent);
-
-     string indent_str (indent + 2, ' ');
-     stream << parser_function_name << "_free (&local_args_info);\n";
-     stream << indent_str;
-     stream << "return 0;";
    }
  else
    {

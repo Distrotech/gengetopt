@@ -48,3 +48,14 @@ the last use is significant.   The classic example is the @option{-O}
 switch present in most C compilers:
 
 maintainer-mode
+
+document that an option can span more lines.
+
+remove getopt.c and getopt1.c?
+
+check override for config/cmdline and cmdline/config
+
+make a version of _parser that takes the parameters in a struct
+_parser_options
+and an init function for options
+and add the parameter error_on_dup

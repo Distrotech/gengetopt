@@ -960,3 +960,65 @@ Moreover, text can be specified more than once in the input file.
       --file-save=STRING        save the passed options into a file
 
 A text after all options.
+only_hidden 0.1
+
+Usage: only_hidden --nonhidden=STRING --nonhidden2=STRING [-h|--help] 
+         [--full-help] [-V|--version] 
+
+  -h, --help               Print help and exit
+      --full-help          Print help, including hidden options, and exit
+  -V, --version            Print version and exit
+
+First section.  This contains non hidden options:
+      --nonhidden=STRING   non hidden
+      --nonhidden2=STRING  non hidden2
+only_hidden 0.1
+
+Usage: only_hidden --nonhidden=STRING --nonhidden2=STRING [-h|--help] 
+         [--full-help] [-V|--version] 
+
+  -h, --help               Print help and exit
+      --full-help          Print help, including hidden options, and exit
+  -V, --version            Print version and exit
+
+First section.  This contains non hidden options:
+      --nonhidden=STRING   non hidden
+      --nonhidden2=STRING  non hidden2
+
+Hidden section.  This contains only hidden options:
+      --hidden=STRING      hidden
+      --hidden2=STRING     hidden2
+required_or_optional 0.1
+
+Usage: required_or_optional --required=STRING --non-specified=STRING 
+         --non-specified2=STRING [-h|--help] [-V|--version] [--optional=STRING] 
+         
+
+  -h, --help                   Print help and exit
+  -V, --version                Print version and exit
+
+This contains options with specified required/optional:
+      --required=STRING        required specified (mandatory)
+      --optional=STRING        optional specified
+
+This contains options with NON specified required/optional:
+      --non-specified=STRING   non specified whether optional or required 
+                                 (mandatory)
+      --non-specified2=STRING  non specified whether optional or required 
+                                 (mandatory)
+required_or_optional 0.1
+
+Usage: required_or_optional --required=STRING [-h|--help] [-V|--version] 
+         [--optional=STRING] [--non-specified=STRING] [--non-specified2=STRING] 
+         
+
+  -h, --help                   Print help and exit
+  -V, --version                Print version and exit
+
+This contains options with specified required/optional:
+      --required=STRING        required specified (mandatory)
+      --optional=STRING        optional specified
+
+This contains options with NON specified required/optional:
+      --non-specified=STRING   non specified whether optional or required
+      --non-specified2=STRING  non specified whether optional or required

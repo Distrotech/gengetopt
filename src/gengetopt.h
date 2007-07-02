@@ -63,15 +63,6 @@ int gengetopt_add_option (const char * long_opt, char short_opt,
                           const AcceptedValues *acceptedvalues,
                           int multiple = 0,
                           int argoptional = 0);
-int gengetopt_create_option (gengetopt_option *&opt, const char * long_opt, char short_opt,
-                          const char * desc,
-                          int type, int flagstat, int required,
-                          const char *default_value,
-                          const char * group_value,
-                          const char * type_str,
-                          const AcceptedValues *acceptedvalues,
-                          int multiple = 0,
-                          int argoptional = 0);
 
 int gengetopt_has_option (gengetopt_option *opt);
 int gengetopt_check_option (gengetopt_option *opt,

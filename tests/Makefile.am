@@ -1,4 +1,4 @@
-# Copyright (C) 1999-2006  Free Software Foundation, Inc.
+# Copyright (C) 1999-2007  Free Software Foundation, Inc.
 #  
 # This file is part of GNU gengetopt 
 #
@@ -28,6 +28,9 @@ SUFFIXES = .ggo .ggonu .ggoconf .ggostr
 PROGNAME = $(top_builddir)/src/gengetopt$(EXEEXT) --gen-version
 
 PROGNAMESHOWHELP = $(PROGNAME) --show-help --long-help
+PROGNAMESHOWFULLHELP = $(PROGNAME) --show-full-help --long-help
+
+PROGNAMESHOWHELPREQUIRED = $(PROGNAME) --show-help --long-help --show-required
 
 GGO_COMPILE = $(PROGNAME) --input=$< --func-name=$*_parser --file-name=$*
 
@@ -60,7 +63,7 @@ AM_LDFLAGS = $(DEFS) $(INCLUDES)
 # these are for gnulib
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl
 
-LDADD = $(top_builddir)/gl/libgnu.a
+LDADD = $(top_builddir)/gl/libgnu.la
 
 EXPECT = 1
 
@@ -201,6 +204,8 @@ test_conf.conf.in \
 test_conf_inc.conf.in test_conf_inc_inc.conf test_conf_inc2.conf \
 test_conf2.conf test_conf3.conf test_conf_err.conf \
 test_conf_err_string.conf test_conf_err_string2.conf \
+test_section_with_all_hidden.ggo \
+test_required_optional_cmd.ggo \
 $(ERRFILES) $(ERRGGOFILES)
 
 check-err: $(ERRFILES)
@@ -226,6 +231,10 @@ $(TESTSOUTPUT):
 	  $(top_builddir)/tests/$$source --full-help >> $@ 2>&1; \
 	done && \
 	$(PROGNAMESHOWHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $@ 2>&1;
+	$(PROGNAMESHOWHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $@ 2>&1;
+	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $@ 2>&1;
+	$(PROGNAMESHOWHELPREQUIRED) < $(srcdir)/test_required_optional_cmd.ggo >> $@ 2>&1;
+	$(PROGNAMESHOWHELPREQUIRED) --default-optional < $(srcdir)/test_required_optional_cmd.ggo >> $@ 2>&1;
 
 store-backup: $(BUILT_SOURCES) $(TESTSOUTPUT)
 	rm -f *.test; \
@@ -259,6 +268,10 @@ check-diff:
 	  $(top_builddir)/tests/$$tests --full-help >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	done && \
 	$(PROGNAMESHOWHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWHELPREQUIRED) < $(srcdir)/test_required_optional_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWHELPREQUIRED) --default-optional < $(srcdir)/test_required_optional_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
         echo "diff $(TESTSOUTPUT) $(TESTSOUT)"; \
         if ! diff $(TESTSOUTPUT) $(srcdir)/$(TESTSOUT); \
         then errors=1; fi; \

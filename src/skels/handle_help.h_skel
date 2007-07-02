@@ -6,6 +6,6 @@ case 'h':	/* Print help and exit.  */
   @parser_name@_print_help ();
 @ENDIF@
   @parser_name@_free (&local_args_info);
-  exit (EXIT_SUCCESS);@IF@ full_help @THEN@
+  exit (EXIT_SUCCESS);@IF@ full_help @then@
 }
 @ENDIF@

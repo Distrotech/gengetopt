@@ -23,7 +23,7 @@ option "float"       f "float option" float optional
 option "double"      d "double option" double optional
 option "longdouble"  D "longdouble option" longdouble optional
 option "longlong"    L "longlong option" longlong optional
-option "flag"        F "flag option" on flag
+option "flag"        F "flag option" flag on
 option "function"    u "function option" optional
 option "no-short"    - "no short option" optional
 option "opt-arg"     - "option with optional arg" 

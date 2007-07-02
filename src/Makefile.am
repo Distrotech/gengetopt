@@ -1,4 +1,4 @@
-# Copyright (C) 1999, 2000, 2001, 2002  Free Software Foundation, Inc.
+# Copyright (C) 1999-2007  Free Software Foundation, Inc.
 #  
 # This file is part of GNU gengetopt 
 #
@@ -29,14 +29,13 @@ bin_PROGRAMS = gengetopt
 
 gengetopt_SOURCES = parser.yy scanner.ll argsdef.c cmdline.c gengetopt.cc gm.cc \
 	yyerror.cc gm_utils.cpp fileutils.cpp acceptedvalues.cpp ggos.cpp
-#confparsergen.cc
 
 #gengetopt_LDADD = @LIBOBJS@ @LEXLIB@ skels/libgen.a
 
 # these are for gnulib
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl
 
-LDADD = $(top_builddir)/gl/libgnu.a @LEXLIB@ skels/libgen.a
+LDADD = $(top_builddir)/gl/libgnu.la @LEXLIB@ skels/libgen.la
 
 EXTRA_DIST = parser.h argsdef.h gengetopt.h ggos.h gm.h gnugetopt.h \
 cmdline.ggo cmdline.h my_sstream.h my_string.h my_map.h \
@@ -87,4 +86,7 @@ pkgdata_DATA = gnugetopt.h getopt.c getopt1.c
 # automake (maybe due to a bug) doesn't added these files well,
 # so we explicitely declare them
 MAINTAINERCLEANFILES = scanner.cc parser.h parser.cc 
-noinst_HEADERS = gm_utils.h fileutils.h acceptedvalues.h errorcodes.h yyerror.h
+
+noinst_HEADERS = gm_utils.h fileutils.h acceptedvalues.h \
+errorcodes.h yyerror.h 
+

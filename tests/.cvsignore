@@ -38,3 +38,5 @@ more_cmdparsers
 test_multiple_parsers
 test_conf_inc.conf
 test_conf.conf
+.libs
+

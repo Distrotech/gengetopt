@@ -17,11 +17,11 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(reconf)
+AC_INIT(autogen.sh)
 
 AM_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE(gengetopt,2.19.1)
+AM_INIT_AUTOMAKE(gengetopt,2.20)
 
 dnl directory for docs (html)
 AC_SUBST(gengetoptdocdir)
@@ -60,8 +60,7 @@ fi
 
 AC_PROG_INSTALL
 
-dnl check for ranlib, for building common code
-AC_PROG_RANLIB
+AM_PROG_LIBTOOL
 
 dnl test for --enable-warnings command line option
 AC_ARG_ENABLE( warnings, [  --enable-warnings       enable compiler warnings], AC_COMPILE_WARNINGS )

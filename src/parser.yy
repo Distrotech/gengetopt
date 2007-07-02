@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 1999-2005  Free Software Foundation, Inc.
+ * Copyright (C) 1999-2007  Free Software Foundation, Inc.
  *
  * This file is part of GNU gengetopt
  *
@@ -184,7 +184,7 @@ statement
 	| purpose
 	| description
 	| usage
-        | sectiondef
+	| sectiondef
 	| option
 	| text
 	| groupoption
@@ -375,6 +375,7 @@ option_parts: option_parts opt_yesno
 			  {
 			  	$$ = $1;
 			  	$$->required = $2;
+			  	$$->required_set = true;
 			  }
 			| option_parts TOK_ARGTYPE
 			  {

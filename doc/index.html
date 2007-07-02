@@ -12,7 +12,7 @@
 <body style="background-color: rgb(255, 255, 255);">
 
 <h1>GNU Gengetopt
-2.19.1</h1>
+2.20</h1>
 
 
 <p>This program generates a C function that uses <i>getopt_long</i>
@@ -108,22 +108,22 @@ through cvs, say, e.g., version X.Y.Z, you must specify the tag
 update</tt>
 command.</p>
 
+<p>NOTICE: This convention holds since release 2.14.</p>
+
 <p>When you compile the sources that you get through the cvs
 repository,
 before running the <tt>configure</tt> and <tt>make</tt>
 commands, you
 should, at least the first time, run the command:</p>
 
-<pre> sh reconf<br></pre>
+<pre> sh autogen.sh<br></pre>
 
 <p>This will run the autotools commands in the correct order, and
 also copy
 possibly missing files. You should have installed recent versions of
-<tt>automake</tt> and <tt>autoconf</tt> in
+<tt>automake</tt>, <tt>autoconf</tt> and <tt>libtool</tt>  in
 order for this to succeed. You will also need <tt>flex</tt>
 and <tt>bison</tt>.</p>
-
-<p>NOTICE: This convention holds since release 2.14.</p>
 
 <h2>Changes in this
 release</h2>

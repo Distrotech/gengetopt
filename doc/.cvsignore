@@ -1,6 +1,7 @@
 Makefile.in
 Makefile
 .deps
+.libs
 cmdline1.h
 cmdline1.c
 cmdline2.h

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 1999, 2000, 2001  Free Software Foundation, Inc.
+ * Copyright (C) 1999-2007  Free Software Foundation, Inc.
  *
  * This file is part of GNU gengetopt
  *
@@ -51,12 +51,6 @@ extern int yyparse () ;
 
 #include "yyerror.h"
 
-/*
-#ifndef HAVE_STRDUP
-extern "C" char *strdup (const char *s) ;
-#endif
-*/
-
 #include "strdup.h"
 
 gengetopt_option_list gengetopt_options;
@@ -74,7 +68,11 @@ char *current_section_desc = 0;
 char *current_text = 0;
 char *current_args = 0;
 
+/// whether, if not specified, an option is considered optional
+bool default_to_optional = false;
+
 int canonize_vars (void);
+static void set_default_required_properties(void);
 
 static void print_copyright();
 static void print_reportbugs();
@@ -82,6 +80,17 @@ static void print_reportbugs();
 static void output_formatted_string(const string &);
 
 static bool check_dependencies();
+
+static int gengetopt_create_option (gengetopt_option *&opt, const char * long_opt, char short_opt,
+                          const char * desc,
+                          int type, int flagstat, int required,
+                          const char *default_value,
+                          const char * group_value,
+                          const char * type_str,
+                          const AcceptedValues *acceptedvalues,
+                          int multiple = 0,
+                          int argoptional = 0);
+
 
 #include <algorithm>
 #include <iterator>
@@ -105,7 +114,7 @@ main (int argc, char **argv)
       fprintf (stderr, "Run gengetopt --help to see the list of options.\n");
       exit(1) ;
   }
-
+  
   if (args_info.help_given)
   {
     printf ("GNU ");
@@ -121,11 +130,6 @@ main (int argc, char **argv)
     print_copyright ();
     exit (0);
   }
-
-  cmdline_parser_name = args_info.func_name_arg ;
-  cmdline_filename = args_info.file_name_arg ;
-  c_ext = args_info.c_extension_arg;
-  header_ext = args_info.header_extension_arg;
 
   if ( args_info.input_arg )
     {
@@ -152,6 +156,16 @@ main (int argc, char **argv)
       exit(1) ;
     }
   }
+
+  cmdline_parser_name = args_info.func_name_arg ;
+  cmdline_filename = args_info.file_name_arg ;
+  c_ext = args_info.c_extension_arg;
+  header_ext = args_info.header_extension_arg;
+  
+  default_to_optional = args_info.default_optional_given;
+  
+  // now set the default "required" property for options
+  set_default_required_properties();
 
   if (! check_dependencies()) {
     gengetopt_free();
@@ -457,6 +471,9 @@ gengetopt_create_option (gengetopt_option *&n, const char * long_opt, char short
   if (n == NULL)
     return NOT_ENOUGH_MEMORY;
 
+  // here we will set required anyway
+  n->required_set = true;
+  
   n->long_opt = strdup (long_opt);
   if (n->long_opt == NULL)
     {
@@ -586,6 +603,8 @@ gengetopt_check_option (gengetopt_option *n, bool groupoption)
         return NOT_GROUP_OPTION;
 
       n->required = 0;
+      n->required_set = true;
+
       groups_collection_t::const_iterator it =
         gengetopt_groups.find(string(n->group_value));
       if (it == gengetopt_groups.end())
@@ -605,10 +624,11 @@ gengetopt_check_option (gengetopt_option *n, bool groupoption)
       return SPECIFY_FLAG_STAT;
 
     if (n->default_string || n->multiple || n->arg_is_optional
-        || n->type_str || n->acceptedvalues)
+        || n->type_str || n->acceptedvalues || n->required_set)
       return NOT_VALID_SPECIFICATION;
 
     n->required = 0;
+    n->required_set = true;
   }
   else
   {
@@ -806,12 +826,24 @@ canonize_vars (void)
   return 0;
 }
 
+static void
+set_default_required_prop (gengetopt_option *p)
+{
+    if (!p->required_set)
+        p->required = (default_to_optional ? 0 : 1);
+}
+
+static void set_default_required_properties(void)
+{
+  for_each(gengetopt_options.begin(), gengetopt_options.end(), set_default_required_prop);
+}
+
 void
 print_copyright()
 {
   copyright_gen_class copyright_g;
 
-  copyright_g.set_year ("1999-2006");
+  copyright_g.set_year ("1999-2007");
   copyright_g.generate_copyright (cout);
 }
 

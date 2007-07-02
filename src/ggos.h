@@ -19,12 +19,13 @@ This file is licensed to you under the license specified in the included file
 
 struct gengetopt_option
 {
-  char short_opt;
-  char * long_opt;
-  char * desc;
-  int type; /* values in `argsdef.h' */
-  int flagstat ;
-  int required;
+  char short_opt; /** the short option specification (one char) */
+  char * long_opt; /** the short option specification */
+  char * desc; /** the option description */
+  int type; /** the type of the option (possible values in `argsdef.h') */
+  int flagstat ; /** if the option is of type flag, this indicates its state (on/off) */
+  int required; /** whether the option required */
+  bool required_set; /** whether the required property was set */
   char * var_arg; /* canonized long_opt + "_arg" = argument var */
   int default_given ; /* if a default is given */
   char * default_string ; /* default value for this option, if string */
@@ -49,18 +50,7 @@ struct gengetopt_option
   char *filename; /* source file */
   int linenum; /* line number */
 
-  gengetopt_option() :
-    short_opt(0), long_opt(0), desc(0), type(ARG_NO),
-    flagstat(-1),
-    required(1), var_arg(0), default_string(0),
-    group_value(0), group_desc(0),
-    multiple(false), arg_is_optional(false), hidden(false),
-    type_str(0), acceptedvalues(0),
-    section(0), section_desc(0), dependon(0),
-    text_before(0), text_after(0),
-    filename(0), linenum(0)
-    {
-    }
+  gengetopt_option();
 };
 
 typedef std::list<gengetopt_option *> gengetopt_option_list;

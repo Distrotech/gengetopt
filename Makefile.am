@@ -1,4 +1,4 @@
-# Copyright (C) 1999, 2000, 2001  Free Software Foundation, Inc.
+# Copyright (C) 1999-2007  Free Software Foundation, Inc.
 #
 # This file is part of GNU gengetopt
 #
@@ -18,7 +18,7 @@
 
 ACLOCAL_AMFLAGS = -I gl/m4
 
-EXTRA_DIST = reconf configure TODO LICENSE gl/m4/gnulib-cache.m4
+EXTRA_DIST = autogen.sh configure TODO LICENSE gl/m4/gnulib-cache.m4
 SUBDIRS = gl src doc tests
 
 gengetoptdoc_DATA = ChangeLog COPYING NEWS THANKS INSTALL README LICENSE

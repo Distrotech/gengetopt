@@ -1,4 +1,4 @@
-# Copyright (C) 1999, 2000, 2001  Free Software Foundation, Inc.
+# Copyright (C) 1999-2007  Free Software Foundation, Inc.
 #
 # This file is part of GNU gengetopt
 #
@@ -26,7 +26,7 @@
 #         purpose <string>
 #         option <long> <short> <desc> <argtype> <required>
 #         option <long> <short> <desc> flag      <onoff>
-#         option <long> <short> <desc> no
+#         option <long> <short> <desc> <required>
 #         ... # ...
 #
 # Where:
@@ -41,7 +41,7 @@
 # <desc>     = String with upper and lower case chars, digits, '-', '.' and
 #              spaces.
 # <argtype>  = string, int, short, long, float, double, longdouble or longlong.
-# <required> = yes or no.
+# <required> = required or optional.
 # <onoff>    = on or off.
 # Comments begins with '#' in any place of the line and ends in the
 # end of line.
@@ -50,7 +50,7 @@
 
 
 # Name of our program
-package "gengetopt"       # we don't use it: we're using automake
+package "gengetopt"       # can be omitted if using automake
 # Version of our program
 #version "1.0.1"           # we don't use it: we're using automake
 
@@ -74,6 +74,7 @@ option  "output-dir"     - "output directory"  string typestr="path"  optional
 option  "c-extension"   c "extension of c file" string typestr="ext" default="c" optional
 option  "header-extension"   H "extension of header file" string typestr="ext" default="h" optional
 option  "long-help"     l "long usage line in help" optional
+option  "default-optional"     - "by default, an option is considered optional if not specified otherwise" optional
 option  "unamed-opts"   u "accept options without names (e.g., file names)" string default="FILES" optional argoptional
 
 text "\nThe parser generated is thought to be used to parse the command line arguments. "
@@ -102,4 +103,4 @@ option  "show-help" - "show the output of --help instead of generating code" opt
 option  "show-full-help" - "show the output of --help (including hidden options) instead of generating code" optional
 option  "show-version" - "show the output of --version instead of generating code" optional
 
-text "\nPlease refer to the manual for further explanations."
+text "\nPlease refer to the info manual for further explanations."

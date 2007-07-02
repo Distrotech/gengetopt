@@ -149,6 +149,12 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   const string generate_description();
   const string generate_usage_string(bool use_config_package = true);
 
+  /**
+   * generate a list of option descriptions that will be printed in the
+   * help output
+   * 
+   * @param generate_hidden if true, include also the hidden options
+   */
   OptionHelpList *generate_help_option_list(bool generate_hidden = false);
 };
 

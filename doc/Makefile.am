@@ -43,7 +43,7 @@ sample2_SOURCES = cmdline2.c main2.c
 # these are for gnulib
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl
 
-LDADD = $(top_builddir)/gl/libgnu.a
+LDADD = $(top_builddir)/gl/libgnu.la
 
 gengetoptdoc_DATA = gengetopt.html index.html 
 
@@ -120,7 +120,7 @@ sample1.output.texinfo: sample1.ggo
 
 EXTRA_DIST = sample1.ggo sample2.ggo samples.stamp \
              cmdline1.c cmdline1.h cmdline2.c cmdline2.h \
-             $(man_MANS) $(gengetoptdoc_DATA) cxxconfig.h \
+             $(man_MANS) $(gengetoptdoc_DATA) \
              testdata \
              $(GENERATEDINFOS) \
              input.sed \

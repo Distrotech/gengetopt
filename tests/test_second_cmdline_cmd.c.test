@@ -17,7 +17,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "getopt.h"
 
 #include "test_second_cmdline_cmd.h"
 
@@ -483,11 +482,52 @@ test_second_cmdline_cmd_parser_required2 (struct test_second_cmdline_cmd_struct 
  */
 
 /* 
- * we don't include anything since this file is thought to be
+ * we must include anything we need since this file is not thought to be
  * inserted in a file already using getopt.h
  *
  * Lorenzo
  */
+
+struct option
+{
+  const char *name;
+  /* has_arg can't be an enum because some compilers complain about
+     type mismatches in all the code that assumes it is an int.  */
+  int has_arg;
+  int *flag;
+  int val;
+};
+
+/* For communication from `getopt' to the caller.
+   When `getopt' finds an option that takes an argument,
+   the argument value is returned here.
+   Also, when `ordering' is RETURN_IN_ORDER,
+   each non-option ARGV-element is returned here.  */
+
+static char *optarg;
+
+/* Index in ARGV of the next element to be scanned.
+   This is used for communication to and from the caller
+   and for communication between successive calls to `getopt'.
+
+   On entry to `getopt', zero means this is the first call; initialize.
+
+   When `getopt' returns -1, this is the index of the first of the
+   non-option elements that the caller should itself scan.
+
+   Otherwise, `optind' communicates from one call to the next
+   how much of ARGV has been scanned so far.  */
+
+static int optind;
+
+/* Callers store zero here to inhibit the error message `getopt' prints
+   for unrecognized options.  */
+
+static int opterr;
+
+/* Set to an option character which was unrecognized.  */
+
+static int optopt;
 
 /* This version of `getopt' appears to the caller like standard Unix `getopt'
    but it behaves differently for the user, since it allows the user
@@ -1011,7 +1051,7 @@ static int getopt_internal_r(int argc, char *const *argv, const char *optstring,
 	 * This is a big difference with GNU getopt, since optind == 0
 	 * means initialization while here 1 means first call.
 	 */
-	if (d->custom_optind == 1 || d->custom_optind == 0 || !d->initialized) {
+	if (d->custom_optind == 0 || !d->initialized) {
 		if (d->custom_optind == 0)
 			d->custom_optind = 1;	/* Don't scan ARGV[0], the program name.  */
 		custom_getopt_initialize(d);

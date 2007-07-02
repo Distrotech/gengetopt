@@ -940,7 +940,8 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           if (strcmp (long_options[option_index].name, "full-help") == 0) {
             test_all_opts_cmd_parser_print_full_help ();
             test_all_opts_cmd_parser_free (&local_args_info);
-            exit (EXIT_SUCCESS);}
+            exit (EXIT_SUCCESS);
+          }
           
 
           /* no short option.  */

@@ -1,6 +1,7 @@
 Makefile.in
 Makefile
 .deps
+.libs
 parser.h
 parser.cc
 scanner.cc
