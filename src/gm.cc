@@ -5,7 +5,7 @@
  *
  * GNU gengetopt is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2, or (at your option)
+ * the Free Software Foundation; either version 3, or (at your option)
  * any later version.
  *
  * GNU gengetopt is distributed in the hope that it will be useful, but
@@ -497,9 +497,9 @@ CmdlineParserCreator::generate_option_given(ostream &stream,
     {
       stream << endl;
       stream << indent_str;
-      stream << "char **inputs ; /* unamed options */\n" ;
+      stream << "char **inputs ; /**< @brief unamed options (options without names) */\n" ;
       stream << indent_str;
-      stream << "unsigned inputs_num ; /* unamed options number */" ;
+      stream << "unsigned inputs_num ; /**< @brief unamed options number */" ;
     }
 }
 
@@ -518,7 +518,7 @@ CmdlineParserCreator::generate_option_values_decl(ostream &stream,
         }
 
         stream << "extern char *" << OPTION_VALUES_NAME(opt->var_arg) <<
-          "[] ;\t/* Possible values for " << opt->long_opt << ".  */\n";
+          "[] ;\t/**< @brief Possible values for " << opt->long_opt << ".  */\n";
       }
     }
 
@@ -1359,20 +1359,20 @@ CmdlineParserCreator::generate_handle_help(ostream &stream,
  if (no_handle_help)
    {
      generic_option_gen_class help_gen;
-          
+
      // we use the update_arg parameter to call the free function
      // and to return 0
      string indent_str (indent + 2, ' ');
      const string final_instructions =
-         parser_function_name + 
+         parser_function_name +
          string("_free (&local_args_info);\nreturn 0;");
 
-     help_gen.set_update_arg(final_instructions);     
-     
+     help_gen.set_update_arg(final_instructions);
+
      if (full_help) {
         help_gen.set_long_option (FULL_HELP_LONG_OPT);
         help_gen.set_option_comment (FULL_HELP_OPT_DESCR);
-        help_gen.set_option_var_name (FULL_HELP_LONG_OPT_FIELD);        
+        help_gen.set_option_var_name (FULL_HELP_LONG_OPT_FIELD);
      } else {
         help_gen.set_long_option (HELP_LONG_OPT);
         help_gen.set_short_option (HELP_SHORT_OPT_STR);

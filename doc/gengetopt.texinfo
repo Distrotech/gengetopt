@@ -6,7 +6,7 @@
 @c
 @c GNU gengetopt is free software; you can redistribute it and/or modify 
 @c it under the terms of the GNU General Public License as published by 
-@c the Free Software Foundation; either version 2, or (at your option) 
+@c the Free Software Foundation; either version 3, or (at your option) 
 @c any later version. 
 @c
 @c GNU gengetopt is distributed in the hope that it will be useful, but 
@@ -15,8 +15,8 @@
 @c Public License for more details. 
 @c
 @c You should have received a copy of the GNU General Public License along 
-@c with gengetopt; see the file COPYING. If not, write to the Free Software 
-@c Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. 
+@c with gengetopt; see the file COPYING. If not, see http://www.gnu.org/license
+
 
 @c %**start of header
 @setfilename gengetopt.info
@@ -97,6 +97,7 @@ This file documents GNU Gengetopt version @value{VERSION}.
 * Invoking gengetopt::          gengetopt command line options
 * Terminology::                 Definitions of options, values, and so forth.
 * Group options::               Mutual exclusive options
+* Parser function additional parameters::  
 * Configuration files::         Parsing a configuration file
 * Multiple Options::            Multiple options
 * String Parsers and Multiple Parsers::  Using multiple parsers in the same program
@@ -140,6 +141,9 @@ Gengetopt can also generate a function to save the command line options
 into a file (see @ref{Basic Usage}), and a function to read the command
 line options from a  file (see @ref{Configuration files}).  Of course,
 these two kinds of files are compliant.
+
+Generated code works also if you use GNU Autoconf and GNU Automake and
+it is documented with Doxygen comments.
 
 @node Copying, Installation, Audience, Top
 @unnumbered Gengetopt Copying Conditions
@@ -1168,7 +1172,7 @@ the command line.  Gengetopt would create a tidy array for multiple
 options (see @ref{Multiple Options}, for further details about dealing
 with multiple options).
 
-@node Group options, Configuration files, Terminology, Top
+@node Group options, Parser function additional parameters, Terminology, Top
 @chapter Group options
 @cindex group options
 
@@ -1218,53 +1222,115 @@ $ ./test_groups -a --optc -d
 test_groups: 2 options of group my grp2 were given. At most one is required
 @end example
 
-@node Configuration files, Multiple Options, Group options, Top
+@node Parser function additional parameters, Configuration files, Group options, Top
+@chapter Parser function additional parameters
+@cindex parser parameters
+@cindex parameters
+
+Besides the parser functions, in the generated header file, gengetopt
+also generates@footnote{Since version 2.21.} an additional structure
+@code{<cmd_parser_name>_params} that can be used to customize the
+invocation of the generated parsers (it is especially useful when using
+configuration file parsers, @ref{Configuration files}, string parsers,
+@ref{String Parsers and Multiple Parsers}, and, in general, multiple
+parsers).
+
+These are the fields of this structure (as usual, boolean options are
+represented as @code{int} and they are @code{true} if they are set to
+@code{1} and @code{false} if they are set to @code{0}):
+
+@table @code
+@item int initialize
+@cindex initialize
+tells whether the args_info struct has to be initialized.
+
+@item int override
+@cindex override
+tells whether the values for the options that are parsed should override
+those that are already present in the passed args_info struct (e.g.,
+this is the case when you call a parser multiple times using the same
+args_info struct, see, e.g., @ref{Configuration files} and@ref{String
+Parsers and Multiple Parsers}).
+
+@item int check_required
+@cindex check_required
+tells whether the check for required options must be performed or not.
+
+@item int check_ambiguity
+@cindex check_ambiguity
+tells whether the check whether options that are parsed are not
+already present in the passed args_info struct; this is performed only
+for NON multiple options (see also @ref{Multiple Options}).
+@end table
+
+For instance, internally, the standard command line parser function is
+invoked with @code{initialize} and @code{check_required} set to 1 and
+@code{override} set to 0.
+
+Gengetopt also generates an initialization function for such structures,
+called @code{<cmd_parser_name>_params_init}, which returns a dynamically
+allocated structure with all fields initialized to 0.
+
+We strongly advise to use such function for creating such a structure,
+since this will make your code scalable to future releases of gengetopt
+where such structure might contain additional fields.  Otherwise, you
+might risk to use a structure where some fields are not initialized,
+with unpredictable results.  Furthermore, since the function returns a
+pointer to a dynamically allocated structure (with @code{malloc}), it is
+up to you to deallocate that structure when you no longer need it (with
+@code{free}).
+
+Some examples of usage of this parameters struct are shown in
+@ref{Configuration files}.
+
+@node Configuration files, Multiple Options, Parser function additional parameters, Top
 @chapter Configuration files
 @cindex configuration files
 
 @cindex @code{-C,--conf-parser}
 It is often useful to specify command line options directly in a
-configuration file, so that the value of some options are read from
-this file if they are not given as command line options.  When the
-command line option @code{-C|--conf-parser} is given to gengetopt,
-apart from the standard command line option parser, also this
-additional parser is generated (its name is
-@code{<commandline_parser>_configfile}):
+configuration file, so that the value of some options are read from this
+file if they are not given as command line options.  When the command
+line option @code{-C|--conf-parser} is given to gengetopt, apart from
+the standard command line option parser, also this additional parser is
+generated (its name is @code{<cmd_parser_name>_config_file}@footnote{The
+previous function @code{<cmd_parser_name>_configfile} --- notice the
+absence of the @code{_} --- is deprecated and should be no longer used,
+since it might be removed in the future releases.}):
 
+@cindex <cmd_parser_name>_config_file
 @example
 int
-<cmd_parser_name>_configfile (char * const filename,
-                              struct gengetopt_args_info *args_info,
-                              int override,
-                              int initialize,
-                              int check_required);
+<cmd_parser_name>_config_file(char * const filename,
+                             struct gengetopt_args_info *args_info,
+                             struct <cmd_parser_name>_params *params);
 @end example
 
-The parameter @code{override} tells whether the values read in the
+The parameter structure @code{<cmd_parser_name>_params} is described in
+@ref{Parser function additional parameters}.
+For instance, @code{params->override} tells whether the values read in the
 configuration file have to override those specified at the command line.
-The @code{initialize} tells whether the args_info struct has to be
-initialize.
 
-IMPORTANT: you have to explicitly set @code{initialize} to true (i.e.,
-different from 0) if you call the config file parser before the standard
-command line option parser, otherwise unpredictable results may show.
+IMPORTANT: you have to explicitly set @code{params->initialize} to 1 if
+you call the config file parser before the standard command line option
+parser, otherwise unpredictable results may show.
 
-The @code{check_required} tells whether the check for required options
-must be performed or not.
- 
 If you call the config file parser before the standard command line
 option parser and then you want to call the standard command line parser
-you MUST use this second version, passing 0 for initialized, so that
-collected values from the config file are not lost:
+you MUST use this second version of the parser function, with
+@code{params->initialize} set to 0, so that collected values from the
+config file are not lost@footnote{The previous function
+@code{<cmd_parser_name>2} --- notice the @code{2} --- is deprecated and
+should be no longer used, since it might be removed in the future
+releases.}:
 
+@cindex <cmd_parser_name>_ext
 @example
 int
-<cmd_parser_name>2 (int argc,
-                    char * const *argv,
-                    struct gengetopt_args_info *args_info,
-                    int override,
-                    int initialize,
-                    int check_required);
+<cmd_parser_name>_ext (int argc,
+                       char * const *argv,
+                       struct gengetopt_args_info *args_info,
+                       struct <cmd_parser_name>_params *params);
 @end example
 
 Notice, that with this version you can also specify whether the options
@@ -1281,6 +1347,7 @@ If you decide not to request the check for required option, you can
 test it manually, after the command line parsing returns by using the
 following generated function:
 
+@cindex <cmd_parser_name>_required
 @example 
 int
 <cmd_parser_name>_required (struct gengetopt_args_info *args_info,
@@ -1293,8 +1360,8 @@ value different from 0, then some required options are missing.  An
 error has already been printed by this function.  This concerns also
 options of a required group (@ref{Group options}).
 
-The config file has the following simple syntax: lines starting with #
-are considered comments and:
+The config file has the following simple syntax: lines starting with
+@code{#} are considered comments and:
 
 @example
 <option_name> = @{<option_val>@} 
@@ -1362,7 +1429,7 @@ This second example use the second version of the command line parser:
 first call the configuration file parser and then the command line
 parser (the command line options will override the configuration file
 options):
- 
+
 @include test_conf_parser_ov2.c.texinfo
 
 @noindent
@@ -1376,6 +1443,20 @@ value of no-short: 1
 value of int: 100
 value of float: 2.140000
 @end example
+
+If on the above code you substitute @code{params->override = 1} with
+@code{params->check_ambiguity = 1} (see the test file
+@file{test_conf_parser_ov4.c}), then the following invocation will
+generate an error:
+
+@example 
+./test_conf_parser_ov4 -r "bar" -i 100
+./test_conf_parser_ov4: `--required' (`-r') option given more than once
+@end example
+
+@noindent
+since the @code{-r} option is specified both in the configuration file
+and at the command line.
 
 @section Further details on the configuration file parser
 
@@ -1487,13 +1568,13 @@ Notice that this is independent from the @code{required} flag.
 @cindex string parsers
 
 The parsers generated by gengetopt (indeed the C and header files) are
-self-contained and different parsers can be linked in the same
-program, without interferences.  This is useful, e.g., in cases where
-a specific command line option argument has a complex syntax that
-accepts options itself according to terminology already defined, the
-one handled by @code{getopt_long}, see @ref{Terminology}.  Another
-case when multiple parsers can be useful is when your command behaves
-differently according to a specific command line option.
+self-contained and different parsers can be linked in the same program,
+without interferences.  This is useful, e.g., in cases where a specific
+command line option argument has a complex syntax that accepts options
+itself according to terminology already defined, i.e., the one handled
+by @code{getopt_long}, see @ref{Terminology}.  Another case when
+multiple parsers can be useful is when your command behaves differently
+according to a specific command line option.
 
 Obviously there exists only one instance of command line arguments
 passed to the @code{main} function (namely the variables @code{argc}
@@ -1514,16 +1595,20 @@ The two functions will be:
 int <parser_name>_string (const char *cmdline, 
     struct test_first_cmdline_cmd_struct *args_info,
     const char *prog_name);
-int <parser_name>_string2 (const char *cmdline,
+int <parser_name>_string_ext (const char *cmdline,
     struct test_first_cmdline_cmd_struct *args_info,
     const char *prog_name,
-    int override, int initialize, int check_required);
+    struct <cmd_parser_name>_params *params);
 @end example
 
-The second one allows you to specify more details about the parsing
-(this is the same as for configuration files, thus we refer to that
-section for the details of the two functions and default values, see
-@ref{Configuration files}).
+The second version@footnote{The previous function
+@code{<cmd_parser_name>_string2} --- notice the @code{2} --- is
+deprecated and should be no longer used, since it might be removed in
+the future releases.} allows you to specify more details about the
+parsing, using the @code{<cmd_parser_name>_params} structure, shown in
+@ref{Parser function additional parameters} (this is the same as for
+configuration files, thus we refer to that section for the details of
+the two functions and default values, see @ref{Configuration files}).
 
 Of course, these functions can be used in general to simulate the
 invocation of a program with specific command line options (stored in

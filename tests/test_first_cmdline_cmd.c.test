@@ -40,7 +40,8 @@ static
 void clear_args (struct test_first_cmdline_cmd_struct *args_info);
 
 static int
-test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct test_first_cmdline_cmd_struct *args_info, int override, int initialize, int check_required, const char *additional_error);
+test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct test_first_cmdline_cmd_struct *args_info,
+                        struct test_first_cmdline_cmd_parser_params *params, const char *additional_error);
 
 static int
 test_first_cmdline_cmd_parser_required2 (struct test_first_cmdline_cmd_struct *args_info, const char *prog_name, const char *additional_error);
@@ -142,6 +143,23 @@ test_first_cmdline_cmd_parser_init (struct test_first_cmdline_cmd_struct *args_i
 
   args_info->inputs = NULL;
   args_info->inputs_num = 0;
+}
+
+struct test_first_cmdline_cmd_parser_params *
+test_first_cmdline_cmd_parser_params_init()
+{
+  struct test_first_cmdline_cmd_parser_params *params = 
+    (struct test_first_cmdline_cmd_parser_params *)malloc(sizeof(struct test_first_cmdline_cmd_parser_params));
+
+  if (params)
+    { 
+      params->override = 0;
+      params->initialize = 0;
+      params->check_required = 0;
+      params->check_ambiguity = 0;
+    }
+    
+  return params;
 }
 
 static void
@@ -292,7 +310,9 @@ get_multiple_arg_token(const char *arg)
   j = 0;
   while (arg[i] && (j < len-1))
     {
-      if (arg[i] == '\\')
+      if (arg[i] == '\\' && 
+	  arg[ i + 1 ] && 
+	  arg[ i + 1 ] == ',')
         ++i;
 
       ret[j++] = arg[i++];
@@ -393,11 +413,33 @@ test_first_cmdline_cmd_parser (int argc, char * const *argv, struct test_first_c
 }
 
 int
+test_first_cmdline_cmd_parser_ext (int argc, char * const *argv, struct test_first_cmdline_cmd_struct *args_info,
+                   struct test_first_cmdline_cmd_parser_params *params)
+{
+  int result;
+  result = test_first_cmdline_cmd_parser_internal (argc, argv, args_info, params, NULL);
+
+  if (result == EXIT_FAILURE)
+    {
+      test_first_cmdline_cmd_parser_free (args_info);
+      exit (EXIT_FAILURE);
+    }
+  
+  return result;
+}
+
+int
 test_first_cmdline_cmd_parser2 (int argc, char * const *argv, struct test_first_cmdline_cmd_struct *args_info, int override, int initialize, int check_required)
 {
   int result;
+  struct test_first_cmdline_cmd_parser_params params;
+  
+  params.override = override;
+  params.initialize = initialize;
+  params.check_required = check_required;
+  params.check_ambiguity = 0;
 
-  result = test_first_cmdline_cmd_parser_internal (argc, argv, args_info, override, initialize, check_required, NULL);
+  result = test_first_cmdline_cmd_parser_internal (argc, argv, args_info, &params, NULL);
 
   if (result == EXIT_FAILURE)
     {
@@ -1064,7 +1106,8 @@ static int custom_getopt_long (int argc, char *const *argv, const char *options,
 }
 
 int
-test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct test_first_cmdline_cmd_struct *args_info, int override, int initialize, int check_required, const char *additional_error)
+test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct test_first_cmdline_cmd_struct *args_info,
+                        struct test_first_cmdline_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
   char *multi_token, *multi_next; /* for multiple options */
@@ -1074,6 +1117,16 @@ test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct tes
   struct string_list * multi_list = NULL,* multi_new = NULL;
   int error = 0;
   struct test_first_cmdline_cmd_struct local_args_info;
+  
+  int override;
+  int initialize;
+  int check_required;
+  int check_ambiguity;
+  
+  override = params->override;
+  initialize = params->initialize;
+  check_required = params->check_required;
+  check_ambiguity = params->check_ambiguity;
 
   if (initialize)
     test_first_cmdline_cmd_parser_init (args_info);
@@ -1126,7 +1179,7 @@ test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct tes
           exit (EXIT_SUCCESS);
 
         case 'a':	/* option a of the first command line to parse.  */
-          if (local_args_info.option_a_given)
+          if (local_args_info.option_a_given || (check_ambiguity && args_info->option_a_given))
             {
               fprintf (stderr, "%s: `--option-a' (`-a') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -1318,6 +1371,20 @@ int
 test_first_cmdline_cmd_parser_string2(const char *cmdline, struct test_first_cmdline_cmd_struct *args_info, const char *prog_name,
     int override, int initialize, int check_required)
 {
+  struct test_first_cmdline_cmd_parser_params params;
+
+  params.override = override;
+  params.initialize = initialize;
+  params.check_required = check_required;
+  params.check_ambiguity = 0;
+
+  return test_first_cmdline_cmd_parser_string_ext(cmdline, args_info, prog_name, &params);
+}
+
+int
+test_first_cmdline_cmd_parser_string_ext(const char *cmdline, struct test_first_cmdline_cmd_struct *args_info, const char *prog_name,
+    struct test_first_cmdline_cmd_parser_params *params)
+{
   char **argv_ptr = 0;
   int result;
   unsigned int argc;
@@ -1325,7 +1392,7 @@ test_first_cmdline_cmd_parser_string2(const char *cmdline, struct test_first_cmd
   argc = test_first_cmdline_cmd_parser_create_argv(cmdline, &argv_ptr, prog_name);
   
   result =
-    test_first_cmdline_cmd_parser_internal (argc, argv_ptr, args_info, override, initialize, check_required, 0);
+    test_first_cmdline_cmd_parser_internal (argc, argv_ptr, args_info, params, 0);
   
   if (argv_ptr)
     {

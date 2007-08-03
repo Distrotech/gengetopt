@@ -40,3 +40,5 @@ test_conf_inc.conf
 test_conf.conf
 .libs
 
+test_conf_parser_ov4
+test_conf_parser_ov4.c

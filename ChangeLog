@@ -1,3 +1,28 @@
+2007-07-28  Lorenzo Bettini  <bettini@lorelap>
+
+        * COPYING: updated to version 3
+
+	* src/skels/c_source.h_skel: correctly handle multiple options with
+	backslashes (thanks to Peter Kovacs)
+
+	* doc/Makefile.am: removed non-standard %. rules
+
+	* src/skels/Makefile.am: removed non-standard %. rules
+
+	* src/Makefile.am: removed non-standard %. rules
+
+	* tests/Makefile.am: added explicit deps for .h and .c generated
+	files (to make parallel make work)
+
+2007-07-09  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/skels/header.h_skel: define a structure for passing parameters
+	to the parsers; and define versiones of parsers taking the params
+	through this structure.
+	Added the check_ambiguity parameter to check whether an option
+	that is parsed is already present in the args_info struct
+	Contains doxygen documentation
+
 2007-07-01  Lorenzo Bettini  <bettini@lorelap>
 
 	* src/gengetopt.cc (main): store args_info values after having
@@ -10,7 +35,7 @@
 
 2007-06-08  Lorenzo Bettini  <bettini@lorelap>
 
-	* src/skels/custom_getopt_gen.h_skel: does not check 
+	* src/skels/custom_getopt_gen.h_skel: does not check
 	d->custom_optind == 1 as an initialization condition since it
 	is not correct
 
@@ -49,7 +74,7 @@
 
 2007-01-12  Lorenzo Bettini  <bettini@lorelap>
 
-	* src/scanner.ll: # comments not in strings (thanks to 
+	* src/scanner.ll: # comments not in strings (thanks to
 	Matthew K. Junker)
 
 2007-01-09  Lorenzo Bettini  <bettini@lorelap>
@@ -261,7 +286,7 @@
 
 2004-09-22  Lorenzo Bettini  <http://www.lorenzobettini.it>
 
-	* src/gm.cc (_generate_option_arg): simplified using 
+	* src/gm.cc (_generate_option_arg): simplified using
 	option_arg_gen_class
 
 	* src/skels/option_arg.h_skel: to generate the _arg fields of

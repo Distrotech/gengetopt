@@ -1,1 +1,1 @@
-int @group_name@_group_counter; /* counter for group @group_name@ */
+int @group_name@_group_counter; /**< @@brief Counter for group @group_name@ */

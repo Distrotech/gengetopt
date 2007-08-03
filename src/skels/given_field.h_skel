@@ -1,4 +1,4 @@
-@IF@ multiple @THEN@unsigned @ENDIF@int @arg_name@_given ;	/* Whether @long_opt@ was given.  */
+@IF@ multiple @THEN@unsigned @ENDIF@int @arg_name@_given ;	/**< @@brief Whether @long_opt@ was given.  */
 @IF@ group @THEN@
-  int @arg_name@_group ; /* Whether @long_opt@'s was updated.  */
+  int @arg_name@_group ; /**< @@brief Whether @long_opt@'s was updated.  */
 @ENDIF@

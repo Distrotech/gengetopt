@@ -1,4 +1,4 @@
-string="foo"
+string="\"foo\""
 string="bar"
 string="hello"
 string="world"

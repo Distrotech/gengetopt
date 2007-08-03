@@ -5,7 +5,7 @@ case '@short_option@':	/* @option_comment@.  */
 @gen_else@if (strcmp (long_options[option_index].name, "@long_option@") == 0)
 {
 @ENDIF@
-  if (local_args_info.@option_var_name@_given)
+  if (local_args_info.@option_var_name@_given || (check_ambiguity && args_info->@option_var_name@_given))
     {
       fprintf (stderr, "%s: `--@long_option@'@if@ has_short_option @then@ (`-@short_option@')@endif@ option given more than once%s\n", @package_var_name@, (additional_error ? additional_error : ""));
       goto failure;

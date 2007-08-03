@@ -2,4 +2,4 @@
 
 # the next program must exit with error
 
-if $* ./test_multiple -s "foo" -s "bar" -s "hello" --noarg-noshort -i 100 -n -i 200 -s "world" --no-short-opt "check" --no-short-opt "this out" --noarg --no-short-opt=first,second, --noarg-noshort --no-short-opt=third,fourth,fifth -n -M --optarg-noshort="second arg for optarg" -M"first arg for optarg" --optarg="second arg for optarg" --optarg-noshort --file-save="test_multiple.save" -L"1" --limited-interval="1" -L"2" -L"3" --limited-open-right="1","2","3"; then true; else false; fi
+if $* ./test_multiple -s \\\"foo\\\" -s "bar" -s "hello" --noarg-noshort -i 100 -n -i 200 -s "world" --no-short-opt "check" --no-short-opt "this out" --noarg --no-short-opt=first,second, --noarg-noshort --no-short-opt=third,fourth,fifth -n -M --optarg-noshort="second arg for optarg" -M"first arg for optarg" --optarg="second arg for optarg" --optarg-noshort --file-save="test_multiple.save" -L"1" --limited-interval="1" -L"2" -L"3" --limited-open-right="1","2","3"; then true; else false; fi

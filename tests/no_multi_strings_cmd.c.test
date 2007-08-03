@@ -41,7 +41,8 @@ static
 void clear_args (struct gengetopt_args_info *args_info);
 
 static int
-no_multi_strings_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required, const char *additional_error);
+no_multi_strings_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                        struct no_multi_strings_cmd_parser_params *params, const char *additional_error);
 
 static int
 no_multi_strings_cmd_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error);
@@ -120,6 +121,23 @@ no_multi_strings_cmd_parser_init (struct gengetopt_args_info *args_info)
 
   args_info->inputs = NULL;
   args_info->inputs_num = 0;
+}
+
+struct no_multi_strings_cmd_parser_params *
+no_multi_strings_cmd_parser_params_init()
+{
+  struct no_multi_strings_cmd_parser_params *params = 
+    (struct no_multi_strings_cmd_parser_params *)malloc(sizeof(struct no_multi_strings_cmd_parser_params));
+
+  if (params)
+    { 
+      params->override = 0;
+      params->initialize = 0;
+      params->check_required = 0;
+      params->check_ambiguity = 0;
+    }
+    
+  return params;
 }
 
 static void
@@ -263,7 +281,9 @@ get_multiple_arg_token(const char *arg)
   j = 0;
   while (arg[i] && (j < len-1))
     {
-      if (arg[i] == '\\')
+      if (arg[i] == '\\' && 
+	  arg[ i + 1 ] && 
+	  arg[ i + 1 ] == ',')
         ++i;
 
       ret[j++] = arg[i++];
@@ -364,11 +384,33 @@ no_multi_strings_cmd_parser (int argc, char * const *argv, struct gengetopt_args
 }
 
 int
+no_multi_strings_cmd_parser_ext (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                   struct no_multi_strings_cmd_parser_params *params)
+{
+  int result;
+  result = no_multi_strings_cmd_parser_internal (argc, argv, args_info, params, NULL);
+
+  if (result == EXIT_FAILURE)
+    {
+      no_multi_strings_cmd_parser_free (args_info);
+      exit (EXIT_FAILURE);
+    }
+  
+  return result;
+}
+
+int
 no_multi_strings_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required)
 {
   int result;
+  struct no_multi_strings_cmd_parser_params params;
+  
+  params.override = override;
+  params.initialize = initialize;
+  params.check_required = check_required;
+  params.check_ambiguity = 0;
 
-  result = no_multi_strings_cmd_parser_internal (argc, argv, args_info, override, initialize, check_required, NULL);
+  result = no_multi_strings_cmd_parser_internal (argc, argv, args_info, &params, NULL);
 
   if (result == EXIT_FAILURE)
     {
@@ -412,7 +454,8 @@ no_multi_strings_cmd_parser_required2 (struct gengetopt_args_info *args_info, co
 }
 
 int
-no_multi_strings_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required, const char *additional_error)
+no_multi_strings_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                        struct no_multi_strings_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
   char *multi_token, *multi_next; /* for multiple options */
@@ -422,6 +465,16 @@ no_multi_strings_cmd_parser_internal (int argc, char * const *argv, struct genge
   struct int_list * multi_list = NULL,* multi_new = NULL;
   int error = 0;
   struct gengetopt_args_info local_args_info;
+  
+  int override;
+  int initialize;
+  int check_required;
+  int check_ambiguity;
+  
+  override = params->override;
+  initialize = params->initialize;
+  check_required = params->check_required;
+  check_ambiguity = params->check_ambiguity;
 
   if (initialize)
     no_multi_strings_cmd_parser_init (args_info);
@@ -464,7 +517,7 @@ no_multi_strings_cmd_parser_internal (int argc, char * const *argv, struct genge
           exit (EXIT_SUCCESS);
 
         case 't':	/* This is a test option.  */
-          if (local_args_info.test_given)
+          if (local_args_info.test_given || (check_ambiguity && args_info->test_given))
             {
               fprintf (stderr, "%s: `--test' (`-t') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;

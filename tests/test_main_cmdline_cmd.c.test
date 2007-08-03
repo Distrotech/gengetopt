@@ -41,7 +41,8 @@ static
 void clear_args (struct gengetopt_args_info *args_info);
 
 static int
-test_main_cmdline_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required, const char *additional_error);
+test_main_cmdline_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                        struct test_main_cmdline_cmd_parser_params *params, const char *additional_error);
 
 static int
 test_main_cmdline_cmd_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error);
@@ -122,6 +123,23 @@ test_main_cmdline_cmd_parser_init (struct gengetopt_args_info *args_info)
 
   args_info->inputs = NULL;
   args_info->inputs_num = 0;
+}
+
+struct test_main_cmdline_cmd_parser_params *
+test_main_cmdline_cmd_parser_params_init()
+{
+  struct test_main_cmdline_cmd_parser_params *params = 
+    (struct test_main_cmdline_cmd_parser_params *)malloc(sizeof(struct test_main_cmdline_cmd_parser_params));
+
+  if (params)
+    { 
+      params->override = 0;
+      params->initialize = 0;
+      params->check_required = 0;
+      params->check_ambiguity = 0;
+    }
+    
+  return params;
 }
 
 static void
@@ -292,7 +310,9 @@ get_multiple_arg_token(const char *arg)
   j = 0;
   while (arg[i] && (j < len-1))
     {
-      if (arg[i] == '\\')
+      if (arg[i] == '\\' && 
+	  arg[ i + 1 ] && 
+	  arg[ i + 1 ] == ',')
         ++i;
 
       ret[j++] = arg[i++];
@@ -393,11 +413,33 @@ test_main_cmdline_cmd_parser (int argc, char * const *argv, struct gengetopt_arg
 }
 
 int
+test_main_cmdline_cmd_parser_ext (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                   struct test_main_cmdline_cmd_parser_params *params)
+{
+  int result;
+  result = test_main_cmdline_cmd_parser_internal (argc, argv, args_info, params, NULL);
+
+  if (result == EXIT_FAILURE)
+    {
+      test_main_cmdline_cmd_parser_free (args_info);
+      exit (EXIT_FAILURE);
+    }
+  
+  return result;
+}
+
+int
 test_main_cmdline_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required)
 {
   int result;
+  struct test_main_cmdline_cmd_parser_params params;
+  
+  params.override = override;
+  params.initialize = initialize;
+  params.check_required = check_required;
+  params.check_ambiguity = 0;
 
-  result = test_main_cmdline_cmd_parser_internal (argc, argv, args_info, override, initialize, check_required, NULL);
+  result = test_main_cmdline_cmd_parser_internal (argc, argv, args_info, &params, NULL);
 
   if (result == EXIT_FAILURE)
     {
@@ -456,7 +498,8 @@ test_main_cmdline_cmd_parser_required2 (struct gengetopt_args_info *args_info, c
 }
 
 int
-test_main_cmdline_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required, const char *additional_error)
+test_main_cmdline_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                        struct test_main_cmdline_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
   char *multi_token, *multi_next; /* for multiple options */
@@ -467,6 +510,16 @@ test_main_cmdline_cmd_parser_internal (int argc, char * const *argv, struct geng
   struct string_list * second_cmd_list = NULL,* second_cmd_new = NULL;
   int error = 0;
   struct gengetopt_args_info local_args_info;
+  
+  int override;
+  int initialize;
+  int check_required;
+  int check_ambiguity;
+  
+  override = params->override;
+  initialize = params->initialize;
+  check_required = params->check_required;
+  check_ambiguity = params->check_ambiguity;
 
   if (initialize)
     test_main_cmdline_cmd_parser_init (args_info);

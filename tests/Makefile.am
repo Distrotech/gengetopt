@@ -4,7 +4,7 @@
 #
 # GNU gengetopt is free software; you can redistribute it and/or modify 
 # it under the terms of the GNU General Public License as published by 
-# the Free Software Foundation; either version 2, or (at your option) 
+# the Free Software Foundation; either version 3, or (at your option) 
 # any later version. 
 #
 # GNU gengetopt is distributed in the hope that it will be useful, but 
@@ -20,7 +20,7 @@
 # .ggonu is used in this test suite for command line parsers that have
 # to be created without --unamed-opt
 
-SUFFIXES = .ggo .ggonu .ggoconf .ggostr
+SUFFIXES = .ggo .ggonu .ggoconf .ggostr .err
 
 # we do not generate the gengetopt version number in the output
 # file so that the number does not disturb in diffing when changing
@@ -41,12 +41,12 @@ GGO_COMPILE = $(PROGNAME) --input=$< --func-name=$*_parser --file-name=$*
 	$(PROGNAME) --input $< --func-name $*_parser --file-name $*
 
 .ggoconf.c:
-	$(GGO_COMPILE) --unamed-opt="OTHER NAMES" --conf-parser --arg-struct-name="my_args_info"
+	$(GGO_COMPILE) --unamed-opt="OTHER NAMES" --conf-parser --arg-struct-name="my_args_info" --no-handle-error
 
 .ggostr.c:
 	$(GGO_COMPILE) --unamed-opt="OTHER NAMES" --string-parser --arg-struct-name=$*_struct --include-getopt
 
-%.err: %.ggo
+.ggo.err:
 	$(PROGNAME) --unamed-opt -i $< --file-name null 2> $@ || true
 
 # we don't have to link to anything
@@ -75,6 +75,7 @@ test_all_opts_file_save.sh \
 test_groups.sh \
 test_conf_parser.sh test_conf_parser_ov.sh test_conf_parser_ov2.sh \
 test_conf_parser_ov3.sh \
+test_conf_parser_ov4.sh \
 test_conf_parser_err.sh test_conf_parser_err_string.sh \
 test_conf_parser_grp.sh \
 test_conf_parser_save.sh \
@@ -93,12 +94,38 @@ test_err.sh
 check_PROGRAMS = no_strings no_multi_strings no_unamed no_optgiven \
 no_optgiven2 more_than_once no_prog_name \
 canonize-names default_values default_cmdline test_all_opts \
-test_groups test_conf_parser test_conf_parser_ov test_conf_parser_ov2 \
-test_conf_parser_ov3 test_conf_parser_file_save \
+test_groups test_conf_parser test_conf_parser_ov \
+test_conf_parser_ov2 \
+test_conf_parser_ov3 \
+test_conf_parser_ov4 \
+test_conf_parser_file_save \
 test_multiple test_sections test_values test_redef_help \
 test_multiple_parsers
 
 hidden_options_programs = test_all_opts
+
+# in order to make it work with parallel make we need to make
+# these deps explicit
+# NOTE: this problem shows only on distribution tarballs
+# since files in .deps are empty
+no_strings_cmd.h: no_strings_cmd.c
+no_multi_strings_cmd.h: no_multi_strings_cmd.c
+no_unamed_cmd.h: no_unamed_cmd.c
+no_optgiven_cmd.h: no_optgiven_cmd.c
+more_than_once_cmd.h: more_than_once_cmd.c
+canonize-names-cmd.h: canonize-names-cmd.c
+default_values_cmd.h: default_values_cmd.c
+cmdline.h: cmdline.c
+test_all_opts_cmd.h: test_all_opts_cmd.c
+test_groups_cmd.h: test_groups_cmd.c
+test_conf_parser_cmd.h: test_conf_parser_cmd.c
+test_multiple_cmd.h: test_multiple_cmd.c
+test_sections_cmd.h: test_sections_cmd.c
+test_values_cmd.h: test_values_cmd.c
+test_redef_help_cmd.h: test_redef_help_cmd.c
+test_main_cmdline_cmd.h: test_main_cmdline_cmd.c
+test_first_cmdline_cmd.h: test_first_cmdline_cmd.c
+test_second_cmdline_cmd.h: test_second_cmdline_cmd.c
 
 no_strings_SOURCES = no_strings_cmd.ggo no_strings.c
 no_multi_strings_SOURCES = no_multi_strings_cmd.ggo no_multi_strings.c
@@ -117,6 +144,7 @@ test_conf_parser_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser.c
 test_conf_parser_ov_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_ov.c
 test_conf_parser_ov2_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_ov2.c
 test_conf_parser_ov3_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_ov3.c
+test_conf_parser_ov4_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_ov4.c
 test_conf_parser_file_save_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_file_save.c
 test_multiple_SOURCES = test_multiple_cmd.ggo test_multiple.c
 test_sections_SOURCES = test_sections_cmd.ggo test_sections.c
@@ -124,7 +152,7 @@ test_values_SOURCES = test_values_cmd.ggo test_values.c
 test_redef_help_SOURCES = test_redef_help_cmd.ggo test_redef_help.c
 test_multiple_parsers_SOURCES = test_main_cmdline_cmd.ggo test_first_cmdline_cmd.ggostr test_second_cmdline_cmd.ggostr test_multiple_parsers.c
 
-BUILT_SOURCES = no_strings_cmd.c no_strings_cmd.h \
+CHECKDIFFFILES = no_strings_cmd.c no_strings_cmd.h \
 no_multi_strings_cmd.c no_multi_strings_cmd.h \
 no_unamed_cmd.c no_unamed_cmd.h \
 no_optgiven_cmd.c no_optgiven_cmd.h \
@@ -141,7 +169,9 @@ test_values_cmd.c test_values_cmd.h \
 test_redef_help_cmd.c test_redef_help_cmd.h \
 test_main_cmdline_cmd.c test_main_cmdline_cmd.h \
 test_first_cmdline_cmd.c test_first_cmdline_cmd.h \
-test_second_cmdline_cmd.c test_second_cmdline_cmd.h
+test_second_cmdline_cmd.c test_second_cmdline_cmd.h  
+
+BUILT_SOURCES = $(CHECKDIFFFILES) $(ERRFILES)
 
 GENERATED_TESTS	= no_strings_cmd.c.test no_strings_cmd.h.test \
 no_multi_strings_cmd.c.test no_multi_strings_cmd.h.test \
@@ -191,9 +221,11 @@ test_groups.sh.in test_conf_parser.sh.in test_conf_parser_save.sh.in \
 test_conf_parser_grp.sh.in \
 test_conf_parser_ov.sh.in test_conf_parser_ov2.sh.in \
 test_conf_parser_ov3.sh.in \
+test_conf_parser_ov4.sh.in \
 test_conf_parser_err.sh.in test_conf_parser_err_string.sh.in \
 test_multiple.sh.in test_multiple_err.sh.in test_sections.sh.in test_default_values.sh.in \
 test_conf_parser_ov2.c.in test_conf_parser_ov3.c.in \
+test_conf_parser_ov4.c.in \
 test_values.sh.in test_values_err.sh.in test_show_help.sh.in \
 valgrind_tests.sh.in valgrind_suppressions.sh.in test_err.sh.in \
 test_dep.sh.in test_multiple_parsers.sh.in \
@@ -206,7 +238,7 @@ test_conf2.conf test_conf3.conf test_conf_err.conf \
 test_conf_err_string.conf test_conf_err_string2.conf \
 test_section_with_all_hidden.ggo \
 test_required_optional_cmd.ggo \
-$(ERRFILES) $(ERRGGOFILES)
+$(ERRFILES) $(ERRGGOFILES) 
 
 check-err: $(ERRFILES)
 	for source in $(ERRFILES); do \
@@ -250,7 +282,7 @@ store-backup: $(BUILT_SOURCES) $(TESTSOUTPUT)
 	cp $(TESTSOUT) $(srcdir)/$(TESTSOUTPUT)
 
 check-diff:
-	for source in $(BUILT_SOURCES); do \
+	for source in $(CHECKDIFFFILES); do \
 	  back_output="`echo $$source.test`"; \
 	  echo "diff $$source $$back_output"; \
 	  if ! diff $$source $(srcdir)/$$back_output; \

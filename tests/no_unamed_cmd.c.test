@@ -40,7 +40,8 @@ static
 void clear_args (struct gengetopt_args_info *args_info);
 
 static int
-no_unamed_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required, const char *additional_error);
+no_unamed_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                        struct no_unamed_cmd_parser_params *params, const char *additional_error);
 
 
 static char *
@@ -101,6 +102,23 @@ no_unamed_cmd_parser_init (struct gengetopt_args_info *args_info)
   clear_given (args_info);
   clear_args (args_info);
   init_args_info (args_info);
+}
+
+struct no_unamed_cmd_parser_params *
+no_unamed_cmd_parser_params_init()
+{
+  struct no_unamed_cmd_parser_params *params = 
+    (struct no_unamed_cmd_parser_params *)malloc(sizeof(struct no_unamed_cmd_parser_params));
+
+  if (params)
+    { 
+      params->override = 0;
+      params->initialize = 0;
+      params->check_required = 0;
+      params->check_ambiguity = 0;
+    }
+    
+  return params;
 }
 
 static void
@@ -185,11 +203,33 @@ no_unamed_cmd_parser (int argc, char * const *argv, struct gengetopt_args_info *
 }
 
 int
+no_unamed_cmd_parser_ext (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                   struct no_unamed_cmd_parser_params *params)
+{
+  int result;
+  result = no_unamed_cmd_parser_internal (argc, argv, args_info, params, NULL);
+
+  if (result == EXIT_FAILURE)
+    {
+      no_unamed_cmd_parser_free (args_info);
+      exit (EXIT_FAILURE);
+    }
+  
+  return result;
+}
+
+int
 no_unamed_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required)
 {
   int result;
+  struct no_unamed_cmd_parser_params params;
+  
+  params.override = override;
+  params.initialize = initialize;
+  params.check_required = check_required;
+  params.check_ambiguity = 0;
 
-  result = no_unamed_cmd_parser_internal (argc, argv, args_info, override, initialize, check_required, NULL);
+  result = no_unamed_cmd_parser_internal (argc, argv, args_info, &params, NULL);
 
   if (result == EXIT_FAILURE)
     {
@@ -207,12 +247,23 @@ no_unamed_cmd_parser_required (struct gengetopt_args_info *args_info, const char
 }
 
 int
-no_unamed_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required, const char *additional_error)
+no_unamed_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                        struct no_unamed_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
 
   int error = 0;
   struct gengetopt_args_info local_args_info;
+  
+  int override;
+  int initialize;
+  int check_required;
+  int check_ambiguity;
+  
+  override = params->override;
+  initialize = params->initialize;
+  check_required = params->check_required;
+  check_ambiguity = params->check_ambiguity;
 
   if (initialize)
     no_unamed_cmd_parser_init (args_info);
@@ -254,7 +305,7 @@ no_unamed_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_ar
           exit (EXIT_SUCCESS);
 
         case 'i':	/* foo string option.  */
-          if (local_args_info.foo_given)
+          if (local_args_info.foo_given || (check_ambiguity && args_info->foo_given))
             {
               fprintf (stderr, "%s: `--foo' (`-i') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;

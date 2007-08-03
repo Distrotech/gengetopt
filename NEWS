@@ -7,6 +7,21 @@ Please send gengetopt bug reports to bug-gengetopt at gnu.org
 For details about the new features, you can take a look at:
 http://tronprog.blogspot.com/search/label/gengetopt
 
+Version 2.21
+
+   * a structure for parser function parameters (that might be extended
+     in future versions)
+   * a parser parameter to check whether an option that is parsed is
+     already present in the args_info struct (suggested by
+     Yegor Yefremov)
+   * the generated files contain doxygen documentation (suggested by
+     Yegor Yefremov)
+   * parallel make works
+   * generated make files should not depend on GNU make
+   * fixed a bug with multiple options with back slashes (thanks to
+     Peter Kovacs)
+   * updated to version 3 of GPL
+
 Version 2.20
 
    * if --include-getopt is specified the generated parser is actually
@@ -18,7 +33,7 @@ Version 2.20
    * fixed a bug when generating --full-help handling in case
      --no-handle-help is specified (thanks to Thomas Boehne)
    * fixed a bug in the included getopt code when --include-getopt is specified
-   * fixed a bug when using args entry in the .ggo file 
+   * fixed a bug when using args entry in the .ggo file
      (thanks to Christian Gagneraud)
 
 Version 2.19.1
@@ -40,7 +55,7 @@ Version 2.19
      option is mandatory
    * configuration files can include other configuration files
      (thanks to David Bird)
-   * --no-handle-help handles also --full-help (thanks to Gyozo Papp) 
+   * --no-handle-help handles also --full-help (thanks to Gyozo Papp)
 
 Version 2.18
 

@@ -44,7 +44,8 @@ static
 void clear_args (struct @args_info@ *args_info);
 
 static int
-@parser_name@_internal (int argc, char * const *argv, struct @args_info@ *args_info, int override, int initialize, int check_required, const char *additional_error);
+@parser_name@_internal (int argc, char * const *argv, struct @args_info@ *args_info,
+                        struct @parser_name@_params *params, const char *additional_error);
 
 @IF@ check_required_options @THEN@
 static int
@@ -157,6 +158,23 @@ void
   args_info->inputs = NULL;
   args_info->inputs_num = 0;
 @ENDIF@
+}
+
+struct @parser_name@_params *
+@parser_name@_params_init()
+{
+  struct @parser_name@_params *params = 
+    (struct @parser_name@_params *)malloc(sizeof(struct @parser_name@_params));
+
+  if (params)
+    { 
+      params->override = 0;
+      params->initialize = 0;
+      params->check_required = 0;
+      params->check_ambiguity = 0;
+    }
+    
+  return params;
 }
 
 static void
@@ -288,7 +306,9 @@ get_multiple_arg_token(const char *arg)
   j = 0;
   while (arg[i] && (j < len-1))
     {
-      if (arg[i] == '\\')
+      if (arg[i] == '\\' && 
+	  arg[ i + 1 ] && 
+	  arg[ i + 1 ] == ',')
         ++i;
 
       ret[j++] = arg[i++];
@@ -393,11 +413,27 @@ int
 }
 
 int
+@parser_name@_ext (int argc, char * const *argv, struct @args_info@ *args_info,
+                   struct @parser_name@_params *params)
+{
+  int result;
+  result = @parser_name@_internal (argc, argv, args_info, params, NULL);
+
+  @final_exit@
+}
+
+int
 @parser_name@2 (int argc, char * const *argv, struct @args_info@ *args_info, int override, int initialize, int check_required)
 {
   int result;
+  struct @parser_name@_params params;
+  
+  params.override = override;
+  params.initialize = initialize;
+  params.check_required = check_required;
+  params.check_ambiguity = 0;
 
-  result = @parser_name@_internal (argc, argv, args_info, override, initialize, check_required, NULL);
+  result = @parser_name@_internal (argc, argv, args_info, &params, NULL);
 
   @final_exit@
 }
@@ -436,7 +472,8 @@ int
 @custom_getopt:method@
 @ENDIF@
 int
-@parser_name@_internal (int argc, char * const *argv, struct @args_info@ *args_info, int override, int initialize, int check_required, const char *additional_error)
+@parser_name@_internal (int argc, char * const *argv, struct @args_info@ *args_info,
+                        struct @parser_name@_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
 @IF@ multiple_token_vars @THEN@
@@ -445,6 +482,16 @@ int
   @list_def:method{iteration=true}@
   int error = 0;
   struct @args_info@ local_args_info;
+  
+  int override;
+  int initialize;
+  int check_required;
+  int check_ambiguity;
+  
+  override = params->override;
+  initialize = params->initialize;
+  check_required = params->check_required;
+  check_ambiguity = params->check_ambiguity;
 
   if (initialize)
     @parser_name@_init (args_info);
@@ -713,6 +760,21 @@ int
                            struct @args_info@ *args_info,
                            int override, int initialize, int check_required)
 {
+  struct @parser_name@_params params;
+
+  params.override = override;
+  params.initialize = initialize;
+  params.check_required = check_required;
+  params.check_ambiguity = 0;
+  
+  return @parser_name@_config_file (filename, args_info, &params);
+}
+
+int
+@parser_name@_config_file (char * const filename,
+                           struct @args_info@ *args_info,
+                           struct @parser_name@_params *params)
+{
   int i, result;
   int my_argc = 1;
   char **my_argv_arg;
@@ -742,7 +804,7 @@ int
     strcat (additional_error, filename);
     result =
       @parser_name@_internal (my_argc, my_argv_arg, args_info,
-                              override, initialize, check_required,
+                              params,
                               additional_error);
 
     free (additional_error);
@@ -825,6 +887,20 @@ int
 @parser_name@_string2(const char *cmdline, struct @args_info@ *args_info, const char *prog_name,
     int override, int initialize, int check_required)
 {
+  struct @parser_name@_params params;
+
+  params.override = override;
+  params.initialize = initialize;
+  params.check_required = check_required;
+  params.check_ambiguity = 0;
+
+  return @parser_name@_string_ext(cmdline, args_info, prog_name, &params);
+}
+
+int
+@parser_name@_string_ext(const char *cmdline, struct @args_info@ *args_info, const char *prog_name,
+    struct @parser_name@_params *params)
+{
   char **argv_ptr = 0;
   int result;
   unsigned int argc;
@@ -832,7 +908,7 @@ int
   argc = @parser_name@_create_argv(cmdline, &argv_ptr, prog_name);
   
   result =
-    @parser_name@_internal (argc, argv_ptr, args_info, override, initialize, check_required, 0);
+    @parser_name@_internal (argc, argv_ptr, args_info, params, 0);
   
   if (argv_ptr)
     {

@@ -13,6 +13,7 @@
     <secondaryLanguages/>
     <versioncontrol>kdevcvsservice</versioncontrol>
     <defaultencoding/>
+    <projectname>gengetopt</projectname>
   </general>
   <kdevautoproject>
     <general>
@@ -177,6 +178,8 @@
       <usePermanentCaching>true</usePermanentCaching>
       <alwaysIncludeNamespaces>false</alwaysIncludeNamespaces>
       <includePaths>.;</includePaths>
+      <parseMissingHeadersExperimental>false</parseMissingHeadersExperimental>
+      <resolveIncludePathsUsingMakeExperimental>false</resolveIncludePathsUsingMakeExperimental>
     </codecompletion>
     <creategettersetter>
       <prefixGet/>
@@ -194,6 +197,7 @@
       <designerintegration>EmbeddedKDevDesigner</designerintegration>
       <qmake>/usr/bin/qmake-qt3</qmake>
       <designer>/usr/bin/designer-qt3</designer>
+      <designerpluginpaths/>
     </qt>
     <splitheadersource>
       <enabled>false</enabled>

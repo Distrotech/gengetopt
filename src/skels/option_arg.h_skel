@@ -1,18 +1,18 @@
 @IF@ long_long_arg @THEN@
 #ifdef HAVE_LONG_LONG
-@longlongtype@ @name@_arg;	/* @desc@@if@ has_default @then@ (default=@default_value@)@endif@.  */
+@longlongtype@ @name@_arg;	/**< @@brief @desc@@if@ has_default @then@ (default=@default_value@)@endif@.  */
 #else
-@longtype@ @name@_arg;	/* @desc@@if@ has_default @then@ (default=@default_value@)@endif@.  */
+@longtype@ @name@_arg;	/**< @@brief @desc@@if@ has_default @then@ (default=@default_value@)@endif@.  */
 #endif
-@origtype@ @name@_orig;	/* @desc@ original value given at command line.  */
+@origtype@ @name@_orig;	/**< @@brief @desc@ original value given at command line.  */
 @ELSEIF@ flag_arg @THEN@
-@type@ @name@_flag;	/* @desc@ (default=@if@ default_on @then@on@else@off@endif@).  */
+@type@ @name@_flag;	/**< @@brief @desc@ (default=@if@ default_on @then@on@else@off@endif@).  */
 @ELSEIF@ has_arg @THEN@
-@type@ @name@_arg;	/* @desc@@if@ has_default @then@ (default='@default_value@')@endif@.  */
-@origtype@ @name@_orig;	/* @desc@ original value given at command line.  */
+@type@ @name@_arg;	/**< @@brief @desc@@if@ has_default @then@ (default='@default_value@')@endif@.  */
+@origtype@ @name@_orig;	/**< @@brief @desc@ original value given at command line.  */
 @ENDIF@
 @IF@ multiple @THEN@
-int @name@_min; /* @desc@'s minimum occurreces */
-int @name@_max; /* @desc@'s maximum occurreces */
+int @name@_min; /**< @@brief @desc@'s minimum occurreces */
+int @name@_max; /**< @@brief @desc@'s maximum occurreces */
 @ENDIF@
-const char *@name@_help; /* @desc@ help description.  */
+const char *@name@_help; /**< @@brief @desc@ help description.  */

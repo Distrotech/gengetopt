@@ -99,6 +99,12 @@ value of multi-string_given: 7
   value of multi-string: last?
 value of multi-string-def_given: 0
 default value of multi-string-def: this default
+value of required: this is a test
+value of string: another
+value of no-short_given: 1
+value of int: 100
+value of float: 3.140000
+./test_conf_parser_ov4: `--required' (`-r') option given more than once
 test_conf_parser: option `--string' requires an argument
 test_conf_parser:./test_conf_err_string.conf:3: malformed string in configuration file
 test_conf_parser:./test_conf_err_string2.conf:3: unterminated string in configuration file
@@ -141,7 +147,7 @@ noarg given 3 times
 noarg_noshort given 2 times
 opt-arg given: 1
 opt-arg value: not given
-passed string: foo
+passed string: \"foo\"
 passed string: bar
 passed string: hello
 passed string: world
@@ -557,6 +563,41 @@ some groups just for testing:
  Group: my grp2
       --optc              string c
   -d, --optd              string d
+test_conf_parser 1.0
+
+Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
+
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+
+ Group: grp1
+  an option of this group is required
+  -a, --opta=STRING             string a
+  -b, --optb=STRING             string b
+
+ Group: my grp2
+      --optc                    string c
+  -C, --optd                    string d
+  -s, --string=STRING           string option
+  -i, --int=INT                 int option
+  -S, --short=SHORT             short option
+  -l, --long=LONG               long option
+  -f, --float=FLOAT             float option
+  -d, --double=DOUBLE           double option
+  -D, --longdouble=LONGDOUBLE   longdouble option
+  -L, --longlong=LONGLONG       longlong option
+  -F, --flag                    flag option  (default=on)
+  -u, --function                function option
+      --no-short                no short option
+  -r, --required=STRING         required option
+  -c, --conf-file=STRING        config file  (default=`test_conf.conf')
+  -M, --multi-string=STRING     multiple string option
+      --multi-string-def=STRING multiple string option with default  
+                                  (default=`this default')
+  -n, --noarg                   multiple option with no arg
+      --noarg-noshort           multiple option with no arg and no short
+      --opt-arg[=STRING]        option with optional arg
+      --file-save=STRING        save the passed options into a file
 test_conf_parser 1.0
 
 Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...

@@ -4,7 +4,7 @@
 #
 # GNU gengetopt is free software; you can redistribute it and/or modify 
 # it under the terms of the GNU General Public License as published by 
-# the Free Software Foundation; either version 2, or (at your option) 
+# the Free Software Foundation; either version 3, or (at your option) 
 # any later version. 
 #
 # GNU gengetopt is distributed in the hope that it will be useful, but 
@@ -20,15 +20,16 @@ SUBDIRS = includes skels
 
 #INCLUDES = -I@top_srcdir@/src/skels
 
-SUFFIXES = .text
+SUFFIXES = .text .c .ggo
 
 .text.o:
 	$(TXTC) $<
 
 bin_PROGRAMS = gengetopt
 
-gengetopt_SOURCES = parser.yy scanner.ll argsdef.c cmdline.c gengetopt.cc gm.cc \
-	yyerror.cc gm_utils.cpp fileutils.cpp acceptedvalues.cpp ggos.cpp
+gengetopt_SOURCES = parser.yy scanner.ll \
+argsdef.c cmdline.ggo gengetopt.cc gm.cc \
+yyerror.cc gm_utils.cpp fileutils.cpp acceptedvalues.cpp ggos.cpp
 
 #gengetopt_LDADD = @LIBOBJS@ @LEXLIB@ skels/libgen.a
 
@@ -38,7 +39,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl
 LDADD = $(top_builddir)/gl/libgnu.la @LEXLIB@ skels/libgen.la
 
 EXTRA_DIST = parser.h argsdef.h gengetopt.h ggos.h gm.h gnugetopt.h \
-cmdline.ggo cmdline.h my_sstream.h my_string.h my_map.h \
+cmdline.c cmdline.h my_sstream.h my_string.h my_map.h \
 global_opts.h \
 ggo_options.h \
 groups.h \
@@ -63,10 +64,15 @@ AM_LFLAGS = -i
 # repository; then when you make a checkout on another place, make
 # would try to build cmdline.c, but to do this it would need gengetopt
 # which is not built yet; so we simply touch cmdline.c (and this is safe)
-%.c: %.ggo
+
+.ggo.c:
 	if test -f $(PROGNAME); then \
 	$(PROGNAME) --input=$< ; \
 	else touch $@ ; fi
+
+cmdline.h: cmdline.c
+
+BUILT_SOURCES = cmdline.h cmdline.c
 
 # automatically generate gengetopt_strdup() from the replacement function
 # strdup().

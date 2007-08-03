@@ -4,7 +4,7 @@
 #
 # GNU gengetopt is free software; you can redistribute it and/or modify 
 # it under the terms of the GNU General Public License as published by 
-# the Free Software Foundation; either version 2, or (at your option) 
+# the Free Software Foundation; either version 3, or (at your option) 
 # any later version. 
 #
 # GNU gengetopt is distributed in the hope that it will be useful, but 
@@ -48,7 +48,8 @@ LDADD = $(top_builddir)/gl/libgnu.la
 gengetoptdoc_DATA = gengetopt.html index.html 
 
 gengetoptexamples_DATA = sample1.ggo sample2.ggo main1.cc main2.c \
-                         cmdline1.c cmdline1.h cmdline2.c cmdline2.h
+                         cmdline1.c cmdline1.h cmdline2.c cmdline2.h \
+README.example
 
 AM_MAKEINFOHTMLFLAGS=--no-split
 
@@ -66,11 +67,13 @@ RUNSOURCEHIGHLIGHT=$(SOURCEHIGHLIGHT) -f texinfo --style-file=texinfo.style --ou
 
 gengetopt.texinfo: $(GENERATEDINFOS)
 
+SUFFIXES = .h.texinfo .cc.texinfo .c.texinfo .ggo.texinfo
+
 if NO_SOURCEHIGHLIGHT
-%.h.texinfo: %.h
+.h.h.texinfo:
 	touch $@
 
-%.cc.texinfo: %.cc
+.cc.cc.texinfo:
 	touch $@
 
 test_conf_parser.c.texinfo: $(top_srcdir)/tests/test_conf_parser.c
@@ -82,17 +85,17 @@ test_conf_parser_ov2.c.texinfo: $(top_srcdir)/tests/test_conf_parser_ov2.c
 test_multiple_parsers.c.texinfo: $(top_srcdir)/tests/test_multiple_parsers.c
 	touch $@
 
-%.c.texinfo: %.c
+.c.c.texinfo:
 	touch $@
 
-%.ggo.texinfo: %.ggo
+.ggo.ggo.texinfo:
 	cat $< | sed -f $(srcdir)/input.sed > $@
 
 else
-%.h.texinfo: %.h
+.h.h.texinfo:
 	$(RUNSOURCEHIGHLIGHT) $< 
 
-%.cc.texinfo: %.cc
+.cc.cc.texinfo:
 	$(RUNSOURCEHIGHLIGHT) $< 
 
 test_conf_parser.c.texinfo: $(top_srcdir)/tests/test_conf_parser.c
@@ -104,10 +107,10 @@ test_conf_parser_ov2.c.texinfo: $(top_srcdir)/tests/test_conf_parser_ov2.c
 test_multiple_parsers.c.texinfo: $(top_srcdir)/tests/test_multiple_parsers.c
 	$(RUNSOURCEHIGHLIGHT) $(top_srcdir)/tests/test_multiple_parsers.c
 
-%.c.texinfo: %.c
+.c.c.texinfo:
 	$(RUNSOURCEHIGHLIGHT) $< 
 
-%.ggo.texinfo: %.ggo
+.ggo.ggo.texinfo:
 	$(RUNSOURCEHIGHLIGHT) $< --failsafe
 endif
 
@@ -124,7 +127,8 @@ EXTRA_DIST = sample1.ggo sample2.ggo samples.stamp \
              testdata \
              $(GENERATEDINFOS) \
              input.sed \
-             multiple_example.c
+             multiple_example.c \
+             README.example
 
 cmdline1.h: cmdline1.c
 cmdline1.c: sample1.ggo

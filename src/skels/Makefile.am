@@ -11,14 +11,15 @@
 # if gengen is not installed we simply ignore the changes
 # FIXME: maybe we have to notify the developer about it
 
+SUFFIXES = .h_skel
+
 if NO_GENGEN
-%.h %.cc: %.h_skel
+.h_skel.cc:
 	touch $@
 else
 GENERATE = $(GENGEN)
 
-&.h: %.cc
-%.cc: %.h_skel
+.h_skel.cc:
 	$(GENERATE) -i $< --file-name $*.h --gen-name $* --separate-files --expand-tabs
 	touch $@
 endif

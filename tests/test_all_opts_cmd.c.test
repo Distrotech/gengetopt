@@ -91,7 +91,8 @@ static
 void clear_args (struct gengetopt_args_info *args_info);
 
 static int
-test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required, const char *additional_error);
+test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                        struct test_all_opts_cmd_parser_params *params, const char *additional_error);
 
 static int
 test_all_opts_cmd_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error);
@@ -234,6 +235,23 @@ test_all_opts_cmd_parser_init (struct gengetopt_args_info *args_info)
 
   args_info->inputs = NULL;
   args_info->inputs_num = 0;
+}
+
+struct test_all_opts_cmd_parser_params *
+test_all_opts_cmd_parser_params_init()
+{
+  struct test_all_opts_cmd_parser_params *params = 
+    (struct test_all_opts_cmd_parser_params *)malloc(sizeof(struct test_all_opts_cmd_parser_params));
+
+  if (params)
+    { 
+      params->override = 0;
+      params->initialize = 0;
+      params->check_required = 0;
+      params->check_ambiguity = 0;
+    }
+    
+  return params;
 }
 
 static void
@@ -538,11 +556,33 @@ test_all_opts_cmd_parser (int argc, char * const *argv, struct gengetopt_args_in
 }
 
 int
+test_all_opts_cmd_parser_ext (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                   struct test_all_opts_cmd_parser_params *params)
+{
+  int result;
+  result = test_all_opts_cmd_parser_internal (argc, argv, args_info, params, NULL);
+
+  if (result == EXIT_FAILURE)
+    {
+      test_all_opts_cmd_parser_free (args_info);
+      exit (EXIT_FAILURE);
+    }
+  
+  return result;
+}
+
+int
 test_all_opts_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required)
 {
   int result;
+  struct test_all_opts_cmd_parser_params params;
+  
+  params.override = override;
+  params.initialize = initialize;
+  params.check_required = check_required;
+  params.check_ambiguity = 0;
 
-  result = test_all_opts_cmd_parser_internal (argc, argv, args_info, override, initialize, check_required, NULL);
+  result = test_all_opts_cmd_parser_internal (argc, argv, args_info, &params, NULL);
 
   if (result == EXIT_FAILURE)
     {
@@ -594,12 +634,23 @@ test_all_opts_cmd_parser_required2 (struct gengetopt_args_info *args_info, const
 }
 
 int
-test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required, const char *additional_error)
+test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                        struct test_all_opts_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
 
   int error = 0;
   struct gengetopt_args_info local_args_info;
+  
+  int override;
+  int initialize;
+  int check_required;
+  int check_ambiguity;
+  
+  override = params->override;
+  initialize = params->initialize;
+  check_required = params->check_required;
+  check_ambiguity = params->check_ambiguity;
 
   if (initialize)
     test_all_opts_cmd_parser_init (args_info);
@@ -660,7 +711,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           exit (EXIT_SUCCESS);
 
         case 's':	/*  string option.  */
-          if (local_args_info.string_given)
+          if (local_args_info.string_given || (check_ambiguity && args_info->string_given))
             {
               fprintf (stderr, "%s: `--string' (`-s') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -678,7 +729,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 'i':	/* int option.  */
-          if (local_args_info.int_given)
+          if (local_args_info.int_given || (check_ambiguity && args_info->int_given))
             {
               fprintf (stderr, "%s: `--int' (`-i') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -698,7 +749,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 'S':	/* short option.  */
-          if (local_args_info.short_given)
+          if (local_args_info.short_given || (check_ambiguity && args_info->short_given))
             {
               fprintf (stderr, "%s: `--short' (`-S') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -718,7 +769,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 'l':	/* long option.  */
-          if (local_args_info.long_given)
+          if (local_args_info.long_given || (check_ambiguity && args_info->long_given))
             {
               fprintf (stderr, "%s: `--long' (`-l') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -738,7 +789,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 'f':	/* float option.  */
-          if (local_args_info.float_given)
+          if (local_args_info.float_given || (check_ambiguity && args_info->float_given))
             {
               fprintf (stderr, "%s: `--float' (`-f') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -758,7 +809,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 'd':	/* double option.  */
-          if (local_args_info.double_given)
+          if (local_args_info.double_given || (check_ambiguity && args_info->double_given))
             {
               fprintf (stderr, "%s: `--double' (`-d') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -778,7 +829,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 'D':	/* longdouble option.  */
-          if (local_args_info.longdouble_given)
+          if (local_args_info.longdouble_given || (check_ambiguity && args_info->longdouble_given))
             {
               fprintf (stderr, "%s: `--longdouble' (`-D') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -798,7 +849,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 'L':	/* longlong option.  */
-          if (local_args_info.longlong_given)
+          if (local_args_info.longlong_given || (check_ambiguity && args_info->longlong_given))
             {
               fprintf (stderr, "%s: `--longlong' (`-L') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -822,7 +873,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 'F':	/* flag option.  */
-          if (local_args_info.flag_given)
+          if (local_args_info.flag_given || (check_ambiguity && args_info->flag_given))
             {
               fprintf (stderr, "%s: `--flag' (`-F') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -835,7 +886,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 'u':	/* function option.  */
-          if (local_args_info.function_given)
+          if (local_args_info.function_given || (check_ambiguity && args_info->function_given))
             {
               fprintf (stderr, "%s: `--function' (`-u') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -847,7 +898,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 'o':	/* option with optional arg (short).  */
-          if (local_args_info.opt_arg_short_given)
+          if (local_args_info.opt_arg_short_given || (check_ambiguity && args_info->opt_arg_short_given))
             {
               fprintf (stderr, "%s: `--opt-arg-short' (`-o') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -868,7 +919,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 'r':	/* required option.  */
-          if (local_args_info.required_given)
+          if (local_args_info.required_given || (check_ambiguity && args_info->required_given))
             {
               fprintf (stderr, "%s: `--required' (`-r') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -886,7 +937,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 'H':	/* hidden option.  */
-          if (local_args_info.hidden_given)
+          if (local_args_info.hidden_given || (check_ambiguity && args_info->hidden_given))
             {
               fprintf (stderr, "%s: `--hidden' (`-H') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -906,7 +957,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 'A':	/* option that depends on opt-arg.  */
-          if (local_args_info.dependant_given)
+          if (local_args_info.dependant_given || (check_ambiguity && args_info->dependant_given))
             {
               fprintf (stderr, "%s: `--dependant' (`-A') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -924,7 +975,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 'y':	/* the name of this option is just as long as the maximum allowed, so this description begin on a new line.  */
-          if (local_args_info.assume_multimeth_virtual_given)
+          if (local_args_info.assume_multimeth_virtual_given || (check_ambiguity && args_info->assume_multimeth_virtual_given))
             {
               fprintf (stderr, "%s: `--assume-multimeth-virtual' (`-y') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -947,7 +998,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           /* no short option.  */
           if (strcmp (long_options[option_index].name, "no-short") == 0)
           {
-            if (local_args_info.no_short_given)
+            if (local_args_info.no_short_given || (check_ambiguity && args_info->no_short_given))
               {
                 fprintf (stderr, "%s: `--no-short' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
                 goto failure;
@@ -961,7 +1012,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           /* option with optional arg.  */
           else if (strcmp (long_options[option_index].name, "opt-arg") == 0)
           {
-            if (local_args_info.opt_arg_given)
+            if (local_args_info.opt_arg_given || (check_ambiguity && args_info->opt_arg_given))
               {
                 fprintf (stderr, "%s: `--opt-arg' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
                 goto failure;
@@ -983,7 +1034,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           /* the name of this option is long enough to make this description begin on a new line.  */
           else if (strcmp (long_options[option_index].name, "very-very-long-option") == 0)
           {
-            if (local_args_info.very_very_long_option_given)
+            if (local_args_info.very_very_long_option_given || (check_ambiguity && args_info->very_very_long_option_given))
               {
                 fprintf (stderr, "%s: `--very-very-long-option' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
                 goto failure;
@@ -1002,7 +1053,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           /* save the passed options into a file.  */
           else if (strcmp (long_options[option_index].name, "file-save") == 0)
           {
-            if (local_args_info.file_save_given)
+            if (local_args_info.file_save_given || (check_ambiguity && args_info->file_save_given))
               {
                 fprintf (stderr, "%s: `--file-save' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
                 goto failure;

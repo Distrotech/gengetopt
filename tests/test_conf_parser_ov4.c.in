@@ -1,8 +1,10 @@
-/* test_conf_parser_ov2.c test */
+/* test_conf_parser_ov4.c test */
 
 /* test all kinds of options and the conf file parser */
 /* differently from test_conf_parser_ov.c, first scan the conf file and
-   then the command line */
+   then the command line; however, if options were specified in the
+   conf file and also in the command line we get an error (uses
+   check_ambiguity parameter */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -14,6 +16,7 @@ static struct my_args_info args_info;
 int
 main (int argc, char **argv)
 {
+  int result = 0;
   struct test_conf_parser_cmd_parser_params *params;
   
   /* initialize the parameters structure */
@@ -27,20 +30,24 @@ main (int argc, char **argv)
 
   /* call the config file parser */
   if (test_conf_parser_cmd_parser_config_file
-      ("@srcdir@/test_conf2.conf", &args_info, params) != 0)
-    exit(1);
+      ("@srcdir@/test_conf2.conf", &args_info, params) != 0) {
+    result = 1;
+    goto stop;
+  }
 
   /* 
-     override config file options,
+     check ambiguity with config file options,
      do not initialize args_info, check for required options.
   */
   params->initialize = 0;
-  params->override = 1;
+  params->check_ambiguity = 1;
   params->check_required = 1;
 
   /* call the command line parser */
-  if (test_conf_parser_cmd_parser_ext (argc, argv, &args_info, params) != 0)
-    exit(1) ;
+  if (test_conf_parser_cmd_parser_ext (argc, argv, &args_info, params) != 0) {
+    result = 1;
+    goto stop;
+  }
 
   printf ("value of required: %s\n", args_info.required_arg);
   printf ("value of string: %s\n", args_info.string_arg);
@@ -48,9 +55,10 @@ main (int argc, char **argv)
   printf ("value of int: %d\n", args_info.int_arg);
   printf ("value of float: %f\n", args_info.float_arg);
 
-  /* release memory */
+ stop:
+  /* deallocate structures */
   test_conf_parser_cmd_parser_free (&args_info);
   free (params);
 
-  return 0;
+  return result;
 }

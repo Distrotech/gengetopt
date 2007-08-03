@@ -48,7 +48,8 @@ static
 void clear_args (struct gengetopt_args_info *args_info);
 
 static int
-test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required, const char *additional_error);
+test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                        struct test_values_cmd_parser_params *params, const char *additional_error);
 
 static int
 test_values_cmd_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error);
@@ -165,6 +166,23 @@ test_values_cmd_parser_init (struct gengetopt_args_info *args_info)
 
   args_info->inputs = NULL;
   args_info->inputs_num = 0;
+}
+
+struct test_values_cmd_parser_params *
+test_values_cmd_parser_params_init()
+{
+  struct test_values_cmd_parser_params *params = 
+    (struct test_values_cmd_parser_params *)malloc(sizeof(struct test_values_cmd_parser_params));
+
+  if (params)
+    { 
+      params->override = 0;
+      params->initialize = 0;
+      params->check_required = 0;
+      params->check_ambiguity = 0;
+    }
+    
+  return params;
 }
 
 static void
@@ -486,7 +504,9 @@ get_multiple_arg_token(const char *arg)
   j = 0;
   while (arg[i] && (j < len-1))
     {
-      if (arg[i] == '\\')
+      if (arg[i] == '\\' && 
+	  arg[ i + 1 ] && 
+	  arg[ i + 1 ] == ',')
         ++i;
 
       ret[j++] = arg[i++];
@@ -611,11 +631,33 @@ test_values_cmd_parser (int argc, char * const *argv, struct gengetopt_args_info
 }
 
 int
+test_values_cmd_parser_ext (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                   struct test_values_cmd_parser_params *params)
+{
+  int result;
+  result = test_values_cmd_parser_internal (argc, argv, args_info, params, NULL);
+
+  if (result == EXIT_FAILURE)
+    {
+      test_values_cmd_parser_free (args_info);
+      exit (EXIT_FAILURE);
+    }
+  
+  return result;
+}
+
+int
 test_values_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required)
 {
   int result;
+  struct test_values_cmd_parser_params params;
+  
+  params.override = override;
+  params.initialize = initialize;
+  params.check_required = check_required;
+  params.check_ambiguity = 0;
 
-  result = test_values_cmd_parser_internal (argc, argv, args_info, override, initialize, check_required, NULL);
+  result = test_values_cmd_parser_internal (argc, argv, args_info, &params, NULL);
 
   if (result == EXIT_FAILURE)
     {
@@ -665,7 +707,8 @@ test_values_cmd_parser_required2 (struct gengetopt_args_info *args_info, const c
 }
 
 int
-test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required, const char *additional_error)
+test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+                        struct test_values_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
   char *multi_token, *multi_next; /* for multiple options */
@@ -677,6 +720,16 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
   struct string_list * multistring_values_no_short_list = NULL,* multistring_values_no_short_new = NULL;
   int error = 0;
   struct gengetopt_args_info local_args_info;
+  
+  int override;
+  int initialize;
+  int check_required;
+  int check_ambiguity;
+  
+  override = params->override;
+  initialize = params->initialize;
+  check_required = params->check_required;
+  check_ambiguity = params->check_ambiguity;
 
   if (initialize)
     test_values_cmd_parser_init (args_info);
@@ -726,7 +779,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           exit (EXIT_SUCCESS);
 
         case 's':	/* string option with values.  */
-          if (local_args_info.string_values_given)
+          if (local_args_info.string_values_given || (check_ambiguity && args_info->string_values_given))
             {
               fprintf (stderr, "%s: `--string-values' (`-s') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
               goto failure;
@@ -785,7 +838,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           /* string option with values and default.  */
           if (strcmp (long_options[option_index].name, "string-values-def") == 0)
           {
-            if (local_args_info.string_values_def_given)
+            if (local_args_info.string_values_def_given || (check_ambiguity && args_info->string_values_def_given))
               {
                 fprintf (stderr, "%s: `--string-values-def' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
                 goto failure;
@@ -809,7 +862,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           /* string option with values and default and optional argument.  */
           else if (strcmp (long_options[option_index].name, "string-values-def-argopt") == 0)
           {
-            if (local_args_info.string_values_def_argopt_given)
+            if (local_args_info.string_values_def_argopt_given || (check_ambiguity && args_info->string_values_def_argopt_given))
               {
                 fprintf (stderr, "%s: `--string-values-def-argopt' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
                 goto failure;
@@ -836,7 +889,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           /* string option with values no short.  */
           else if (strcmp (long_options[option_index].name, "string-values-no-short") == 0)
           {
-            if (local_args_info.string_values_no_short_given)
+            if (local_args_info.string_values_no_short_given || (check_ambiguity && args_info->string_values_no_short_given))
               {
                 fprintf (stderr, "%s: `--string-values-no-short' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
                 goto failure;
@@ -933,7 +986,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           /* group string option with values and default.  */
           else if (strcmp (long_options[option_index].name, "string-values-group") == 0)
           {
-            if (local_args_info.string_values_group_given)
+            if (local_args_info.string_values_group_given || (check_ambiguity && args_info->string_values_group_given))
               {
                 fprintf (stderr, "%s: `--string-values-group' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
                 goto failure;

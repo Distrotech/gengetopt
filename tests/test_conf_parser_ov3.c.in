@@ -1,7 +1,7 @@
 /* test_conf_parser_ov2.c test */
 
 /* test all kinds of options and the conf file parser */
-/* differently from test_conf_parser_ov.c, first scan two conf file and
+/* differently from test_conf_parser_ov.c, first scan two conf files and
    then the command line */
 
 #include <stdlib.h>

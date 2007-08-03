@@ -15,14 +15,30 @@ main (int argc, char **argv)
   int i;
   int result = 0;
 
+  struct test_conf_parser_cmd_parser_params *params;
+  
+  /* initialize the parameters structure */
+  params = test_conf_parser_cmd_parser_params_init();
+
+  /* call the command line parser */
   if (test_conf_parser_cmd_parser (argc, argv, &args_info) != 0) {
     result = 1;
     goto stop;
   }
 
-  /* override cmd options, but do not initialize args_info, check for required options */
-  if (test_conf_parser_cmd_parser_configfile
-      (args_info.conf_file_arg, &args_info, 1, 0, 1) != 0) 
+  /* 
+     override command line options,
+     but do not initialize args_info, check for required options.
+     NOTICE: we might skip the 0 assignment, since the fields of the structure
+     are already initialized to 0. 
+  */
+  params->initialize = 0;
+  params->override = 1;
+  params->check_required = 1;
+
+  /* call the config file parser */
+  if (test_conf_parser_cmd_parser_config_file
+      (args_info.conf_file_arg, &args_info, params) != 0) 
     {
       result = 1;
       goto stop;
@@ -63,7 +79,9 @@ main (int argc, char **argv)
   }
 
  stop:
+  /* deallocate structures */
   test_conf_parser_cmd_parser_free (&args_info);
+  free (params);
 
   return result;
 }
