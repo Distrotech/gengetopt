@@ -1,14 +1,1 @@
-if (@list_name@_list)
-  {
-    struct @type@_list *tmp;
-    while (@list_name@_list)
-      {
-        tmp = @list_name@_list;
-@IF@ string_list @THEN@
-        free (@list_name@_list->arg);
-@ENDIF@
-        free (@list_name@_list->orig);
-        @list_name@_list = @list_name@_list->next;
-        free (tmp);
-      }
-  }
+free_list (@list_name@_list, @IF@ string_list @THEN@ 1 @ELSE@ 0 @ENDIF@);

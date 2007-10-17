@@ -12,61 +12,18 @@ free_list_gen_class::generate_free_list(ostream &stream, unsigned int indent)
   string indent_str (indent, ' ');
   indent = 0;
 
-  stream << "if (";
+  stream << "free_list (";
   generate_string (list_name, stream, indent + indent_str.length ());
-  stream << "_list)";
-  stream << "\n";
-  stream << indent_str;
-  stream << "  {";
-  stream << "\n";
-  stream << indent_str;
-  stream << "    struct ";
-  generate_string (type, stream, indent + indent_str.length ());
-  stream << "_list *tmp;";
-  stream << "\n";
-  stream << indent_str;
-  stream << "    while (";
-  generate_string (list_name, stream, indent + indent_str.length ());
-  stream << "_list)";
-  stream << "\n";
-  stream << indent_str;
-  stream << "      {";
-  stream << "\n";
-  stream << indent_str;
-  stream << "        tmp = ";
-  generate_string (list_name, stream, indent + indent_str.length ());
-  stream << "_list;";
-  stream << "\n";
-  stream << indent_str;
+  stream << "_list, ";
   if (string_list)
     {
-      stream << "        free (";
-      generate_string (list_name, stream, indent + indent_str.length ());
-      stream << "_list->arg);";
-      stream << "\n";
-      stream << indent_str;
+      stream << "1 ";
     }
-  stream << "        free (";
-  generate_string (list_name, stream, indent + indent_str.length ());
-  stream << "_list->orig);";
-  stream << "\n";
-  stream << indent_str;
-  indent = 8;
-  stream << "        ";
-  generate_string (list_name, stream, indent + indent_str.length ());
-  stream << "_list = ";
-  generate_string (list_name, stream, indent + indent_str.length ());
-  stream << "_list->next;";
-  indent = 0;
-  stream << "\n";
-  stream << indent_str;
-  stream << "        free (tmp);";
-  stream << "\n";
-  stream << indent_str;
-  stream << "      }";
-  stream << "\n";
-  stream << indent_str;
-  stream << "  }";
+  else
+    {
+      stream << "0 ";
+    }
+  stream << ");";
   stream << "\n";
   stream << indent_str;
 }

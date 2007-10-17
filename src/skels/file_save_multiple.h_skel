@@ -1,17 +1,5 @@
 @IF@ has_arg @THEN@
-if (args_info->@opt_var@_orig)
-  {
-    for (i = 0; i < args_info->@opt_var@_given; ++i)
-      {
-        if (args_info->@opt_var@_orig [i])
-          {
-            fprintf(outfile, "%s=\"%s\"\n", "@opt_name@", args_info->@opt_var@_orig [i]);
-          }
-      }
-  }
+write_multiple_into_file(outfile, args_info->@opt_var@_given, "@opt_name@", args_info->@opt_var@_orig);
 @ELSE@
-for (i = 0; i < args_info->@opt_var@_given; ++i)
-  {
-  @write_cmd@
-  }
+write_multiple_into_file(outfile, args_info->@opt_var@_given, "@opt_name@", 0);
 @ENDIF@

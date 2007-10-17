@@ -12,52 +12,24 @@ file_save_gen_class::generate_file_save(ostream &stream, unsigned int indent)
   string indent_str (indent, ' ');
   indent = 0;
 
-  if (check_given)
+  stream << "if (args_info->";
+  generate_string (given, stream, indent + indent_str.length ());
+  stream << ")";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  write_into_file(outfile, \"";
+  generate_string (opt_name, stream, indent + indent_str.length ());
+  stream << "\", ";
+  if (( arg == "" ))
     {
-      stream << "if (args_info->";
-      generate_string (given, stream, indent + indent_str.length ());
-      stream << ") {";
-      stream << "\n";
-      stream << indent_str;
-    }
-  if (has_arg)
-    {
-      stream << "  if (args_info->";
-      generate_string (arg, stream, indent + indent_str.length ());
-      stream << ") {";
-      stream << "\n";
-      stream << indent_str;
-      stream << "    fprintf(outfile, \"%s=\\\"%s\\\"\\n\", \"";
-      generate_string (opt_name, stream, indent + indent_str.length ());
-      stream << "\", args_info->";
-      generate_string (arg, stream, indent + indent_str.length ());
-      stream << ");";
-      stream << "\n";
-      stream << indent_str;
-      stream << "  } else {";
-      stream << "\n";
-      stream << indent_str;
-      stream << "    fprintf(outfile, \"%s\\n\", \"";
-      generate_string (opt_name, stream, indent + indent_str.length ());
-      stream << "\");";
-      stream << "\n";
-      stream << indent_str;
-      stream << "  }";
-      stream << "\n";
-      stream << indent_str;
+      stream << "0 ";
     }
   else
     {
-      stream << "  fprintf(outfile, \"%s\\n\", \"";
-      generate_string (opt_name, stream, indent + indent_str.length ());
-      stream << "\");";
-      stream << "\n";
-      stream << indent_str;
+      stream << "args_info->";
+      generate_string (arg, stream, indent + indent_str.length ());
     }
-  if (check_given)
-    {
-      stream << "}";
-      stream << "\n";
-      stream << indent_str;
-    }
+  stream << ");";
+  stream << "\n";
+  stream << indent_str;
 }

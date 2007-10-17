@@ -17,6 +17,8 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. 
 
 
+if NO_CROSSCOMPILING
+
 # .ggonu is used in this test suite for command line parsers that have
 # to be created without --unamed-opt
 
@@ -48,10 +50,6 @@ GGO_COMPILE = $(PROGNAME) --input=$< --func-name=$*_parser --file-name=$*
 
 .ggo.err:
 	$(PROGNAME) --unamed-opt -i $< --file-name null 2> $@ || true
-
-# we don't have to link to anything
-LIBS =
-
 
 # INCLUDES is added to LDFLAGS because .ggo file are sources, and thus
 # the .c files are passed to the linker, which also compiles, thus
@@ -254,12 +252,15 @@ check-err: $(ERRFILES)
 $(TESTSOUTPUT):
 	rm -f $(TESTSOUTPUT); \
         for source in $(TESTS); do \
+	  echo "*** $$source" >> $@; \
 	  $(top_builddir)/tests/$$source >> $@ 2>&1; \
 	done && \
 	for source in $(check_PROGRAMS); do \
+	  echo "*** $$source -h" >> $@; \
 	  $(top_builddir)/tests/$$source -h >> $@ 2>&1; \
 	done && \
 	for source in $(hidden_options_programs); do \
+	  echo "*** $$source --full-help" >> $@; \
 	  $(top_builddir)/tests/$$source --full-help >> $@ 2>&1; \
 	done && \
 	$(PROGNAMESHOWHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $@ 2>&1;
@@ -279,7 +280,8 @@ store-backup: $(BUILT_SOURCES) $(TESTSOUTPUT)
 	  test_output="`echo $$source|sed s/save/save\.test/`"; \
 	  cp $$source $(srcdir)/$$test_output; \
         done; \
-	cp $(TESTSOUT) $(srcdir)/$(TESTSOUTPUT)
+	cp $(TESTSOUT) $(srcdir)/$(TESTSOUTPUT); \
+	rm -f *.err.test
 
 check-diff:
 	for source in $(CHECKDIFFFILES); do \
@@ -291,12 +293,15 @@ check-diff:
 	echo "creating output of tests..."; \
 	rm -f $(TESTSOUT); \
         for tests in $(TESTS); do \
+	  echo "*** $$tests" >> $(srcdir)/$(TESTSOUT); \
 	  $(top_builddir)/tests/$$tests >> $(srcdir)/$(TESTSOUT) 2>&1 ; \
 	done && \
 	for tests in $(check_PROGRAMS); do \
+	  echo "*** $$tests -h" >> $(srcdir)/$(TESTSOUT); \
 	  $(top_builddir)/tests/$$tests -h >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	done && \
 	for tests in $(hidden_options_programs); do \
+	  echo "*** $$tests --full-help" >> $(srcdir)/$(TESTSOUT); \
 	  $(top_builddir)/tests/$$tests --full-help >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	done && \
 	$(PROGNAMESHOWHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
@@ -326,3 +331,5 @@ clean-err:
 	rm -f *.err
 
 CLEANFILES = *_cmd.c *_cmd.h *-cmd.h *-cmd.c cmdline.c cmdline.h *.save *.err.out
+
+endif

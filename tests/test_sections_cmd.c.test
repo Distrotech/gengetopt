@@ -49,6 +49,18 @@ const char *gengetopt_args_info_help[] = {
     0
 };
 
+typedef enum {ARG_NO
+  , ARG_FLAG
+  , ARG_STRING
+  , ARG_INT
+  , ARG_SHORT
+  , ARG_LONG
+  , ARG_FLOAT
+  , ARG_DOUBLE
+  , ARG_LONGDOUBLE
+  , ARG_LONGLONG
+} test_sections_cmd_parser_arg_type;
+
 static
 void clear_given (struct gengetopt_args_info *args_info);
 static
@@ -157,7 +169,7 @@ test_sections_cmd_parser_init (struct gengetopt_args_info *args_info)
 }
 
 struct test_sections_cmd_parser_params *
-test_sections_cmd_parser_params_init()
+test_sections_cmd_parser_params_init(void)
 {
   struct test_sections_cmd_parser_params *params = 
     (struct test_sections_cmd_parser_params *)malloc(sizeof(struct test_sections_cmd_parser_params));
@@ -168,79 +180,103 @@ test_sections_cmd_parser_params_init()
       params->initialize = 0;
       params->check_required = 0;
       params->check_ambiguity = 0;
+      params->print_errors = 1;
     }
     
   return params;
 }
 
 static void
+free_string_field (char **s)
+{
+  if (*s)
+    {
+      free (*s);
+      *s = 0;
+    }
+}
+
+
+static void
 test_sections_cmd_parser_release (struct gengetopt_args_info *args_info)
 {
-  
   unsigned int i;
-  if (args_info->string_arg)
-    {
-      free (args_info->string_arg); /* free previous argument */
-      args_info->string_arg = 0;
-    }
-  if (args_info->string_orig)
-    {
-      free (args_info->string_orig); /* free previous argument */
-      args_info->string_orig = 0;
-    }
-  if (args_info->int_orig)
-    {
-      free (args_info->int_orig); /* free previous argument */
-      args_info->int_orig = 0;
-    }
-  if (args_info->short_orig)
-    {
-      free (args_info->short_orig); /* free previous argument */
-      args_info->short_orig = 0;
-    }
-  if (args_info->long_orig)
-    {
-      free (args_info->long_orig); /* free previous argument */
-      args_info->long_orig = 0;
-    }
-  if (args_info->float_orig)
-    {
-      free (args_info->float_orig); /* free previous argument */
-      args_info->float_orig = 0;
-    }
-  if (args_info->double_orig)
-    {
-      free (args_info->double_orig); /* free previous argument */
-      args_info->double_orig = 0;
-    }
-  if (args_info->longdouble_orig)
-    {
-      free (args_info->longdouble_orig); /* free previous argument */
-      args_info->longdouble_orig = 0;
-    }
-  if (args_info->longlong_orig)
-    {
-      free (args_info->longlong_orig); /* free previous argument */
-      args_info->longlong_orig = 0;
-    }
-  if (args_info->required_arg)
-    {
-      free (args_info->required_arg); /* free previous argument */
-      args_info->required_arg = 0;
-    }
-  if (args_info->required_orig)
-    {
-      free (args_info->required_orig); /* free previous argument */
-      args_info->required_orig = 0;
-    }
+  free_string_field (&(args_info->string_arg));
+  free_string_field (&(args_info->string_orig));
+  free_string_field (&(args_info->int_orig));
+  free_string_field (&(args_info->short_orig));
+  free_string_field (&(args_info->long_orig));
+  free_string_field (&(args_info->float_orig));
+  free_string_field (&(args_info->double_orig));
+  free_string_field (&(args_info->longdouble_orig));
+  free_string_field (&(args_info->longlong_orig));
+  free_string_field (&(args_info->required_arg));
+  free_string_field (&(args_info->required_orig));
+  
   
   for (i = 0; i < args_info->inputs_num; ++i)
     free (args_info->inputs [i]);
-  
+
   if (args_info->inputs_num)
     free (args_info->inputs);
-  
+
   clear_given (args_info);
+}
+
+static void
+write_into_file(FILE *outfile, const char *opt, const char *arg)
+{
+  if (arg) {
+    fprintf(outfile, "%s=\"%s\"\n", opt, arg);
+  } else {
+    fprintf(outfile, "%s\n", opt);
+  }
+}
+
+
+int
+test_sections_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
+{
+  int i = 0;
+
+  if (!outfile)
+    {
+      fprintf (stderr, "%s: cannot dump options to stream\n", TEST_SECTIONS_CMD_PARSER_PACKAGE);
+      return EXIT_FAILURE;
+    }
+
+  if (args_info->help_given)
+    write_into_file(outfile, "help", 0 );
+  if (args_info->version_given)
+    write_into_file(outfile, "version", 0 );
+  if (args_info->string_given)
+    write_into_file(outfile, "string", args_info->string_orig);
+  if (args_info->int_given)
+    write_into_file(outfile, "int", args_info->int_orig);
+  if (args_info->short_given)
+    write_into_file(outfile, "short", args_info->short_orig);
+  if (args_info->long_given)
+    write_into_file(outfile, "long", args_info->long_orig);
+  if (args_info->float_given)
+    write_into_file(outfile, "float", args_info->float_orig);
+  if (args_info->double_given)
+    write_into_file(outfile, "double", args_info->double_orig);
+  if (args_info->longdouble_given)
+    write_into_file(outfile, "longdouble", args_info->longdouble_orig);
+  if (args_info->longlong_given)
+    write_into_file(outfile, "longlong", args_info->longlong_orig);
+  if (args_info->flag_given)
+    write_into_file(outfile, "flag", 0 );
+  if (args_info->function_given)
+    write_into_file(outfile, "function", 0 );
+  if (args_info->no_short_given)
+    write_into_file(outfile, "no-short", 0 );
+  if (args_info->required_given)
+    write_into_file(outfile, "required", args_info->required_orig);
+  
+
+  i = EXIT_SUCCESS;
+  return i;
 }
 
 int
@@ -257,88 +293,9 @@ test_sections_cmd_parser_file_save(const char *filename, struct gengetopt_args_i
       return EXIT_FAILURE;
     }
 
-  if (args_info->help_given) {
-    fprintf(outfile, "%s\n", "help");
-  }
-  if (args_info->version_given) {
-    fprintf(outfile, "%s\n", "version");
-  }
-  if (args_info->string_given) {
-    if (args_info->string_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "string", args_info->string_orig);
-    } else {
-      fprintf(outfile, "%s\n", "string");
-    }
-  }
-  if (args_info->int_given) {
-    if (args_info->int_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "int", args_info->int_orig);
-    } else {
-      fprintf(outfile, "%s\n", "int");
-    }
-  }
-  if (args_info->short_given) {
-    if (args_info->short_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "short", args_info->short_orig);
-    } else {
-      fprintf(outfile, "%s\n", "short");
-    }
-  }
-  if (args_info->long_given) {
-    if (args_info->long_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "long", args_info->long_orig);
-    } else {
-      fprintf(outfile, "%s\n", "long");
-    }
-  }
-  if (args_info->float_given) {
-    if (args_info->float_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "float", args_info->float_orig);
-    } else {
-      fprintf(outfile, "%s\n", "float");
-    }
-  }
-  if (args_info->double_given) {
-    if (args_info->double_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "double", args_info->double_orig);
-    } else {
-      fprintf(outfile, "%s\n", "double");
-    }
-  }
-  if (args_info->longdouble_given) {
-    if (args_info->longdouble_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "longdouble", args_info->longdouble_orig);
-    } else {
-      fprintf(outfile, "%s\n", "longdouble");
-    }
-  }
-  if (args_info->longlong_given) {
-    if (args_info->longlong_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "longlong", args_info->longlong_orig);
-    } else {
-      fprintf(outfile, "%s\n", "longlong");
-    }
-  }
-  if (args_info->flag_given) {
-    fprintf(outfile, "%s\n", "flag");
-  }
-  if (args_info->function_given) {
-    fprintf(outfile, "%s\n", "function");
-  }
-  if (args_info->no_short_given) {
-    fprintf(outfile, "%s\n", "no-short");
-  }
-  if (args_info->required_given) {
-    if (args_info->required_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "required", args_info->required_orig);
-    } else {
-      fprintf(outfile, "%s\n", "required");
-    }
-  }
-  
+  i = test_sections_cmd_parser_dump(outfile, args_info);
   fclose (outfile);
 
-  i = EXIT_SUCCESS;
   return i;
 }
 
@@ -397,6 +354,7 @@ test_sections_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_i
   params.initialize = initialize;
   params.check_required = check_required;
   params.check_ambiguity = 0;
+  params.print_errors = 1;
 
   result = test_sections_cmd_parser_internal (argc, argv, args_info, &params, NULL);
 
@@ -444,6 +402,147 @@ test_sections_cmd_parser_required2 (struct gengetopt_args_info *args_info, const
   return error;
 }
 
+
+static char *package_name = 0;
+
+/**
+ * @brief updates an option
+ * @param field the generic pointer to the field to update
+ * @param orig_field the pointer to the orig field
+ * @param field_given the pointer to the number of occurrence of this option
+ * @param prev_given the pointer to the number of occurrence already seen
+ * @param val the argument for this option (if null no arg was specified)
+ * @param orig the actual argument (can be different in case of options with values)
+ * @param possible_values the possible values for this option (if specified)
+ * @param default_value the default value (in case the option only accepts fixed values)
+ * @param arg_type the type of this option
+ * @param check_ambiguity @see test_sections_cmd_parser_params.check_ambiguity
+ * @param override @see test_sections_cmd_parser_params.override
+ * @param no_free whether to free a possible previous value
+ * @param multiple_option whether this is a multiple option
+ * @param long_opt the corresponding long option
+ * @param short_opt the corresponding short option (or '-' if none)
+ * @param additional_error possible further error specification
+ */
+static
+int update_arg(void *field, char **orig_field,
+               unsigned int *field_given, unsigned int *prev_given, 
+               const char *val, char *orig,
+               char *possible_values[], const char *default_value,
+               test_sections_cmd_parser_arg_type arg_type,
+               short check_ambiguity, short override,
+               short no_free, short multiple_option,
+               const char *long_opt, char short_opt,
+               const char *additional_error)
+{
+  char *stop_char;
+  int found;
+  char **string_field;
+
+  stop_char = 0;
+  found = 0;
+
+  if (!multiple_option && prev_given && (*prev_given || (check_ambiguity && *field_given)))
+    {
+      if (short_opt != '-')
+        fprintf (stderr, "%s: `--%s' (`-%c') option given more than once%s\n", 
+               package_name, long_opt, short_opt,
+               (additional_error ? additional_error : ""));
+      else
+        fprintf (stderr, "%s: `--%s' option given more than once%s\n", 
+               package_name, long_opt,
+               (additional_error ? additional_error : ""));
+      return 1; /* failure */
+    }
+
+    
+  if (field_given && *field_given && ! override)
+    return 0;
+  if (prev_given)
+    (*prev_given)++;
+  if (field_given)
+    (*field_given)++;
+
+  switch(arg_type) {
+  case ARG_FLAG:
+    *((int *)field) = !*((int *)field);
+    break;
+  case ARG_INT:
+    if (val) *((int *)field) = strtol (val, &stop_char, 0);
+    break;
+  case ARG_SHORT:
+    if (val) *((short *)field) = (short)strtol (val, &stop_char, 0);
+    break;
+  case ARG_LONG:
+    if (val) *((long *)field) = (long)strtol (val, &stop_char, 0);
+    break;
+  case ARG_FLOAT:
+    if (val) *((float *)field) = (float)strtod (val, &stop_char);
+    break;
+  case ARG_DOUBLE:
+    if (val) *((double *)field) = strtod (val, &stop_char);
+    break;
+  case ARG_LONGDOUBLE:
+    if (val) *((long double *)field) = (long double)strtod (val, &stop_char);
+    break;
+  case ARG_LONGLONG:
+#ifdef HAVE_LONG_LONG
+    if (val) *((long long int*)field) = (long long int) strtol (val, &stop_char, 0);
+#else
+    if (val) *((long *)field) = (long)strtol (val, &stop_char, 0);
+#endif
+    break;
+  case ARG_STRING:
+    if (val || possible_values) {
+      string_field = (char **)field;
+      if (!no_free && *string_field)
+        free (*string_field); /* free previous string */
+      *string_field = gengetopt_strdup (possible_values ? possible_values[found] : val);
+    }
+    break;
+  default:
+    break;
+  };
+
+  /* check numeric conversion */
+  switch(arg_type) {
+  case ARG_INT:
+  case ARG_SHORT:
+  case ARG_LONG:
+  case ARG_FLOAT:
+  case ARG_DOUBLE:
+  case ARG_LONGDOUBLE:
+  case ARG_LONGLONG:
+    if (val && !(stop_char && *stop_char == '\0')) {
+      fprintf(stderr, "%s: invalid numeric value: %s\n", package_name, val);
+      return 1; /* failure */
+    }
+    break;
+  default:
+    ;
+  };
+
+  /* store the original value */
+  switch(arg_type) {
+  case ARG_NO:
+  case ARG_FLAG:
+    break;
+  default:
+    if (orig && orig_field) {
+      if (no_free) {
+        *orig_field = orig;
+      } else {
+        if (*orig_field)
+          free (*orig_field); /* free previous string */
+        *orig_field = gengetopt_strdup (orig);
+      }
+    }
+  };
+
+  return 0; /* OK */
+}
+
+
 int
 test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
                         struct test_sections_cmd_parser_params *params, const char *additional_error)
@@ -458,6 +557,8 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
   int check_required;
   int check_ambiguity;
   
+  package_name = argv[0];
+  
   override = params->override;
   initialize = params->initialize;
   check_required = params->check_required;
@@ -470,13 +571,12 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
 
   optarg = 0;
   optind = 0;
-  opterr = 1;
+  opterr = params->print_errors;
   optopt = '?';
 
   while (1)
     {
       int option_index = 0;
-      char *stop_char;
 
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
@@ -496,7 +596,6 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         { NULL,	0, NULL, 0 }
       };
 
-      stop_char = 0;
       c = getopt_long (argc, argv, "hVs:i:S:l:f:d:D:L:Fur:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -514,225 +613,138 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           exit (EXIT_SUCCESS);
 
         case 's':	/* string option.  */
-          if (local_args_info.string_given || (check_ambiguity && args_info->string_given))
-            {
-              fprintf (stderr, "%s: `--string' (`-s') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->string_given && ! override)
-            continue;
-          local_args_info.string_given = 1;
-          args_info->string_given = 1;
-          if (args_info->string_arg)
-            free (args_info->string_arg); /* free previous string */
-          args_info->string_arg = gengetopt_strdup (optarg);
-          if (args_info->string_orig)
-            free (args_info->string_orig); /* free previous string */
-          args_info->string_orig = gengetopt_strdup (optarg);
+        
+          if (update_arg( (void *)&(args_info->string_arg), 
+               &(args_info->string_orig), &(args_info->string_given),
+              &(local_args_info.string_given), optarg, optarg, 0, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "string", 's',
+              additional_error))
+            goto failure;
+        
           break;
-
         case 'i':	/* int option.  */
-          if (local_args_info.int_given || (check_ambiguity && args_info->int_given))
-            {
-              fprintf (stderr, "%s: `--int' (`-i') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->int_given && ! override)
-            continue;
-          local_args_info.int_given = 1;
-          args_info->int_given = 1;
-          args_info->int_arg = strtol (optarg, &stop_char, 0);
-          if (!(stop_char && *stop_char == '\0')) {
-            fprintf(stderr, "%s: invalid numeric value: %s\n", argv[0], optarg);
+        
+          if (update_arg( (void *)&(args_info->int_arg), 
+               &(args_info->int_orig), &(args_info->int_given),
+              &(local_args_info.int_given), optarg, optarg, 0, 0, ARG_INT,
+              check_ambiguity, override, 0, 0,
+              "int", 'i',
+              additional_error))
             goto failure;
-          }
-          if (args_info->int_orig)
-            free (args_info->int_orig); /* free previous string */
-          args_info->int_orig = gengetopt_strdup (optarg);
+        
           break;
-
         case 'S':	/* short option.  */
-          if (local_args_info.short_given || (check_ambiguity && args_info->short_given))
-            {
-              fprintf (stderr, "%s: `--short' (`-S') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->short_given && ! override)
-            continue;
-          local_args_info.short_given = 1;
-          args_info->short_given = 1;
-          args_info->short_arg = (short)strtol (optarg, &stop_char, 0);
-          if (!(stop_char && *stop_char == '\0')) {
-            fprintf(stderr, "%s: invalid numeric value: %s\n", argv[0], optarg);
+        
+          if (update_arg( (void *)&(args_info->short_arg), 
+               &(args_info->short_orig), &(args_info->short_given),
+              &(local_args_info.short_given), optarg, optarg, 0, 0, ARG_SHORT,
+              check_ambiguity, override, 0, 0,
+              "short", 'S',
+              additional_error))
             goto failure;
-          }
-          if (args_info->short_orig)
-            free (args_info->short_orig); /* free previous string */
-          args_info->short_orig = gengetopt_strdup (optarg);
+        
           break;
-
         case 'l':	/* long option.  */
-          if (local_args_info.long_given || (check_ambiguity && args_info->long_given))
-            {
-              fprintf (stderr, "%s: `--long' (`-l') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->long_given && ! override)
-            continue;
-          local_args_info.long_given = 1;
-          args_info->long_given = 1;
-          args_info->long_arg = strtol (optarg, &stop_char, 0);
-          if (!(stop_char && *stop_char == '\0')) {
-            fprintf(stderr, "%s: invalid numeric value: %s\n", argv[0], optarg);
+        
+          if (update_arg( (void *)&(args_info->long_arg), 
+               &(args_info->long_orig), &(args_info->long_given),
+              &(local_args_info.long_given), optarg, optarg, 0, 0, ARG_LONG,
+              check_ambiguity, override, 0, 0,
+              "long", 'l',
+              additional_error))
             goto failure;
-          }
-          if (args_info->long_orig)
-            free (args_info->long_orig); /* free previous string */
-          args_info->long_orig = gengetopt_strdup (optarg);
+        
           break;
-
         case 'f':	/* float option.  */
-          if (local_args_info.float_given || (check_ambiguity && args_info->float_given))
-            {
-              fprintf (stderr, "%s: `--float' (`-f') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->float_given && ! override)
-            continue;
-          local_args_info.float_given = 1;
-          args_info->float_given = 1;
-          args_info->float_arg = (float)strtod (optarg, &stop_char);
-          if (!(stop_char && *stop_char == '\0')) {
-            fprintf(stderr, "%s: invalid numeric value: %s\n", argv[0], optarg);
+        
+          if (update_arg( (void *)&(args_info->float_arg), 
+               &(args_info->float_orig), &(args_info->float_given),
+              &(local_args_info.float_given), optarg, optarg, 0, 0, ARG_FLOAT,
+              check_ambiguity, override, 0, 0,
+              "float", 'f',
+              additional_error))
             goto failure;
-          }
-          if (args_info->float_orig)
-            free (args_info->float_orig); /* free previous string */
-          args_info->float_orig = gengetopt_strdup (optarg);
+        
           break;
-
         case 'd':	/* double option.  */
-          if (local_args_info.double_given || (check_ambiguity && args_info->double_given))
-            {
-              fprintf (stderr, "%s: `--double' (`-d') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->double_given && ! override)
-            continue;
-          local_args_info.double_given = 1;
-          args_info->double_given = 1;
-          args_info->double_arg = strtod (optarg, &stop_char);
-          if (!(stop_char && *stop_char == '\0')) {
-            fprintf(stderr, "%s: invalid numeric value: %s\n", argv[0], optarg);
+        
+          if (update_arg( (void *)&(args_info->double_arg), 
+               &(args_info->double_orig), &(args_info->double_given),
+              &(local_args_info.double_given), optarg, optarg, 0, 0, ARG_DOUBLE,
+              check_ambiguity, override, 0, 0,
+              "double", 'd',
+              additional_error))
             goto failure;
-          }
-          if (args_info->double_orig)
-            free (args_info->double_orig); /* free previous string */
-          args_info->double_orig = gengetopt_strdup (optarg);
+        
           break;
-
         case 'D':	/* longdouble option.  */
-          if (local_args_info.longdouble_given || (check_ambiguity && args_info->longdouble_given))
-            {
-              fprintf (stderr, "%s: `--longdouble' (`-D') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->longdouble_given && ! override)
-            continue;
-          local_args_info.longdouble_given = 1;
-          args_info->longdouble_given = 1;
-          args_info->longdouble_arg = (long double)strtod (optarg, &stop_char);
-          if (!(stop_char && *stop_char == '\0')) {
-            fprintf(stderr, "%s: invalid numeric value: %s\n", argv[0], optarg);
+        
+          if (update_arg( (void *)&(args_info->longdouble_arg), 
+               &(args_info->longdouble_orig), &(args_info->longdouble_given),
+              &(local_args_info.longdouble_given), optarg, optarg, 0, 0, ARG_LONGDOUBLE,
+              check_ambiguity, override, 0, 0,
+              "longdouble", 'D',
+              additional_error))
             goto failure;
-          }
-          if (args_info->longdouble_orig)
-            free (args_info->longdouble_orig); /* free previous string */
-          args_info->longdouble_orig = gengetopt_strdup (optarg);
+        
           break;
-
         case 'L':	/* longlong option.  */
-          if (local_args_info.longlong_given || (check_ambiguity && args_info->longlong_given))
-            {
-              fprintf (stderr, "%s: `--longlong' (`-L') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->longlong_given && ! override)
-            continue;
-          local_args_info.longlong_given = 1;
-          args_info->longlong_given = 1;
-          #ifdef HAVE_LONG_LONG
-          args_info->longlong_arg = (long long int) strtol (optarg, &stop_char, 0);
-          #else
-          args_info->longlong_arg = (long) strtol (optarg, &stop_char, 0);
-          #endif
-          if (!(stop_char && *stop_char == '\0')) {
-            fprintf(stderr, "%s: invalid numeric value: %s\n", argv[0], optarg);
+        
+          if (update_arg( (void *)&(args_info->longlong_arg), 
+               &(args_info->longlong_orig), &(args_info->longlong_given),
+              &(local_args_info.longlong_given), optarg, optarg, 0, 0, ARG_LONGLONG,
+              check_ambiguity, override, 0, 0,
+              "longlong", 'L',
+              additional_error))
             goto failure;
-          }
-          if (args_info->longlong_orig)
-            free (args_info->longlong_orig); /* free previous string */
-          args_info->longlong_orig = gengetopt_strdup (optarg);
+        
           break;
-
         case 'F':	/* flag option.  */
-          if (local_args_info.flag_given || (check_ambiguity && args_info->flag_given))
-            {
-              fprintf (stderr, "%s: `--flag' (`-F') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->flag_given && ! override)
-            continue;
-          local_args_info.flag_given = 1;
-          args_info->flag_given = 1;
-          args_info->flag_flag = !(args_info->flag_flag);
+        
+          if (update_arg((void *)&(args_info->flag_flag), 0, &(args_info->flag_given),
+              &(local_args_info.flag_given), optarg, optarg, 0, 0, ARG_FLAG,
+              check_ambiguity, override, 1, 0, "flag", 'F',
+              additional_error))
+            goto failure;
+        
           break;
-
         case 'u':	/* function option.  */
-          if (local_args_info.function_given || (check_ambiguity && args_info->function_given))
-            {
-              fprintf (stderr, "%s: `--function' (`-u') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->function_given && ! override)
-            continue;
-          local_args_info.function_given = 1;
-          args_info->function_given = 1;
+        
+          if (update_arg( 0 , 
+               0 , &(args_info->function_given),
+              &(local_args_info.function_given), optarg, optarg, 0, 0, ARG_NO,
+              check_ambiguity, override, 0, 0,
+              "function", 'u',
+              additional_error))
+            goto failure;
+        
           break;
-
         case 'r':	/* required option.  */
-          if (local_args_info.required_given || (check_ambiguity && args_info->required_given))
-            {
-              fprintf (stderr, "%s: `--required' (`-r') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->required_given && ! override)
-            continue;
-          local_args_info.required_given = 1;
-          args_info->required_given = 1;
-          if (args_info->required_arg)
-            free (args_info->required_arg); /* free previous string */
-          args_info->required_arg = gengetopt_strdup (optarg);
-          if (args_info->required_orig)
-            free (args_info->required_orig); /* free previous string */
-          args_info->required_orig = gengetopt_strdup (optarg);
+        
+          if (update_arg( (void *)&(args_info->required_arg), 
+               &(args_info->required_orig), &(args_info->required_given),
+              &(local_args_info.required_given), optarg, optarg, 0, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "required", 'r',
+              additional_error))
+            goto failure;
+        
           break;
-
 
         case 0:	/* Long option with no short option */
           /* no short option.  */
           if (strcmp (long_options[option_index].name, "no-short") == 0)
           {
-            if (local_args_info.no_short_given || (check_ambiguity && args_info->no_short_given))
-              {
-                fprintf (stderr, "%s: `--no-short' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-                goto failure;
-              }
-            if (args_info->no_short_given && ! override)
-              continue;
-            local_args_info.no_short_given = 1;
-            args_info->no_short_given = 1;
-            break;
+          
+            if (update_arg( 0 , 
+                 0 , &(args_info->no_short_given),
+                &(local_args_info.no_short_given), optarg, optarg, 0, 0, ARG_NO,
+                check_ambiguity, override, 0, 0,
+                "no-short", '-',
+                additional_error))
+              goto failure;
+          
           }
           
           break;

@@ -1,5 +1,0 @@
-for (i = 0; i < @structure@->inputs_num; ++i)
-  free (@structure@->inputs [i]);
-
-if (@structure@->inputs_num)
-  free (@structure@->inputs);

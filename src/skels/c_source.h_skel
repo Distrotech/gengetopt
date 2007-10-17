@@ -38,6 +38,35 @@ const char *@args_info@_full_help[] = {
 };
 @ENDIF@
 
+typedef enum {ARG_NO
+@IF@ has_arg_flag @THEN@
+  , ARG_FLAG
+@ENDIF@
+@IF@ has_arg_string @THEN@
+  , ARG_STRING
+@ENDIF@
+@IF@ has_arg_int @THEN@
+  , ARG_INT
+@ENDIF@
+@IF@ has_arg_short @THEN@
+  , ARG_SHORT
+@ENDIF@
+@IF@ has_arg_long @THEN@
+  , ARG_LONG
+@ENDIF@
+@IF@ has_arg_float @THEN@
+  , ARG_FLOAT
+@ENDIF@
+@IF@ has_arg_double @THEN@
+  , ARG_DOUBLE
+@ENDIF@
+@IF@ has_arg_longdouble @THEN@
+  , ARG_LONGDOUBLE
+@ENDIF@
+@IF@ has_arg_longlong @THEN@
+  , ARG_LONGLONG
+@ENDIF@} @parser_name@_arg_type;
+
 static
 void clear_given (struct @args_info@ *args_info);
 static
@@ -78,7 +107,6 @@ free_cmd_list(void)
 
 @ENDIF@
 
-@struct_def:method{iteration=true}@
 @option_values:method{iteration=true}@
 @IF@ do_generate_strdup @THEN@
 static char *
@@ -161,7 +189,7 @@ void
 }
 
 struct @parser_name@_params *
-@parser_name@_params_init()
+@parser_name@_params_init(void)
 {
   struct @parser_name@_params *params = 
     (struct @parser_name@_params *)malloc(sizeof(struct @parser_name@_params));
@@ -172,16 +200,170 @@ struct @parser_name@_params *
       params->initialize = 0;
       params->check_required = 0;
       params->check_ambiguity = 0;
+      params->print_errors = 1;
     }
     
   return params;
 }
 
+@IF@ has_typed_options @THEN@
+static void
+free_string_field (char **s)
+{
+  if (*s)
+    {
+      free (*s);
+      *s = 0;
+    }
+}
+@ENDIF@
+
+@IF@ multiple_options @THEN@
+/** @@brief generic value variable */
+union generic_value {
+@IF@ has_arg_int @THEN@
+    int int_arg;
+@ENDIF@
+@IF@ has_arg_short @THEN@
+    short short_arg;
+@ENDIF@
+@IF@ has_arg_long @THEN@
+    long long_arg;
+@ENDIF@
+@IF@ has_arg_float @THEN@
+    float float_arg;
+@ENDIF@
+@IF@ has_arg_double @THEN@
+    double double_arg;
+@ENDIF@
+@IF@ has_arg_longdouble @THEN@
+    long double longdouble_arg;
+@ENDIF@
+@IF@ has_arg_longlong @THEN@
+#ifdef HAVE_LONG_LONG
+    long long int longlong_arg;
+#else
+    long longlong_arg;
+#endif
+@ENDIF@
+    char *string_arg;
+};
+
+/** @@brief holds temporary values for multiple options */
+struct generic_list
+{
+  union generic_value arg;
+  char *orig;
+  struct generic_list *next;
+};
+
+/**
+ * @@brief add a node at the head of the list 
+ */
+static void add_node(struct generic_list **list) {
+  struct generic_list *new_node = (struct generic_list *) malloc (sizeof (struct generic_list));
+  new_node->next = *list;
+  *list = new_node;
+  new_node->arg.string_arg = NULL;
+  new_node->orig = NULL;
+}
+
+@IF@ (not multiple_options_all_string) and multiple_token_vars @THEN@
+static void
+free_multiple_field(unsigned int len, void **arg, char ***orig)
+{
+  unsigned int i;
+  if (*arg) {
+    for (i = 0; i < len; ++i)
+      {
+        free_string_field(&((*orig)[i]));
+      }
+
+    free (*arg);
+    *arg = 0;
+    free (*orig);
+    *orig = 0;
+  }
+}
+@ENDIF@
+
+@IF@ multiple_options_string @THEN@
+static void
+free_multiple_string_field(unsigned int len, char ***arg, char ***orig)
+{
+  unsigned int i;
+  if (*arg) {
+    for (i = 0; i < len; ++i)
+      {
+        free_string_field(&((*arg)[i]));
+        free_string_field(&((*orig)[i]));
+      }
+    free_string_field(&((*arg)[0])); /* free default string */
+
+    free (*arg);
+    *arg = 0;
+    free (*orig);
+    *orig = 0;
+  }
+}
+@ENDIF@
+@ENDIF@
+
 static void
 @parser_name@_release (struct @args_info@ *args_info)
 {
+@IF@ handle_unamed @THEN@
+  unsigned int i;@ENDIF@
+
   @free:method@
+  
+@IF@ handle_unamed @THEN@
+  for (i = 0; i < args_info->inputs_num; ++i)
+    free (args_info->inputs [i]);
+
+  if (args_info->inputs_num)
+    free (args_info->inputs);
+@ENDIF@
+
   clear_given (args_info);
+}
+
+static void
+write_into_file(FILE *outfile, const char *opt, const char *arg)
+{
+  if (arg) {
+    fprintf(outfile, "%s=\"%s\"\n", opt, arg);
+  } else {
+    fprintf(outfile, "%s\n", opt);
+  }
+}
+
+@IF@ multiple_options @THEN@
+static void
+write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg)
+{
+  int i;
+  
+  for (i = 0; i < len; ++i)
+    write_into_file(outfile, opt, (arg ? arg[i] : 0));
+}
+@ENDIF@
+
+int
+@parser_name@_dump(FILE *outfile, struct @args_info@ *args_info)
+{
+  int i = 0;
+
+  if (!outfile)
+    {
+      fprintf (stderr, "%s: cannot dump options to stream\n", @package_var_name@);
+      return EXIT_FAILURE;
+    }
+
+  @file_save_loop:method@
+
+  i = EXIT_SUCCESS;
+  return i;
 }
 
 int
@@ -198,10 +380,9 @@ int
       return EXIT_FAILURE;
     }
 
-  @file_save_loop:method@
+  i = @parser_name@_dump(outfile, args_info);
   fclose (outfile);
 
-  i = EXIT_SUCCESS;
   return i;
 }
 
@@ -212,11 +393,12 @@ void
 }
 
 @IF@ check_possible_values @THEN@
-/*
- * Returns:
- * - the index of the matched value
- * - -1 if no argument has been specified
- * - -2 if more than one value has matched
+/**
+ * @@param val the value to check
+ * @@param values the possible values
+ * @@return the index of the matched value:
+ * -1 if no argument has been specified,
+ * -2 if more than one value has matched
  */
 static int
 check_possible_values(const char *val, char *values[])
@@ -432,6 +614,7 @@ int
   params.initialize = initialize;
   params.check_required = check_required;
   params.check_ambiguity = 0;
+  params.print_errors = 1;
 
   result = @parser_name@_internal (argc, argv, args_info, &params, NULL);
 
@@ -471,13 +654,462 @@ int
 @IF@ include_getopt @THEN@
 @custom_getopt:method@
 @ENDIF@
+
+static char *package_name = 0;
+
+/**
+ * @@brief updates an option
+ * @@param field the generic pointer to the field to update
+ * @@param orig_field the pointer to the orig field
+ * @@param field_given the pointer to the number of occurrence of this option
+ * @@param prev_given the pointer to the number of occurrence already seen
+ * @@param val the argument for this option (if null no arg was specified)
+ * @@param orig the actual argument (can be different in case of options with values)
+ * @@param possible_values the possible values for this option (if specified)
+ * @@param default_value the default value (in case the option only accepts fixed values)
+ * @@param arg_type the type of this option
+ * @@param check_ambiguity @@see @parser_name@_params.check_ambiguity
+ * @@param override @@see @parser_name@_params.override
+ * @@param no_free whether to free a possible previous value
+ * @@param multiple_option whether this is a multiple option
+ * @@param long_opt the corresponding long option
+ * @@param short_opt the corresponding short option (or '-' if none)
+ * @@param additional_error possible further error specification
+ */
+static
+int update_arg(void *field, char **orig_field,
+               unsigned int *field_given, unsigned int *prev_given, 
+               const char *val, char *orig,
+               char *possible_values[], const char *default_value,
+               @parser_name@_arg_type arg_type,
+               short check_ambiguity, short override,
+               short no_free, short multiple_option,
+               const char *long_opt, char short_opt,
+               const char *additional_error)
+{
+  char *stop_char;
+  int found;
+@IF@ has_arg_string @THEN@
+  char **string_field;
+@ENDIF@
+
+  stop_char = 0;
+  found = 0;
+
+  if (!multiple_option && prev_given && (*prev_given || (check_ambiguity && *field_given)))
+    {
+      if (short_opt != '-')
+        fprintf (stderr, "%s: `--%s' (`-%c') option given more than once%s\n", 
+               package_name, long_opt, short_opt,
+               (additional_error ? additional_error : ""));
+      else
+        fprintf (stderr, "%s: `--%s' option given more than once%s\n", 
+               package_name, long_opt,
+               (additional_error ? additional_error : ""));
+      return 1; /* failure */
+    }
+
+@IF@ check_possible_values @THEN@
+  if (possible_values && (found = check_possible_values((val ? val : default_value), possible_values)) < 0)
+    {
+      if (short_opt != '-')
+        fprintf (stderr, "%s: %s argument, \"%s\", for option `--%s' (`-%c')%s\n", 
+          package_name, (found == -2) ? "ambiguous" : "invalid", val, long_opt, short_opt,
+          (additional_error ? additional_error : ""));
+      else
+        fprintf (stderr, "%s: %s argument, \"%s\", for option `--%s'%s\n", 
+          package_name, (found == -2) ? "ambiguous" : "invalid", val, long_opt,
+          (additional_error ? additional_error : ""));
+      return 1; /* failure */
+    }
+@ENDIF@
+    
+  if (field_given && *field_given && ! override)
+    return 0;
+  if (prev_given)
+    (*prev_given)++;
+  if (field_given)
+    (*field_given)++;
+
+  switch(arg_type) {
+@IF@ has_arg_flag @THEN@
+  case ARG_FLAG:
+    *((int *)field) = !*((int *)field);
+    break;
+@ENDIF@
+@IF@ has_arg_int @THEN@
+  case ARG_INT:
+    if (val) *((int *)field) = strtol (val, &stop_char, 0);
+    break;
+@ENDIF@
+@IF@ has_arg_short @THEN@
+  case ARG_SHORT:
+    if (val) *((short *)field) = (short)strtol (val, &stop_char, 0);
+    break;
+@ENDIF@
+@IF@ has_arg_long @THEN@
+  case ARG_LONG:
+    if (val) *((long *)field) = (long)strtol (val, &stop_char, 0);
+    break;
+@ENDIF@
+@IF@ has_arg_float @THEN@
+  case ARG_FLOAT:
+    if (val) *((float *)field) = (float)strtod (val, &stop_char);
+    break;
+@ENDIF@
+@IF@ has_arg_double @THEN@
+  case ARG_DOUBLE:
+    if (val) *((double *)field) = strtod (val, &stop_char);
+    break;
+@ENDIF@
+@IF@ has_arg_longdouble @THEN@
+  case ARG_LONGDOUBLE:
+    if (val) *((long double *)field) = (long double)strtod (val, &stop_char);
+    break;
+@ENDIF@
+@IF@ has_arg_longlong @THEN@
+  case ARG_LONGLONG:
+#ifdef HAVE_LONG_LONG
+    if (val) *((long long int*)field) = (long long int) strtol (val, &stop_char, 0);
+#else
+    if (val) *((long *)field) = (long)strtol (val, &stop_char, 0);
+#endif
+    break;
+@ENDIF@
+@IF@ has_arg_string @THEN@
+  case ARG_STRING:
+    if (val || possible_values) {
+      string_field = (char **)field;
+      if (!no_free && *string_field)
+        free (*string_field); /* free previous string */
+      *string_field = gengetopt_strdup (possible_values ? possible_values[found] : val);
+    }
+    break;
+@ENDIF@
+  default:
+    break;
+  };
+
+@IF@ has_arg_int or has_arg_short or has_arg_long or 
+     has_arg_float or has_arg_double or 
+     has_arg_longdouble or has_arg_longlong @THEN@
+  /* check numeric conversion */
+  switch(arg_type) {
+@IF@ has_arg_int @THEN@
+  case ARG_INT:
+@ENDIF@
+@IF@ has_arg_short @THEN@
+  case ARG_SHORT:
+@ENDIF@
+@IF@ has_arg_long @THEN@
+  case ARG_LONG:
+@ENDIF@
+@IF@ has_arg_float @THEN@
+  case ARG_FLOAT:
+@ENDIF@
+@IF@ has_arg_double @THEN@
+  case ARG_DOUBLE:
+@ENDIF@
+@IF@ has_arg_longdouble @THEN@
+  case ARG_LONGDOUBLE:
+@ENDIF@
+@IF@ has_arg_longlong @THEN@
+  case ARG_LONGLONG:
+@ENDIF@
+    if (val && !(stop_char && *stop_char == '\0')) {
+      fprintf(stderr, "%s: invalid numeric value: %s\n", package_name, val);
+      return 1; /* failure */
+    }
+    break;
+  default:
+    ;
+  };
+@ENDIF@
+
+  /* store the original value */
+  switch(arg_type) {
+  case ARG_NO:
+@IF@ has_arg_flag @THEN@
+  case ARG_FLAG:
+@ENDIF@
+    break;
+  default:
+    if (orig && orig_field) {
+      if (no_free) {
+        *orig_field = orig;
+      } else {
+        if (*orig_field)
+          free (*orig_field); /* free previous string */
+        *orig_field = gengetopt_strdup (orig);
+      }
+    }
+  };
+
+  return 0; /* OK */
+}
+
+@IF@ multiple_options @THEN@
+/**
+ * @@brief store information about a multiple option in a temporary list
+ * @@param list where to (temporarily) store multiple options
+ */
+static
+int update_multiple_arg_temp(struct generic_list **list,
+               unsigned int *prev_given, const char *val,
+               char *possible_values[], const char *default_value,
+               @parser_name@_arg_type arg_type,
+               const char *long_opt, char short_opt,
+               const char *additional_error)
+{
+  char *multi_token, *multi_next; /* store single arguments */
+
+  if (arg_type == ARG_NO) {
+    (*prev_given)++;
+    return 0; /* OK */
+  }
+
+  multi_token = get_multiple_arg_token(val);
+  multi_next = get_multiple_arg_token_next (val);
+
+  while (1)
+    {
+      add_node (list);
+      if (update_arg((void *)&((*list)->arg), &((*list)->orig), 0,
+          prev_given, multi_token, multi_token, possible_values, default_value, 
+          arg_type, 0, 1, 1, 1, long_opt, short_opt, additional_error)) {
+        if (multi_token) free(multi_token);
+        return 1; /* failure */
+      }
+
+      if (multi_next)
+        {
+          multi_token = get_multiple_arg_token(multi_next);
+          multi_next = get_multiple_arg_token_next (multi_next);
+        }
+      else
+        break;
+    }
+
+  return 0; /* OK */
+}
+
+/**
+ * @@brief free the passed list (including possible string argument)
+ */
+static
+void free_list(struct generic_list *list, short string_arg)
+{
+  if (list) {
+    struct generic_list *tmp;
+    while (list)
+      {
+        tmp = list;
+        if (string_arg && list->arg.string_arg)
+          free (list->arg.string_arg);
+        if (list->orig)
+          free (list->orig);
+        list = list->next;
+        free (tmp);
+      }
+  }
+}
+
+/**
+ * @@brief updates a multiple option starting from the passed list
+ */
+static
+void update_multiple_arg(void *field, char ***orig_field,
+               unsigned int field_given, unsigned int prev_given, union generic_value *default_value,
+               @parser_name@_arg_type arg_type,
+               struct generic_list *list)
+{
+  int i;
+  struct generic_list *tmp;
+
+  if (prev_given && list) {
+    *orig_field = (char **) realloc (*orig_field, (field_given + prev_given) * sizeof (char *));
+
+    switch(arg_type) {
+@IF@ has_arg_int @THEN@
+    case ARG_INT:
+      *((int **)field) = (int *)realloc (*((int **)field), (field_given + prev_given) * sizeof (int)); break;
+@ENDIF@
+@IF@ has_arg_short @THEN@
+    case ARG_SHORT:
+      *((short **)field) = (short *)realloc (*((short **)field), (field_given + prev_given) * sizeof (short)); break;
+@ENDIF@
+@IF@ has_arg_long @THEN@
+    case ARG_LONG:
+      *((long **)field) = (long *)realloc (*((long **)field), (field_given + prev_given) * sizeof (long)); break;
+@ENDIF@
+@IF@ has_arg_float @THEN@
+    case ARG_FLOAT:
+      *((float **)field) = (float *)realloc (*((float **)field), (field_given + prev_given) * sizeof (float)); break;
+@ENDIF@
+@IF@ has_arg_double @THEN@
+    case ARG_DOUBLE:
+      *((double **)field) = (double *)realloc (*((double **)field), (field_given + prev_given) * sizeof (double)); break;
+@ENDIF@
+@IF@ has_arg_longdouble @THEN@
+    case ARG_LONGDOUBLE:
+      *((long double **)field) = (long double *)realloc (*((long double **)field), (field_given + prev_given) * sizeof (long double)); break;
+@ENDIF@
+@IF@ has_arg_longlong @THEN@
+    case ARG_LONGLONG:
+#ifdef HAVE_LONG_LONG
+      *((long long int **)field) = (long long int *)realloc (*((long long int **)field), (field_given + prev_given) * sizeof (long long int)); break;
+#else
+      *((long **)field) = (long *)realloc (*((long **)field), (field_given + prev_given) * sizeof (long)); break;
+#endif
+@ENDIF@
+@IF@ has_arg_string @THEN@
+    case ARG_STRING:
+      *((char ***)field) = (char **)realloc (*((char ***)field), (field_given + prev_given) * sizeof (char *)); break;
+@ENDIF@
+    default:
+      break;
+    };
+    
+    for (i = (prev_given - 1); i >= 0; --i)
+      {
+        tmp = list;
+        
+        switch(arg_type) {
+@IF@ has_arg_int @THEN@
+        case ARG_INT:
+          (*((int **)field))[i + field_given] = tmp->arg.int_arg; break;
+@ENDIF@
+@IF@ has_arg_short @THEN@
+        case ARG_SHORT:
+          (*((short **)field))[i + field_given] = tmp->arg.short_arg; break;
+@ENDIF@
+@IF@ has_arg_long @THEN@
+        case ARG_LONG:
+          (*((long **)field))[i + field_given] = tmp->arg.long_arg; break;
+@ENDIF@
+@IF@ has_arg_float @THEN@
+        case ARG_FLOAT:
+          (*((float **)field))[i + field_given] = tmp->arg.float_arg; break;
+@ENDIF@
+@IF@ has_arg_double @THEN@
+        case ARG_DOUBLE:
+          (*((double **)field))[i + field_given] = tmp->arg.double_arg; break;
+@ENDIF@
+@IF@ has_arg_longdouble @THEN@
+        case ARG_LONGDOUBLE:
+          (*((long double **)field))[i + field_given] = tmp->arg.longdouble_arg; break;
+@ENDIF@
+@IF@ has_arg_longlong @THEN@
+        case ARG_LONGLONG:
+#ifdef HAVE_LONG_LONG
+          (*((long long int **)field))[i + field_given] = tmp->arg.longlong_arg; break;
+#else
+          (*((long **)field))[i + field_given] = tmp->arg.longlong_arg; break;
+#endif
+@ENDIF@
+@IF@ has_arg_string @THEN@
+        case ARG_STRING:
+          (*((char ***)field))[i + field_given] = tmp->arg.string_arg; break;
+@ENDIF@
+        default:
+          break;
+        }        
+        (*orig_field) [i + field_given] = list->orig;
+        list = list->next;
+        free (tmp);
+      }
+  } else { /* set the default value */
+    if (default_value && ! field_given) {
+      switch(arg_type) {
+@IF@ has_arg_int @THEN@
+      case ARG_INT:
+        if (! *((int **)field)) {
+          *((int **)field) = (int *)malloc (sizeof (int));
+          (*((int **)field))[0] = default_value->int_arg; 
+        }
+        break;
+@ENDIF@
+@IF@ has_arg_short @THEN@
+      case ARG_SHORT:
+        if (! *((short **)field)) {
+          *((short **)field) = (short *)malloc (sizeof (short));
+          (*((short **)field))[0] = default_value->short_arg;
+        }
+        break;
+@ENDIF@
+@IF@ has_arg_long @THEN@
+      case ARG_LONG:
+        if (! *((long **)field)) {
+          *((long **)field) = (long *)malloc (sizeof (long));
+          (*((long **)field))[0] = default_value->long_arg;
+        }
+        break;
+@ENDIF@
+@IF@ has_arg_float @THEN@
+      case ARG_FLOAT:
+        if (! *((float **)field)) {
+          *((float **)field) = (float *)malloc (sizeof (float));
+          (*((float **)field))[0] = default_value->float_arg;
+        }
+        break;
+@ENDIF@
+@IF@ has_arg_double @THEN@
+      case ARG_DOUBLE:
+        if (! *((double **)field)) {
+          *((double **)field) = (double *)malloc (sizeof (double));
+          (*((double **)field))[0] = default_value->double_arg;
+        }
+        break;
+@ENDIF@
+@IF@ has_arg_longdouble @THEN@
+      case ARG_LONGDOUBLE:
+        if (! *((long double **)field)) {
+          *((long double **)field) = (long double *)malloc (sizeof (long double));
+          (*((long double **)field))[0] = default_value->longdouble_arg;
+        }
+        break;
+@ENDIF@
+@IF@ has_arg_longlong @THEN@
+      case ARG_LONGLONG:
+#ifdef HAVE_LONG_LONG
+        if (! *((long long int **)field)) {
+          *((long long int **)field) = (long long int *)malloc (sizeof (long long int));
+          (*((long long int **)field))[0] = default_value->longlong_arg;
+        }
+#else
+        if (! *((long **)field)) {
+          *((long **)field) = (long *)malloc (sizeof (long));
+          (*((long **)field))[0] = default_value->longlong_arg;
+        }
+#endif
+        break;
+@ENDIF@
+@IF@ has_arg_string @THEN@
+      case ARG_STRING:
+        if (! *((char ***)field)) {
+          *((char ***)field) = (char **)malloc (sizeof (char *));
+          (*((char ***)field))[0] = gengetopt_strdup(default_value->string_arg);
+        }
+        break;
+@ENDIF@
+      default: break;
+      }
+      if (!(*orig_field)) {
+        *orig_field = (char **) malloc (sizeof (char *));
+        (*orig_field)[0] = NULL;
+      }
+    }
+  }
+}
+@ENDIF@
+
 int
 @parser_name@_internal (int argc, char * const *argv, struct @args_info@ *args_info,
                         struct @parser_name@_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
-@IF@ multiple_token_vars @THEN@
-  char *multi_token, *multi_next; /* for multiple options */
+@IF@ multiple_options_with_default @THEN@
+  union generic_value multiple_default_value;
 @endif@
   @list_def:method{iteration=true}@
   int error = 0;
@@ -487,6 +1119,8 @@ int
   int initialize;
   int check_required;
   int check_ambiguity;
+  
+  package_name = argv[0];
   
   override = params->override;
   initialize = params->initialize;
@@ -500,23 +1134,18 @@ int
 
   optarg = 0;
   optind = 0;
-  opterr = 1;
+  opterr = params->print_errors;
   optopt = '?';
 
   while (1)
     {
-@IF@ check_possible_values @THEN@
-      int found = 0;
-@ENDIF@
       int option_index = 0;
-      char *stop_char;
 
       static struct option long_options[] = {
         @long_option_struct:method{iteration=true}@
         { NULL,	0, NULL, 0 }
       };
 
-      stop_char = 0;
       @IF@ include_getopt @THEN@
       custom_optarg = optarg;
       custom_optind = optind;
@@ -766,6 +1395,7 @@ int
   params.initialize = initialize;
   params.check_required = check_required;
   params.check_ambiguity = 0;
+  params.print_errors = 1;
   
   return @parser_name@_config_file (filename, args_info, &params);
 }
@@ -893,6 +1523,7 @@ int
   params.initialize = initialize;
   params.check_required = check_required;
   params.check_ambiguity = 0;
+  params.print_errors = 1;
 
   return @parser_name@_string_ext(cmdline, args_info, prog_name, &params);
 }

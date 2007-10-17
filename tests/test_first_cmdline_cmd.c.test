@@ -34,6 +34,11 @@ const char *test_first_cmdline_cmd_struct_help[] = {
     0
 };
 
+typedef enum {ARG_NO
+  , ARG_STRING
+  , ARG_INT
+} test_first_cmdline_cmd_parser_arg_type;
+
 static
 void clear_given (struct test_first_cmdline_cmd_struct *args_info);
 static
@@ -69,13 +74,6 @@ free_cmd_list(void)
     }
 }
 
-
-struct string_list
-{
-  char * arg;
-  char *orig;
-  struct string_list * next;
-};
 
 static char *
 gengetopt_strdup (const char *s);
@@ -146,7 +144,7 @@ test_first_cmdline_cmd_parser_init (struct test_first_cmdline_cmd_struct *args_i
 }
 
 struct test_first_cmdline_cmd_parser_params *
-test_first_cmdline_cmd_parser_params_init()
+test_first_cmdline_cmd_parser_params_init(void)
 {
   struct test_first_cmdline_cmd_parser_params *params = 
     (struct test_first_cmdline_cmd_parser_params *)malloc(sizeof(struct test_first_cmdline_cmd_parser_params));
@@ -157,51 +155,125 @@ test_first_cmdline_cmd_parser_params_init()
       params->initialize = 0;
       params->check_required = 0;
       params->check_ambiguity = 0;
+      params->print_errors = 1;
     }
     
   return params;
 }
 
 static void
+free_string_field (char **s)
+{
+  if (*s)
+    {
+      free (*s);
+      *s = 0;
+    }
+}
+
+/** @brief generic value variable */
+union generic_value {
+    int int_arg;
+    char *string_arg;
+};
+
+/** @brief holds temporary values for multiple options */
+struct generic_list
+{
+  union generic_value arg;
+  char *orig;
+  struct generic_list *next;
+};
+
+/**
+ * @brief add a node at the head of the list 
+ */
+static void add_node(struct generic_list **list) {
+  struct generic_list *new_node = (struct generic_list *) malloc (sizeof (struct generic_list));
+  new_node->next = *list;
+  *list = new_node;
+  new_node->arg.string_arg = NULL;
+  new_node->orig = NULL;
+}
+
+
+static void
+free_multiple_string_field(unsigned int len, char ***arg, char ***orig)
+{
+  unsigned int i;
+  if (*arg) {
+    for (i = 0; i < len; ++i)
+      {
+        free_string_field(&((*arg)[i]));
+        free_string_field(&((*orig)[i]));
+      }
+    free_string_field(&((*arg)[0])); /* free default string */
+
+    free (*arg);
+    *arg = 0;
+    free (*orig);
+    *orig = 0;
+  }
+}
+
+static void
 test_first_cmdline_cmd_parser_release (struct test_first_cmdline_cmd_struct *args_info)
 {
-  
   unsigned int i;
-  if (args_info->option_a_orig)
-    {
-      free (args_info->option_a_orig); /* free previous argument */
-      args_info->option_a_orig = 0;
-    }
-  if (args_info->multi_arg)
-    {
-      for (i = 0; i < args_info->multi_given; ++i)
-        {
-          if (args_info->multi_arg [i])
-            {
-              free (args_info->multi_arg [i]); /* free previous argument */
-              args_info->multi_arg [i] = 0;
-            }
-          if (args_info->multi_orig [i])
-            {
-              free (args_info->multi_orig [i]); /* free previous argument */
-              args_info->multi_orig [i] = 0;
-            }
-        }
-      if (args_info->multi_arg [0])
-        free (args_info->multi_arg [0]); /* free default string */
-      free (args_info->multi_arg); /* free previous argument */
-      args_info->multi_arg = 0;
-      free (args_info->multi_orig); /* free previous argument */
-      args_info->multi_orig = 0;
-    }
+  free_string_field (&(args_info->option_a_orig));
+  free_multiple_string_field (args_info->multi_given, &(args_info->multi_arg), &(args_info->multi_orig));
+  
   
   for (i = 0; i < args_info->inputs_num; ++i)
     free (args_info->inputs [i]);
-  
+
   if (args_info->inputs_num)
     free (args_info->inputs);
-  
+
   clear_given (args_info);
+}
+
+static void
+write_into_file(FILE *outfile, const char *opt, const char *arg)
+{
+  if (arg) {
+    fprintf(outfile, "%s=\"%s\"\n", opt, arg);
+  } else {
+    fprintf(outfile, "%s\n", opt);
+  }
+}
+
+static void
+write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg)
+{
+  int i;
+  
+  for (i = 0; i < len; ++i)
+    write_into_file(outfile, opt, (arg ? arg[i] : 0));
+}
+
+int
+test_first_cmdline_cmd_parser_dump(FILE *outfile, struct test_first_cmdline_cmd_struct *args_info)
+{
+  int i = 0;
+
+  if (!outfile)
+    {
+      fprintf (stderr, "%s: cannot dump options to stream\n", TEST_FIRST_CMDLINE_CMD_PARSER_PACKAGE);
+      return EXIT_FAILURE;
+    }
+
+  if (args_info->help_given)
+    write_into_file(outfile, "help", 0 );
+  if (args_info->version_given)
+    write_into_file(outfile, "version", 0 );
+  if (args_info->option_a_given)
+    write_into_file(outfile, "option-a", args_info->option_a_orig);
+  write_multiple_into_file(outfile, args_info->multi_given, "multi", args_info->multi_orig);
+  
+
+  i = EXIT_SUCCESS;
+  return i;
 }
 
 int
@@ -218,33 +290,9 @@ test_first_cmdline_cmd_parser_file_save(const char *filename, struct test_first_
       return EXIT_FAILURE;
     }
 
-  if (args_info->help_given) {
-    fprintf(outfile, "%s\n", "help");
-  }
-  if (args_info->version_given) {
-    fprintf(outfile, "%s\n", "version");
-  }
-  if (args_info->option_a_given) {
-    if (args_info->option_a_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "option-a", args_info->option_a_orig);
-    } else {
-      fprintf(outfile, "%s\n", "option-a");
-    }
-  }
-  if (args_info->multi_orig)
-    {
-      for (i = 0; i < args_info->multi_given; ++i)
-        {
-          if (args_info->multi_orig [i])
-            {
-              fprintf(outfile, "%s=\"%s\"\n", "multi", args_info->multi_orig [i]);
-            }
-        }
-    }
-  
+  i = test_first_cmdline_cmd_parser_dump(outfile, args_info);
   fclose (outfile);
 
-  i = EXIT_SUCCESS;
   return i;
 }
 
@@ -438,6 +486,7 @@ test_first_cmdline_cmd_parser2 (int argc, char * const *argv, struct test_first_
   params.initialize = initialize;
   params.check_required = check_required;
   params.check_ambiguity = 0;
+  params.print_errors = 1;
 
   result = test_first_cmdline_cmd_parser_internal (argc, argv, args_info, &params, NULL);
 
@@ -1105,16 +1154,251 @@ static int custom_getopt_long (int argc, char *const *argv, const char *options,
 		opt_index);
 }
 
+
+static char *package_name = 0;
+
+/**
+ * @brief updates an option
+ * @param field the generic pointer to the field to update
+ * @param orig_field the pointer to the orig field
+ * @param field_given the pointer to the number of occurrence of this option
+ * @param prev_given the pointer to the number of occurrence already seen
+ * @param val the argument for this option (if null no arg was specified)
+ * @param orig the actual argument (can be different in case of options with values)
+ * @param possible_values the possible values for this option (if specified)
+ * @param default_value the default value (in case the option only accepts fixed values)
+ * @param arg_type the type of this option
+ * @param check_ambiguity @see test_first_cmdline_cmd_parser_params.check_ambiguity
+ * @param override @see test_first_cmdline_cmd_parser_params.override
+ * @param no_free whether to free a possible previous value
+ * @param multiple_option whether this is a multiple option
+ * @param long_opt the corresponding long option
+ * @param short_opt the corresponding short option (or '-' if none)
+ * @param additional_error possible further error specification
+ */
+static
+int update_arg(void *field, char **orig_field,
+               unsigned int *field_given, unsigned int *prev_given, 
+               const char *val, char *orig,
+               char *possible_values[], const char *default_value,
+               test_first_cmdline_cmd_parser_arg_type arg_type,
+               short check_ambiguity, short override,
+               short no_free, short multiple_option,
+               const char *long_opt, char short_opt,
+               const char *additional_error)
+{
+  char *stop_char;
+  int found;
+  char **string_field;
+
+  stop_char = 0;
+  found = 0;
+
+  if (!multiple_option && prev_given && (*prev_given || (check_ambiguity && *field_given)))
+    {
+      if (short_opt != '-')
+        fprintf (stderr, "%s: `--%s' (`-%c') option given more than once%s\n", 
+               package_name, long_opt, short_opt,
+               (additional_error ? additional_error : ""));
+      else
+        fprintf (stderr, "%s: `--%s' option given more than once%s\n", 
+               package_name, long_opt,
+               (additional_error ? additional_error : ""));
+      return 1; /* failure */
+    }
+
+    
+  if (field_given && *field_given && ! override)
+    return 0;
+  if (prev_given)
+    (*prev_given)++;
+  if (field_given)
+    (*field_given)++;
+
+  switch(arg_type) {
+  case ARG_INT:
+    if (val) *((int *)field) = strtol (val, &stop_char, 0);
+    break;
+  case ARG_STRING:
+    if (val || possible_values) {
+      string_field = (char **)field;
+      if (!no_free && *string_field)
+        free (*string_field); /* free previous string */
+      *string_field = gengetopt_strdup (possible_values ? possible_values[found] : val);
+    }
+    break;
+  default:
+    break;
+  };
+
+  /* check numeric conversion */
+  switch(arg_type) {
+  case ARG_INT:
+    if (val && !(stop_char && *stop_char == '\0')) {
+      fprintf(stderr, "%s: invalid numeric value: %s\n", package_name, val);
+      return 1; /* failure */
+    }
+    break;
+  default:
+    ;
+  };
+
+  /* store the original value */
+  switch(arg_type) {
+  case ARG_NO:
+    break;
+  default:
+    if (orig && orig_field) {
+      if (no_free) {
+        *orig_field = orig;
+      } else {
+        if (*orig_field)
+          free (*orig_field); /* free previous string */
+        *orig_field = gengetopt_strdup (orig);
+      }
+    }
+  };
+
+  return 0; /* OK */
+}
+
+/**
+ * @brief store information about a multiple option in a temporary list
+ * @param list where to (temporarily) store multiple options
+ */
+static
+int update_multiple_arg_temp(struct generic_list **list,
+               unsigned int *prev_given, const char *val,
+               char *possible_values[], const char *default_value,
+               test_first_cmdline_cmd_parser_arg_type arg_type,
+               const char *long_opt, char short_opt,
+               const char *additional_error)
+{
+  char *multi_token, *multi_next; /* store single arguments */
+
+  if (arg_type == ARG_NO) {
+    (*prev_given)++;
+    return 0; /* OK */
+  }
+
+  multi_token = get_multiple_arg_token(val);
+  multi_next = get_multiple_arg_token_next (val);
+
+  while (1)
+    {
+      add_node (list);
+      if (update_arg((void *)&((*list)->arg), &((*list)->orig), 0,
+          prev_given, multi_token, multi_token, possible_values, default_value, 
+          arg_type, 0, 1, 1, 1, long_opt, short_opt, additional_error)) {
+        if (multi_token) free(multi_token);
+        return 1; /* failure */
+      }
+
+      if (multi_next)
+        {
+          multi_token = get_multiple_arg_token(multi_next);
+          multi_next = get_multiple_arg_token_next (multi_next);
+        }
+      else
+        break;
+    }
+
+  return 0; /* OK */
+}
+
+/**
+ * @brief free the passed list (including possible string argument)
+ */
+static
+void free_list(struct generic_list *list, short string_arg)
+{
+  if (list) {
+    struct generic_list *tmp;
+    while (list)
+      {
+        tmp = list;
+        if (string_arg && list->arg.string_arg)
+          free (list->arg.string_arg);
+        if (list->orig)
+          free (list->orig);
+        list = list->next;
+        free (tmp);
+      }
+  }
+}
+
+/**
+ * @brief updates a multiple option starting from the passed list
+ */
+static
+void update_multiple_arg(void *field, char ***orig_field,
+               unsigned int field_given, unsigned int prev_given, union generic_value *default_value,
+               test_first_cmdline_cmd_parser_arg_type arg_type,
+               struct generic_list *list)
+{
+  int i;
+  struct generic_list *tmp;
+
+  if (prev_given && list) {
+    *orig_field = (char **) realloc (*orig_field, (field_given + prev_given) * sizeof (char *));
+
+    switch(arg_type) {
+    case ARG_INT:
+      *((int **)field) = (int *)realloc (*((int **)field), (field_given + prev_given) * sizeof (int)); break;
+    case ARG_STRING:
+      *((char ***)field) = (char **)realloc (*((char ***)field), (field_given + prev_given) * sizeof (char *)); break;
+    default:
+      break;
+    };
+    
+    for (i = (prev_given - 1); i >= 0; --i)
+      {
+        tmp = list;
+        
+        switch(arg_type) {
+        case ARG_INT:
+          (*((int **)field))[i + field_given] = tmp->arg.int_arg; break;
+        case ARG_STRING:
+          (*((char ***)field))[i + field_given] = tmp->arg.string_arg; break;
+        default:
+          break;
+        }        
+        (*orig_field) [i + field_given] = list->orig;
+        list = list->next;
+        free (tmp);
+      }
+  } else { /* set the default value */
+    if (default_value && ! field_given) {
+      switch(arg_type) {
+      case ARG_INT:
+        if (! *((int **)field)) {
+          *((int **)field) = (int *)malloc (sizeof (int));
+          (*((int **)field))[0] = default_value->int_arg; 
+        }
+        break;
+      case ARG_STRING:
+        if (! *((char ***)field)) {
+          *((char ***)field) = (char **)malloc (sizeof (char *));
+          (*((char ***)field))[0] = gengetopt_strdup(default_value->string_arg);
+        }
+        break;
+      default: break;
+      }
+      if (!(*orig_field)) {
+        *orig_field = (char **) malloc (sizeof (char *));
+        (*orig_field)[0] = NULL;
+      }
+    }
+  }
+}
+
 int
 test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct test_first_cmdline_cmd_struct *args_info,
                         struct test_first_cmdline_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
-  char *multi_token, *multi_next; /* for multiple options */
 
-  int i;        /* Counter */
-
-  struct string_list * multi_list = NULL,* multi_new = NULL;
+  struct generic_list * multi_list = NULL;
   int error = 0;
   struct test_first_cmdline_cmd_struct local_args_info;
   
@@ -1122,6 +1406,8 @@ test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct tes
   int initialize;
   int check_required;
   int check_ambiguity;
+  
+  package_name = argv[0];
   
   override = params->override;
   initialize = params->initialize;
@@ -1135,13 +1421,12 @@ test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct tes
 
   optarg = 0;
   optind = 0;
-  opterr = 1;
+  opterr = params->print_errors;
   optopt = '?';
 
   while (1)
     {
       int option_index = 0;
-      char *stop_char;
 
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
@@ -1151,7 +1436,6 @@ test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct tes
         { NULL,	0, NULL, 0 }
       };
 
-      stop_char = 0;
       custom_optarg = optarg;
       custom_optind = optind;
       custom_opterr = opterr;
@@ -1179,50 +1463,24 @@ test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct tes
           exit (EXIT_SUCCESS);
 
         case 'a':	/* option a of the first command line to parse.  */
-          if (local_args_info.option_a_given || (check_ambiguity && args_info->option_a_given))
-            {
-              fprintf (stderr, "%s: `--option-a' (`-a') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->option_a_given && ! override)
-            continue;
-          local_args_info.option_a_given = 1;
-          args_info->option_a_given = 1;
-          args_info->option_a_arg = strtol (optarg, &stop_char, 0);
-          if (!(stop_char && *stop_char == '\0')) {
-            fprintf(stderr, "%s: invalid numeric value: %s\n", argv[0], optarg);
+        
+          if (update_arg( (void *)&(args_info->option_a_arg), 
+               &(args_info->option_a_orig), &(args_info->option_a_given),
+              &(local_args_info.option_a_given), optarg, optarg, 0, 0, ARG_INT,
+              check_ambiguity, override, 0, 0,
+              "option-a", 'a',
+              additional_error))
             goto failure;
-          }
-          if (args_info->option_a_orig)
-            free (args_info->option_a_orig); /* free previous string */
-          args_info->option_a_orig = gengetopt_strdup (optarg);
+        
           break;
-
         case 'M':	/* multiple option of the first command line to parse.  */
-          local_args_info.multi_given++;
+          if (update_multiple_arg_temp(&multi_list, 
+              &(local_args_info.multi_given), optarg, 0, 0, ARG_STRING,
+              "multi", 'M',
+              additional_error))
+            goto failure;
         
-          multi_token = get_multiple_arg_token(optarg);
-          multi_next = get_multiple_arg_token_next (optarg);
-        
-          while (1)
-            {
-              multi_new = (struct string_list *) malloc (sizeof (struct string_list));
-              multi_new->next = multi_list;
-              multi_list = multi_new;
-              multi_new->arg = gengetopt_strdup (multi_token);
-              multi_new->orig = multi_token;
-        
-              if (multi_next)
-                {
-                  multi_token = get_multiple_arg_token(multi_next);
-                  multi_next = get_multiple_arg_token_next (multi_next);
-                  local_args_info.multi_given++;
-                }
-              else
-                break;
-            }
           break;
-
 
         case 0:	/* Long option with no short option */
         case '?':	/* Invalid option.  */
@@ -1236,21 +1494,10 @@ test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct tes
     } /* while */
 
 
-  if (local_args_info.multi_given && multi_list)
-    {
-      struct string_list *tmp;
-      args_info->multi_arg = (char * *) realloc (args_info->multi_arg, (args_info->multi_given + local_args_info.multi_given) * sizeof (char *));
-      args_info->multi_orig = (char **) realloc (args_info->multi_orig, (args_info->multi_given + local_args_info.multi_given) * sizeof (char *));
-      for (i = (local_args_info.multi_given - 1); i >= 0; --i)
-        {
-          tmp = multi_list;
-          args_info->multi_arg [i + args_info->multi_given] = multi_list->arg;
-          args_info->multi_orig [i + args_info->multi_given] = multi_list->orig;
-          multi_list = multi_list->next;
-          free (tmp);
-        }
-    }
-  
+  update_multiple_arg((void *)&(args_info->multi_arg),
+    &(args_info->multi_orig), args_info->multi_given,
+    local_args_info.multi_given, 0 , 
+    ARG_STRING, multi_list);
 
   args_info->multi_given += local_args_info.multi_given;
   local_args_info.multi_given = 0;
@@ -1284,18 +1531,7 @@ test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct tes
   return 0;
 
 failure:
-  if (multi_list)
-    {
-      struct string_list *tmp;
-      while (multi_list)
-        {
-          tmp = multi_list;
-          free (multi_list->arg);
-          free (multi_list->orig);
-          multi_list = multi_list->next;
-          free (tmp);
-        }
-    }
+  free_list (multi_list, 1 );
   
   test_first_cmdline_cmd_parser_release (&local_args_info);
   return (EXIT_FAILURE);
@@ -1377,6 +1613,7 @@ test_first_cmdline_cmd_parser_string2(const char *cmdline, struct test_first_cmd
   params.initialize = initialize;
   params.check_required = check_required;
   params.check_ambiguity = 0;
+  params.print_errors = 1;
 
   return test_first_cmdline_cmd_parser_string_ext(cmdline, args_info, prog_name, &params);
 }

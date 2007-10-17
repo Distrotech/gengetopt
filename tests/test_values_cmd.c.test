@@ -42,6 +42,10 @@ const char *gengetopt_args_info_help[] = {
     0
 };
 
+typedef enum {ARG_NO
+  , ARG_STRING
+} test_values_cmd_parser_arg_type;
+
 static
 void clear_given (struct gengetopt_args_info *args_info);
 static
@@ -53,13 +57,6 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
 
 static int
 test_values_cmd_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error);
-
-struct string_list
-{
-  char * arg;
-  char *orig;
-  struct string_list * next;
-};
 
 char *test_values_cmd_parser_string_values_values[] = {"foo", "foa", "bar", "foobar", "barfoo", 0} ;	/* Possible values for string-values.  */
 char *test_values_cmd_parser_string_values_def_values[] = {"foo", "bar", "foobar", "barfoo", 0} ;	/* Possible values for string-values-def.  */
@@ -169,7 +166,7 @@ test_values_cmd_parser_init (struct gengetopt_args_info *args_info)
 }
 
 struct test_values_cmd_parser_params *
-test_values_cmd_parser_params_init()
+test_values_cmd_parser_params_init(void)
 {
   struct test_values_cmd_parser_params *params = 
     (struct test_values_cmd_parser_params *)malloc(sizeof(struct test_values_cmd_parser_params));
@@ -180,140 +177,145 @@ test_values_cmd_parser_params_init()
       params->initialize = 0;
       params->check_required = 0;
       params->check_ambiguity = 0;
+      params->print_errors = 1;
     }
     
   return params;
 }
 
 static void
+free_string_field (char **s)
+{
+  if (*s)
+    {
+      free (*s);
+      *s = 0;
+    }
+}
+
+/** @brief generic value variable */
+union generic_value {
+    char *string_arg;
+};
+
+/** @brief holds temporary values for multiple options */
+struct generic_list
+{
+  union generic_value arg;
+  char *orig;
+  struct generic_list *next;
+};
+
+/**
+ * @brief add a node at the head of the list 
+ */
+static void add_node(struct generic_list **list) {
+  struct generic_list *new_node = (struct generic_list *) malloc (sizeof (struct generic_list));
+  new_node->next = *list;
+  *list = new_node;
+  new_node->arg.string_arg = NULL;
+  new_node->orig = NULL;
+}
+
+
+static void
+free_multiple_string_field(unsigned int len, char ***arg, char ***orig)
+{
+  unsigned int i;
+  if (*arg) {
+    for (i = 0; i < len; ++i)
+      {
+        free_string_field(&((*arg)[i]));
+        free_string_field(&((*orig)[i]));
+      }
+    free_string_field(&((*arg)[0])); /* free default string */
+
+    free (*arg);
+    *arg = 0;
+    free (*orig);
+    *orig = 0;
+  }
+}
+
+static void
 test_values_cmd_parser_release (struct gengetopt_args_info *args_info)
 {
-  
   unsigned int i;
-  if (args_info->string_values_arg)
-    {
-      free (args_info->string_values_arg); /* free previous argument */
-      args_info->string_values_arg = 0;
-    }
-  if (args_info->string_values_orig)
-    {
-      free (args_info->string_values_orig); /* free previous argument */
-      args_info->string_values_orig = 0;
-    }
-  if (args_info->string_values_def_arg)
-    {
-      free (args_info->string_values_def_arg); /* free previous argument */
-      args_info->string_values_def_arg = 0;
-    }
-  if (args_info->string_values_def_orig)
-    {
-      free (args_info->string_values_def_orig); /* free previous argument */
-      args_info->string_values_def_orig = 0;
-    }
-  if (args_info->string_values_def_argopt_arg)
-    {
-      free (args_info->string_values_def_argopt_arg); /* free previous argument */
-      args_info->string_values_def_argopt_arg = 0;
-    }
-  if (args_info->string_values_def_argopt_orig)
-    {
-      free (args_info->string_values_def_argopt_orig); /* free previous argument */
-      args_info->string_values_def_argopt_orig = 0;
-    }
-  if (args_info->string_values_no_short_arg)
-    {
-      free (args_info->string_values_no_short_arg); /* free previous argument */
-      args_info->string_values_no_short_arg = 0;
-    }
-  if (args_info->string_values_no_short_orig)
-    {
-      free (args_info->string_values_no_short_orig); /* free previous argument */
-      args_info->string_values_no_short_orig = 0;
-    }
-  if (args_info->multistring_values_arg)
-    {
-      for (i = 0; i < args_info->multistring_values_given; ++i)
-        {
-          if (args_info->multistring_values_arg [i])
-            {
-              free (args_info->multistring_values_arg [i]); /* free previous argument */
-              args_info->multistring_values_arg [i] = 0;
-            }
-          if (args_info->multistring_values_orig [i])
-            {
-              free (args_info->multistring_values_orig [i]); /* free previous argument */
-              args_info->multistring_values_orig [i] = 0;
-            }
-        }
-      if (args_info->multistring_values_arg [0])
-        free (args_info->multistring_values_arg [0]); /* free default string */
-      free (args_info->multistring_values_arg); /* free previous argument */
-      args_info->multistring_values_arg = 0;
-      free (args_info->multistring_values_orig); /* free previous argument */
-      args_info->multistring_values_orig = 0;
-    }
-  if (args_info->multistring_values_def_arg)
-    {
-      for (i = 0; i < args_info->multistring_values_def_given; ++i)
-        {
-          if (args_info->multistring_values_def_arg [i])
-            {
-              free (args_info->multistring_values_def_arg [i]); /* free previous argument */
-              args_info->multistring_values_def_arg [i] = 0;
-            }
-          if (args_info->multistring_values_def_orig [i])
-            {
-              free (args_info->multistring_values_def_orig [i]); /* free previous argument */
-              args_info->multistring_values_def_orig [i] = 0;
-            }
-        }
-      if (args_info->multistring_values_def_arg [0])
-        free (args_info->multistring_values_def_arg [0]); /* free default string */
-      free (args_info->multistring_values_def_arg); /* free previous argument */
-      args_info->multistring_values_def_arg = 0;
-      free (args_info->multistring_values_def_orig); /* free previous argument */
-      args_info->multistring_values_def_orig = 0;
-    }
-  if (args_info->multistring_values_no_short_arg)
-    {
-      for (i = 0; i < args_info->multistring_values_no_short_given; ++i)
-        {
-          if (args_info->multistring_values_no_short_arg [i])
-            {
-              free (args_info->multistring_values_no_short_arg [i]); /* free previous argument */
-              args_info->multistring_values_no_short_arg [i] = 0;
-            }
-          if (args_info->multistring_values_no_short_orig [i])
-            {
-              free (args_info->multistring_values_no_short_orig [i]); /* free previous argument */
-              args_info->multistring_values_no_short_orig [i] = 0;
-            }
-        }
-      if (args_info->multistring_values_no_short_arg [0])
-        free (args_info->multistring_values_no_short_arg [0]); /* free default string */
-      free (args_info->multistring_values_no_short_arg); /* free previous argument */
-      args_info->multistring_values_no_short_arg = 0;
-      free (args_info->multistring_values_no_short_orig); /* free previous argument */
-      args_info->multistring_values_no_short_orig = 0;
-    }
-  if (args_info->string_values_group_arg)
-    {
-      free (args_info->string_values_group_arg); /* free previous argument */
-      args_info->string_values_group_arg = 0;
-    }
-  if (args_info->string_values_group_orig)
-    {
-      free (args_info->string_values_group_orig); /* free previous argument */
-      args_info->string_values_group_orig = 0;
-    }
+  free_string_field (&(args_info->string_values_arg));
+  free_string_field (&(args_info->string_values_orig));
+  free_string_field (&(args_info->string_values_def_arg));
+  free_string_field (&(args_info->string_values_def_orig));
+  free_string_field (&(args_info->string_values_def_argopt_arg));
+  free_string_field (&(args_info->string_values_def_argopt_orig));
+  free_string_field (&(args_info->string_values_no_short_arg));
+  free_string_field (&(args_info->string_values_no_short_orig));
+  free_multiple_string_field (args_info->multistring_values_given, &(args_info->multistring_values_arg), &(args_info->multistring_values_orig));
+  free_multiple_string_field (args_info->multistring_values_def_given, &(args_info->multistring_values_def_arg), &(args_info->multistring_values_def_orig));
+  free_multiple_string_field (args_info->multistring_values_no_short_given, &(args_info->multistring_values_no_short_arg), &(args_info->multistring_values_no_short_orig));
+  free_string_field (&(args_info->string_values_group_arg));
+  free_string_field (&(args_info->string_values_group_orig));
+  
   
   for (i = 0; i < args_info->inputs_num; ++i)
     free (args_info->inputs [i]);
-  
+
   if (args_info->inputs_num)
     free (args_info->inputs);
-  
+
   clear_given (args_info);
+}
+
+static void
+write_into_file(FILE *outfile, const char *opt, const char *arg)
+{
+  if (arg) {
+    fprintf(outfile, "%s=\"%s\"\n", opt, arg);
+  } else {
+    fprintf(outfile, "%s\n", opt);
+  }
+}
+
+static void
+write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg)
+{
+  int i;
+  
+  for (i = 0; i < len; ++i)
+    write_into_file(outfile, opt, (arg ? arg[i] : 0));
+}
+
+int
+test_values_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
+{
+  int i = 0;
+
+  if (!outfile)
+    {
+      fprintf (stderr, "%s: cannot dump options to stream\n", TEST_VALUES_CMD_PARSER_PACKAGE);
+      return EXIT_FAILURE;
+    }
+
+  if (args_info->help_given)
+    write_into_file(outfile, "help", 0 );
+  if (args_info->version_given)
+    write_into_file(outfile, "version", 0 );
+  if (args_info->string_values_given)
+    write_into_file(outfile, "string-values", args_info->string_values_orig);
+  if (args_info->string_values_def_given)
+    write_into_file(outfile, "string-values-def", args_info->string_values_def_orig);
+  if (args_info->string_values_def_argopt_given)
+    write_into_file(outfile, "string-values-def-argopt", args_info->string_values_def_argopt_orig);
+  if (args_info->string_values_no_short_given)
+    write_into_file(outfile, "string-values-no-short", args_info->string_values_no_short_orig);
+  write_multiple_into_file(outfile, args_info->multistring_values_given, "multistring-values", args_info->multistring_values_orig);
+  write_multiple_into_file(outfile, args_info->multistring_values_def_given, "multistring-values-def", args_info->multistring_values_def_orig);
+  write_multiple_into_file(outfile, args_info->multistring_values_no_short_given, "multistring-values-no-short", args_info->multistring_values_no_short_orig);
+  if (args_info->string_values_group_given)
+    write_into_file(outfile, "string-values-group", args_info->string_values_group_orig);
+  
+
+  i = EXIT_SUCCESS;
+  return i;
 }
 
 int
@@ -330,81 +332,9 @@ test_values_cmd_parser_file_save(const char *filename, struct gengetopt_args_inf
       return EXIT_FAILURE;
     }
 
-  if (args_info->help_given) {
-    fprintf(outfile, "%s\n", "help");
-  }
-  if (args_info->version_given) {
-    fprintf(outfile, "%s\n", "version");
-  }
-  if (args_info->string_values_given) {
-    if (args_info->string_values_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "string-values", args_info->string_values_orig);
-    } else {
-      fprintf(outfile, "%s\n", "string-values");
-    }
-  }
-  if (args_info->string_values_def_given) {
-    if (args_info->string_values_def_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "string-values-def", args_info->string_values_def_orig);
-    } else {
-      fprintf(outfile, "%s\n", "string-values-def");
-    }
-  }
-  if (args_info->string_values_def_argopt_given) {
-    if (args_info->string_values_def_argopt_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "string-values-def-argopt", args_info->string_values_def_argopt_orig);
-    } else {
-      fprintf(outfile, "%s\n", "string-values-def-argopt");
-    }
-  }
-  if (args_info->string_values_no_short_given) {
-    if (args_info->string_values_no_short_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "string-values-no-short", args_info->string_values_no_short_orig);
-    } else {
-      fprintf(outfile, "%s\n", "string-values-no-short");
-    }
-  }
-  if (args_info->multistring_values_orig)
-    {
-      for (i = 0; i < args_info->multistring_values_given; ++i)
-        {
-          if (args_info->multistring_values_orig [i])
-            {
-              fprintf(outfile, "%s=\"%s\"\n", "multistring-values", args_info->multistring_values_orig [i]);
-            }
-        }
-    }
-  if (args_info->multistring_values_def_orig)
-    {
-      for (i = 0; i < args_info->multistring_values_def_given; ++i)
-        {
-          if (args_info->multistring_values_def_orig [i])
-            {
-              fprintf(outfile, "%s=\"%s\"\n", "multistring-values-def", args_info->multistring_values_def_orig [i]);
-            }
-        }
-    }
-  if (args_info->multistring_values_no_short_orig)
-    {
-      for (i = 0; i < args_info->multistring_values_no_short_given; ++i)
-        {
-          if (args_info->multistring_values_no_short_orig [i])
-            {
-              fprintf(outfile, "%s=\"%s\"\n", "multistring-values-no-short", args_info->multistring_values_no_short_orig [i]);
-            }
-        }
-    }
-  if (args_info->string_values_group_given) {
-    if (args_info->string_values_group_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "string-values-group", args_info->string_values_group_orig);
-    } else {
-      fprintf(outfile, "%s\n", "string-values-group");
-    }
-  }
-  
+  i = test_values_cmd_parser_dump(outfile, args_info);
   fclose (outfile);
 
-  i = EXIT_SUCCESS;
   return i;
 }
 
@@ -414,11 +344,12 @@ test_values_cmd_parser_free (struct gengetopt_args_info *args_info)
   test_values_cmd_parser_release (args_info);
 }
 
-/*
- * Returns:
- * - the index of the matched value
- * - -1 if no argument has been specified
- * - -2 if more than one value has matched
+/**
+ * @param val the value to check
+ * @param values the possible values
+ * @return the index of the matched value:
+ * -1 if no argument has been specified,
+ * -2 if more than one value has matched
  */
 static int
 check_possible_values(const char *val, char *values[])
@@ -601,25 +532,14 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
   return error;
 }
 static void
-reset_group_group1(struct gengetopt_args_info *args_info);
-
-static void
 reset_group_group1(struct gengetopt_args_info *args_info)
 {
   if (! args_info->group1_group_counter)
     return;
   
   args_info->string_values_group_given = 0 ;
-  if (args_info->string_values_group_arg)
-    {
-      free (args_info->string_values_group_arg); /* free previous argument */
-      args_info->string_values_group_arg = 0;
-    }
-  if (args_info->string_values_group_orig)
-    {
-      free (args_info->string_values_group_orig); /* free previous argument */
-      args_info->string_values_group_orig = 0;
-    }
+  free_string_field (&(args_info->string_values_group_arg));
+  free_string_field (&(args_info->string_values_group_orig));
 
   args_info->group1_group_counter = 0;
 }
@@ -656,6 +576,7 @@ test_values_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_inf
   params.initialize = initialize;
   params.check_required = check_required;
   params.check_ambiguity = 0;
+  params.print_errors = 1;
 
   result = test_values_cmd_parser_internal (argc, argv, args_info, &params, NULL);
 
@@ -706,18 +627,242 @@ test_values_cmd_parser_required2 (struct gengetopt_args_info *args_info, const c
   return error;
 }
 
+
+static char *package_name = 0;
+
+/**
+ * @brief updates an option
+ * @param field the generic pointer to the field to update
+ * @param orig_field the pointer to the orig field
+ * @param field_given the pointer to the number of occurrence of this option
+ * @param prev_given the pointer to the number of occurrence already seen
+ * @param val the argument for this option (if null no arg was specified)
+ * @param orig the actual argument (can be different in case of options with values)
+ * @param possible_values the possible values for this option (if specified)
+ * @param default_value the default value (in case the option only accepts fixed values)
+ * @param arg_type the type of this option
+ * @param check_ambiguity @see test_values_cmd_parser_params.check_ambiguity
+ * @param override @see test_values_cmd_parser_params.override
+ * @param no_free whether to free a possible previous value
+ * @param multiple_option whether this is a multiple option
+ * @param long_opt the corresponding long option
+ * @param short_opt the corresponding short option (or '-' if none)
+ * @param additional_error possible further error specification
+ */
+static
+int update_arg(void *field, char **orig_field,
+               unsigned int *field_given, unsigned int *prev_given, 
+               const char *val, char *orig,
+               char *possible_values[], const char *default_value,
+               test_values_cmd_parser_arg_type arg_type,
+               short check_ambiguity, short override,
+               short no_free, short multiple_option,
+               const char *long_opt, char short_opt,
+               const char *additional_error)
+{
+  char *stop_char;
+  int found;
+  char **string_field;
+
+  stop_char = 0;
+  found = 0;
+
+  if (!multiple_option && prev_given && (*prev_given || (check_ambiguity && *field_given)))
+    {
+      if (short_opt != '-')
+        fprintf (stderr, "%s: `--%s' (`-%c') option given more than once%s\n", 
+               package_name, long_opt, short_opt,
+               (additional_error ? additional_error : ""));
+      else
+        fprintf (stderr, "%s: `--%s' option given more than once%s\n", 
+               package_name, long_opt,
+               (additional_error ? additional_error : ""));
+      return 1; /* failure */
+    }
+
+  if (possible_values && (found = check_possible_values((val ? val : default_value), possible_values)) < 0)
+    {
+      if (short_opt != '-')
+        fprintf (stderr, "%s: %s argument, \"%s\", for option `--%s' (`-%c')%s\n", 
+          package_name, (found == -2) ? "ambiguous" : "invalid", val, long_opt, short_opt,
+          (additional_error ? additional_error : ""));
+      else
+        fprintf (stderr, "%s: %s argument, \"%s\", for option `--%s'%s\n", 
+          package_name, (found == -2) ? "ambiguous" : "invalid", val, long_opt,
+          (additional_error ? additional_error : ""));
+      return 1; /* failure */
+    }
+    
+  if (field_given && *field_given && ! override)
+    return 0;
+  if (prev_given)
+    (*prev_given)++;
+  if (field_given)
+    (*field_given)++;
+
+  switch(arg_type) {
+  case ARG_STRING:
+    if (val || possible_values) {
+      string_field = (char **)field;
+      if (!no_free && *string_field)
+        free (*string_field); /* free previous string */
+      *string_field = gengetopt_strdup (possible_values ? possible_values[found] : val);
+    }
+    break;
+  default:
+    break;
+  };
+
+
+  /* store the original value */
+  switch(arg_type) {
+  case ARG_NO:
+    break;
+  default:
+    if (orig && orig_field) {
+      if (no_free) {
+        *orig_field = orig;
+      } else {
+        if (*orig_field)
+          free (*orig_field); /* free previous string */
+        *orig_field = gengetopt_strdup (orig);
+      }
+    }
+  };
+
+  return 0; /* OK */
+}
+
+/**
+ * @brief store information about a multiple option in a temporary list
+ * @param list where to (temporarily) store multiple options
+ */
+static
+int update_multiple_arg_temp(struct generic_list **list,
+               unsigned int *prev_given, const char *val,
+               char *possible_values[], const char *default_value,
+               test_values_cmd_parser_arg_type arg_type,
+               const char *long_opt, char short_opt,
+               const char *additional_error)
+{
+  char *multi_token, *multi_next; /* store single arguments */
+
+  if (arg_type == ARG_NO) {
+    (*prev_given)++;
+    return 0; /* OK */
+  }
+
+  multi_token = get_multiple_arg_token(val);
+  multi_next = get_multiple_arg_token_next (val);
+
+  while (1)
+    {
+      add_node (list);
+      if (update_arg((void *)&((*list)->arg), &((*list)->orig), 0,
+          prev_given, multi_token, multi_token, possible_values, default_value, 
+          arg_type, 0, 1, 1, 1, long_opt, short_opt, additional_error)) {
+        if (multi_token) free(multi_token);
+        return 1; /* failure */
+      }
+
+      if (multi_next)
+        {
+          multi_token = get_multiple_arg_token(multi_next);
+          multi_next = get_multiple_arg_token_next (multi_next);
+        }
+      else
+        break;
+    }
+
+  return 0; /* OK */
+}
+
+/**
+ * @brief free the passed list (including possible string argument)
+ */
+static
+void free_list(struct generic_list *list, short string_arg)
+{
+  if (list) {
+    struct generic_list *tmp;
+    while (list)
+      {
+        tmp = list;
+        if (string_arg && list->arg.string_arg)
+          free (list->arg.string_arg);
+        if (list->orig)
+          free (list->orig);
+        list = list->next;
+        free (tmp);
+      }
+  }
+}
+
+/**
+ * @brief updates a multiple option starting from the passed list
+ */
+static
+void update_multiple_arg(void *field, char ***orig_field,
+               unsigned int field_given, unsigned int prev_given, union generic_value *default_value,
+               test_values_cmd_parser_arg_type arg_type,
+               struct generic_list *list)
+{
+  int i;
+  struct generic_list *tmp;
+
+  if (prev_given && list) {
+    *orig_field = (char **) realloc (*orig_field, (field_given + prev_given) * sizeof (char *));
+
+    switch(arg_type) {
+    case ARG_STRING:
+      *((char ***)field) = (char **)realloc (*((char ***)field), (field_given + prev_given) * sizeof (char *)); break;
+    default:
+      break;
+    };
+    
+    for (i = (prev_given - 1); i >= 0; --i)
+      {
+        tmp = list;
+        
+        switch(arg_type) {
+        case ARG_STRING:
+          (*((char ***)field))[i + field_given] = tmp->arg.string_arg; break;
+        default:
+          break;
+        }        
+        (*orig_field) [i + field_given] = list->orig;
+        list = list->next;
+        free (tmp);
+      }
+  } else { /* set the default value */
+    if (default_value && ! field_given) {
+      switch(arg_type) {
+      case ARG_STRING:
+        if (! *((char ***)field)) {
+          *((char ***)field) = (char **)malloc (sizeof (char *));
+          (*((char ***)field))[0] = gengetopt_strdup(default_value->string_arg);
+        }
+        break;
+      default: break;
+      }
+      if (!(*orig_field)) {
+        *orig_field = (char **) malloc (sizeof (char *));
+        (*orig_field)[0] = NULL;
+      }
+    }
+  }
+}
+
 int
 test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
                         struct test_values_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
-  char *multi_token, *multi_next; /* for multiple options */
+  union generic_value multiple_default_value;
 
-  int i;        /* Counter */
-
-  struct string_list * multistring_values_list = NULL,* multistring_values_new = NULL;
-  struct string_list * multistring_values_def_list = NULL,* multistring_values_def_new = NULL;
-  struct string_list * multistring_values_no_short_list = NULL,* multistring_values_no_short_new = NULL;
+  struct generic_list * multistring_values_list = NULL;
+  struct generic_list * multistring_values_def_list = NULL;
+  struct generic_list * multistring_values_no_short_list = NULL;
   int error = 0;
   struct gengetopt_args_info local_args_info;
   
@@ -725,6 +870,8 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
   int initialize;
   int check_required;
   int check_ambiguity;
+  
+  package_name = argv[0];
   
   override = params->override;
   initialize = params->initialize;
@@ -738,14 +885,12 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
 
   optarg = 0;
   optind = 0;
-  opterr = 1;
+  opterr = params->print_errors;
   optopt = '?';
 
   while (1)
     {
-      int found = 0;
       int option_index = 0;
-      char *stop_char;
 
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
@@ -761,7 +906,6 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
         { NULL,	0, NULL, 0 }
       };
 
-      stop_char = 0;
       c = getopt_long (argc, argv, "hVs:S:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -779,236 +923,100 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           exit (EXIT_SUCCESS);
 
         case 's':	/* string option with values.  */
-          if (local_args_info.string_values_given || (check_ambiguity && args_info->string_values_given))
-            {
-              fprintf (stderr, "%s: `--string-values' (`-s') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if ((found = check_possible_values((optarg ? optarg : 0 ), test_values_cmd_parser_string_values_values)) < 0)
-            {
-              fprintf (stderr, "%s: %s argument, \"%s\", for option `--string-values' (`-s')%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", optarg, (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->string_values_given && ! override)
-            continue;
-          local_args_info.string_values_given = 1;
-          args_info->string_values_given = 1;
-          if (args_info->string_values_arg)
-            free (args_info->string_values_arg); /* free previous string */
-          args_info->string_values_arg = gengetopt_strdup (test_values_cmd_parser_string_values_values[found]);
-          if (args_info->string_values_orig)
-            free (args_info->string_values_orig); /* free previous string */
-          args_info->string_values_orig = gengetopt_strdup (optarg);
+        
+          if (update_arg( (void *)&(args_info->string_values_arg), 
+               &(args_info->string_values_orig), &(args_info->string_values_given),
+              &(local_args_info.string_values_given), optarg, optarg, test_values_cmd_parser_string_values_values, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "string-values", 's',
+              additional_error))
+            goto failure;
+        
           break;
-
         case 'S':	/* multiple string option with values.  */
-          local_args_info.multistring_values_given++;
+          if (update_multiple_arg_temp(&multistring_values_list, 
+              &(local_args_info.multistring_values_given), optarg, test_values_cmd_parser_multistring_values_values, 0, ARG_STRING,
+              "multistring-values", 'S',
+              additional_error))
+            goto failure;
         
-          multi_token = get_multiple_arg_token(optarg);
-          multi_next = get_multiple_arg_token_next (optarg);
-        
-          while (1)
-            {
-              if ((found = check_possible_values((multi_token ? multi_token : 0 ), test_values_cmd_parser_multistring_values_values)) < 0)
-                {
-                  fprintf (stderr, "%s: %s argument, \"%s\", for option `--multistring-values' (`-S')%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", multi_token, (additional_error ? additional_error : ""));
-                  free (multi_token);
-                  goto failure;
-                }
-        
-              multistring_values_new = (struct string_list *) malloc (sizeof (struct string_list));
-              multistring_values_new->next = multistring_values_list;
-              multistring_values_list = multistring_values_new;
-              multistring_values_new->arg = gengetopt_strdup (test_values_cmd_parser_multistring_values_values[found]);
-              multistring_values_new->orig = multi_token;
-        
-              if (multi_next)
-                {
-                  multi_token = get_multiple_arg_token(multi_next);
-                  multi_next = get_multiple_arg_token_next (multi_next);
-                  local_args_info.multistring_values_given++;
-                }
-              else
-                break;
-            }
           break;
-
 
         case 0:	/* Long option with no short option */
           /* string option with values and default.  */
           if (strcmp (long_options[option_index].name, "string-values-def") == 0)
           {
-            if (local_args_info.string_values_def_given || (check_ambiguity && args_info->string_values_def_given))
-              {
-                fprintf (stderr, "%s: `--string-values-def' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-                goto failure;
-              }
-            if ((found = check_possible_values((optarg ? optarg : 0 ), test_values_cmd_parser_string_values_def_values)) < 0)
-              {
-                fprintf (stderr, "%s: %s argument, \"%s\", for option `--string-values-def'%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", optarg, (additional_error ? additional_error : ""));
-                goto failure;
-              }
-            if (args_info->string_values_def_given && ! override)
-              continue;
-            local_args_info.string_values_def_given = 1;
-            args_info->string_values_def_given = 1;
-            if (args_info->string_values_def_arg)
-              free (args_info->string_values_def_arg); /* free previous string */
-            args_info->string_values_def_arg = gengetopt_strdup (test_values_cmd_parser_string_values_def_values[found]);
-            if (args_info->string_values_def_orig)
-              free (args_info->string_values_def_orig); /* free previous string */
-            args_info->string_values_def_orig = gengetopt_strdup (optarg);
+          
+            if (update_arg( (void *)&(args_info->string_values_def_arg), 
+                 &(args_info->string_values_def_orig), &(args_info->string_values_def_given),
+                &(local_args_info.string_values_def_given), optarg, optarg, test_values_cmd_parser_string_values_def_values, "bar", ARG_STRING,
+                check_ambiguity, override, 0, 0,
+                "string-values-def", '-',
+                additional_error))
+              goto failure;
+          
           }
           /* string option with values and default and optional argument.  */
           else if (strcmp (long_options[option_index].name, "string-values-def-argopt") == 0)
           {
-            if (local_args_info.string_values_def_argopt_given || (check_ambiguity && args_info->string_values_def_argopt_given))
-              {
-                fprintf (stderr, "%s: `--string-values-def-argopt' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-                goto failure;
-              }
-            if ((found = check_possible_values((optarg ? optarg : "foobar" ), test_values_cmd_parser_string_values_def_argopt_values)) < 0)
-              {
-                fprintf (stderr, "%s: %s argument, \"%s\", for option `--string-values-def-argopt'%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", optarg, (additional_error ? additional_error : ""));
-                goto failure;
-              }
-            if (args_info->string_values_def_argopt_given && ! override)
-              continue;
-            local_args_info.string_values_def_argopt_given = 1;
-            args_info->string_values_def_argopt_given = 1;
-            if (test_values_cmd_parser_string_values_def_argopt_values[found])
-              {
-                if (args_info->string_values_def_argopt_arg)
-                  free (args_info->string_values_def_argopt_arg); /* free previous string */
-                args_info->string_values_def_argopt_arg = gengetopt_strdup (test_values_cmd_parser_string_values_def_argopt_values[found]);
-                if (args_info->string_values_def_argopt_orig)
-                  free (args_info->string_values_def_argopt_orig); /* free previous string */
-                args_info->string_values_def_argopt_orig = gengetopt_strdup (optarg);
-              }
+          
+            if (update_arg( (void *)&(args_info->string_values_def_argopt_arg), 
+                 &(args_info->string_values_def_argopt_orig), &(args_info->string_values_def_argopt_given),
+                &(local_args_info.string_values_def_argopt_given), optarg, optarg, test_values_cmd_parser_string_values_def_argopt_values, "foobar", ARG_STRING,
+                check_ambiguity, override, 0, 0,
+                "string-values-def-argopt", '-',
+                additional_error))
+              goto failure;
+          
           }
           /* string option with values no short.  */
           else if (strcmp (long_options[option_index].name, "string-values-no-short") == 0)
           {
-            if (local_args_info.string_values_no_short_given || (check_ambiguity && args_info->string_values_no_short_given))
-              {
-                fprintf (stderr, "%s: `--string-values-no-short' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-                goto failure;
-              }
-            if ((found = check_possible_values((optarg ? optarg : 0 ), test_values_cmd_parser_string_values_no_short_values)) < 0)
-              {
-                fprintf (stderr, "%s: %s argument, \"%s\", for option `--string-values-no-short'%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", optarg, (additional_error ? additional_error : ""));
-                goto failure;
-              }
-            if (args_info->string_values_no_short_given && ! override)
-              continue;
-            local_args_info.string_values_no_short_given = 1;
-            args_info->string_values_no_short_given = 1;
-            if (args_info->string_values_no_short_arg)
-              free (args_info->string_values_no_short_arg); /* free previous string */
-            args_info->string_values_no_short_arg = gengetopt_strdup (test_values_cmd_parser_string_values_no_short_values[found]);
-            if (args_info->string_values_no_short_orig)
-              free (args_info->string_values_no_short_orig); /* free previous string */
-            args_info->string_values_no_short_orig = gengetopt_strdup (optarg);
+          
+            if (update_arg( (void *)&(args_info->string_values_no_short_arg), 
+                 &(args_info->string_values_no_short_orig), &(args_info->string_values_no_short_given),
+                &(local_args_info.string_values_no_short_given), optarg, optarg, test_values_cmd_parser_string_values_no_short_values, 0, ARG_STRING,
+                check_ambiguity, override, 0, 0,
+                "string-values-no-short", '-',
+                additional_error))
+              goto failure;
+          
           }
           /* multiple string option with values and default.  */
           else if (strcmp (long_options[option_index].name, "multistring-values-def") == 0)
           {
-            local_args_info.multistring_values_def_given++;
+            if (update_multiple_arg_temp(&multistring_values_def_list, 
+                &(local_args_info.multistring_values_def_given), optarg, test_values_cmd_parser_multistring_values_def_values, "foo", ARG_STRING,
+                "multistring-values-def", '-',
+                additional_error))
+              goto failure;
           
-            multi_token = get_multiple_arg_token(optarg);
-            multi_next = get_multiple_arg_token_next (optarg);
-          
-            while (1)
-              {
-                if ((found = check_possible_values((multi_token ? multi_token : "foo" ), test_values_cmd_parser_multistring_values_def_values)) < 0)
-                  {
-                    fprintf (stderr, "%s: %s argument, \"%s\", for option `--multistring-values-def'%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", multi_token, (additional_error ? additional_error : ""));
-                    free (multi_token);
-                    goto failure;
-                  }
-          
-                multistring_values_def_new = (struct string_list *) malloc (sizeof (struct string_list));
-                multistring_values_def_new->next = multistring_values_def_list;
-                multistring_values_def_list = multistring_values_def_new;
-                multistring_values_def_new->arg = gengetopt_strdup (NULL);
-                multistring_values_def_new->orig = NULL;
-                if (test_values_cmd_parser_multistring_values_def_values[found])
-                  {
-                    multistring_values_def_new->arg = gengetopt_strdup (test_values_cmd_parser_multistring_values_def_values[found]);
-                    multistring_values_def_new->orig = multi_token;
-                  }
-          
-                if (multi_next)
-                  {
-                    multi_token = get_multiple_arg_token(multi_next);
-                    multi_next = get_multiple_arg_token_next (multi_next);
-                    local_args_info.multistring_values_def_given++;
-                  }
-                else
-                  break;
-              }
-            break;
           }
           /* multiple string option with values no-short.  */
           else if (strcmp (long_options[option_index].name, "multistring-values-no-short") == 0)
           {
-            local_args_info.multistring_values_no_short_given++;
+            if (update_multiple_arg_temp(&multistring_values_no_short_list, 
+                &(local_args_info.multistring_values_no_short_given), optarg, test_values_cmd_parser_multistring_values_no_short_values, 0, ARG_STRING,
+                "multistring-values-no-short", '-',
+                additional_error))
+              goto failure;
           
-            multi_token = get_multiple_arg_token(optarg);
-            multi_next = get_multiple_arg_token_next (optarg);
-          
-            while (1)
-              {
-                if ((found = check_possible_values((multi_token ? multi_token : 0 ), test_values_cmd_parser_multistring_values_no_short_values)) < 0)
-                  {
-                    fprintf (stderr, "%s: %s argument, \"%s\", for option `--multistring-values-no-short'%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", multi_token, (additional_error ? additional_error : ""));
-                    free (multi_token);
-                    goto failure;
-                  }
-          
-                multistring_values_no_short_new = (struct string_list *) malloc (sizeof (struct string_list));
-                multistring_values_no_short_new->next = multistring_values_no_short_list;
-                multistring_values_no_short_list = multistring_values_no_short_new;
-                multistring_values_no_short_new->arg = gengetopt_strdup (test_values_cmd_parser_multistring_values_no_short_values[found]);
-                multistring_values_no_short_new->orig = multi_token;
-          
-                if (multi_next)
-                  {
-                    multi_token = get_multiple_arg_token(multi_next);
-                    multi_next = get_multiple_arg_token_next (multi_next);
-                    local_args_info.multistring_values_no_short_given++;
-                  }
-                else
-                  break;
-              }
-            break;
           }
           /* group string option with values and default.  */
           else if (strcmp (long_options[option_index].name, "string-values-group") == 0)
           {
-            if (local_args_info.string_values_group_given || (check_ambiguity && args_info->string_values_group_given))
-              {
-                fprintf (stderr, "%s: `--string-values-group' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-                goto failure;
-              }
-            if ((found = check_possible_values((optarg ? optarg : 0 ), test_values_cmd_parser_string_values_group_values)) < 0)
-              {
-                fprintf (stderr, "%s: %s argument, \"%s\", for option `--string-values-group'%s\n", argv[0], (found == -2) ? "ambiguous" : "invalid", optarg, (additional_error ? additional_error : ""));
-                goto failure;
-              }
-            if (args_info->string_values_group_given && ! override)
-              continue;
-            local_args_info.string_values_group_given = 1;
-            args_info->string_values_group_given = 1;
             if (args_info->group1_group_counter && override)
               reset_group_group1 (args_info);
             args_info->group1_group_counter += 1;
-            if (args_info->string_values_group_arg)
-              free (args_info->string_values_group_arg); /* free previous string */
-            args_info->string_values_group_arg = gengetopt_strdup (test_values_cmd_parser_string_values_group_values[found]);
-            if (args_info->string_values_group_orig)
-              free (args_info->string_values_group_orig); /* free previous string */
-            args_info->string_values_group_orig = gengetopt_strdup (optarg);
+          
+            if (update_arg( (void *)&(args_info->string_values_group_arg), 
+                 &(args_info->string_values_group_orig), &(args_info->string_values_group_given),
+                &(local_args_info.string_values_group_given), optarg, optarg, test_values_cmd_parser_string_values_group_values, "bar", ARG_STRING,
+                check_ambiguity, override, 0, 0,
+                "string-values-group", '-',
+                additional_error))
+              goto failure;
+          
           }
           
           break;
@@ -1029,61 +1037,19 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
     }
   
 
-  if (local_args_info.multistring_values_given && multistring_values_list)
-    {
-      struct string_list *tmp;
-      args_info->multistring_values_arg = (char * *) realloc (args_info->multistring_values_arg, (args_info->multistring_values_given + local_args_info.multistring_values_given) * sizeof (char *));
-      args_info->multistring_values_orig = (char **) realloc (args_info->multistring_values_orig, (args_info->multistring_values_given + local_args_info.multistring_values_given) * sizeof (char *));
-      for (i = (local_args_info.multistring_values_given - 1); i >= 0; --i)
-        {
-          tmp = multistring_values_list;
-          args_info->multistring_values_arg [i + args_info->multistring_values_given] = multistring_values_list->arg;
-          args_info->multistring_values_orig [i + args_info->multistring_values_given] = multistring_values_list->orig;
-          multistring_values_list = multistring_values_list->next;
-          free (tmp);
-        }
-    }
-  
-  if (local_args_info.multistring_values_def_given && multistring_values_def_list)
-    {
-      struct string_list *tmp;
-      args_info->multistring_values_def_arg = (char * *) realloc (args_info->multistring_values_def_arg, (args_info->multistring_values_def_given + local_args_info.multistring_values_def_given) * sizeof (char *));
-      args_info->multistring_values_def_orig = (char **) realloc (args_info->multistring_values_def_orig, (args_info->multistring_values_def_given + local_args_info.multistring_values_def_given) * sizeof (char *));
-      for (i = (local_args_info.multistring_values_def_given - 1); i >= 0; --i)
-        {
-          tmp = multistring_values_def_list;
-          args_info->multistring_values_def_arg [i + args_info->multistring_values_def_given] = multistring_values_def_list->arg;
-          args_info->multistring_values_def_orig [i + args_info->multistring_values_def_given] = multistring_values_def_list->orig;
-          multistring_values_def_list = multistring_values_def_list->next;
-          free (tmp);
-        }
-    }
-  else /* set the default value */
-    {
-      if (! args_info->multistring_values_def_arg && ! args_info->multistring_values_def_given)
-        {
-          args_info->multistring_values_def_arg = (char * *) malloc (sizeof (char *));
-          args_info->multistring_values_def_arg [0] = gengetopt_strdup("foo");
-          args_info->multistring_values_def_orig = (char **) malloc (sizeof (char *));
-          args_info->multistring_values_def_orig [0] = NULL;
-        }
-    }
-  
-  if (local_args_info.multistring_values_no_short_given && multistring_values_no_short_list)
-    {
-      struct string_list *tmp;
-      args_info->multistring_values_no_short_arg = (char * *) realloc (args_info->multistring_values_no_short_arg, (args_info->multistring_values_no_short_given + local_args_info.multistring_values_no_short_given) * sizeof (char *));
-      args_info->multistring_values_no_short_orig = (char **) realloc (args_info->multistring_values_no_short_orig, (args_info->multistring_values_no_short_given + local_args_info.multistring_values_no_short_given) * sizeof (char *));
-      for (i = (local_args_info.multistring_values_no_short_given - 1); i >= 0; --i)
-        {
-          tmp = multistring_values_no_short_list;
-          args_info->multistring_values_no_short_arg [i + args_info->multistring_values_no_short_given] = multistring_values_no_short_list->arg;
-          args_info->multistring_values_no_short_orig [i + args_info->multistring_values_no_short_given] = multistring_values_no_short_list->orig;
-          multistring_values_no_short_list = multistring_values_no_short_list->next;
-          free (tmp);
-        }
-    }
-  
+  update_multiple_arg((void *)&(args_info->multistring_values_arg),
+    &(args_info->multistring_values_orig), args_info->multistring_values_given,
+    local_args_info.multistring_values_given, 0 , 
+    ARG_STRING, multistring_values_list);
+  multiple_default_value.string_arg = "foo";
+  update_multiple_arg((void *)&(args_info->multistring_values_def_arg),
+    &(args_info->multistring_values_def_orig), args_info->multistring_values_def_given,
+    local_args_info.multistring_values_def_given, &multiple_default_value , 
+    ARG_STRING, multistring_values_def_list);
+  update_multiple_arg((void *)&(args_info->multistring_values_no_short_arg),
+    &(args_info->multistring_values_no_short_orig), args_info->multistring_values_no_short_given,
+    local_args_info.multistring_values_no_short_given, 0 , 
+    ARG_STRING, multistring_values_no_short_list);
 
   args_info->multistring_values_given += local_args_info.multistring_values_given;
   local_args_info.multistring_values_given = 0;
@@ -1129,42 +1095,9 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
   return 0;
 
 failure:
-  if (multistring_values_list)
-    {
-      struct string_list *tmp;
-      while (multistring_values_list)
-        {
-          tmp = multistring_values_list;
-          free (multistring_values_list->arg);
-          free (multistring_values_list->orig);
-          multistring_values_list = multistring_values_list->next;
-          free (tmp);
-        }
-    }
-  if (multistring_values_def_list)
-    {
-      struct string_list *tmp;
-      while (multistring_values_def_list)
-        {
-          tmp = multistring_values_def_list;
-          free (multistring_values_def_list->arg);
-          free (multistring_values_def_list->orig);
-          multistring_values_def_list = multistring_values_def_list->next;
-          free (tmp);
-        }
-    }
-  if (multistring_values_no_short_list)
-    {
-      struct string_list *tmp;
-      while (multistring_values_no_short_list)
-        {
-          tmp = multistring_values_no_short_list;
-          free (multistring_values_no_short_list->arg);
-          free (multistring_values_no_short_list->orig);
-          multistring_values_no_short_list = multistring_values_no_short_list->next;
-          free (tmp);
-        }
-    }
+  free_list (multistring_values_list, 1 );
+  free_list (multistring_values_def_list, 1 );
+  free_list (multistring_values_no_short_list, 1 );
   
   test_values_cmd_parser_release (&local_args_info);
   return (EXIT_FAILURE);

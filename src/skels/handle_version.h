@@ -17,14 +17,16 @@ class handle_version_gen_class
 {
  protected:
   string parser_name;
+  bool short_opt;
 
  public:
-  handle_version_gen_class()
+  handle_version_gen_class() :
+    short_opt (false)
   {
   }
   
-  handle_version_gen_class(const string &_parser_name) :
-    parser_name (_parser_name)
+  handle_version_gen_class(const string &_parser_name, bool _short_opt) :
+    parser_name (_parser_name), short_opt (_short_opt)
   {
   }
 
@@ -54,6 +56,11 @@ class handle_version_gen_class
   void set_parser_name(const string &_parser_name)
   {
     parser_name = _parser_name;
+  }
+
+  void set_short_opt(bool _short_opt)
+  {
+    short_opt = _short_opt;
   }
 
   void generate_handle_version(ostream &stream, unsigned int indent = 0);

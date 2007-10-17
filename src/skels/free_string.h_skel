@@ -1,12 +1,4 @@
 @IF@ has_string_type @THEN@
-if (@structure@->@opt_var@_arg)
-  {
-    free (@structure@->@opt_var@_arg); /* free @comment@ */
-    @structure@->@opt_var@_arg = 0;
-  }
+free_string_field (&(@structure@->@opt_var@_arg));
 @ENDIF@
-if (@structure@->@opt_var@_orig)
-  {
-    free (@structure@->@opt_var@_orig); /* free @comment@ */
-    @structure@->@opt_var@_orig = 0;
-  }
+free_string_field (&(@structure@->@opt_var@_orig));

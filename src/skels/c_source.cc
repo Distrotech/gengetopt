@@ -161,6 +161,70 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
     }
   stream << "\n";
   stream << indent_str;
+  stream << "typedef enum {ARG_NO";
+  stream << "\n";
+  stream << indent_str;
+  if (has_arg_flag)
+    {
+      stream << "  , ARG_FLAG";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_string)
+    {
+      stream << "  , ARG_STRING";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_int)
+    {
+      stream << "  , ARG_INT";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_short)
+    {
+      stream << "  , ARG_SHORT";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_long)
+    {
+      stream << "  , ARG_LONG";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_float)
+    {
+      stream << "  , ARG_FLOAT";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_double)
+    {
+      stream << "  , ARG_DOUBLE";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_longdouble)
+    {
+      stream << "  , ARG_LONGDOUBLE";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_longlong)
+    {
+      stream << "  , ARG_LONGLONG";
+      stream << "\n";
+      stream << indent_str;
+    }
+  stream << "} ";
+  generate_string (parser_name, stream, indent + indent_str.length ());
+  stream << "_arg_type;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
   stream << "static";
   stream << "\n";
   stream << indent_str;
@@ -280,11 +344,6 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << indent_str;
     }
   stream << "\n";
-  stream << indent_str;
-  if (struct_def.size () > 0)
-    generate_string (struct_def, stream, indent + indent_str.length ());
-  else
-    generate_struct_def (stream, indent + indent_str.length ());
   stream << indent_str;
   if (option_values.size () > 0)
     generate_string (option_values, stream, indent + indent_str.length ());
@@ -579,7 +638,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "\n";
   stream << indent_str;
   generate_string (parser_name, stream, indent + indent_str.length ());
-  stream << "_params_init()";
+  stream << "_params_init(void)";
   stream << "\n";
   stream << indent_str;
   stream << "{";
@@ -617,6 +676,9 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "      params->check_ambiguity = 0;";
   stream << "\n";
   stream << indent_str;
+  stream << "      params->print_errors = 1;";
+  stream << "\n";
+  stream << indent_str;
   stream << "    }";
   stream << "\n";
   stream << indent_str;
@@ -633,6 +695,280 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << indent_str;
   stream << "\n";
   stream << indent_str;
+  if (has_typed_options)
+    {
+      stream << "static void";
+      stream << "\n";
+      stream << indent_str;
+      stream << "free_string_field (char **s)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "{";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  if (*s)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      free (*s);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      *s = 0;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    }";
+      stream << "\n";
+      stream << indent_str;
+      stream << "}";
+      stream << "\n";
+      stream << indent_str;
+    }
+  stream << "\n";
+  stream << indent_str;
+  if (multiple_options)
+    {
+      stream << "/** ";
+      stream << "@";
+      stream << "brief generic value variable */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "union generic_value {";
+      stream << "\n";
+      stream << indent_str;
+      if (has_arg_int)
+        {
+          stream << "    int int_arg;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_short)
+        {
+          stream << "    short short_arg;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_long)
+        {
+          stream << "    long long_arg;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_float)
+        {
+          stream << "    float float_arg;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_double)
+        {
+          stream << "    double double_arg;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_longdouble)
+        {
+          stream << "    long double longdouble_arg;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_longlong)
+        {
+          stream << "#ifdef HAVE_LONG_LONG";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    long long int longlong_arg;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "#else";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    long longlong_arg;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "#endif";
+          stream << "\n";
+          stream << indent_str;
+        }
+      stream << "    char *string_arg;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "};";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "/** ";
+      stream << "@";
+      stream << "brief holds temporary values for multiple options */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "struct generic_list";
+      stream << "\n";
+      stream << indent_str;
+      stream << "{";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  union generic_value arg;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  char *orig;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  struct generic_list *next;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "};";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "/**";
+      stream << "\n";
+      stream << indent_str;
+      stream << " * ";
+      stream << "@";
+      stream << "brief add a node at the head of the list ";
+      stream << "\n";
+      stream << indent_str;
+      stream << " */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "static void add_node(struct generic_list **list) {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  struct generic_list *new_node = (struct generic_list *) malloc (sizeof (struct generic_list));";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  new_node->next = *list;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  *list = new_node;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  new_node->arg.string_arg = NULL;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  new_node->orig = NULL;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "}";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      if (( ( ! multiple_options_all_string ) && multiple_token_vars ))
+        {
+          stream << "static void";
+          stream << "\n";
+          stream << indent_str;
+          stream << "free_multiple_field(unsigned int len, void **arg, char ***orig)";
+          stream << "\n";
+          stream << indent_str;
+          stream << "{";
+          stream << "\n";
+          stream << indent_str;
+          stream << "  unsigned int i;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "  if (*arg) {";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    for (i = 0; i < len; ++i)";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      {";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        free_string_field(&((*orig)[i]));";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      }";
+          stream << "\n";
+          stream << indent_str;
+          stream << "\n";
+          stream << indent_str;
+          stream << "    free (*arg);";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    *arg = 0;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    free (*orig);";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    *orig = 0;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "  }";
+          stream << "\n";
+          stream << indent_str;
+          stream << "}";
+          stream << "\n";
+          stream << indent_str;
+        }
+      stream << "\n";
+      stream << indent_str;
+      if (multiple_options_string)
+        {
+          stream << "static void";
+          stream << "\n";
+          stream << indent_str;
+          stream << "free_multiple_string_field(unsigned int len, char ***arg, char ***orig)";
+          stream << "\n";
+          stream << indent_str;
+          stream << "{";
+          stream << "\n";
+          stream << indent_str;
+          stream << "  unsigned int i;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "  if (*arg) {";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    for (i = 0; i < len; ++i)";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      {";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        free_string_field(&((*arg)[i]));";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        free_string_field(&((*orig)[i]));";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      }";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    free_string_field(&((*arg)[0])); /* free default string */";
+          stream << "\n";
+          stream << indent_str;
+          stream << "\n";
+          stream << indent_str;
+          stream << "    free (*arg);";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    *arg = 0;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    free (*orig);";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    *orig = 0;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "  }";
+          stream << "\n";
+          stream << indent_str;
+          stream << "}";
+          stream << "\n";
+          stream << indent_str;
+        }
+    }
+  stream << "\n";
+  stream << indent_str;
   stream << "static void";
   stream << "\n";
   stream << indent_str;
@@ -645,6 +981,12 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "{";
   stream << "\n";
   stream << indent_str;
+  if (handle_unamed)
+    {
+      stream << "  unsigned int i;";
+    }
+  stream << "\n";
+  stream << indent_str;
   indent = 2;
   stream << "  ";
   if (free.size () > 0)
@@ -654,7 +996,149 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   indent = 0;
   stream << "\n";
   stream << indent_str;
+  indent = 2;
+  stream << "  ";
+  indent = 0;
+  stream << "\n";
+  stream << indent_str;
+  if (handle_unamed)
+    {
+      stream << "  for (i = 0; i < args_info->inputs_num; ++i)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    free (args_info->inputs [i]);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "  if (args_info->inputs_num)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    free (args_info->inputs);";
+      stream << "\n";
+      stream << indent_str;
+    }
+  stream << "\n";
+  stream << indent_str;
   stream << "  clear_given (args_info);";
+  stream << "\n";
+  stream << indent_str;
+  stream << "}";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  stream << "static void";
+  stream << "\n";
+  stream << indent_str;
+  stream << "write_into_file(FILE *outfile, const char *opt, const char *arg)";
+  stream << "\n";
+  stream << indent_str;
+  stream << "{";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  if (arg) {";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    fprintf(outfile, \"%s=\\\"%s\\\"\\n\", opt, arg);";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  } else {";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    fprintf(outfile, \"%s\\n\", opt);";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  }";
+  stream << "\n";
+  stream << indent_str;
+  stream << "}";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  if (multiple_options)
+    {
+      stream << "static void";
+      stream << "\n";
+      stream << indent_str;
+      stream << "write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "{";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  int i;";
+      stream << "\n";
+      stream << indent_str;
+      indent = 2;
+      stream << "  ";
+      indent = 0;
+      stream << "\n";
+      stream << indent_str;
+      stream << "  for (i = 0; i < len; ++i)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    write_into_file(outfile, opt, (arg ? arg[i] : 0));";
+      stream << "\n";
+      stream << indent_str;
+      stream << "}";
+      stream << "\n";
+      stream << indent_str;
+    }
+  stream << "\n";
+  stream << indent_str;
+  stream << "int";
+  stream << "\n";
+  stream << indent_str;
+  generate_string (parser_name, stream, indent + indent_str.length ());
+  stream << "_dump(FILE *outfile, struct ";
+  generate_string (args_info, stream, indent + indent_str.length ());
+  stream << " *args_info)";
+  stream << "\n";
+  stream << indent_str;
+  stream << "{";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  int i = 0;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  stream << "  if (!outfile)";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    {";
+  stream << "\n";
+  stream << indent_str;
+  stream << "      fprintf (stderr, \"%s: cannot dump options to stream\\n\", ";
+  generate_string (package_var_name, stream, indent + indent_str.length ());
+  stream << ");";
+  stream << "\n";
+  stream << indent_str;
+  stream << "      return EXIT_FAILURE;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    }";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  indent = 2;
+  stream << "  ";
+  if (file_save_loop.size () > 0)
+    generate_string (file_save_loop, stream, indent + indent_str.length ());
+  else
+    generate_file_save_loop (stream, indent + indent_str.length ());
+  indent = 0;
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  stream << "  i = EXIT_SUCCESS;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  return i;";
   stream << "\n";
   stream << indent_str;
   stream << "}";
@@ -706,21 +1190,14 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << indent_str;
   stream << "\n";
   stream << indent_str;
-  indent = 2;
-  stream << "  ";
-  if (file_save_loop.size () > 0)
-    generate_string (file_save_loop, stream, indent + indent_str.length ());
-  else
-    generate_file_save_loop (stream, indent + indent_str.length ());
-  indent = 0;
+  stream << "  i = ";
+  generate_string (parser_name, stream, indent + indent_str.length ());
+  stream << "_dump(outfile, args_info);";
   stream << "\n";
   stream << indent_str;
   stream << "  fclose (outfile);";
   stream << "\n";
   stream << indent_str;
-  stream << "\n";
-  stream << indent_str;
-  stream << "  i = EXIT_SUCCESS;";
   stream << "\n";
   stream << indent_str;
   stream << "  return i;";
@@ -757,19 +1234,28 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << indent_str;
   if (check_possible_values)
     {
-      stream << "/*";
+      stream << "/**";
       stream << "\n";
       stream << indent_str;
-      stream << " * Returns:";
+      stream << " * ";
+      stream << "@";
+      stream << "param val the value to check";
       stream << "\n";
       stream << indent_str;
-      stream << " * - the index of the matched value";
+      stream << " * ";
+      stream << "@";
+      stream << "param values the possible values";
       stream << "\n";
       stream << indent_str;
-      stream << " * - -1 if no argument has been specified";
+      stream << " * ";
+      stream << "@";
+      stream << "return the index of the matched value:";
       stream << "\n";
       stream << indent_str;
-      stream << " * - -2 if more than one value has matched";
+      stream << " * -1 if no argument has been specified,";
+      stream << "\n";
+      stream << indent_str;
+      stream << " * -2 if more than one value has matched";
       stream << "\n";
       stream << indent_str;
       stream << " */";
@@ -1401,6 +1887,9 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "  params.check_ambiguity = 0;";
   stream << "\n";
   stream << indent_str;
+  stream << "  params.print_errors = 1;";
+  stream << "\n";
+  stream << indent_str;
   stream << "\n";
   stream << indent_str;
   stream << "  result = ";
@@ -1529,6 +2018,1258 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "\n";
       stream << indent_str;
     }
+  stream << "\n";
+  stream << indent_str;
+  stream << "static char *package_name = 0;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  stream << "/**";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "brief updates an option";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param field the generic pointer to the field to update";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param orig_field the pointer to the orig field";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param field_given the pointer to the number of occurrence of this option";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param prev_given the pointer to the number of occurrence already seen";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param val the argument for this option (if null no arg was specified)";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param orig the actual argument (can be different in case of options with values)";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param possible_values the possible values for this option (if specified)";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param default_value the default value (in case the option only accepts fixed values)";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param arg_type the type of this option";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param check_ambiguity ";
+  stream << "@";
+  stream << "see ";
+  generate_string (parser_name, stream, indent + indent_str.length ());
+  stream << "_params.check_ambiguity";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param override ";
+  stream << "@";
+  stream << "see ";
+  generate_string (parser_name, stream, indent + indent_str.length ());
+  stream << "_params.override";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param no_free whether to free a possible previous value";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param multiple_option whether this is a multiple option";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param long_opt the corresponding long option";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param short_opt the corresponding short option (or '-' if none)";
+  stream << "\n";
+  stream << indent_str;
+  stream << " * ";
+  stream << "@";
+  stream << "param additional_error possible further error specification";
+  stream << "\n";
+  stream << indent_str;
+  stream << " */";
+  stream << "\n";
+  stream << indent_str;
+  stream << "static";
+  stream << "\n";
+  stream << indent_str;
+  stream << "int update_arg(void *field, char **orig_field,";
+  stream << "\n";
+  stream << indent_str;
+  stream << "               unsigned int *field_given, unsigned int *prev_given, ";
+  stream << "\n";
+  stream << indent_str;
+  stream << "               const char *val, char *orig,";
+  stream << "\n";
+  stream << indent_str;
+  stream << "               char *possible_values[], const char *default_value,";
+  stream << "\n";
+  stream << indent_str;
+  indent = 15;
+  stream << "               ";
+  generate_string (parser_name, stream, indent + indent_str.length ());
+  stream << "_arg_type arg_type,";
+  indent = 0;
+  stream << "\n";
+  stream << indent_str;
+  stream << "               short check_ambiguity, short override,";
+  stream << "\n";
+  stream << indent_str;
+  stream << "               short no_free, short multiple_option,";
+  stream << "\n";
+  stream << indent_str;
+  stream << "               const char *long_opt, char short_opt,";
+  stream << "\n";
+  stream << indent_str;
+  stream << "               const char *additional_error)";
+  stream << "\n";
+  stream << indent_str;
+  stream << "{";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  char *stop_char;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  int found;";
+  stream << "\n";
+  stream << indent_str;
+  if (has_arg_string)
+    {
+      stream << "  char **string_field;";
+      stream << "\n";
+      stream << indent_str;
+    }
+  stream << "\n";
+  stream << indent_str;
+  stream << "  stop_char = 0;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  found = 0;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  stream << "  if (!multiple_option && prev_given && (*prev_given || (check_ambiguity && *field_given)))";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    {";
+  stream << "\n";
+  stream << indent_str;
+  stream << "      if (short_opt != '-')";
+  stream << "\n";
+  stream << indent_str;
+  stream << "        fprintf (stderr, \"%s: `--%s' (`-%c') option given more than once%s\\n\", ";
+  stream << "\n";
+  stream << indent_str;
+  stream << "               package_name, long_opt, short_opt,";
+  stream << "\n";
+  stream << indent_str;
+  stream << "               (additional_error ? additional_error : \"\"));";
+  stream << "\n";
+  stream << indent_str;
+  stream << "      else";
+  stream << "\n";
+  stream << indent_str;
+  stream << "        fprintf (stderr, \"%s: `--%s' option given more than once%s\\n\", ";
+  stream << "\n";
+  stream << indent_str;
+  stream << "               package_name, long_opt,";
+  stream << "\n";
+  stream << indent_str;
+  stream << "               (additional_error ? additional_error : \"\"));";
+  stream << "\n";
+  stream << indent_str;
+  stream << "      return 1; /* failure */";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    }";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  if (check_possible_values)
+    {
+      stream << "  if (possible_values && (found = check_possible_values((val ? val : default_value), possible_values)) < 0)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      if (short_opt != '-')";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        fprintf (stderr, \"%s: %s argument, \\\"%s\\\", for option `--%s' (`-%c')%s\\n\", ";
+      stream << "\n";
+      stream << indent_str;
+      stream << "          package_name, (found == -2) ? \"ambiguous\" : \"invalid\", val, long_opt, short_opt,";
+      stream << "\n";
+      stream << indent_str;
+      stream << "          (additional_error ? additional_error : \"\"));";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      else";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        fprintf (stderr, \"%s: %s argument, \\\"%s\\\", for option `--%s'%s\\n\", ";
+      stream << "\n";
+      stream << indent_str;
+      stream << "          package_name, (found == -2) ? \"ambiguous\" : \"invalid\", val, long_opt,";
+      stream << "\n";
+      stream << indent_str;
+      stream << "          (additional_error ? additional_error : \"\"));";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      return 1; /* failure */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    }";
+      stream << "\n";
+      stream << indent_str;
+    }
+  stream << "    ";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  if (field_given && *field_given && ! override)";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    return 0;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  if (prev_given)";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    (*prev_given)++;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  if (field_given)";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    (*field_given)++;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  stream << "  switch(arg_type) {";
+  stream << "\n";
+  stream << indent_str;
+  if (has_arg_flag)
+    {
+      stream << "  case ARG_FLAG:";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    *((int *)field) = !*((int *)field);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    break;";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_int)
+    {
+      stream << "  case ARG_INT:";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    if (val) *((int *)field) = strtol (val, &stop_char, 0);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    break;";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_short)
+    {
+      stream << "  case ARG_SHORT:";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    if (val) *((short *)field) = (short)strtol (val, &stop_char, 0);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    break;";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_long)
+    {
+      stream << "  case ARG_LONG:";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    if (val) *((long *)field) = (long)strtol (val, &stop_char, 0);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    break;";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_float)
+    {
+      stream << "  case ARG_FLOAT:";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    if (val) *((float *)field) = (float)strtod (val, &stop_char);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    break;";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_double)
+    {
+      stream << "  case ARG_DOUBLE:";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    if (val) *((double *)field) = strtod (val, &stop_char);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    break;";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_longdouble)
+    {
+      stream << "  case ARG_LONGDOUBLE:";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    if (val) *((long double *)field) = (long double)strtod (val, &stop_char);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    break;";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_longlong)
+    {
+      stream << "  case ARG_LONGLONG:";
+      stream << "\n";
+      stream << indent_str;
+      stream << "#ifdef HAVE_LONG_LONG";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    if (val) *((long long int*)field) = (long long int) strtol (val, &stop_char, 0);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "#else";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    if (val) *((long *)field) = (long)strtol (val, &stop_char, 0);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "#endif";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    break;";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_arg_string)
+    {
+      stream << "  case ARG_STRING:";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    if (val || possible_values) {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      string_field = (char **)field;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      if (!no_free && *string_field)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        free (*string_field); /* free previous string */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      *string_field = gengetopt_strdup (possible_values ? possible_values[found] : val);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    }";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    break;";
+      stream << "\n";
+      stream << indent_str;
+    }
+  stream << "  default:";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    break;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  };";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  if (( ( ( ( ( ( has_arg_int || has_arg_short ) || has_arg_long ) || has_arg_float ) || has_arg_double ) || has_arg_longdouble ) || has_arg_longlong ))
+    {
+      stream << "  /* check numeric conversion */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  switch(arg_type) {";
+      stream << "\n";
+      stream << indent_str;
+      if (has_arg_int)
+        {
+          stream << "  case ARG_INT:";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_short)
+        {
+          stream << "  case ARG_SHORT:";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_long)
+        {
+          stream << "  case ARG_LONG:";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_float)
+        {
+          stream << "  case ARG_FLOAT:";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_double)
+        {
+          stream << "  case ARG_DOUBLE:";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_longdouble)
+        {
+          stream << "  case ARG_LONGDOUBLE:";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_longlong)
+        {
+          stream << "  case ARG_LONGLONG:";
+          stream << "\n";
+          stream << indent_str;
+        }
+      stream << "    if (val && !(stop_char && *stop_char == '\\0')) {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      fprintf(stderr, \"%s: invalid numeric value: %s\\n\", package_name, val);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      return 1; /* failure */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    }";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    break;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  default:";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    ;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  };";
+      stream << "\n";
+      stream << indent_str;
+    }
+  stream << "\n";
+  stream << indent_str;
+  stream << "  /* store the original value */";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  switch(arg_type) {";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  case ARG_NO:";
+  stream << "\n";
+  stream << indent_str;
+  if (has_arg_flag)
+    {
+      stream << "  case ARG_FLAG:";
+      stream << "\n";
+      stream << indent_str;
+    }
+  stream << "    break;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  default:";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    if (orig && orig_field) {";
+  stream << "\n";
+  stream << indent_str;
+  stream << "      if (no_free) {";
+  stream << "\n";
+  stream << indent_str;
+  stream << "        *orig_field = orig;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "      } else {";
+  stream << "\n";
+  stream << indent_str;
+  stream << "        if (*orig_field)";
+  stream << "\n";
+  stream << indent_str;
+  stream << "          free (*orig_field); /* free previous string */";
+  stream << "\n";
+  stream << indent_str;
+  stream << "        *orig_field = gengetopt_strdup (orig);";
+  stream << "\n";
+  stream << indent_str;
+  stream << "      }";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    }";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  };";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  stream << "  return 0; /* OK */";
+  stream << "\n";
+  stream << indent_str;
+  stream << "}";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  if (multiple_options)
+    {
+      stream << "/**";
+      stream << "\n";
+      stream << indent_str;
+      stream << " * ";
+      stream << "@";
+      stream << "brief store information about a multiple option in a temporary list";
+      stream << "\n";
+      stream << indent_str;
+      stream << " * ";
+      stream << "@";
+      stream << "param list where to (temporarily) store multiple options";
+      stream << "\n";
+      stream << indent_str;
+      stream << " */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "static";
+      stream << "\n";
+      stream << indent_str;
+      stream << "int update_multiple_arg_temp(struct generic_list **list,";
+      stream << "\n";
+      stream << indent_str;
+      stream << "               unsigned int *prev_given, const char *val,";
+      stream << "\n";
+      stream << indent_str;
+      stream << "               char *possible_values[], const char *default_value,";
+      stream << "\n";
+      stream << indent_str;
+      indent = 15;
+      stream << "               ";
+      generate_string (parser_name, stream, indent + indent_str.length ());
+      stream << "_arg_type arg_type,";
+      indent = 0;
+      stream << "\n";
+      stream << indent_str;
+      stream << "               const char *long_opt, char short_opt,";
+      stream << "\n";
+      stream << indent_str;
+      stream << "               const char *additional_error)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "{";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  char *multi_token, *multi_next; /* store single arguments */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "  if (arg_type == ARG_NO) {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    (*prev_given)++;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    return 0; /* OK */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  }";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "  multi_token = get_multiple_arg_token(val);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  multi_next = get_multiple_arg_token_next (val);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "  while (1)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      add_node (list);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      if (update_arg((void *)&((*list)->arg), &((*list)->orig), 0,";
+      stream << "\n";
+      stream << indent_str;
+      stream << "          prev_given, multi_token, multi_token, possible_values, default_value, ";
+      stream << "\n";
+      stream << indent_str;
+      stream << "          arg_type, 0, 1, 1, 1, long_opt, short_opt, additional_error)) {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        if (multi_token) free(multi_token);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        return 1; /* failure */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      }";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "      if (multi_next)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "          multi_token = get_multiple_arg_token(multi_next);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "          multi_next = get_multiple_arg_token_next (multi_next);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        }";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      else";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        break;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    }";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "  return 0; /* OK */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "}";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "/**";
+      stream << "\n";
+      stream << indent_str;
+      stream << " * ";
+      stream << "@";
+      stream << "brief free the passed list (including possible string argument)";
+      stream << "\n";
+      stream << indent_str;
+      stream << " */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "static";
+      stream << "\n";
+      stream << indent_str;
+      stream << "void free_list(struct generic_list *list, short string_arg)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "{";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  if (list) {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    struct generic_list *tmp;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    while (list)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        tmp = list;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        if (string_arg && list->arg.string_arg)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "          free (list->arg.string_arg);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        if (list->orig)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "          free (list->orig);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        list = list->next;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        free (tmp);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      }";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  }";
+      stream << "\n";
+      stream << indent_str;
+      stream << "}";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "/**";
+      stream << "\n";
+      stream << indent_str;
+      stream << " * ";
+      stream << "@";
+      stream << "brief updates a multiple option starting from the passed list";
+      stream << "\n";
+      stream << indent_str;
+      stream << " */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "static";
+      stream << "\n";
+      stream << indent_str;
+      stream << "void update_multiple_arg(void *field, char ***orig_field,";
+      stream << "\n";
+      stream << indent_str;
+      stream << "               unsigned int field_given, unsigned int prev_given, union generic_value *default_value,";
+      stream << "\n";
+      stream << indent_str;
+      indent = 15;
+      stream << "               ";
+      generate_string (parser_name, stream, indent + indent_str.length ());
+      stream << "_arg_type arg_type,";
+      indent = 0;
+      stream << "\n";
+      stream << indent_str;
+      stream << "               struct generic_list *list)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "{";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  int i;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  struct generic_list *tmp;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "  if (prev_given && list) {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    *orig_field = (char **) realloc (*orig_field, (field_given + prev_given) * sizeof (char *));";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "    switch(arg_type) {";
+      stream << "\n";
+      stream << indent_str;
+      if (has_arg_int)
+        {
+          stream << "    case ARG_INT:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      *((int **)field) = (int *)realloc (*((int **)field), (field_given + prev_given) * sizeof (int)); break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_short)
+        {
+          stream << "    case ARG_SHORT:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      *((short **)field) = (short *)realloc (*((short **)field), (field_given + prev_given) * sizeof (short)); break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_long)
+        {
+          stream << "    case ARG_LONG:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      *((long **)field) = (long *)realloc (*((long **)field), (field_given + prev_given) * sizeof (long)); break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_float)
+        {
+          stream << "    case ARG_FLOAT:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      *((float **)field) = (float *)realloc (*((float **)field), (field_given + prev_given) * sizeof (float)); break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_double)
+        {
+          stream << "    case ARG_DOUBLE:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      *((double **)field) = (double *)realloc (*((double **)field), (field_given + prev_given) * sizeof (double)); break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_longdouble)
+        {
+          stream << "    case ARG_LONGDOUBLE:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      *((long double **)field) = (long double *)realloc (*((long double **)field), (field_given + prev_given) * sizeof (long double)); break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_longlong)
+        {
+          stream << "    case ARG_LONGLONG:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "#ifdef HAVE_LONG_LONG";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      *((long long int **)field) = (long long int *)realloc (*((long long int **)field), (field_given + prev_given) * sizeof (long long int)); break;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "#else";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      *((long **)field) = (long *)realloc (*((long **)field), (field_given + prev_given) * sizeof (long)); break;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "#endif";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_string)
+        {
+          stream << "    case ARG_STRING:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      *((char ***)field) = (char **)realloc (*((char ***)field), (field_given + prev_given) * sizeof (char *)); break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      stream << "    default:";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      break;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    };";
+      stream << "\n";
+      stream << indent_str;
+      indent = 4;
+      stream << "    ";
+      indent = 0;
+      stream << "\n";
+      stream << indent_str;
+      stream << "    for (i = (prev_given - 1); i >= 0; --i)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        tmp = list;";
+      stream << "\n";
+      stream << indent_str;
+      indent = 8;
+      stream << "        ";
+      indent = 0;
+      stream << "\n";
+      stream << indent_str;
+      stream << "        switch(arg_type) {";
+      stream << "\n";
+      stream << indent_str;
+      if (has_arg_int)
+        {
+          stream << "        case ARG_INT:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((int **)field))[i + field_given] = tmp->arg.int_arg; break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_short)
+        {
+          stream << "        case ARG_SHORT:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((short **)field))[i + field_given] = tmp->arg.short_arg; break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_long)
+        {
+          stream << "        case ARG_LONG:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((long **)field))[i + field_given] = tmp->arg.long_arg; break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_float)
+        {
+          stream << "        case ARG_FLOAT:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((float **)field))[i + field_given] = tmp->arg.float_arg; break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_double)
+        {
+          stream << "        case ARG_DOUBLE:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((double **)field))[i + field_given] = tmp->arg.double_arg; break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_longdouble)
+        {
+          stream << "        case ARG_LONGDOUBLE:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((long double **)field))[i + field_given] = tmp->arg.longdouble_arg; break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_longlong)
+        {
+          stream << "        case ARG_LONGLONG:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "#ifdef HAVE_LONG_LONG";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((long long int **)field))[i + field_given] = tmp->arg.longlong_arg; break;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "#else";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((long **)field))[i + field_given] = tmp->arg.longlong_arg; break;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "#endif";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_string)
+        {
+          stream << "        case ARG_STRING:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((char ***)field))[i + field_given] = tmp->arg.string_arg; break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      stream << "        default:";
+      stream << "\n";
+      stream << indent_str;
+      stream << "          break;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        }        ";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        (*orig_field) [i + field_given] = list->orig;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        list = list->next;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        free (tmp);";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      }";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  } else { /* set the default value */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    if (default_value && ! field_given) {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      switch(arg_type) {";
+      stream << "\n";
+      stream << indent_str;
+      if (has_arg_int)
+        {
+          stream << "      case ARG_INT:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        if (! *((int **)field)) {";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          *((int **)field) = (int *)malloc (sizeof (int));";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((int **)field))[0] = default_value->int_arg; ";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        }";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_short)
+        {
+          stream << "      case ARG_SHORT:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        if (! *((short **)field)) {";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          *((short **)field) = (short *)malloc (sizeof (short));";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((short **)field))[0] = default_value->short_arg;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        }";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_long)
+        {
+          stream << "      case ARG_LONG:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        if (! *((long **)field)) {";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          *((long **)field) = (long *)malloc (sizeof (long));";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((long **)field))[0] = default_value->long_arg;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        }";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_float)
+        {
+          stream << "      case ARG_FLOAT:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        if (! *((float **)field)) {";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          *((float **)field) = (float *)malloc (sizeof (float));";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((float **)field))[0] = default_value->float_arg;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        }";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_double)
+        {
+          stream << "      case ARG_DOUBLE:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        if (! *((double **)field)) {";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          *((double **)field) = (double *)malloc (sizeof (double));";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((double **)field))[0] = default_value->double_arg;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        }";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_longdouble)
+        {
+          stream << "      case ARG_LONGDOUBLE:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        if (! *((long double **)field)) {";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          *((long double **)field) = (long double *)malloc (sizeof (long double));";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((long double **)field))[0] = default_value->longdouble_arg;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        }";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_longlong)
+        {
+          stream << "      case ARG_LONGLONG:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "#ifdef HAVE_LONG_LONG";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        if (! *((long long int **)field)) {";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          *((long long int **)field) = (long long int *)malloc (sizeof (long long int));";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((long long int **)field))[0] = default_value->longlong_arg;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        }";
+          stream << "\n";
+          stream << indent_str;
+          stream << "#else";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        if (! *((long **)field)) {";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          *((long **)field) = (long *)malloc (sizeof (long));";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((long **)field))[0] = default_value->longlong_arg;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        }";
+          stream << "\n";
+          stream << indent_str;
+          stream << "#endif";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (has_arg_string)
+        {
+          stream << "      case ARG_STRING:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        if (! *((char ***)field)) {";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          *((char ***)field) = (char **)malloc (sizeof (char *));";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((char ***)field))[0] = gengetopt_strdup(default_value->string_arg);";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        }";
+          stream << "\n";
+          stream << indent_str;
+          stream << "        break;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      stream << "      default: break;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      }";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      if (!(*orig_field)) {";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        *orig_field = (char **) malloc (sizeof (char *));";
+      stream << "\n";
+      stream << indent_str;
+      stream << "        (*orig_field)[0] = NULL;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "      }";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    }";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  }";
+      stream << "\n";
+      stream << indent_str;
+      stream << "}";
+      stream << "\n";
+      stream << indent_str;
+    }
+  stream << "\n";
+  stream << indent_str;
   stream << "int";
   stream << "\n";
   stream << indent_str;
@@ -1549,9 +3290,9 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "  int c;	/* Character of the parsed option.  */";
   stream << "\n";
   stream << indent_str;
-  if (multiple_token_vars)
+  if (multiple_options_with_default)
     {
-      stream << "  char *multi_token, *multi_next; /* for multiple options */";
+      stream << "  union generic_value multiple_default_value;";
       stream << "\n";
       stream << indent_str;
     }
@@ -1587,6 +3328,14 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "\n";
   stream << indent_str;
   stream << "  int check_ambiguity;";
+  stream << "\n";
+  stream << indent_str;
+  indent = 2;
+  stream << "  ";
+  indent = 0;
+  stream << "\n";
+  stream << indent_str;
+  stream << "  package_name = argv[0];";
   stream << "\n";
   stream << indent_str;
   indent = 2;
@@ -1635,7 +3384,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "  optind = 0;";
   stream << "\n";
   stream << indent_str;
-  stream << "  opterr = 1;";
+  stream << "  opterr = params->print_errors;";
   stream << "\n";
   stream << indent_str;
   stream << "  optopt = '?';";
@@ -1649,16 +3398,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "    {";
   stream << "\n";
   stream << indent_str;
-  if (check_possible_values)
-    {
-      stream << "      int found = 0;";
-      stream << "\n";
-      stream << indent_str;
-    }
   stream << "      int option_index = 0;";
-  stream << "\n";
-  stream << indent_str;
-  stream << "      char *stop_char;";
   stream << "\n";
   stream << indent_str;
   stream << "\n";
@@ -1679,9 +3419,6 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "      };";
   stream << "\n";
   stream << indent_str;
-  stream << "\n";
-  stream << indent_str;
-  stream << "      stop_char = 0;";
   stream << "\n";
   stream << indent_str;
   if (include_getopt)
@@ -2451,6 +4188,9 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "  params.check_ambiguity = 0;";
       stream << "\n";
       stream << indent_str;
+      stream << "  params.print_errors = 1;";
+      stream << "\n";
+      stream << indent_str;
       indent = 2;
       stream << "  ";
       indent = 0;
@@ -2835,6 +4575,9 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "\n";
       stream << indent_str;
       stream << "  params.check_ambiguity = 0;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  params.print_errors = 1;";
       stream << "\n";
       stream << indent_str;
       stream << "\n";

@@ -1,26 +1,5 @@
-if (@structure@->@opt_var@_arg)
-  {
-    for (i = 0; i < @structure@->@opt_var@_given; ++i)
-      {
 @IF@ has_string_type @THEN@
-        if (@structure@->@opt_var@_arg [i])
-          {
-            free (@structure@->@opt_var@_arg [i]); /* free @comment@ */
-            @structure@->@opt_var@_arg [i] = 0;
-          }
+free_multiple_string_field (@structure@->@opt_var@_given, &(@structure@->@opt_var@_arg), &(@structure@->@opt_var@_orig));
+@ELSE@
+free_multiple_field (@structure@->@opt_var@_given, (void **)&(@structure@->@opt_var@_arg), &(@structure@->@opt_var@_orig));
 @ENDIF@
-        if (@structure@->@opt_var@_orig [i])
-          {
-            free (@structure@->@opt_var@_orig [i]); /* free @comment@ */
-            @structure@->@opt_var@_orig [i] = 0;
-          }
-      }
-@IF@ has_string_type @THEN@
-    if (@structure@->@opt_var@_arg [0])
-      free (@structure@->@opt_var@_arg [0]); /* free default string */
-@ENDIF@
-    free (@structure@->@opt_var@_arg); /* free @comment@ */
-    @structure@->@opt_var@_arg = 0;
-    free (@structure@->@opt_var@_orig); /* free @comment@ */
-    @structure@->@opt_var@_orig = 0;
-  }

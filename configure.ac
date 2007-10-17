@@ -20,7 +20,7 @@ AC_INIT(autogen.sh)
 
 AM_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE(gengetopt,2.21)
+AM_INIT_AUTOMAKE(gengetopt,2.22b)
 
 dnl directory for docs (html)
 AC_SUBST(gengetoptdocdir)
@@ -142,6 +142,10 @@ AM_CONDITIONAL(NO_STRDUP, test "$ac_cv_func_strdup" = no )
 AM_CONDITIONAL(NO_SOURCEHIGHLIGHT, test -z "$ac_cv_path_SOURCEHIGHLIGHT" )
 AM_CONDITIONAL(NO_GENGEN, test -z "$ac_cv_path_GENGEN" )
 dnl AM_CONDITIONAL(NO_SSTREAM, test -z "$ac_cv_cxx_have_sstream" )
+
+dnl we want to avoid tests in case we're crosscompiling
+dnl since we wouldn't be able to run the gengetopt executable in that case
+AM_CONDITIONAL(NO_CROSSCOMPILING, test "$cross_compiling" = no )
 
 AH_TEMPLATE(HAVE_LONG_LONG)
 

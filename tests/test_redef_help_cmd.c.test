@@ -28,10 +28,15 @@ const char *gengetopt_args_info_usage = "Usage: test_redef_help [OPTIONS]... [FI
 const char *gengetopt_args_info_description = "";
 
 const char *gengetopt_args_info_help[] = {
-  "  -h, --height  height",
-  "  -V, --vavoom  vavoom instead of version",
+  "      --help     Print help and exit",
+  "      --version  Print version and exit",
+  "  -h, --height   height",
+  "  -V, --vavoom   vavoom instead of version",
     0
 };
+
+typedef enum {ARG_NO
+} test_redef_help_cmd_parser_arg_type;
 
 static
 void clear_given (struct gengetopt_args_info *args_info);
@@ -49,6 +54,8 @@ gengetopt_strdup (const char *s);
 static
 void clear_given (struct gengetopt_args_info *args_info)
 {
+  args_info->help_given = 0 ;
+  args_info->version_given = 0 ;
   args_info->height_given = 0 ;
   args_info->vavoom_given = 0 ;
 }
@@ -62,8 +69,10 @@ void clear_args (struct gengetopt_args_info *args_info)
 static
 void init_args_info(struct gengetopt_args_info *args_info)
 {
-  args_info->height_help = gengetopt_args_info_help[0] ;
-  args_info->vavoom_help = gengetopt_args_info_help[1] ;
+  args_info->help_help = gengetopt_args_info_help[0] ;
+  args_info->version_help = gengetopt_args_info_help[1] ;
+  args_info->height_help = gengetopt_args_info_help[2] ;
+  args_info->vavoom_help = gengetopt_args_info_help[3] ;
   
 }
 
@@ -103,7 +112,7 @@ test_redef_help_cmd_parser_init (struct gengetopt_args_info *args_info)
 }
 
 struct test_redef_help_cmd_parser_params *
-test_redef_help_cmd_parser_params_init()
+test_redef_help_cmd_parser_params_init(void)
 {
   struct test_redef_help_cmd_parser_params *params = 
     (struct test_redef_help_cmd_parser_params *)malloc(sizeof(struct test_redef_help_cmd_parser_params));
@@ -114,24 +123,63 @@ test_redef_help_cmd_parser_params_init()
       params->initialize = 0;
       params->check_required = 0;
       params->check_ambiguity = 0;
+      params->print_errors = 1;
     }
     
   return params;
 }
 
+
+
 static void
 test_redef_help_cmd_parser_release (struct gengetopt_args_info *args_info)
 {
-  
   unsigned int i;
+  
   
   for (i = 0; i < args_info->inputs_num; ++i)
     free (args_info->inputs [i]);
-  
+
   if (args_info->inputs_num)
     free (args_info->inputs);
-  
+
   clear_given (args_info);
+}
+
+static void
+write_into_file(FILE *outfile, const char *opt, const char *arg)
+{
+  if (arg) {
+    fprintf(outfile, "%s=\"%s\"\n", opt, arg);
+  } else {
+    fprintf(outfile, "%s\n", opt);
+  }
+}
+
+
+int
+test_redef_help_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
+{
+  int i = 0;
+
+  if (!outfile)
+    {
+      fprintf (stderr, "%s: cannot dump options to stream\n", TEST_REDEF_HELP_CMD_PARSER_PACKAGE);
+      return EXIT_FAILURE;
+    }
+
+  if (args_info->help_given)
+    write_into_file(outfile, "help", 0 );
+  if (args_info->version_given)
+    write_into_file(outfile, "version", 0 );
+  if (args_info->height_given)
+    write_into_file(outfile, "height", 0 );
+  if (args_info->vavoom_given)
+    write_into_file(outfile, "vavoom", 0 );
+  
+
+  i = EXIT_SUCCESS;
+  return i;
 }
 
 int
@@ -148,16 +196,9 @@ test_redef_help_cmd_parser_file_save(const char *filename, struct gengetopt_args
       return EXIT_FAILURE;
     }
 
-  if (args_info->height_given) {
-    fprintf(outfile, "%s\n", "height");
-  }
-  if (args_info->vavoom_given) {
-    fprintf(outfile, "%s\n", "vavoom");
-  }
-  
+  i = test_redef_help_cmd_parser_dump(outfile, args_info);
   fclose (outfile);
 
-  i = EXIT_SUCCESS;
   return i;
 }
 
@@ -216,6 +257,7 @@ test_redef_help_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args
   params.initialize = initialize;
   params.check_required = check_required;
   params.check_ambiguity = 0;
+  params.print_errors = 1;
 
   result = test_redef_help_cmd_parser_internal (argc, argv, args_info, &params, NULL);
 
@@ -234,6 +276,92 @@ test_redef_help_cmd_parser_required (struct gengetopt_args_info *args_info, cons
   return EXIT_SUCCESS;
 }
 
+
+static char *package_name = 0;
+
+/**
+ * @brief updates an option
+ * @param field the generic pointer to the field to update
+ * @param orig_field the pointer to the orig field
+ * @param field_given the pointer to the number of occurrence of this option
+ * @param prev_given the pointer to the number of occurrence already seen
+ * @param val the argument for this option (if null no arg was specified)
+ * @param orig the actual argument (can be different in case of options with values)
+ * @param possible_values the possible values for this option (if specified)
+ * @param default_value the default value (in case the option only accepts fixed values)
+ * @param arg_type the type of this option
+ * @param check_ambiguity @see test_redef_help_cmd_parser_params.check_ambiguity
+ * @param override @see test_redef_help_cmd_parser_params.override
+ * @param no_free whether to free a possible previous value
+ * @param multiple_option whether this is a multiple option
+ * @param long_opt the corresponding long option
+ * @param short_opt the corresponding short option (or '-' if none)
+ * @param additional_error possible further error specification
+ */
+static
+int update_arg(void *field, char **orig_field,
+               unsigned int *field_given, unsigned int *prev_given, 
+               const char *val, char *orig,
+               char *possible_values[], const char *default_value,
+               test_redef_help_cmd_parser_arg_type arg_type,
+               short check_ambiguity, short override,
+               short no_free, short multiple_option,
+               const char *long_opt, char short_opt,
+               const char *additional_error)
+{
+  char *stop_char;
+  int found;
+
+  stop_char = 0;
+  found = 0;
+
+  if (!multiple_option && prev_given && (*prev_given || (check_ambiguity && *field_given)))
+    {
+      if (short_opt != '-')
+        fprintf (stderr, "%s: `--%s' (`-%c') option given more than once%s\n", 
+               package_name, long_opt, short_opt,
+               (additional_error ? additional_error : ""));
+      else
+        fprintf (stderr, "%s: `--%s' option given more than once%s\n", 
+               package_name, long_opt,
+               (additional_error ? additional_error : ""));
+      return 1; /* failure */
+    }
+
+    
+  if (field_given && *field_given && ! override)
+    return 0;
+  if (prev_given)
+    (*prev_given)++;
+  if (field_given)
+    (*field_given)++;
+
+  switch(arg_type) {
+  default:
+    break;
+  };
+
+
+  /* store the original value */
+  switch(arg_type) {
+  case ARG_NO:
+    break;
+  default:
+    if (orig && orig_field) {
+      if (no_free) {
+        *orig_field = orig;
+      } else {
+        if (*orig_field)
+          free (*orig_field); /* free previous string */
+        *orig_field = gengetopt_strdup (orig);
+      }
+    }
+  };
+
+  return 0; /* OK */
+}
+
+
 int
 test_redef_help_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
                         struct test_redef_help_cmd_parser_params *params, const char *additional_error)
@@ -248,6 +376,8 @@ test_redef_help_cmd_parser_internal (int argc, char * const *argv, struct genget
   int check_required;
   int check_ambiguity;
   
+  package_name = argv[0];
+  
   override = params->override;
   initialize = params->initialize;
   check_required = params->check_required;
@@ -260,21 +390,21 @@ test_redef_help_cmd_parser_internal (int argc, char * const *argv, struct genget
 
   optarg = 0;
   optind = 0;
-  opterr = 1;
+  opterr = params->print_errors;
   optopt = '?';
 
   while (1)
     {
       int option_index = 0;
-      char *stop_char;
 
       static struct option long_options[] = {
+        { "help",	0, NULL, 0 },
+        { "version",	0, NULL, 0 },
         { "height",	0, NULL, 'h' },
         { "vavoom",	0, NULL, 'V' },
         { NULL,	0, NULL, 0 }
       };
 
-      stop_char = 0;
       c = getopt_long (argc, argv, "hV", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -282,31 +412,41 @@ test_redef_help_cmd_parser_internal (int argc, char * const *argv, struct genget
       switch (c)
         {
         case 'h':	/* height.  */
-          if (local_args_info.height_given || (check_ambiguity && args_info->height_given))
-            {
-              fprintf (stderr, "%s: `--height' (`-h') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->height_given && ! override)
-            continue;
-          local_args_info.height_given = 1;
-          args_info->height_given = 1;
+        
+          if (update_arg( 0 , 
+               0 , &(args_info->height_given),
+              &(local_args_info.height_given), optarg, optarg, 0, 0, ARG_NO,
+              check_ambiguity, override, 0, 0,
+              "height", 'h',
+              additional_error))
+            goto failure;
+        
           break;
-
         case 'V':	/* vavoom instead of version.  */
-          if (local_args_info.vavoom_given || (check_ambiguity && args_info->vavoom_given))
-            {
-              fprintf (stderr, "%s: `--vavoom' (`-V') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->vavoom_given && ! override)
-            continue;
-          local_args_info.vavoom_given = 1;
-          args_info->vavoom_given = 1;
+        
+          if (update_arg( 0 , 
+               0 , &(args_info->vavoom_given),
+              &(local_args_info.vavoom_given), optarg, optarg, 0, 0, ARG_NO,
+              check_ambiguity, override, 0, 0,
+              "vavoom", 'V',
+              additional_error))
+            goto failure;
+        
           break;
-
 
         case 0:	/* Long option with no short option */
+          if (strcmp (long_options[option_index].name, "help") == 0) {
+            test_redef_help_cmd_parser_print_help ();
+            test_redef_help_cmd_parser_free (&local_args_info);
+            exit (EXIT_SUCCESS);
+          }
+
+          if (strcmp (long_options[option_index].name, "version") == 0) {
+            test_redef_help_cmd_parser_print_version ();
+            test_redef_help_cmd_parser_free (&local_args_info);
+            exit (EXIT_SUCCESS);
+          }
+
         case '?':	/* Invalid option.  */
           /* `getopt_long' already printed an error message.  */
           goto failure;

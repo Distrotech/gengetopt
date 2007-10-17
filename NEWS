@@ -7,6 +7,20 @@ Please send gengetopt bug reports to bug-gengetopt at gnu.org
 For details about the new features, you can take a look at:
 http://tronprog.blogspot.com/search/label/gengetopt
 
+Version 2.22
+
+   * avoid test suite if crosscompiling
+   * generated code is averagely less verbose
+   * generate a function to save the command line options into an open stream
+     (thanks to Papp Gyozo).
+   * given fields are unsigned also for non multiple options
+   * removed compilation warnings for generated code when using
+     -Wstrict-prototypes (thanks to Andre Noll)
+   * added print_errors parameters to pass to generated parser function to
+     suppress getopt_long message printing (thanks to J. David Bryan)
+   * if h is specified as a short option, then --help is still automatically
+     generated, the same holds for --version and v (thanks to J. David Bryan)
+
 Version 2.21
 
    * a structure for parser function parameters (that might be extended

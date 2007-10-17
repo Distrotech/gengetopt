@@ -18,17 +18,15 @@ class reset_group_gen_class
  protected:
   string args_info;
   string body;
-  bool multiple_arg;
   string name;
 
  public:
-  reset_group_gen_class() :
-    multiple_arg (false)
+  reset_group_gen_class()
   {
   }
   
-  reset_group_gen_class(const string &_args_info, const string &_body, bool _multiple_arg, const string &_name) :
-    args_info (_args_info), body (_body), multiple_arg (_multiple_arg), name (_name)
+  reset_group_gen_class(const string &_args_info, const string &_body, const string &_name) :
+    args_info (_args_info), body (_body), name (_name)
   {
   }
 
@@ -63,11 +61,6 @@ class reset_group_gen_class
   void set_body(const string &_body)
   {
     body = _body;
-  }
-
-  void set_multiple_arg(bool _multiple_arg)
-  {
-    multiple_arg = _multiple_arg;
   }
 
   void set_name(const string &_name)

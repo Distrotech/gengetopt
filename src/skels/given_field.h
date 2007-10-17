@@ -19,16 +19,15 @@ class given_field_gen_class
   string arg_name;
   bool group;
   string long_opt;
-  bool multiple;
 
  public:
   given_field_gen_class() :
-    group (false), multiple (false)
+    group (false)
   {
   }
   
-  given_field_gen_class(const string &_arg_name, bool _group, const string &_long_opt, bool _multiple) :
-    arg_name (_arg_name), group (_group), long_opt (_long_opt), multiple (_multiple)
+  given_field_gen_class(const string &_arg_name, bool _group, const string &_long_opt) :
+    arg_name (_arg_name), group (_group), long_opt (_long_opt)
   {
   }
 
@@ -68,11 +67,6 @@ class given_field_gen_class
   void set_long_opt(const string &_long_opt)
   {
     long_opt = _long_opt;
-  }
-
-  void set_multiple(bool _multiple)
-  {
-    multiple = _multiple;
   }
 
   void generate_given_field(ostream &stream, unsigned int indent = 0);

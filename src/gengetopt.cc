@@ -107,7 +107,7 @@ main (int argc, char **argv)
   char *header_ext  ; /* extenstion of header file */
   string output_dir; /* output directory (default empty -> current dir)*/
 
-  int i;
+  int i, has_help, has_version;
   FILE *input_file ;
 
   if (cmdline_parser (argc, argv, &args_info) != 0) {
@@ -179,8 +179,10 @@ main (int argc, char **argv)
     free(current_section);
   current_section = 0;
 
-  if (gengetopt_has_option (VERSION_LONG_OPT, VERSION_SHORT_OPT) == 0) {
-    gengetopt_create_option (opt, VERSION_LONG_OPT, VERSION_SHORT_OPT,
+  has_version = gengetopt_has_option (VERSION_LONG_OPT, VERSION_SHORT_OPT);
+
+  if (has_version != REQ_LONG_OPTION) {
+    gengetopt_create_option (opt, VERSION_LONG_OPT, has_version ? '-' : VERSION_SHORT_OPT,
                                  VERSION_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0);
     gengetopt_options.push_front(opt);
   }
@@ -191,8 +193,10 @@ main (int argc, char **argv)
       gengetopt_options.push_front(opt);
   }
 
-  if (gengetopt_has_option(HELP_LONG_OPT, HELP_SHORT_OPT) == 0) {
-    gengetopt_create_option (opt, HELP_LONG_OPT, HELP_SHORT_OPT,
+  has_help = gengetopt_has_option(HELP_LONG_OPT, HELP_SHORT_OPT);
+ 
+  if (has_help != REQ_LONG_OPTION) {
+    gengetopt_create_option (opt, HELP_LONG_OPT, has_help ? '-' : HELP_SHORT_OPT,
                                  HELP_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0);
     gengetopt_options.push_front(opt);
   }

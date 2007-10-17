@@ -18,15 +18,16 @@ class handle_help_gen_class
  protected:
   bool full_help;
   string parser_name;
+  bool short_opt;
 
  public:
   handle_help_gen_class() :
-    full_help (false)
+    full_help (false), short_opt (false)
   {
   }
   
-  handle_help_gen_class(bool _full_help, const string &_parser_name) :
-    full_help (_full_help), parser_name (_parser_name)
+  handle_help_gen_class(bool _full_help, const string &_parser_name, bool _short_opt) :
+    full_help (_full_help), parser_name (_parser_name), short_opt (_short_opt)
   {
   }
 
@@ -61,6 +62,11 @@ class handle_help_gen_class
   void set_parser_name(const string &_parser_name)
   {
     parser_name = _parser_name;
+  }
+
+  void set_short_opt(bool _short_opt)
+  {
+    short_opt = _short_opt;
   }
 
   void generate_handle_help(ostream &stream, unsigned int indent = 0);

@@ -27,14 +27,21 @@ handle_help_gen_class::generate_handle_help(ostream &stream, unsigned int indent
     }
   else
     {
-      stream << "case 'h':	/* Print help and exit.  */";
-      stream << "\n";
-      stream << indent_str;
-      indent = 2;
+      if (short_opt)
+        {
+          stream << "case 'h':	/* Print help and exit.  */";
+          stream << "\n";
+          stream << indent_str;
+        }
+      else
+        {
+          stream << "if (strcmp (long_options[option_index].name, \"help\") == 0) {";
+          stream << "\n";
+          stream << indent_str;
+        }
       stream << "  ";
       generate_string (parser_name, stream, indent + indent_str.length ());
       stream << "_print_help ();";
-      indent = 0;
       stream << "\n";
       stream << indent_str;
     }
@@ -44,12 +51,10 @@ handle_help_gen_class::generate_handle_help(ostream &stream, unsigned int indent
   stream << "\n";
   stream << indent_str;
   stream << "  exit (EXIT_SUCCESS);";
-  if (full_help)
+  if (( full_help || ( ! short_opt ) ))
     {
       stream << "\n";
       stream << indent_str;
       stream << "}";
-      stream << "\n";
-      stream << indent_str;
     }
 }

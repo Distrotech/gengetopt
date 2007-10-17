@@ -1,6 +1,11 @@
+*** no_strings
+*** no_multi_strings
+*** no_unamed
+*** no_optgiven.sh
 ./no_optgiven: '--foo' ('-i') option required
 the no_optgiven_cmd_parser2 returned successfully
 ./no_optgiven2: '--foo' ('-i') option required
+*** more_than_once.sh
 foo option: 10
 bar option: hey
 arg: test1
@@ -11,8 +16,11 @@ bar option: hey
 arg: test1
 arg: test2
 arg: test3
+*** canonize-names
+*** no_prog_name
 specified --required: foo
 additional: unamed
+*** default_values
 foo-opt is given: 0
 bar-opt is given: 0
 Value of foo: 15000
@@ -22,15 +30,19 @@ Value of bar-opt: this is a default
 Value of foofloat: 15000.000000
 Value of foodouble: 15000.000000
 Value of PI:     3.1415926536
+*** default_cmdline
 Value of foo: 15000
 Value of bar: this is a default
+*** test_all_opts.sh
 specified --opt-arg
 specified --opt-arg-short
 specified --opt-arg with argument bar
 specified --opt-arg-short with argument foobar
 specified --hidden: 10
+*** test_all_opts_file_save.sh
 specified --opt-arg
 specified --opt-arg-short
+*** test_groups.sh
 ./test_groups: 0 options of group grp1 were given. One is required.
 ./test_groups: 2 options of group grp1 were given. One is required.
 ./test_groups: 2 options of group my grp2 were given. At most one is required.
@@ -43,6 +55,7 @@ optAmul arg: foo
 optAmul arg: bar
 optAmul arg: (null)
 optAmul arg: aaa
+*** test_conf_parser.sh
 value of required: this is a test
 value of string: another
 value of no-short_given: 1
@@ -65,6 +78,7 @@ noarg_noshort given 2 times
 opt-arg given: 1
 opt-arg value: not given
 saved configuration file test_conf_parser.save
+*** test_conf_parser_ov.sh
 value of required: bar
 value of string: another
 value of no-short_given: 1
@@ -79,11 +93,13 @@ value of multi-string_given: 6
   value of multi-string: sixth
 value of multi-string-def_given: 0
 default value of multi-string-def: this default
+*** test_conf_parser_ov2.sh
 value of required: bar
 value of string: another
 value of no-short_given: 1
 value of int: 100
 value of float: 2.140000
+*** test_conf_parser_ov3.sh
 value of required: bar
 value of string: another
 value of no-short_given: 1
@@ -99,15 +115,19 @@ value of multi-string_given: 7
   value of multi-string: last?
 value of multi-string-def_given: 0
 default value of multi-string-def: this default
+*** test_conf_parser_ov4.sh
 value of required: this is a test
 value of string: another
 value of no-short_given: 1
 value of int: 100
 value of float: 3.140000
 ./test_conf_parser_ov4: `--required' (`-r') option given more than once
+*** test_conf_parser_err.sh
 test_conf_parser: option `--string' requires an argument
+*** test_conf_parser_err_string.sh
 test_conf_parser:./test_conf_err_string.conf:3: malformed string in configuration file
 test_conf_parser:./test_conf_err_string2.conf:3: unterminated string in configuration file
+*** test_conf_parser_grp.sh
 value of required: this is a test
 value of string: another
 value of no-short_given: 1
@@ -125,6 +145,7 @@ noarg given 0 times
 noarg_noshort given 0 times
 opt-arg given: 0
 opt-arg value: not given
+*** test_conf_parser_save.sh
 read configuration file: test_conf_parser.save
 value of required: this is a test
 value of string: another
@@ -147,6 +168,7 @@ noarg given 3 times
 noarg_noshort given 2 times
 opt-arg given: 1
 opt-arg value: not given
+*** test_multiple.sh
 passed string: \"foo\"
 passed string: bar
 passed string: hello
@@ -170,6 +192,7 @@ optarg argument: second arg for optarg
 optarg_noshort_given 2 times
 optarg_noshort argument: second arg for optarg
 optarg_noshort argument: no arg given
+*** test_multiple_err.sh
 ./test_multiple: option requires an argument -- s
 ./test_multiple: '--int' ('-i') option required
 ./test_multiple: '--limited' ('-L') option occurrences must be 3
@@ -177,6 +200,7 @@ optarg_noshort argument: no arg given
 ./test_multiple: '--limited-open-right' option occurrences must be at least 3
 ./test_multiple: '--int' ('-i') option required
 ./test_multiple: '--limited-open-left' option occurrences must be at most 3
+*** test_sections.sh
 test_sections 1.0
 
 Usage: test_sections [OPTIONS]... [FILES]...
@@ -206,6 +230,7 @@ Second section:
 Last section:
       --no-short               no short option
   -r, --required=STRING        required option (mandatory)
+*** test_default_values.sh
 foo-opt is given: 0
 bar-opt is given: 0
 Value of foo: 15000
@@ -252,6 +277,7 @@ Value of foofloat: 15000.000000
 Value of foodouble: 15000.000000
 Value of PI:     3.1415926536
 ./default_values: invalid numeric value: a5
+*** test_values.sh
 specified --string-values with argument foobar
 specified --string-values with (original) argument foob
 (un)specified --string-values-def with argument bar
@@ -275,12 +301,15 @@ specified --multistring-values-no-short with argument bar
 specified --multistring-values-no-short with argument bar
 specified --multistring-values-no-short with argument bar
 specified --multistring-values-no-short with argument foo
+*** test_values_err.sh
 ./test_values: ambiguous argument, "fo", for option `--string-values' (`-s')
 ./test_values: invalid argument, "fooa", for option `--multistring-values' (`-S')
 ./test_values: invalid argument, "fooa", for option `--string-values-no-short'
 ./test_values: invalid argument, "fooa", for option `--multistring-values-no-short'
+*** test_dep.sh
 ./test_all_opts: '--dependant' ('-A') option depends on option 'opt-arg'
 specified --opt-arg with argument bar
+*** test_multiple_parsers.sh
 second cmdline: -a20 -b10 --my-multi=a,b,c,d,e,f
   --option-a: 20
   --option-b: 10
@@ -301,6 +330,7 @@ first cmdline: -M400 -a10 --multi 100,200,300
 first cmdline: -M500 -M600
   --multi: 500
   --multi: 600
+*** test_show_help.sh
 test_all_opts 1.0
 
 This is just a gengetopt's test file
@@ -400,12 +430,14 @@ Usage: test_values [OPTIONS]...
       --string-values-group=FOO group string option with values and default  
                                   (possible values="foo", "bar", 
                                   "foobar", "barfoo" default=`bar')
+*** test_err.sh
 diff wrong_dep.err.out ./wrong_dep.err
 diff wrong_flag.err.out ./wrong_flag.err
 diff wrong_flag2.err.out ./wrong_flag2.err
 diff wrong_group.err.out ./wrong_group.err
 diff wrong_group2.err.out ./wrong_group2.err
 diff wrong_type.err.out ./wrong_type.err
+*** no_strings -h
 no_strings 1.0
 
 Usage: no_strings [--foo|-i] <additional files>
@@ -413,6 +445,7 @@ Usage: no_strings [--foo|-i] <additional files>
   -h, --help     Print help and exit
   -V, --version  Print version and exit
   -i, --foo=INT  foo option
+*** no_multi_strings -h
 no multi strings 0.1
 
 Has multiple options none of which are strings
@@ -423,6 +456,7 @@ Usage: no multi strings [OPTIONS]... [FILES]...
   -V, --version            Print version and exit
   -t, --test=A test value  This is a test option  (default=`5')
       --multi=Multivalue   This is a multi option
+*** no_unamed -h
 no_unamed 1.0
 
 Usage: no_unamed [OPTIONS]...
@@ -430,6 +464,7 @@ Usage: no_unamed [OPTIONS]...
   -h, --help        Print help and exit
   -V, --version     Print version and exit
   -i, --foo=STRING  foo string option
+*** no_optgiven -h
 no_optgiven 1.0
 
 Usage: no_optgiven [OPTIONS]... [FILES]...
@@ -437,6 +472,7 @@ Usage: no_optgiven [OPTIONS]... [FILES]...
   -h, --help     Print help and exit
   -V, --version  Print version and exit
   -i, --foo=INT  foo option
+*** no_optgiven2 -h
 no_optgiven 1.0
 
 Usage: no_optgiven [OPTIONS]... [FILES]...
@@ -444,6 +480,7 @@ Usage: no_optgiven [OPTIONS]... [FILES]...
   -h, --help     Print help and exit
   -V, --version  Print version and exit
   -i, --foo=INT  foo option
+*** more_than_once -h
 more_than_once 1.0
 
 Usage: more_than_once [OPTIONS]... [FILES]...
@@ -452,8 +489,10 @@ Usage: more_than_once [OPTIONS]... [FILES]...
   -V, --version     Print version and exit
   -f, --foo=INT     foo option
   -b, --bar=STRING  bar option
+*** no_prog_name -h
 specified --required: foo
 additional: unamed
+*** canonize-names -h
 canonize_names 1.0
 
 Usage: canonize_names [OPTIONS]...
@@ -461,6 +500,7 @@ Usage: canonize_names [OPTIONS]...
   -h, --help     Print help and exit
   -V, --version  Print version and exit
   -i, --foo=INT  foo option
+*** default_values -h
 default_values 1.0
 
 Usage: default_values [OPTIONS]... [FILES]...
@@ -478,6 +518,7 @@ Usage: default_values [OPTIONS]... [FILES]...
   -s, --timeout=123456789012  number of seconds after the scanning is cancelled 
                                 if no progress is shown at all.  
                                 (default=`120')
+*** default_cmdline -h
 gengetopt 1.0
 
 Usage: gengetopt [OPTIONS]...
@@ -486,6 +527,7 @@ Usage: gengetopt [OPTIONS]...
   -V, --version     Print version and exit
   -f, --foo=INT     foo option  (default=`15000')
   -b, --bar=STRING  bar option  (default=`this is a default')
+*** test_all_opts -h
 test_all_opts 1.0
 
 This is just a gengetopt's test file
@@ -542,6 +584,7 @@ Moreover, text can be specified more than once in the input file.
       --file-save=STRING        save the passed options into a file
 
 A text after all options.
+*** test_groups -h
 test_groups 1.0
 
 Usage: test_groups [OPTIONS]... [FILES]...
@@ -563,6 +606,7 @@ some groups just for testing:
  Group: my grp2
       --optc              string c
   -d, --optd              string d
+*** test_conf_parser -h
 test_conf_parser 1.0
 
 Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
@@ -598,6 +642,7 @@ Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
       --noarg-noshort           multiple option with no arg and no short
       --opt-arg[=STRING]        option with optional arg
       --file-save=STRING        save the passed options into a file
+*** test_conf_parser_ov -h
 test_conf_parser 1.0
 
 Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
@@ -633,6 +678,7 @@ Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
       --noarg-noshort           multiple option with no arg and no short
       --opt-arg[=STRING]        option with optional arg
       --file-save=STRING        save the passed options into a file
+*** test_conf_parser_ov2 -h
 test_conf_parser 1.0
 
 Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
@@ -668,6 +714,7 @@ Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
       --noarg-noshort           multiple option with no arg and no short
       --opt-arg[=STRING]        option with optional arg
       --file-save=STRING        save the passed options into a file
+*** test_conf_parser_ov3 -h
 test_conf_parser 1.0
 
 Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
@@ -703,6 +750,7 @@ Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
       --noarg-noshort           multiple option with no arg and no short
       --opt-arg[=STRING]        option with optional arg
       --file-save=STRING        save the passed options into a file
+*** test_conf_parser_ov4 -h
 test_conf_parser 1.0
 
 Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
@@ -738,6 +786,7 @@ Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
       --noarg-noshort           multiple option with no arg and no short
       --opt-arg[=STRING]        option with optional arg
       --file-save=STRING        save the passed options into a file
+*** test_conf_parser_file_save -h
 test_conf_parser 1.0
 
 Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
@@ -773,6 +822,7 @@ Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...
       --noarg-noshort           multiple option with no arg and no short
       --opt-arg[=STRING]        option with optional arg
       --file-save=STRING        save the passed options into a file
+*** test_multiple -h
 test_multiple 1.0
 
 Usage: test_multiple [OPTIONS]... [FILES]...
@@ -800,6 +850,7 @@ Usage: test_multiple [OPTIONS]... [FILES]...
   -M, --optarg[=ID]             multi with optional args
       --optarg-noshort[=ID]     multi with optional args and no short
       --file-save=STRING        save the passed options into a file
+*** test_sections -h
 test_sections 1.0
 
 Usage: test_sections [OPTIONS]... [FILES]...
@@ -829,6 +880,7 @@ Second section:
 Last section:
       --no-short               no short option
   -r, --required=STRING        required option (mandatory)
+*** test_values -h
 test_values 1.0
 
 This is just a test file
@@ -870,7 +922,9 @@ Usage: test_values [OPTIONS]... [FILES]...
       --string-values-group=FOO group string option with values and default  
                                   (possible values="foo", "bar", 
                                   "foobar", "barfoo" default=`bar')
+*** test_redef_help -h
 specified --height
+*** test_multiple_parsers -h
 gengetopt 1.0
 
 Usage: gengetopt [OPTIONS]... [FILES]...
@@ -880,6 +934,7 @@ Usage: gengetopt [OPTIONS]... [FILES]...
   -F, --first-cmd=first command the first command line to parse (mandatory)
   -S, --second-cmd=second command
                                 the second command line to parse (mandatory)
+*** test_all_opts --full-help
 test_all_opts 1.0
 
 This is just a gengetopt's test file

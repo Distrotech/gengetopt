@@ -42,6 +42,10 @@ const char *gengetopt_args_info_help[] = {
     0
 };
 
+typedef enum {ARG_NO
+  , ARG_STRING
+} test_groups_cmd_parser_arg_type;
+
 static
 void clear_given (struct gengetopt_args_info *args_info);
 static
@@ -53,13 +57,6 @@ test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
 
 static int
 test_groups_cmd_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error);
-
-struct string_list
-{
-  char * arg;
-  char *orig;
-  struct string_list * next;
-};
 
 static char *
 gengetopt_strdup (const char *s);
@@ -143,7 +140,7 @@ test_groups_cmd_parser_init (struct gengetopt_args_info *args_info)
 }
 
 struct test_groups_cmd_parser_params *
-test_groups_cmd_parser_params_init()
+test_groups_cmd_parser_params_init(void)
 {
   struct test_groups_cmd_parser_params *params = 
     (struct test_groups_cmd_parser_params *)malloc(sizeof(struct test_groups_cmd_parser_params));
@@ -154,56 +151,132 @@ test_groups_cmd_parser_params_init()
       params->initialize = 0;
       params->check_required = 0;
       params->check_ambiguity = 0;
+      params->print_errors = 1;
     }
     
   return params;
 }
 
 static void
+free_string_field (char **s)
+{
+  if (*s)
+    {
+      free (*s);
+      *s = 0;
+    }
+}
+
+/** @brief generic value variable */
+union generic_value {
+    char *string_arg;
+};
+
+/** @brief holds temporary values for multiple options */
+struct generic_list
+{
+  union generic_value arg;
+  char *orig;
+  struct generic_list *next;
+};
+
+/**
+ * @brief add a node at the head of the list 
+ */
+static void add_node(struct generic_list **list) {
+  struct generic_list *new_node = (struct generic_list *) malloc (sizeof (struct generic_list));
+  new_node->next = *list;
+  *list = new_node;
+  new_node->arg.string_arg = NULL;
+  new_node->orig = NULL;
+}
+
+
+static void
+free_multiple_string_field(unsigned int len, char ***arg, char ***orig)
+{
+  unsigned int i;
+  if (*arg) {
+    for (i = 0; i < len; ++i)
+      {
+        free_string_field(&((*arg)[i]));
+        free_string_field(&((*orig)[i]));
+      }
+    free_string_field(&((*arg)[0])); /* free default string */
+
+    free (*arg);
+    *arg = 0;
+    free (*orig);
+    *orig = 0;
+  }
+}
+
+static void
 test_groups_cmd_parser_release (struct gengetopt_args_info *args_info)
 {
-  
   unsigned int i;
-  if (args_info->optA_arg)
-    {
-      free (args_info->optA_arg); /* free previous argument */
-      args_info->optA_arg = 0;
-    }
-  if (args_info->optA_orig)
-    {
-      free (args_info->optA_orig); /* free previous argument */
-      args_info->optA_orig = 0;
-    }
-  if (args_info->optAmul_arg)
-    {
-      for (i = 0; i < args_info->optAmul_given; ++i)
-        {
-          if (args_info->optAmul_arg [i])
-            {
-              free (args_info->optAmul_arg [i]); /* free previous argument */
-              args_info->optAmul_arg [i] = 0;
-            }
-          if (args_info->optAmul_orig [i])
-            {
-              free (args_info->optAmul_orig [i]); /* free previous argument */
-              args_info->optAmul_orig [i] = 0;
-            }
-        }
-      if (args_info->optAmul_arg [0])
-        free (args_info->optAmul_arg [0]); /* free default string */
-      free (args_info->optAmul_arg); /* free previous argument */
-      args_info->optAmul_arg = 0;
-      free (args_info->optAmul_orig); /* free previous argument */
-      args_info->optAmul_orig = 0;
-    }
+  free_string_field (&(args_info->optA_arg));
+  free_string_field (&(args_info->optA_orig));
+  free_multiple_string_field (args_info->optAmul_given, &(args_info->optAmul_arg), &(args_info->optAmul_orig));
+  
   
   for (i = 0; i < args_info->inputs_num; ++i)
     free (args_info->inputs [i]);
-  
+
   if (args_info->inputs_num)
     free (args_info->inputs);
-  
+
   clear_given (args_info);
+}
+
+static void
+write_into_file(FILE *outfile, const char *opt, const char *arg)
+{
+  if (arg) {
+    fprintf(outfile, "%s=\"%s\"\n", opt, arg);
+  } else {
+    fprintf(outfile, "%s\n", opt);
+  }
+}
+
+static void
+write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg)
+{
+  int i;
+  
+  for (i = 0; i < len; ++i)
+    write_into_file(outfile, opt, (arg ? arg[i] : 0));
+}
+
+int
+test_groups_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
+{
+  int i = 0;
+
+  if (!outfile)
+    {
+      fprintf (stderr, "%s: cannot dump options to stream\n", TEST_GROUPS_CMD_PARSER_PACKAGE);
+      return EXIT_FAILURE;
+    }
+
+  if (args_info->help_given)
+    write_into_file(outfile, "help", 0 );
+  if (args_info->version_given)
+    write_into_file(outfile, "version", 0 );
+  write_multiple_into_file(outfile, args_info->opta_given, "opta", 0);
+  if (args_info->optA_given)
+    write_into_file(outfile, "optA", args_info->optA_orig);
+  write_multiple_into_file(outfile, args_info->optAmul_given, "optAmul", args_info->optAmul_orig);
+  if (args_info->optb_given)
+    write_into_file(outfile, "optb", 0 );
+  if (args_info->optc_given)
+    write_into_file(outfile, "optc", 0 );
+  if (args_info->optd_given)
+    write_into_file(outfile, "optd", 0 );
+  
+
+  i = EXIT_SUCCESS;
+  return i;
 }
 
 int
@@ -220,47 +293,9 @@ test_groups_cmd_parser_file_save(const char *filename, struct gengetopt_args_inf
       return EXIT_FAILURE;
     }
 
-  if (args_info->help_given) {
-    fprintf(outfile, "%s\n", "help");
-  }
-  if (args_info->version_given) {
-    fprintf(outfile, "%s\n", "version");
-  }
-  for (i = 0; i < args_info->opta_given; ++i)
-    {
-      fprintf(outfile, "%s\n", "opta");
-      
-    }
-  if (args_info->optA_given) {
-    if (args_info->optA_orig) {
-      fprintf(outfile, "%s=\"%s\"\n", "optA", args_info->optA_orig);
-    } else {
-      fprintf(outfile, "%s\n", "optA");
-    }
-  }
-  if (args_info->optAmul_orig)
-    {
-      for (i = 0; i < args_info->optAmul_given; ++i)
-        {
-          if (args_info->optAmul_orig [i])
-            {
-              fprintf(outfile, "%s=\"%s\"\n", "optAmul", args_info->optAmul_orig [i]);
-            }
-        }
-    }
-  if (args_info->optb_given) {
-    fprintf(outfile, "%s\n", "optb");
-  }
-  if (args_info->optc_given) {
-    fprintf(outfile, "%s\n", "optc");
-  }
-  if (args_info->optd_given) {
-    fprintf(outfile, "%s\n", "optd");
-  }
-  
+  i = test_groups_cmd_parser_dump(outfile, args_info);
   fclose (outfile);
 
-  i = EXIT_SUCCESS;
   return i;
 }
 
@@ -423,57 +458,21 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
   return error;
 }
 static void
-reset_group_grp1(struct gengetopt_args_info *args_info);
-
-static void
 reset_group_grp1(struct gengetopt_args_info *args_info)
 {
-  unsigned int i;
   if (! args_info->grp1_group_counter)
     return;
   
   args_info->opta_given = 0 ; args_info->opta_group = 0 ;
   args_info->optA_given = 0 ;
-  if (args_info->optA_arg)
-    {
-      free (args_info->optA_arg); /* free previous argument */
-      args_info->optA_arg = 0;
-    }
-  if (args_info->optA_orig)
-    {
-      free (args_info->optA_orig); /* free previous argument */
-      args_info->optA_orig = 0;
-    }
+  free_string_field (&(args_info->optA_arg));
+  free_string_field (&(args_info->optA_orig));
   args_info->optAmul_given = 0 ; args_info->optAmul_group = 0 ;
-  if (args_info->optAmul_arg)
-    {
-      for (i = 0; i < args_info->optAmul_given; ++i)
-        {
-          if (args_info->optAmul_arg [i])
-            {
-              free (args_info->optAmul_arg [i]); /* free previous argument */
-              args_info->optAmul_arg [i] = 0;
-            }
-          if (args_info->optAmul_orig [i])
-            {
-              free (args_info->optAmul_orig [i]); /* free previous argument */
-              args_info->optAmul_orig [i] = 0;
-            }
-        }
-      if (args_info->optAmul_arg [0])
-        free (args_info->optAmul_arg [0]); /* free default string */
-      free (args_info->optAmul_arg); /* free previous argument */
-      args_info->optAmul_arg = 0;
-      free (args_info->optAmul_orig); /* free previous argument */
-      args_info->optAmul_orig = 0;
-    }
+  free_multiple_string_field (args_info->optAmul_given, &(args_info->optAmul_arg), &(args_info->optAmul_orig));
   args_info->optb_given = 0 ;
 
   args_info->grp1_group_counter = 0;
 }
-
-static void
-reset_group_my_grp2(struct gengetopt_args_info *args_info);
 
 static void
 reset_group_my_grp2(struct gengetopt_args_info *args_info)
@@ -519,6 +518,7 @@ test_groups_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_inf
   params.initialize = initialize;
   params.check_required = check_required;
   params.check_ambiguity = 0;
+  params.print_errors = 1;
 
   result = test_groups_cmd_parser_internal (argc, argv, args_info, &params, NULL);
 
@@ -572,16 +572,227 @@ test_groups_cmd_parser_required2 (struct gengetopt_args_info *args_info, const c
   return error;
 }
 
+
+static char *package_name = 0;
+
+/**
+ * @brief updates an option
+ * @param field the generic pointer to the field to update
+ * @param orig_field the pointer to the orig field
+ * @param field_given the pointer to the number of occurrence of this option
+ * @param prev_given the pointer to the number of occurrence already seen
+ * @param val the argument for this option (if null no arg was specified)
+ * @param orig the actual argument (can be different in case of options with values)
+ * @param possible_values the possible values for this option (if specified)
+ * @param default_value the default value (in case the option only accepts fixed values)
+ * @param arg_type the type of this option
+ * @param check_ambiguity @see test_groups_cmd_parser_params.check_ambiguity
+ * @param override @see test_groups_cmd_parser_params.override
+ * @param no_free whether to free a possible previous value
+ * @param multiple_option whether this is a multiple option
+ * @param long_opt the corresponding long option
+ * @param short_opt the corresponding short option (or '-' if none)
+ * @param additional_error possible further error specification
+ */
+static
+int update_arg(void *field, char **orig_field,
+               unsigned int *field_given, unsigned int *prev_given, 
+               const char *val, char *orig,
+               char *possible_values[], const char *default_value,
+               test_groups_cmd_parser_arg_type arg_type,
+               short check_ambiguity, short override,
+               short no_free, short multiple_option,
+               const char *long_opt, char short_opt,
+               const char *additional_error)
+{
+  char *stop_char;
+  int found;
+  char **string_field;
+
+  stop_char = 0;
+  found = 0;
+
+  if (!multiple_option && prev_given && (*prev_given || (check_ambiguity && *field_given)))
+    {
+      if (short_opt != '-')
+        fprintf (stderr, "%s: `--%s' (`-%c') option given more than once%s\n", 
+               package_name, long_opt, short_opt,
+               (additional_error ? additional_error : ""));
+      else
+        fprintf (stderr, "%s: `--%s' option given more than once%s\n", 
+               package_name, long_opt,
+               (additional_error ? additional_error : ""));
+      return 1; /* failure */
+    }
+
+    
+  if (field_given && *field_given && ! override)
+    return 0;
+  if (prev_given)
+    (*prev_given)++;
+  if (field_given)
+    (*field_given)++;
+
+  switch(arg_type) {
+  case ARG_STRING:
+    if (val || possible_values) {
+      string_field = (char **)field;
+      if (!no_free && *string_field)
+        free (*string_field); /* free previous string */
+      *string_field = gengetopt_strdup (possible_values ? possible_values[found] : val);
+    }
+    break;
+  default:
+    break;
+  };
+
+
+  /* store the original value */
+  switch(arg_type) {
+  case ARG_NO:
+    break;
+  default:
+    if (orig && orig_field) {
+      if (no_free) {
+        *orig_field = orig;
+      } else {
+        if (*orig_field)
+          free (*orig_field); /* free previous string */
+        *orig_field = gengetopt_strdup (orig);
+      }
+    }
+  };
+
+  return 0; /* OK */
+}
+
+/**
+ * @brief store information about a multiple option in a temporary list
+ * @param list where to (temporarily) store multiple options
+ */
+static
+int update_multiple_arg_temp(struct generic_list **list,
+               unsigned int *prev_given, const char *val,
+               char *possible_values[], const char *default_value,
+               test_groups_cmd_parser_arg_type arg_type,
+               const char *long_opt, char short_opt,
+               const char *additional_error)
+{
+  char *multi_token, *multi_next; /* store single arguments */
+
+  if (arg_type == ARG_NO) {
+    (*prev_given)++;
+    return 0; /* OK */
+  }
+
+  multi_token = get_multiple_arg_token(val);
+  multi_next = get_multiple_arg_token_next (val);
+
+  while (1)
+    {
+      add_node (list);
+      if (update_arg((void *)&((*list)->arg), &((*list)->orig), 0,
+          prev_given, multi_token, multi_token, possible_values, default_value, 
+          arg_type, 0, 1, 1, 1, long_opt, short_opt, additional_error)) {
+        if (multi_token) free(multi_token);
+        return 1; /* failure */
+      }
+
+      if (multi_next)
+        {
+          multi_token = get_multiple_arg_token(multi_next);
+          multi_next = get_multiple_arg_token_next (multi_next);
+        }
+      else
+        break;
+    }
+
+  return 0; /* OK */
+}
+
+/**
+ * @brief free the passed list (including possible string argument)
+ */
+static
+void free_list(struct generic_list *list, short string_arg)
+{
+  if (list) {
+    struct generic_list *tmp;
+    while (list)
+      {
+        tmp = list;
+        if (string_arg && list->arg.string_arg)
+          free (list->arg.string_arg);
+        if (list->orig)
+          free (list->orig);
+        list = list->next;
+        free (tmp);
+      }
+  }
+}
+
+/**
+ * @brief updates a multiple option starting from the passed list
+ */
+static
+void update_multiple_arg(void *field, char ***orig_field,
+               unsigned int field_given, unsigned int prev_given, union generic_value *default_value,
+               test_groups_cmd_parser_arg_type arg_type,
+               struct generic_list *list)
+{
+  int i;
+  struct generic_list *tmp;
+
+  if (prev_given && list) {
+    *orig_field = (char **) realloc (*orig_field, (field_given + prev_given) * sizeof (char *));
+
+    switch(arg_type) {
+    case ARG_STRING:
+      *((char ***)field) = (char **)realloc (*((char ***)field), (field_given + prev_given) * sizeof (char *)); break;
+    default:
+      break;
+    };
+    
+    for (i = (prev_given - 1); i >= 0; --i)
+      {
+        tmp = list;
+        
+        switch(arg_type) {
+        case ARG_STRING:
+          (*((char ***)field))[i + field_given] = tmp->arg.string_arg; break;
+        default:
+          break;
+        }        
+        (*orig_field) [i + field_given] = list->orig;
+        list = list->next;
+        free (tmp);
+      }
+  } else { /* set the default value */
+    if (default_value && ! field_given) {
+      switch(arg_type) {
+      case ARG_STRING:
+        if (! *((char ***)field)) {
+          *((char ***)field) = (char **)malloc (sizeof (char *));
+          (*((char ***)field))[0] = gengetopt_strdup(default_value->string_arg);
+        }
+        break;
+      default: break;
+      }
+      if (!(*orig_field)) {
+        *orig_field = (char **) malloc (sizeof (char *));
+        (*orig_field)[0] = NULL;
+      }
+    }
+  }
+}
+
 int
 test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
                         struct test_groups_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
-  char *multi_token, *multi_next; /* for multiple options */
 
-  int i;        /* Counter */
-
-  struct string_list * optAmul_list = NULL,* optAmul_new = NULL;
+  struct generic_list * optAmul_list = NULL;
   int error = 0;
   struct gengetopt_args_info local_args_info;
   
@@ -589,6 +800,8 @@ test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
   int initialize;
   int check_required;
   int check_ambiguity;
+  
+  package_name = argv[0];
   
   override = params->override;
   initialize = params->initialize;
@@ -602,13 +815,12 @@ test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
 
   optarg = 0;
   optind = 0;
-  opterr = 1;
+  opterr = params->print_errors;
   optopt = '?';
 
   while (1)
     {
       int option_index = 0;
-      char *stop_char;
 
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
@@ -622,7 +834,6 @@ test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
         { NULL,	0, NULL, 0 }
       };
 
-      stop_char = 0;
       c = getopt_long (argc, argv, "hVaA::M::bd", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -641,121 +852,85 @@ test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
 
         case 'a':	/* string a.  */
           local_args_info.opta_given++;
-        
           if (!args_info->opta_group)
             {
               args_info->opta_group = 1;
               args_info->grp1_group_counter += 1;
             }
+        
           break;
-
         case 'A':	/* string A.  */
-          if (local_args_info.optA_given || (check_ambiguity && args_info->optA_given))
-            {
-              fprintf (stderr, "%s: `--optA' (`-A') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->optA_given && ! override)
-            continue;
-          local_args_info.optA_given = 1;
-          args_info->optA_given = 1;
           if (args_info->grp1_group_counter && override)
             reset_group_grp1 (args_info);
           args_info->grp1_group_counter += 1;
-          if (optarg)
-            {
-              if (args_info->optA_arg)
-                free (args_info->optA_arg); /* free previous string */
-              args_info->optA_arg = gengetopt_strdup (optarg);
-              if (args_info->optA_orig)
-                free (args_info->optA_orig); /* free previous string */
-              args_info->optA_orig = gengetopt_strdup (optarg);
-            }
+        
+          if (update_arg( (void *)&(args_info->optA_arg), 
+               &(args_info->optA_orig), &(args_info->optA_given),
+              &(local_args_info.optA_given), optarg, optarg, 0, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "optA", 'A',
+              additional_error))
+            goto failure;
+        
           break;
-
         case 'M':	/* string M.  */
-          local_args_info.optAmul_given++;
-        
-          multi_token = get_multiple_arg_token(optarg);
-          multi_next = get_multiple_arg_token_next (optarg);
-        
-          while (1)
-            {
-              optAmul_new = (struct string_list *) malloc (sizeof (struct string_list));
-              optAmul_new->next = optAmul_list;
-              optAmul_list = optAmul_new;
-              optAmul_new->arg = gengetopt_strdup (NULL);
-              optAmul_new->orig = NULL;
-              if (multi_token)
-                {
-                  optAmul_new->arg = gengetopt_strdup (multi_token);
-                  optAmul_new->orig = multi_token;
-                }
-        
-              if (multi_next)
-                {
-                  multi_token = get_multiple_arg_token(multi_next);
-                  multi_next = get_multiple_arg_token_next (multi_next);
-                  local_args_info.optAmul_given++;
-                }
-              else
-                break;
-            }
+          if (update_multiple_arg_temp(&optAmul_list, 
+              &(local_args_info.optAmul_given), optarg, 0, 0, ARG_STRING,
+              "optAmul", 'M',
+              additional_error))
+            goto failure;
           if (!args_info->optAmul_group)
             {
               args_info->optAmul_group = 1;
               args_info->grp1_group_counter += 1;
             }
+        
           break;
-
         case 'b':	/* string b.  */
-          if (local_args_info.optb_given || (check_ambiguity && args_info->optb_given))
-            {
-              fprintf (stderr, "%s: `--optb' (`-b') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->optb_given && ! override)
-            continue;
-          local_args_info.optb_given = 1;
-          args_info->optb_given = 1;
           if (args_info->grp1_group_counter && override)
             reset_group_grp1 (args_info);
           args_info->grp1_group_counter += 1;
+        
+          if (update_arg( 0 , 
+               0 , &(args_info->optb_given),
+              &(local_args_info.optb_given), optarg, optarg, 0, 0, ARG_NO,
+              check_ambiguity, override, 0, 0,
+              "optb", 'b',
+              additional_error))
+            goto failure;
+        
           break;
-
         case 'd':	/* string d.  */
-          if (local_args_info.optd_given || (check_ambiguity && args_info->optd_given))
-            {
-              fprintf (stderr, "%s: `--optd' (`-d') option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-              goto failure;
-            }
-          if (args_info->optd_given && ! override)
-            continue;
-          local_args_info.optd_given = 1;
-          args_info->optd_given = 1;
           if (args_info->my_grp2_group_counter && override)
             reset_group_my_grp2 (args_info);
           args_info->my_grp2_group_counter += 1;
+        
+          if (update_arg( 0 , 
+               0 , &(args_info->optd_given),
+              &(local_args_info.optd_given), optarg, optarg, 0, 0, ARG_NO,
+              check_ambiguity, override, 0, 0,
+              "optd", 'd',
+              additional_error))
+            goto failure;
+        
           break;
-
 
         case 0:	/* Long option with no short option */
           /* string c.  */
           if (strcmp (long_options[option_index].name, "optc") == 0)
           {
-            if (local_args_info.optc_given || (check_ambiguity && args_info->optc_given))
-              {
-                fprintf (stderr, "%s: `--optc' option given more than once%s\n", argv[0], (additional_error ? additional_error : ""));
-                goto failure;
-              }
-            if (args_info->optc_given && ! override)
-              continue;
-            local_args_info.optc_given = 1;
-            args_info->optc_given = 1;
             if (args_info->my_grp2_group_counter && override)
               reset_group_my_grp2 (args_info);
             args_info->my_grp2_group_counter += 1;
-            break;
+          
+            if (update_arg( 0 , 
+                 0 , &(args_info->optc_given),
+                &(local_args_info.optc_given), optarg, optarg, 0, 0, ARG_NO,
+                check_ambiguity, override, 0, 0,
+                "optc", '-',
+                additional_error))
+              goto failure;
+          
           }
           
           break;
@@ -782,21 +957,10 @@ test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
     }
   
 
-  if (local_args_info.optAmul_given && optAmul_list)
-    {
-      struct string_list *tmp;
-      args_info->optAmul_arg = (char * *) realloc (args_info->optAmul_arg, (args_info->optAmul_given + local_args_info.optAmul_given) * sizeof (char *));
-      args_info->optAmul_orig = (char **) realloc (args_info->optAmul_orig, (args_info->optAmul_given + local_args_info.optAmul_given) * sizeof (char *));
-      for (i = (local_args_info.optAmul_given - 1); i >= 0; --i)
-        {
-          tmp = optAmul_list;
-          args_info->optAmul_arg [i + args_info->optAmul_given] = optAmul_list->arg;
-          args_info->optAmul_orig [i + args_info->optAmul_given] = optAmul_list->orig;
-          optAmul_list = optAmul_list->next;
-          free (tmp);
-        }
-    }
-  
+  update_multiple_arg((void *)&(args_info->optAmul_arg),
+    &(args_info->optAmul_orig), args_info->optAmul_given,
+    local_args_info.optAmul_given, 0 , 
+    ARG_STRING, optAmul_list);
 
   args_info->opta_given += local_args_info.opta_given;
   local_args_info.opta_given = 0;
@@ -840,18 +1004,7 @@ test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
   return 0;
 
 failure:
-  if (optAmul_list)
-    {
-      struct string_list *tmp;
-      while (optAmul_list)
-        {
-          tmp = optAmul_list;
-          free (optAmul_list->arg);
-          free (optAmul_list->orig);
-          optAmul_list = optAmul_list->next;
-          free (tmp);
-        }
-    }
+  free_list (optAmul_list, 1 );
   
   test_groups_cmd_parser_release (&local_args_info);
   return (EXIT_FAILURE);

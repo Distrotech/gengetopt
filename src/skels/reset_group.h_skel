@@ -1,12 +1,6 @@
 static void
-reset_group_@name@(struct @args_info@ *args_info);
-
-static void
 reset_group_@name@(struct @args_info@ *args_info)
 {
-@IF@ multiple_arg @THEN@
-  unsigned int i;
-@ENDIF@
   if (! args_info->@name@_group_counter)
     return;
   

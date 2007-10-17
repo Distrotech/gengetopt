@@ -16,7 +16,8 @@ using std::ostream;
 class multiple_fill_array_gen_class
 {
  protected:
-  string list_name;
+  string arg_type;
+  string default_value;
   string option_var_name;
   string type;
 
@@ -25,8 +26,8 @@ class multiple_fill_array_gen_class
   {
   }
   
-  multiple_fill_array_gen_class(const string &_list_name, const string &_option_var_name, const string &_type) :
-    list_name (_list_name), option_var_name (_option_var_name), type (_type)
+  multiple_fill_array_gen_class(const string &_arg_type, const string &_default_value, const string &_option_var_name, const string &_type) :
+    arg_type (_arg_type), default_value (_default_value), option_var_name (_option_var_name), type (_type)
   {
   }
 
@@ -53,9 +54,14 @@ class multiple_fill_array_gen_class
       stream << s.substr (start);
   }
 
-  void set_list_name(const string &_list_name)
+  void set_arg_type(const string &_arg_type)
   {
-    list_name = _list_name;
+    arg_type = _arg_type;
+  }
+
+  void set_default_value(const string &_default_value)
+  {
+    default_value = _default_value;
   }
 
   void set_option_var_name(const string &_option_var_name)

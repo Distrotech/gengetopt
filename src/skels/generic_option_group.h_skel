@@ -1,3 +1,0 @@
-if (args_info->@group_var_name@_group_counter && override)
-  reset_group_@group_var_name@ (args_info);
-args_info->@group_var_name@_group_counter += 1;

@@ -582,12 +582,12 @@ and ends in the end of line.
 
 @cindex @code{-h,--help}
 @cindex @code{-V,--version}
-@anchor{addedoptions}
-Notice that the options @code{-h,--help} and @code{-V,--version} are
-added automatically; however, if you specify an option yourself that has
-@code{h} as short form or @code{help} as long form, then
-@code{-h,--help} is not added (and you have to handle the help option
-manually).  The same holds for @code{-V,--version}.
+@anchor{addedoptions} Notice that the options @code{-h,--help} and
+@code{-V,--version} are added automatically; however, if you specify an
+option yourself that has @code{h} as short form, then only @code{--help}
+is added@footnote{Before version 2.22 neither @code{--help} was added
+and you had to handle the help option manually}.  The same holds for
+@code{-V,--version}.
 
 @cindex @code{--full-help}
 In case hidden options are used, @xref{hidden,,Hidden options}, the
@@ -672,12 +672,15 @@ In @file{cmdline1.h} you'll find the generated C struct:
 
 @include cmdline1.h.texinfo
 
-The @code{<option>_given} field is set to a value different from 0 when
-an argument for @code{<option>} has been specified.   If the option
-accepts an argument and it is not of @code{flag} type The
-@code{<option>_arg} field is set to the value passed at the command
-line.  The @code{<option>_arg} field has the corresponding C type
-specified in the file passed to gengetopt.
+The @code{<option>_given} field is set to 1 when an argument for
+@code{<option>} has been specified (otherwise it is 0)@footnote{Since
+version 2.22 this field is of type @code{unsigned int} instead of
+@code{int} for uniformity with multiple options.}.  This fields also
+counts the times a multiple option is specified (see @ref{Multiple
+Options}).  If the option accepts an argument and it is not of
+@code{flag} type The @code{<option>_arg} field is set to the value
+passed at the command line.  The @code{<option>_arg} field has the
+corresponding C type specified in the file passed to gengetopt.
 
 Notice that if an option has a default value, then the corresponding
 @code{<option>_arg} will be initialized with that value but the
@@ -756,7 +759,10 @@ file.  The contents of this file are consistent with the configuration
 files (@ref{Configuration files}).  Notice that if an option has a
 default value, this option will be saved into the file only if it was
 passed explicitly at command line (or read from a configuration file),
-i.e., default values will not be saved into the file.
+i.e., default values will not be saved into the file.  Alternatively,
+you can use @code{cmdline_parser_dump}@footnote{Introduced in version
+2.22, thanks to Papp Gyozo.} that takes as the first parameter an
+already open stream (@code{FILE *}) instead of a file name.
 
 And here's how these functions can be used inside the main program: 
 
@@ -1244,7 +1250,7 @@ represented as @code{int} and they are @code{true} if they are set to
 @cindex initialize
 tells whether the args_info struct has to be initialized.
 
-@item int override
+@item int override (default = 0)
 @cindex override
 tells whether the values for the options that are parsed should override
 those that are already present in the passed args_info struct (e.g.,
@@ -1252,15 +1258,24 @@ this is the case when you call a parser multiple times using the same
 args_info struct, see, e.g., @ref{Configuration files} and@ref{String
 Parsers and Multiple Parsers}).
 
-@item int check_required
+@item int check_required (default = 0)
 @cindex check_required
 tells whether the check for required options must be performed or not.
 
-@item int check_ambiguity
+@item int check_ambiguity (default = 0)
 @cindex check_ambiguity
 tells whether the check whether options that are parsed are not
 already present in the passed args_info struct; this is performed only
 for NON multiple options (see also @ref{Multiple Options}).
+
+@item int print_errors (default = 1)
+@cindex print_errors
+tells@footnote{Introduced in version 2.22} whether @code{getopt_long}
+must print error messages to the standard error stream if it encounters
+an unknown option character or an option with a missing required
+argument.  This is the default behavior.  If you set this variable to
+zero, @code{getopt_long} does not print any messages, but the generated
+parser will still return with error.
 @end table
 
 For instance, internally, the standard command line parser function is
@@ -1269,7 +1284,7 @@ invoked with @code{initialize} and @code{check_required} set to 1 and
 
 Gengetopt also generates an initialization function for such structures,
 called @code{<cmd_parser_name>_params_init}, which returns a dynamically
-allocated structure with all fields initialized to 0.
+allocated structure with all fields initialized to their default values.
 
 We strongly advise to use such function for creating such a structure,
 since this will make your code scalable to future releases of gengetopt

@@ -19,30 +19,12 @@ reset_group_gen_class::generate_reset_group(ostream &stream, unsigned int indent
   generate_string (name, stream, indent + indent_str.length ());
   stream << "(struct ";
   generate_string (args_info, stream, indent + indent_str.length ());
-  stream << " *args_info);";
-  stream << "\n";
-  stream << indent_str;
-  stream << "\n";
-  stream << indent_str;
-  stream << "static void";
-  stream << "\n";
-  stream << indent_str;
-  stream << "reset_group_";
-  generate_string (name, stream, indent + indent_str.length ());
-  stream << "(struct ";
-  generate_string (args_info, stream, indent + indent_str.length ());
   stream << " *args_info)";
   stream << "\n";
   stream << indent_str;
   stream << "{";
   stream << "\n";
   stream << indent_str;
-  if (multiple_arg)
-    {
-      stream << "  unsigned int i;";
-      stream << "\n";
-      stream << indent_str;
-    }
   stream << "  if (! args_info->";
   generate_string (name, stream, indent + indent_str.length ());
   stream << "_group_counter)";

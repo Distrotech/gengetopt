@@ -23,7 +23,9 @@ noarg
 noarg
 noarg-noshort
 noarg-noshort
+optarg
 optarg="first arg for optarg"
 optarg="second arg for optarg"
 optarg-noshort="second arg for optarg"
+optarg-noshort
 file-save="test_multiple.save"

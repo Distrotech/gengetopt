@@ -12,14 +12,21 @@ handle_version_gen_class::generate_handle_version(ostream &stream, unsigned int 
   string indent_str (indent, ' ');
   indent = 0;
 
-  stream << "case 'V':	/* Print version and exit.  */";
-  stream << "\n";
-  stream << indent_str;
-  indent = 2;
+  if (short_opt)
+    {
+      stream << "case 'V':	/* Print version and exit.  */";
+      stream << "\n";
+      stream << indent_str;
+    }
+  else
+    {
+      stream << "if (strcmp (long_options[option_index].name, \"version\") == 0) {";
+      stream << "\n";
+      stream << indent_str;
+    }
   stream << "  ";
   generate_string (parser_name, stream, indent + indent_str.length ());
   stream << "_print_version ();";
-  indent = 0;
   stream << "\n";
   stream << indent_str;
   indent = 2;
@@ -30,4 +37,10 @@ handle_version_gen_class::generate_handle_version(ostream &stream, unsigned int 
   stream << "\n";
   stream << indent_str;
   stream << "  exit (EXIT_SUCCESS);";
+  if (( ! short_opt ))
+    {
+      stream << "\n";
+      stream << indent_str;
+      stream << "}";
+    }
 }

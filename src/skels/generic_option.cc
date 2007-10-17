@@ -39,104 +39,202 @@ generic_option_gen_class::generate_generic_option(ostream &stream, unsigned int 
       stream << "\n";
       stream << indent_str;
     }
-  stream << "  if (local_args_info.";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_given || (check_ambiguity && args_info->";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_given))";
-  stream << "\n";
-  stream << indent_str;
-  stream << "    {";
-  stream << "\n";
-  stream << indent_str;
-  stream << "      fprintf (stderr, \"%s: `--";
-  generate_string (long_option, stream, indent + indent_str.length ());
-  stream << "'";
-  if (has_short_option)
+  if (multiple)
     {
-      stream << " (`-";
-      generate_string (short_option, stream, indent + indent_str.length ());
-      stream << "')";
-    }
-  stream << " option given more than once%s\\n\", ";
-  generate_string (package_var_name, stream, indent + indent_str.length ());
-  stream << ", (additional_error ? additional_error : \"\"));";
-  stream << "\n";
-  stream << indent_str;
-  stream << "      goto failure;";
-  stream << "\n";
-  stream << indent_str;
-  stream << "    }";
-  stream << "\n";
-  stream << indent_str;
-  if (option_has_values)
-    {
-      stream << "  if ((found = check_possible_values((optarg ? optarg : ";
-      if (( defaultval != "" ))
+      if (option_has_type)
         {
-          stream << "\"";
-          generate_string (defaultval, stream, indent + indent_str.length ());
-          stream << "\" ";
+          stream << "  if (update_multiple_arg_temp(&";
+          generate_string (structure, stream, indent + indent_str.length ());
+          stream << ", ";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      &(local_args_info.";
+          generate_string (option_var_name, stream, indent + indent_str.length ());
+          stream << "_given), optarg, ";
+          generate_string (possible_values, stream, indent + indent_str.length ());
+          stream << ", ";
+          generate_string (default_value, stream, indent + indent_str.length ());
+          stream << ", ";
+          generate_string (arg_type, stream, indent + indent_str.length ());
+          stream << ",";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      \"";
+          generate_string (long_option, stream, indent + indent_str.length ());
+          stream << "\", '";
+          generate_string (short_option, stream, indent + indent_str.length ());
+          stream << "',";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      additional_error))";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    goto failure;";
+          stream << "\n";
+          stream << indent_str;
         }
       else
         {
-          stream << "0 ";
+          stream << "  local_args_info.";
+          generate_string (option_var_name, stream, indent + indent_str.length ());
+          stream << "_given++;";
+          stream << "\n";
+          stream << indent_str;
         }
-      stream << "), ";
-      generate_string (option_values, stream, indent + indent_str.length ());
-      stream << ")) < 0)";
-      stream << "\n";
-      stream << indent_str;
-      stream << "    {";
-      stream << "\n";
-      stream << indent_str;
-      stream << "      fprintf (stderr, \"%s: %s argument, \\\"%s\\\", for option `--";
-      generate_string (long_option, stream, indent + indent_str.length ());
-      stream << "'";
-      if (has_short_option)
+      if (option_has_group)
         {
-          stream << " (`-";
-          generate_string (short_option, stream, indent + indent_str.length ());
-          stream << "')";
+          stream << "  if (!args_info->";
+          generate_string (option_var_name, stream, indent + indent_str.length ());
+          stream << "_group)";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    {";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      args_info->";
+          generate_string (option_var_name, stream, indent + indent_str.length ());
+          stream << "_group = 1;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      args_info->";
+          generate_string (group_var_name, stream, indent + indent_str.length ());
+          stream << "_group_counter += 1;";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    }";
+          stream << "\n";
+          stream << indent_str;
         }
-      stream << "%s\\n\", ";
-      generate_string (package_var_name, stream, indent + indent_str.length ());
-      stream << ", (found == -2) ? \"ambiguous\" : \"invalid\", optarg, (additional_error ? additional_error : \"\"));";
-      stream << "\n";
-      stream << indent_str;
-      stream << "      goto failure;";
-      stream << "\n";
-      stream << indent_str;
-      stream << "    }";
-      stream << "\n";
-      stream << indent_str;
     }
-  stream << "  if (args_info->";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_given && ! override)";
-  stream << "\n";
-  stream << indent_str;
-  stream << "    continue;";
-  stream << "\n";
-  stream << indent_str;
-  stream << "  local_args_info.";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_given = 1;";
-  stream << "\n";
-  stream << indent_str;
-  stream << "  args_info->";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_given = 1;";
-  generate_string (update_group_count, stream, indent + indent_str.length ());
-  stream << "\n";
-  stream << indent_str;
-  indent = 2;
-  stream << "  ";
-  generate_string (update_arg, stream, indent + indent_str.length ());
+  else
+    {
+      if (option_has_group)
+        {
+          stream << "  if (args_info->";
+          generate_string (group_var_name, stream, indent + indent_str.length ());
+          stream << "_group_counter && override)";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    reset_group_";
+          generate_string (group_var_name, stream, indent + indent_str.length ());
+          stream << " (args_info);";
+          stream << "\n";
+          stream << indent_str;
+          stream << "  args_info->";
+          generate_string (group_var_name, stream, indent + indent_str.length ());
+          stream << "_group_counter += 1;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      stream << "\n";
+      stream << indent_str;
+      if (( arg_type == "ARG_FLAG" ))
+        {
+          stream << "  if (update_arg((void *)&(args_info->";
+          generate_string (option_var_name, stream, indent + indent_str.length ());
+          stream << "_flag), 0, &(args_info->";
+          generate_string (option_var_name, stream, indent + indent_str.length ());
+          stream << "_given),";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      &(local_args_info.";
+          generate_string (option_var_name, stream, indent + indent_str.length ());
+          stream << "_given), optarg, optarg, 0, 0, ";
+          generate_string (arg_type, stream, indent + indent_str.length ());
+          stream << ",";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      check_ambiguity, override, 1, 0, \"";
+          generate_string (long_option, stream, indent + indent_str.length ());
+          stream << "\", '";
+          generate_string (short_option, stream, indent + indent_str.length ());
+          stream << "',";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      additional_error))";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    goto failure;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      else
+        {
+          stream << "  if (update_arg(";
+          if (( arg_type == "ARG_NO" ))
+            {
+              stream << " 0 ";
+            }
+          else
+            {
+              stream << " (void *)&(args_info->";
+              generate_string (option_var_name, stream, indent + indent_str.length ());
+              stream << "_arg)";
+            }
+          stream << ", ";
+          stream << "\n";
+          stream << indent_str;
+          indent = 6;
+          stream << "      ";
+          if (( arg_type == "ARG_NO" ))
+            {
+              stream << " 0 ";
+            }
+          else
+            {
+              stream << " &(args_info->";
+              generate_string (option_var_name, stream, indent + indent_str.length ());
+              stream << "_orig)";
+            }
+          stream << ", &(args_info->";
+          generate_string (option_var_name, stream, indent + indent_str.length ());
+          stream << "_given),";
+          indent = 0;
+          stream << "\n";
+          stream << indent_str;
+          stream << "      &(local_args_info.";
+          generate_string (option_var_name, stream, indent + indent_str.length ());
+          stream << "_given), optarg, optarg, ";
+          generate_string (possible_values, stream, indent + indent_str.length ());
+          stream << ", ";
+          generate_string (default_value, stream, indent + indent_str.length ());
+          stream << ", ";
+          generate_string (arg_type, stream, indent + indent_str.length ());
+          stream << ",";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      check_ambiguity, override, 0, 0,";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      \"";
+          generate_string (long_option, stream, indent + indent_str.length ());
+          stream << "\", '";
+          generate_string (short_option, stream, indent + indent_str.length ());
+          stream << "',";
+          stream << "\n";
+          stream << indent_str;
+          stream << "      additional_error))";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    goto failure;";
+          stream << "\n";
+          stream << indent_str;
+        }
+      if (( final_instructions != "" ))
+        {
+          indent = 2;
+          stream << "  ";
+          generate_string (final_instructions, stream, indent + indent_str.length ());
+          indent = 0;
+          stream << "\n";
+          stream << indent_str;
+        }
+    }
   if (has_short_option)
     {
-      
-
+      stream << "\n";
+      stream << indent_str;
+      stream << "  break;";
     }
   else
     {

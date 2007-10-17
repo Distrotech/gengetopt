@@ -79,6 +79,23 @@ canonize_name(const string &old)
 }
 
 bool
+has_multiple_options_all_string()
+{
+  if (! has_multiple_options ())
+    return false;
+
+  struct gengetopt_option * opt = 0;
+
+  foropt
+  {
+    if (opt->multiple && (opt->type && opt->type != ARG_STRING))
+      return false;
+  }
+
+  return true;
+}
+
+bool
 has_multiple_options_string()
 {
   if (! has_multiple_options ())
@@ -118,6 +135,34 @@ has_multiple_options_with_type()
                     it != gengetopt_options.end() && (opt = *it);
                     ++it)
     if (opt->multiple && opt->type)
+      return true;
+
+  return false;
+}
+
+bool
+has_multiple_options_with_default()
+{
+  gengetopt_option * opt = 0;
+
+  for (gengetopt_option_list::iterator it = gengetopt_options.begin();
+                    it != gengetopt_options.end() && (opt = *it);
+                    ++it)
+    if (opt->multiple && opt->default_given)
+      return true;
+
+  return false;
+}
+
+bool
+has_options_with_type()
+{
+  gengetopt_option * opt = 0;
+
+  for (gengetopt_option_list::iterator it = gengetopt_options.begin();
+                    it != gengetopt_options.end() && (opt = *it);
+                    ++it)
+    if (opt->type)
       return true;
 
   return false;

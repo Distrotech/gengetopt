@@ -24,11 +24,29 @@ const string canonize_name(const string &name);
 const string strip_path(const string &);
 const string to_upper(const string &);
 
+/**
+ * All multiple options are of type string
+ * @return All multiple options are of type string
+ */
+bool has_multiple_options_all_string();
+
+/**
+ * Has multiple options and at least one is of type string
+ * @return Has multiple options and at least one is of type string
+ */
 bool has_multiple_options_string();
+
+/**
+ * Has multiple options and at least one has a default value
+ * @return Has multiple options and at least one has a default value
+ */
+bool has_multiple_options_with_default();
+
 bool has_multiple_options();
 bool has_multiple_options_with_type();
 bool has_required();
 bool has_dependencies();
+bool has_options_with_type();
 bool has_options();
 bool has_hidden_options();
 bool has_values();

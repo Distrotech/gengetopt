@@ -40,7 +40,17 @@ class c_source_gen_class
   string handle_option;
   string handle_required;
   bool handle_unamed;
+  bool has_arg_double;
+  bool has_arg_flag;
+  bool has_arg_float;
+  bool has_arg_int;
+  bool has_arg_long;
+  bool has_arg_longdouble;
+  bool has_arg_longlong;
+  bool has_arg_short;
+  bool has_arg_string;
   bool has_hidden;
+  bool has_typed_options;
   string header_file_ext;
   string help_option_print;
   bool include_getopt;
@@ -50,6 +60,9 @@ class c_source_gen_class
   string long_option_struct;
   string multiple_fill_array;
   bool multiple_options;
+  bool multiple_options_all_string;
+  bool multiple_options_string;
+  bool multiple_options_with_default;
   bool multiple_token_functions;
   bool multiple_token_vars;
   bool no_package;
@@ -59,19 +72,18 @@ class c_source_gen_class
   string purpose;
   string reset_groups;
   string source_name;
-  string struct_def;
   string update_multiple_given;
   string usage_string;
   string version_var_name;
 
  public:
   c_source_gen_class() :
-    check_possible_values (false), check_required_options (false), cmd_list (false), conf_parser (false), do_generate_strdup (false), generate_string_parser (false), handle_unamed (false), has_hidden (false), include_getopt (false), multiple_options (false), multiple_token_functions (false), multiple_token_vars (false), no_package (false)
+    check_possible_values (false), check_required_options (false), cmd_list (false), conf_parser (false), do_generate_strdup (false), generate_string_parser (false), handle_unamed (false), has_arg_double (false), has_arg_flag (false), has_arg_float (false), has_arg_int (false), has_arg_long (false), has_arg_longdouble (false), has_arg_longlong (false), has_arg_short (false), has_arg_string (false), has_hidden (false), has_typed_options (false), include_getopt (false), multiple_options (false), multiple_options_all_string (false), multiple_options_string (false), multiple_options_with_default (false), multiple_token_functions (false), multiple_token_vars (false), no_package (false)
   {
   }
   
-  c_source_gen_class(const string &_args_info, bool _check_possible_values, bool _check_required_options, const string &_clear_arg, bool _cmd_list, const string &_command_line, bool _conf_parser, const string &_custom_getopt, const string &_description, bool _do_generate_strdup, const string &_file_save_loop, const string &_final_exit, const string &_free, const string &_full_help_option_print, bool _generate_string_parser, const string &_generator_version, const string &_getopt_string, const string &_given_init, const string &_handle_dependencies, const string &_handle_group, const string &_handle_no_short_option, const string &_handle_option, const string &_handle_required, bool _handle_unamed, bool _has_hidden, const string &_header_file_ext, const string &_help_option_print, bool _include_getopt, const string &_init_args_info, const string &_list_def, const string &_list_free, const string &_long_option_struct, const string &_multiple_fill_array, bool _multiple_options, bool _multiple_token_functions, bool _multiple_token_vars, bool _no_package, const string &_option_values, const string &_package_var_name, const string &_parser_name, const string &_purpose, const string &_reset_groups, const string &_source_name, const string &_struct_def, const string &_update_multiple_given, const string &_usage_string, const string &_version_var_name) :
-    args_info (_args_info), check_possible_values (_check_possible_values), check_required_options (_check_required_options), clear_arg (_clear_arg), cmd_list (_cmd_list), command_line (_command_line), conf_parser (_conf_parser), custom_getopt (_custom_getopt), description (_description), do_generate_strdup (_do_generate_strdup), file_save_loop (_file_save_loop), final_exit (_final_exit), free (_free), full_help_option_print (_full_help_option_print), generate_string_parser (_generate_string_parser), generator_version (_generator_version), getopt_string (_getopt_string), given_init (_given_init), handle_dependencies (_handle_dependencies), handle_group (_handle_group), handle_no_short_option (_handle_no_short_option), handle_option (_handle_option), handle_required (_handle_required), handle_unamed (_handle_unamed), has_hidden (_has_hidden), header_file_ext (_header_file_ext), help_option_print (_help_option_print), include_getopt (_include_getopt), init_args_info (_init_args_info), list_def (_list_def), list_free (_list_free), long_option_struct (_long_option_struct), multiple_fill_array (_multiple_fill_array), multiple_options (_multiple_options), multiple_token_functions (_multiple_token_functions), multiple_token_vars (_multiple_token_vars), no_package (_no_package), option_values (_option_values), package_var_name (_package_var_name), parser_name (_parser_name), purpose (_purpose), reset_groups (_reset_groups), source_name (_source_name), struct_def (_struct_def), update_multiple_given (_update_multiple_given), usage_string (_usage_string), version_var_name (_version_var_name)
+  c_source_gen_class(const string &_args_info, bool _check_possible_values, bool _check_required_options, const string &_clear_arg, bool _cmd_list, const string &_command_line, bool _conf_parser, const string &_custom_getopt, const string &_description, bool _do_generate_strdup, const string &_file_save_loop, const string &_final_exit, const string &_free, const string &_full_help_option_print, bool _generate_string_parser, const string &_generator_version, const string &_getopt_string, const string &_given_init, const string &_handle_dependencies, const string &_handle_group, const string &_handle_no_short_option, const string &_handle_option, const string &_handle_required, bool _handle_unamed, bool _has_arg_double, bool _has_arg_flag, bool _has_arg_float, bool _has_arg_int, bool _has_arg_long, bool _has_arg_longdouble, bool _has_arg_longlong, bool _has_arg_short, bool _has_arg_string, bool _has_hidden, bool _has_typed_options, const string &_header_file_ext, const string &_help_option_print, bool _include_getopt, const string &_init_args_info, const string &_list_def, const string &_list_free, const string &_long_option_struct, const string &_multiple_fill_array, bool _multiple_options, bool _multiple_options_all_string, bool _multiple_options_string, bool _multiple_options_with_default, bool _multiple_token_functions, bool _multiple_token_vars, bool _no_package, const string &_option_values, const string &_package_var_name, const string &_parser_name, const string &_purpose, const string &_reset_groups, const string &_source_name, const string &_update_multiple_given, const string &_usage_string, const string &_version_var_name) :
+    args_info (_args_info), check_possible_values (_check_possible_values), check_required_options (_check_required_options), clear_arg (_clear_arg), cmd_list (_cmd_list), command_line (_command_line), conf_parser (_conf_parser), custom_getopt (_custom_getopt), description (_description), do_generate_strdup (_do_generate_strdup), file_save_loop (_file_save_loop), final_exit (_final_exit), free (_free), full_help_option_print (_full_help_option_print), generate_string_parser (_generate_string_parser), generator_version (_generator_version), getopt_string (_getopt_string), given_init (_given_init), handle_dependencies (_handle_dependencies), handle_group (_handle_group), handle_no_short_option (_handle_no_short_option), handle_option (_handle_option), handle_required (_handle_required), handle_unamed (_handle_unamed), has_arg_double (_has_arg_double), has_arg_flag (_has_arg_flag), has_arg_float (_has_arg_float), has_arg_int (_has_arg_int), has_arg_long (_has_arg_long), has_arg_longdouble (_has_arg_longdouble), has_arg_longlong (_has_arg_longlong), has_arg_short (_has_arg_short), has_arg_string (_has_arg_string), has_hidden (_has_hidden), has_typed_options (_has_typed_options), header_file_ext (_header_file_ext), help_option_print (_help_option_print), include_getopt (_include_getopt), init_args_info (_init_args_info), list_def (_list_def), list_free (_list_free), long_option_struct (_long_option_struct), multiple_fill_array (_multiple_fill_array), multiple_options (_multiple_options), multiple_options_all_string (_multiple_options_all_string), multiple_options_string (_multiple_options_string), multiple_options_with_default (_multiple_options_with_default), multiple_token_functions (_multiple_token_functions), multiple_token_vars (_multiple_token_vars), no_package (_no_package), option_values (_option_values), package_var_name (_package_var_name), parser_name (_parser_name), purpose (_purpose), reset_groups (_reset_groups), source_name (_source_name), update_multiple_given (_update_multiple_given), usage_string (_usage_string), version_var_name (_version_var_name)
   {
   }
 
@@ -244,9 +256,59 @@ class c_source_gen_class
     handle_unamed = _handle_unamed;
   }
 
+  void set_has_arg_double(bool _has_arg_double)
+  {
+    has_arg_double = _has_arg_double;
+  }
+
+  void set_has_arg_flag(bool _has_arg_flag)
+  {
+    has_arg_flag = _has_arg_flag;
+  }
+
+  void set_has_arg_float(bool _has_arg_float)
+  {
+    has_arg_float = _has_arg_float;
+  }
+
+  void set_has_arg_int(bool _has_arg_int)
+  {
+    has_arg_int = _has_arg_int;
+  }
+
+  void set_has_arg_long(bool _has_arg_long)
+  {
+    has_arg_long = _has_arg_long;
+  }
+
+  void set_has_arg_longdouble(bool _has_arg_longdouble)
+  {
+    has_arg_longdouble = _has_arg_longdouble;
+  }
+
+  void set_has_arg_longlong(bool _has_arg_longlong)
+  {
+    has_arg_longlong = _has_arg_longlong;
+  }
+
+  void set_has_arg_short(bool _has_arg_short)
+  {
+    has_arg_short = _has_arg_short;
+  }
+
+  void set_has_arg_string(bool _has_arg_string)
+  {
+    has_arg_string = _has_arg_string;
+  }
+
   void set_has_hidden(bool _has_hidden)
   {
     has_hidden = _has_hidden;
+  }
+
+  void set_has_typed_options(bool _has_typed_options)
+  {
+    has_typed_options = _has_typed_options;
   }
 
   void set_header_file_ext(const string &_header_file_ext)
@@ -306,6 +368,21 @@ class c_source_gen_class
     multiple_options = _multiple_options;
   }
 
+  void set_multiple_options_all_string(bool _multiple_options_all_string)
+  {
+    multiple_options_all_string = _multiple_options_all_string;
+  }
+
+  void set_multiple_options_string(bool _multiple_options_string)
+  {
+    multiple_options_string = _multiple_options_string;
+  }
+
+  void set_multiple_options_with_default(bool _multiple_options_with_default)
+  {
+    multiple_options_with_default = _multiple_options_with_default;
+  }
+
   void set_multiple_token_functions(bool _multiple_token_functions)
   {
     multiple_token_functions = _multiple_token_functions;
@@ -353,13 +430,6 @@ class c_source_gen_class
   void set_source_name(const string &_source_name)
   {
     source_name = _source_name;
-  }
-
-  virtual void generate_struct_def(ostream &stream, unsigned int indent) = 0;
-
-  void set_struct_def(const string &_struct_def)
-  {
-    struct_def = _struct_def;
   }
 
   virtual void generate_update_multiple_given(ostream &stream, unsigned int indent) = 0;

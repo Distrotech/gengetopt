@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 1999, 2000, 2001, 2002  Free Software Foundation, Inc.
+ * Copyright (C) 1999-2007  Free Software Foundation, Inc.
  *
  * This file is part of GNU gengetopt
  *
@@ -75,9 +75,6 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
         printf (" ");
     }
 
-  void do_update_arg (struct gengetopt_option *opt,
-                      ostream &stream, unsigned int indent, const string argstr,
-                      const string orig_argstr);
   void free_option(struct gengetopt_option *opt,
                    ostream &stream, unsigned int indent);
 
@@ -94,11 +91,8 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   // to be implemented in c_source_gen_class
   virtual void generate_clear_arg(ostream &stream, unsigned int indent);
   virtual void generate_given_init(ostream &stream, unsigned int indent);
-  virtual void generate_struct_def(ostream &stream, unsigned int indent);
   virtual void generate_option_values(ostream &stream, unsigned int indent);
 
-  virtual void generate_handle_help(ostream &stream, unsigned int indent,
-                                    bool full_help = false);
   virtual void generate_handle_no_short_option(ostream &stream,
                                                unsigned int indent);
   virtual void generate_handle_option(ostream &stream, unsigned int indent);
@@ -106,7 +100,6 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   virtual void generate_handle_dependencies(ostream &stream, unsigned int indent);
   virtual void generate_handle_group(ostream &stream, unsigned int indent);
   virtual void generate_group_counters(ostream &stream, unsigned int indent);
-  virtual void generate_handle_version(ostream &stream, unsigned int indent);
   virtual void generate_help_option_print(ostream &stream,
                                           unsigned int indent);
   virtual void generate_full_help_option_print(ostream &stream,
@@ -156,6 +149,11 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
    * @param generate_hidden if true, include also the hidden options
    */
   OptionHelpList *generate_help_option_list(bool generate_hidden = false);
+  
+  /**
+   * Sets the has_arg_XXX by inspecting all the options types
+   */
+  void set_has_arg_types();
 };
 
 #endif /* _GM_H */

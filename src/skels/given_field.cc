@@ -12,11 +12,7 @@ given_field_gen_class::generate_given_field(ostream &stream, unsigned int indent
   string indent_str (indent, ' ');
   indent = 0;
 
-  if (multiple)
-    {
-      stream << "unsigned ";
-    }
-  stream << "int ";
+  stream << "unsigned int ";
   generate_string (arg_name, stream, indent + indent_str.length ());
   stream << "_given ;	/**< ";
   stream << "@";

@@ -17,19 +17,16 @@ class file_save_gen_class
 {
  protected:
   string arg;
-  bool check_given;
   string given;
-  bool has_arg;
   string opt_name;
 
  public:
-  file_save_gen_class() :
-    check_given (false), has_arg (false)
+  file_save_gen_class()
   {
   }
   
-  file_save_gen_class(const string &_arg, bool _check_given, const string &_given, bool _has_arg, const string &_opt_name) :
-    arg (_arg), check_given (_check_given), given (_given), has_arg (_has_arg), opt_name (_opt_name)
+  file_save_gen_class(const string &_arg, const string &_given, const string &_opt_name) :
+    arg (_arg), given (_given), opt_name (_opt_name)
   {
   }
 
@@ -61,19 +58,9 @@ class file_save_gen_class
     arg = _arg;
   }
 
-  void set_check_given(bool _check_given)
-  {
-    check_given = _check_given;
-  }
-
   void set_given(const string &_given)
   {
     given = _given;
-  }
-
-  void set_has_arg(bool _has_arg)
-  {
-    has_arg = _has_arg;
   }
 
   void set_opt_name(const string &_opt_name)

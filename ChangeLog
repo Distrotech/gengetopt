@@ -1,3 +1,32 @@
+2007-10-17  J. David Bryan
+
+	* src/gengetopt.cc (main): generate --help handling if only -h
+	is redefined (and so for --version)
+	
+	* src/skels/header.h_skel: added field print_errors to suppress
+	getopt_long messages to stderr
+
+2007-10-16  Papp Gyozo
+
+	* src/skels/c_source.h_skel: added the generated function
+	_dump to dump options into an already open stream
+
+2007-10-07  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/skels/c_source.h_skel: (update_multiple_arg) the static generated
+	function that takes care of updating a multiple option
+
+2007-10-02  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/skels/c_source.h_skel: (update_arg) the static generated
+	function that takes care of updating an option
+
+2007-09-21  Lorenzo Bettini  <bettini@lorelap>
+
+	* doc/Makefile.am: avoid tests if crosscompiling
+
+	* tests/Makefile.am: avoid tests if crosscompiling
+
 2007-07-28  Lorenzo Bettini  <bettini@lorelap>
 
         * COPYING: updated to version 3

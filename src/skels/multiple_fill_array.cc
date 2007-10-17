@@ -12,94 +12,46 @@ multiple_fill_array_gen_class::generate_multiple_fill_array(ostream &stream, uns
   string indent_str (indent, ' ');
   indent = 0;
 
-  stream << "if (local_args_info.";
+  if (( default_value != "0" ))
+    {
+      stream << "multiple_default_value.";
+      generate_string (type, stream, indent + indent_str.length ());
+      stream << "_arg = ";
+      generate_string (default_value, stream, indent + indent_str.length ());
+      stream << ";";
+      stream << "\n";
+      stream << indent_str;
+    }
+  stream << "update_multiple_arg((void *)&(args_info->";
   generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_given && ";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_list)";
+  stream << "_arg),";
   stream << "\n";
   stream << indent_str;
-  stream << "  {";
+  stream << "  &(args_info->";
+  generate_string (option_var_name, stream, indent + indent_str.length ());
+  stream << "_orig), args_info->";
+  generate_string (option_var_name, stream, indent + indent_str.length ());
+  stream << "_given,";
   stream << "\n";
   stream << indent_str;
-  stream << "    struct ";
-  generate_string (list_name, stream, indent + indent_str.length ());
-  stream << "_list *tmp;";
+  stream << "  local_args_info.";
+  generate_string (option_var_name, stream, indent + indent_str.length ());
+  stream << "_given, ";
+  if (( default_value != "0" ))
+    {
+      stream << "&multiple_default_value ";
+    }
+  else
+    {
+      stream << "0 ";
+    }
+  stream << ", ";
   stream << "\n";
   stream << indent_str;
-  stream << "    args_info->";
+  indent = 2;
+  stream << "  ";
+  generate_string (arg_type, stream, indent + indent_str.length ());
+  stream << ", ";
   generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_arg = (";
-  generate_string (type, stream, indent + indent_str.length ());
-  stream << " *) realloc (args_info->";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_arg, (args_info->";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_given + local_args_info.";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_given) * sizeof (";
-  generate_string (type, stream, indent + indent_str.length ());
-  stream << "));";
-  stream << "\n";
-  stream << indent_str;
-  stream << "    args_info->";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_orig = (char **) realloc (args_info->";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_orig, (args_info->";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_given + local_args_info.";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_given) * sizeof (char *));";
-  stream << "\n";
-  stream << indent_str;
-  stream << "    for (i = (local_args_info.";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_given - 1); i >= 0; --i)";
-  stream << "\n";
-  stream << indent_str;
-  stream << "      {";
-  stream << "\n";
-  stream << indent_str;
-  stream << "        tmp = ";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_list;";
-  stream << "\n";
-  stream << indent_str;
-  stream << "        args_info->";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_arg [i + args_info->";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_given] = ";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_list->arg;";
-  stream << "\n";
-  stream << indent_str;
-  stream << "        args_info->";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_orig [i + args_info->";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_given] = ";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_list->orig;";
-  stream << "\n";
-  stream << indent_str;
-  indent = 8;
-  stream << "        ";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_list = ";
-  generate_string (option_var_name, stream, indent + indent_str.length ());
-  stream << "_list->next;";
-  indent = 0;
-  stream << "\n";
-  stream << indent_str;
-  stream << "        free (tmp);";
-  stream << "\n";
-  stream << indent_str;
-  stream << "      }";
-  stream << "\n";
-  stream << indent_str;
-  stream << "  }";
-  stream << "\n";
-  stream << indent_str;
+  stream << "_list);";
 }

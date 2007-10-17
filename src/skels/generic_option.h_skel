@@ -5,22 +5,49 @@ case '@short_option@':	/* @option_comment@.  */
 @gen_else@if (strcmp (long_options[option_index].name, "@long_option@") == 0)
 {
 @ENDIF@
-  if (local_args_info.@option_var_name@_given || (check_ambiguity && args_info->@option_var_name@_given))
+@IF@ multiple @THEN@
+@IF@ option_has_type @THEN@
+  if (update_multiple_arg_temp(&@structure@, 
+      &(local_args_info.@option_var_name@_given), optarg, @possible_values@, @default_value@, @arg_type@,
+      "@long_option@", '@short_option@',
+      additional_error))
+    goto failure;
+@ELSE@
+  local_args_info.@option_var_name@_given++;
+@ENDIF@
+@IF@ option_has_group @THEN@
+  if (!args_info->@option_var_name@_group)
     {
-      fprintf (stderr, "%s: `--@long_option@'@if@ has_short_option @then@ (`-@short_option@')@endif@ option given more than once%s\n", @package_var_name@, (additional_error ? additional_error : ""));
-      goto failure;
-    }
-@IF@ option_has_values @THEN@
-  if ((found = check_possible_values((optarg ? optarg : @IF@ defaultval:string != "" @THEN@ "@defaultval@" @ELSE@ 0 @ENDIF@), @option_values@)) < 0)
-    {
-      fprintf (stderr, "%s: %s argument, \"%s\", for option `--@long_option@'@if@ has_short_option @then@ (`-@short_option@')@endif@%s\n", @package_var_name@, (found == -2) ? "ambiguous" : "invalid", optarg, (additional_error ? additional_error : ""));
-      goto failure;
+      args_info->@option_var_name@_group = 1;
+      args_info->@group_var_name@_group_counter += 1;
     }
 @ENDIF@
-  if (args_info->@option_var_name@_given && ! override)
-    continue;
-  local_args_info.@option_var_name@_given = 1;
-  args_info->@option_var_name@_given = 1;@update_group_count@
-  @update_arg@@IF@ has_short_option @THEN@@else@
+@ELSE@
+@IF@ option_has_group @THEN@
+  if (args_info->@group_var_name@_group_counter && override)
+    reset_group_@group_var_name@ (args_info);
+  args_info->@group_var_name@_group_counter += 1;
+@endif@
+@IF@ arg_type:string = "ARG_FLAG" @THEN@
+  if (update_arg((void *)&(args_info->@option_var_name@_flag), 0, &(args_info->@option_var_name@_given),
+      &(local_args_info.@option_var_name@_given), optarg, optarg, 0, 0, @arg_type@,
+      check_ambiguity, override, 1, 0, "@long_option@", '@short_option@',
+      additional_error))
+    goto failure;
+@ELSE@
+  if (update_arg(@if@ arg_type:string = "ARG_NO" @then@ 0 @else@ (void *)&(args_info->@option_var_name@_arg)@endif@, 
+      @if@ arg_type:string = "ARG_NO" @then@ 0 @else@ &(args_info->@option_var_name@_orig)@endif@, &(args_info->@option_var_name@_given),
+      &(local_args_info.@option_var_name@_given), optarg, optarg, @possible_values@, @default_value@, @arg_type@,
+      check_ambiguity, override, 0, 0,
+      "@long_option@", '@short_option@',
+      additional_error))
+    goto failure;
+@ENDIF@
+@IF@ final_instructions:string != "" @THEN@
+  @final_instructions@
+@ENDIF@
+@ENDIF@
+  @IF@ has_short_option @then@
+  break;@else@
 }
 @ENDIF@

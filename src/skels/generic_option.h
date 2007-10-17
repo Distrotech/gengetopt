@@ -16,27 +16,30 @@ using std::ostream;
 class generic_option_gen_class
 {
  protected:
-  string defaultval;
+  string arg_type;
+  string default_value;
+  string final_instructions;
   string gen_else;
+  string group_var_name;
   bool has_short_option;
   string long_option;
+  bool multiple;
   string option_comment;
-  bool option_has_values;
-  string option_values;
+  bool option_has_group;
+  bool option_has_type;
   string option_var_name;
-  string package_var_name;
+  string possible_values;
   string short_option;
-  string update_arg;
-  string update_group_count;
+  string structure;
 
  public:
   generic_option_gen_class() :
-    has_short_option (false), option_has_values (false)
+    has_short_option (false), multiple (false), option_has_group (false), option_has_type (false)
   {
   }
   
-  generic_option_gen_class(const string &_defaultval, const string &_gen_else, bool _has_short_option, const string &_long_option, const string &_option_comment, bool _option_has_values, const string &_option_values, const string &_option_var_name, const string &_package_var_name, const string &_short_option, const string &_update_arg, const string &_update_group_count) :
-    defaultval (_defaultval), gen_else (_gen_else), has_short_option (_has_short_option), long_option (_long_option), option_comment (_option_comment), option_has_values (_option_has_values), option_values (_option_values), option_var_name (_option_var_name), package_var_name (_package_var_name), short_option (_short_option), update_arg (_update_arg), update_group_count (_update_group_count)
+  generic_option_gen_class(const string &_arg_type, const string &_default_value, const string &_final_instructions, const string &_gen_else, const string &_group_var_name, bool _has_short_option, const string &_long_option, bool _multiple, const string &_option_comment, bool _option_has_group, bool _option_has_type, const string &_option_var_name, const string &_possible_values, const string &_short_option, const string &_structure) :
+    arg_type (_arg_type), default_value (_default_value), final_instructions (_final_instructions), gen_else (_gen_else), group_var_name (_group_var_name), has_short_option (_has_short_option), long_option (_long_option), multiple (_multiple), option_comment (_option_comment), option_has_group (_option_has_group), option_has_type (_option_has_type), option_var_name (_option_var_name), possible_values (_possible_values), short_option (_short_option), structure (_structure)
   {
   }
 
@@ -63,14 +66,29 @@ class generic_option_gen_class
       stream << s.substr (start);
   }
 
-  void set_defaultval(const string &_defaultval)
+  void set_arg_type(const string &_arg_type)
   {
-    defaultval = _defaultval;
+    arg_type = _arg_type;
+  }
+
+  void set_default_value(const string &_default_value)
+  {
+    default_value = _default_value;
+  }
+
+  void set_final_instructions(const string &_final_instructions)
+  {
+    final_instructions = _final_instructions;
   }
 
   void set_gen_else(const string &_gen_else)
   {
     gen_else = _gen_else;
+  }
+
+  void set_group_var_name(const string &_group_var_name)
+  {
+    group_var_name = _group_var_name;
   }
 
   void set_has_short_option(bool _has_short_option)
@@ -83,19 +101,24 @@ class generic_option_gen_class
     long_option = _long_option;
   }
 
+  void set_multiple(bool _multiple)
+  {
+    multiple = _multiple;
+  }
+
   void set_option_comment(const string &_option_comment)
   {
     option_comment = _option_comment;
   }
 
-  void set_option_has_values(bool _option_has_values)
+  void set_option_has_group(bool _option_has_group)
   {
-    option_has_values = _option_has_values;
+    option_has_group = _option_has_group;
   }
 
-  void set_option_values(const string &_option_values)
+  void set_option_has_type(bool _option_has_type)
   {
-    option_values = _option_values;
+    option_has_type = _option_has_type;
   }
 
   void set_option_var_name(const string &_option_var_name)
@@ -103,9 +126,9 @@ class generic_option_gen_class
     option_var_name = _option_var_name;
   }
 
-  void set_package_var_name(const string &_package_var_name)
+  void set_possible_values(const string &_possible_values)
   {
-    package_var_name = _package_var_name;
+    possible_values = _possible_values;
   }
 
   void set_short_option(const string &_short_option)
@@ -113,14 +136,9 @@ class generic_option_gen_class
     short_option = _short_option;
   }
 
-  void set_update_arg(const string &_update_arg)
+  void set_structure(const string &_structure)
   {
-    update_arg = _update_arg;
-  }
-
-  void set_update_group_count(const string &_update_group_count)
-  {
-    update_group_count = _update_group_count;
+    structure = _structure;
   }
 
   void generate_generic_option(ostream &stream, unsigned int indent = 0);

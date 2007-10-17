@@ -50,3 +50,22 @@ switch present in most C compilers:
 maintainer-mode
 
 document that an option can span more lines.
+
+CLEANING
+
+@structure@ is it really useful?
+
+- what was happening before, when an option that required an argument was
+not specified any argument?
+- test without any option at all
+- test all types in multiple options?
+- test multiple options with int
+- no_fre <=> multiple?
+- if multiple options without args avoid generating the functions?
+- merge all the has_ functions into a single function in gm.cc inspecting
+  all the options and setting when appropriate the field in gm?
+
+TESTS
+
+generate in the code also a test main with a string containing the test
+arguments and then in the main, check that the results are as expected.

@@ -153,6 +153,8 @@ RUN_SAMPLE2 = ./sample2$(EXEEXT) -i 10 -l 20
 RUN_SAMPLE2_1 = ./sample2$(EXEEXT) --version
 RUN_SAMPLE2_2 = ./sample2$(EXEEXT) --help
 
+if NO_CROSSCOMPILING
+
 check-am: testdata
 	rm -f test.out
 	touch $(GGO_FILES)
@@ -174,6 +176,8 @@ testdata:
 	$(RUN_SAMPLE1_2) 2>> testdata
 	$(RUN_SAMPLE2_1) >> testdata
 	$(RUN_SAMPLE2_2) >> testdata
+
+endif
 
 # this is to build samples once gengetopt has changed
 # this is for development only.

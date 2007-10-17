@@ -16,7 +16,6 @@ using std::ostream;
 class free_multiple_gen_class
 {
  protected:
-  string comment;
   bool has_string_type;
   string opt_var;
   string structure;
@@ -27,8 +26,8 @@ class free_multiple_gen_class
   {
   }
   
-  free_multiple_gen_class(const string &_comment, bool _has_string_type, const string &_opt_var, const string &_structure) :
-    comment (_comment), has_string_type (_has_string_type), opt_var (_opt_var), structure (_structure)
+  free_multiple_gen_class(bool _has_string_type, const string &_opt_var, const string &_structure) :
+    has_string_type (_has_string_type), opt_var (_opt_var), structure (_structure)
   {
   }
 
@@ -53,11 +52,6 @@ class free_multiple_gen_class
       }
     if (start+1 <= s.size ())
       stream << s.substr (start);
-  }
-
-  void set_comment(const string &_comment)
-  {
-    comment = _comment;
   }
 
   void set_has_string_type(bool _has_string_type)

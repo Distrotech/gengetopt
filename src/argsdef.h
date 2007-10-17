@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 1999, 2000, 2001  Free Software Foundation, Inc.
+ * Copyright (C) 1999-2007  Free Software Foundation, Inc.
  *
  * This file is part of GNU gengetopt 
  *
@@ -32,11 +32,13 @@
 #define ARG_LONGDOUBLE	8
 #define ARG_LONGLONG	9
 
-/* symbolic names for argument types */
+/** corresponding strings for above defines */
+extern const char * arg_type_constants [];
+/** symbolic names for argument types */
 extern const char * arg_names [];
-/* corresponding C types */
+/** corresponding C types */
 extern const char * arg_types [];
-/* string representation of types */
+/** string representation of types */
 extern const char * arg_types_names [];
 
 #define ARGS_STRUCT "args_info"
