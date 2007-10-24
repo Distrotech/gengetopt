@@ -16,15 +16,21 @@ using std::ostream;
 class print_help_string_gen_class
 {
  protected:
+  string args_info;
+  string full_index;
   string helpstring;
+  string index;
+  bool last;
+  bool shared;
 
  public:
-  print_help_string_gen_class()
+  print_help_string_gen_class() :
+    last (false), shared (false)
   {
   }
   
-  print_help_string_gen_class(const string &_helpstring) :
-    helpstring (_helpstring)
+  print_help_string_gen_class(const string &_args_info, const string &_full_index, const string &_helpstring, const string &_index, bool _last, bool _shared) :
+    args_info (_args_info), full_index (_full_index), helpstring (_helpstring), index (_index), last (_last), shared (_shared)
   {
   }
 
@@ -51,9 +57,34 @@ class print_help_string_gen_class
       stream << s.substr (start);
   }
 
+  void set_args_info(const string &_args_info)
+  {
+    args_info = _args_info;
+  }
+
+  void set_full_index(const string &_full_index)
+  {
+    full_index = _full_index;
+  }
+
   void set_helpstring(const string &_helpstring)
   {
     helpstring = _helpstring;
+  }
+
+  void set_index(const string &_index)
+  {
+    index = _index;
+  }
+
+  void set_last(bool _last)
+  {
+    last = _last;
+  }
+
+  void set_shared(bool _shared)
+  {
+    shared = _shared;
   }
 
   void generate_print_help_string(ostream &stream, unsigned int indent = 0);

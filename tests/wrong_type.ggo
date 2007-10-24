@@ -1,5 +1,0 @@
-# test for problems in type specification:
-# for enumerated options type must not be specified
-
-option "values-ok"        f "value option OK" values="foo","bar"
-option "values"        F "value option" values="foo","bar" default="foo" int

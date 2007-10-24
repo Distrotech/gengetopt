@@ -301,6 +301,9 @@ specified --multistring-values-no-short with argument bar
 specified --multistring-values-no-short with argument bar
 specified --multistring-values-no-short with argument bar
 specified --multistring-values-no-short with argument foo
+specified --int-values with argument 180
+specified --int-values with (original) argument 1
+(un)specified --int-values-def with argument 180
 *** test_values_err.sh
 ./test_values: ambiguous argument, "fo", for option `--string-values' (`-s')
 ./test_values: invalid argument, "fooa", for option `--multistring-values' (`-S')
@@ -330,6 +333,58 @@ first cmdline: -M400 -a10 --multi 100,200,300
 first cmdline: -M500 -M600
   --multi: 500
   --multi: 600
+*** test_sections_option_help
+help_help:   -h, --help                   Print help and exit
+version_help:   -V, --version                Print version and exit
+string_help:   -s, --string=STRING          string option
+int_help:   -i, --int=INT                int option
+short_help:   -S, --short=SHORT            short option
+long_help:   -l, --long=LONG              long option
+float_help:   -f, --float=FLOAT            float option
+double_help:   -d, --double=DOUBLE          double option
+longdouble_help:   -D, --longdouble=LONGDOUBLE  longdouble option
+longlong_help:   -L, --longlong=LONGLONG      longlong option
+flag_help:   -F, --flag                   flag option  (default=on)
+function_help:   -u, --function               function option
+no_short_help:       --no-short               no short option
+required_help:   -r, --required=STRING        required option (mandatory)
+*** test_all_opts_option_help
+help_help:   -h, --help                    Print help and exit
+full_help_help:       --full-help               Print help, including hidden options, and exit
+version_help:   -V, --version                 Print version and exit
+string_help:   -s, --string=STRING            string option
+int_help:   -i, --int=INT                 int option
+short_help:   -S, --short=SHORT             short option
+long_help:   -l, --long=LONG               long option
+float_help:   -f, --float=FLOAT             float option
+double_help:   -d, --double=DOUBLE           double option
+longdouble_help:   -D, --longdouble=LONGDOUBLE   longdouble option
+longlong_help:   -L, --longlong=LONGLONG       longlong option
+flag_help:   -F, --flag                    flag option  (default=on)
+function_help:   -u, --function                function option
+no_short_help:       --no-short                no short option
+opt_arg_help:       --opt-arg[=STRING]        option with optional arg
+opt_arg_short_help:   -o, --opt-arg-short[=STRING]  option with optional arg (short)
+required_help:   -r, --required=STRING         required option (mandatory)
+hidden_help:   -H, --hidden=INT              hidden option
+dependant_help:   -A, --dependant=STRING        option that depends on opt-arg
+very_very_long_option_help:       --very-very-long-option=STRING
+                                the name of this option is long enough to make 
+                                  this description begin on a new line
+assume_multimeth_virtual_help:   -y, --assume-multimeth-virtual
+                                the name of this option is just as long as the 
+                                  maximum allowed, so this description begin on 
+                                  a new line
+file_save_help:       --file-save=STRING        save the passed options into a file
+*** test_groups_option_help
+help_help:   -h, --help              Print help and exit
+version_help:   -V, --version           Print version and exit
+opta_help:   -a, --opta              string a
+optA_help:   -A, --optA[=STRING]     string A
+optAmul_help:   -M, --optAmul[=STRING]  string M
+optb_help:   -b, --optb              string b
+optc_help:       --optc              string c
+optd_help:   -d, --optd              string d
 *** test_show_help.sh
 test_all_opts 1.0
 
@@ -430,13 +485,19 @@ Usage: test_values [OPTIONS]...
       --string-values-group=FOO group string option with values and default  
                                   (possible values="foo", "bar", 
                                   "foobar", "barfoo" default=`bar')
+  -i, --int-values=INT          int option with values  (possible 
+                                  values="90", "180", "270", "360")
+      --int-values-def=INT      int option with values and default  (possible 
+                                  values="90", "180", "270", "360" 
+                                  default=`180')
 *** test_err.sh
+diff wrong_default.err.out ./wrong_default.err
 diff wrong_dep.err.out ./wrong_dep.err
 diff wrong_flag.err.out ./wrong_flag.err
 diff wrong_flag2.err.out ./wrong_flag2.err
 diff wrong_group.err.out ./wrong_group.err
 diff wrong_group2.err.out ./wrong_group2.err
-diff wrong_type.err.out ./wrong_type.err
+diff wrong_numeric_value.err.out ./wrong_numeric_value.err
 *** no_strings -h
 no_strings 1.0
 
@@ -922,6 +983,11 @@ Usage: test_values [OPTIONS]... [FILES]...
       --string-values-group=FOO group string option with values and default  
                                   (possible values="foo", "bar", 
                                   "foobar", "barfoo" default=`bar')
+  -i, --int-values=INT          int option with values  (possible 
+                                  values="90", "180", "270", "360")
+      --int-values-def=INT      int option with values and default  (possible 
+                                  values="90", "180", "270", "360" 
+                                  default=`180')
 *** test_redef_help -h
 specified --height
 *** test_multiple_parsers -h
@@ -934,6 +1000,58 @@ Usage: gengetopt [OPTIONS]... [FILES]...
   -F, --first-cmd=first command the first command line to parse (mandatory)
   -S, --second-cmd=second command
                                 the second command line to parse (mandatory)
+*** test_sections_option_help -h
+help_help:   -h, --help                   Print help and exit
+version_help:   -V, --version                Print version and exit
+string_help:   -s, --string=STRING          string option
+int_help:   -i, --int=INT                int option
+short_help:   -S, --short=SHORT            short option
+long_help:   -l, --long=LONG              long option
+float_help:   -f, --float=FLOAT            float option
+double_help:   -d, --double=DOUBLE          double option
+longdouble_help:   -D, --longdouble=LONGDOUBLE  longdouble option
+longlong_help:   -L, --longlong=LONGLONG      longlong option
+flag_help:   -F, --flag                   flag option  (default=on)
+function_help:   -u, --function               function option
+no_short_help:       --no-short               no short option
+required_help:   -r, --required=STRING        required option (mandatory)
+*** test_all_opts_option_help -h
+help_help:   -h, --help                    Print help and exit
+full_help_help:       --full-help               Print help, including hidden options, and exit
+version_help:   -V, --version                 Print version and exit
+string_help:   -s, --string=STRING            string option
+int_help:   -i, --int=INT                 int option
+short_help:   -S, --short=SHORT             short option
+long_help:   -l, --long=LONG               long option
+float_help:   -f, --float=FLOAT             float option
+double_help:   -d, --double=DOUBLE           double option
+longdouble_help:   -D, --longdouble=LONGDOUBLE   longdouble option
+longlong_help:   -L, --longlong=LONGLONG       longlong option
+flag_help:   -F, --flag                    flag option  (default=on)
+function_help:   -u, --function                function option
+no_short_help:       --no-short                no short option
+opt_arg_help:       --opt-arg[=STRING]        option with optional arg
+opt_arg_short_help:   -o, --opt-arg-short[=STRING]  option with optional arg (short)
+required_help:   -r, --required=STRING         required option (mandatory)
+hidden_help:   -H, --hidden=INT              hidden option
+dependant_help:   -A, --dependant=STRING        option that depends on opt-arg
+very_very_long_option_help:       --very-very-long-option=STRING
+                                the name of this option is long enough to make 
+                                  this description begin on a new line
+assume_multimeth_virtual_help:   -y, --assume-multimeth-virtual
+                                the name of this option is just as long as the 
+                                  maximum allowed, so this description begin on 
+                                  a new line
+file_save_help:       --file-save=STRING        save the passed options into a file
+*** test_groups_option_help -h
+help_help:   -h, --help              Print help and exit
+version_help:   -V, --version           Print version and exit
+opta_help:   -a, --opta              string a
+optA_help:   -A, --optA[=STRING]     string A
+optAmul_help:   -M, --optAmul[=STRING]  string M
+optb_help:   -b, --optb              string b
+optc_help:       --optc              string c
+optd_help:   -d, --optd              string d
 *** test_all_opts --full-help
 test_all_opts 1.0
 

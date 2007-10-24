@@ -99,6 +99,7 @@ void clear_args (struct test_first_cmdline_cmd_struct *args_info)
 static
 void init_args_info(struct test_first_cmdline_cmd_struct *args_info)
 {
+
   args_info->help_help = test_first_cmdline_cmd_struct_help[0] ;
   args_info->version_help = test_first_cmdline_cmd_struct_help[1] ;
   args_info->option_a_help = test_first_cmdline_cmd_struct_help[2] ;
@@ -123,7 +124,10 @@ test_first_cmdline_cmd_parser_print_help (void)
   if (strlen(test_first_cmdline_cmd_struct_purpose) > 0)
     printf("\n%s\n", test_first_cmdline_cmd_struct_purpose);
 
-  printf("\n%s\n\n", test_first_cmdline_cmd_struct_usage);
+  if (strlen(test_first_cmdline_cmd_struct_usage) > 0)
+    printf("\n%s\n", test_first_cmdline_cmd_struct_usage);
+
+  printf("\n");
 
   if (strlen(test_first_cmdline_cmd_struct_description) > 0)
     printf("%s\n", test_first_cmdline_cmd_struct_description);
@@ -143,21 +147,25 @@ test_first_cmdline_cmd_parser_init (struct test_first_cmdline_cmd_struct *args_i
   args_info->inputs_num = 0;
 }
 
-struct test_first_cmdline_cmd_parser_params *
-test_first_cmdline_cmd_parser_params_init(void)
+void
+test_first_cmdline_cmd_parser_params_init(struct test_first_cmdline_cmd_parser_params *params)
 {
-  struct test_first_cmdline_cmd_parser_params *params = 
-    (struct test_first_cmdline_cmd_parser_params *)malloc(sizeof(struct test_first_cmdline_cmd_parser_params));
-
   if (params)
     { 
       params->override = 0;
-      params->initialize = 0;
-      params->check_required = 0;
+      params->initialize = 1;
+      params->check_required = 1;
       params->check_ambiguity = 0;
       params->print_errors = 1;
     }
-    
+}
+
+struct test_first_cmdline_cmd_parser_params *
+test_first_cmdline_cmd_parser_params_create(void)
+{
+  struct test_first_cmdline_cmd_parser_params *params = 
+    (struct test_first_cmdline_cmd_parser_params *)malloc(sizeof(struct test_first_cmdline_cmd_parser_params));
+  test_first_cmdline_cmd_parser_params_init(params);  
   return params;
 }
 
@@ -1163,7 +1171,7 @@ static char *package_name = 0;
  * @param orig_field the pointer to the orig field
  * @param field_given the pointer to the number of occurrence of this option
  * @param prev_given the pointer to the number of occurrence already seen
- * @param val the argument for this option (if null no arg was specified)
+ * @param value the argument for this option (if null no arg was specified)
  * @param orig the actual argument (can be different in case of options with values)
  * @param possible_values the possible values for this option (if specified)
  * @param default_value the default value (in case the option only accepts fixed values)
@@ -1179,7 +1187,7 @@ static char *package_name = 0;
 static
 int update_arg(void *field, char **orig_field,
                unsigned int *field_given, unsigned int *prev_given, 
-               const char *val, char *orig,
+               const char *value, char *orig,
                char *possible_values[], const char *default_value,
                test_first_cmdline_cmd_parser_arg_type arg_type,
                short check_ambiguity, short override,
@@ -1187,7 +1195,8 @@ int update_arg(void *field, char **orig_field,
                const char *long_opt, char short_opt,
                const char *additional_error)
 {
-  char *stop_char;
+  char *stop_char = 0;
+  const char *val = value;
   int found;
   char **string_field;
 
@@ -1214,17 +1223,19 @@ int update_arg(void *field, char **orig_field,
     (*prev_given)++;
   if (field_given)
     (*field_given)++;
+  if (possible_values)
+    val = possible_values[found];
 
   switch(arg_type) {
   case ARG_INT:
     if (val) *((int *)field) = strtol (val, &stop_char, 0);
     break;
   case ARG_STRING:
-    if (val || possible_values) {
+    if (val) {
       string_field = (char **)field;
       if (!no_free && *string_field)
         free (*string_field); /* free previous string */
-      *string_field = gengetopt_strdup (possible_values ? possible_values[found] : val);
+      *string_field = gengetopt_strdup (val);
     }
     break;
   default:

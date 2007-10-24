@@ -455,6 +455,48 @@ gengetopt_has_option (const char * long_opt, char short_opt)
   return 0;
 }
 
+bool check_numeric_validity(const char *val, int opt_type)
+{
+    char *end_of_string, *expected_eos;
+
+    expected_eos = (char *) (val + strlen(val));
+
+    switch ( opt_type )
+      {
+      case ARG_INT :
+      case ARG_SHORT :
+      case ARG_LONG :
+      case ARG_LONGLONG :
+        (void) strtol(val, &end_of_string, 0);
+        break;
+
+      case ARG_FLOAT:
+      case ARG_DOUBLE:
+      case ARG_LONGDOUBLE:
+        (void) strtod(val, &end_of_string);
+        break;
+
+      default :
+        // This will allow us to factorise as a single line the
+        // test for correctness of the default value
+        end_of_string = expected_eos;
+        break;
+      }
+    return ( end_of_string == expected_eos );
+}
+
+bool
+check_values(const AcceptedValues *acceptedvalues, int opt_type)
+{
+    for (AcceptedValues::const_iterator it = acceptedvalues->begin();
+        it != acceptedvalues->end(); ++it) {
+        if (!check_numeric_validity((*it).c_str(), opt_type))
+            return false;
+    }
+    
+    return true;
+}
+
 int
 gengetopt_create_option (gengetopt_option *&n, const char * long_opt, char short_opt,
                       const char * desc,
@@ -529,42 +571,18 @@ gengetopt_create_option (gengetopt_option *&n, const char * long_opt, char short
 
   n->acceptedvalues = acceptedvalues;
 
-  if (acceptedvalues && type != ARG_NO)
-    return NOT_REQUESTED_TYPE;
+  // if (acceptedvalues && type != ARG_NO)
+  // return NOT_REQUESTED_TYPE;
 
-  if (acceptedvalues)
+  if (acceptedvalues && ! (n->type))
     n->type = ARG_STRING;
 
   n->default_string = 0;
   n->default_given = (default_value != 0);
   if (n->default_given)
     {
-      char *end_of_string, *expected_eos;
-
-      expected_eos = (char *) (default_value + strlen(default_value));
       n->default_string = strdup (default_value);
-      switch ( type )
-        {
-        case ARG_INT :
-        case ARG_SHORT :
-        case ARG_LONG :
-        case ARG_LONGLONG :
-          (void) strtol(default_value, &end_of_string, 0);
-          break;
-
-        case ARG_FLOAT:
-        case ARG_DOUBLE:
-        case ARG_LONGDOUBLE:
-          (void) strtod(default_value, &end_of_string);
-          break;
-
-        default :
-          // This will allow us to factorise as a single line the
-          // test for correctness of the default value
-          end_of_string = expected_eos;
-          break;
-        }
-      if ( end_of_string != expected_eos )
+      if ( ! check_numeric_validity(default_value, n->type) )
         {
           free (n);
           return INVALID_DEFAULT_VALUE;
@@ -576,6 +594,11 @@ gengetopt_create_option (gengetopt_option *&n, const char * long_opt, char short
             return INVALID_DEFAULT_VALUE;
         }
     }
+  
+  if (acceptedvalues) {
+      if (!check_values(acceptedvalues, n->type))
+          return INVALID_NUMERIC_VALUE;
+  }
 
   n->var_arg = NULL;
 
@@ -640,41 +663,16 @@ gengetopt_check_option (gengetopt_option *n, bool groupoption)
       return NOT_VALID_SPECIFICATION;
   }
 
-  if (n->acceptedvalues && n->type != ARG_NO)
-    return NOT_REQUESTED_TYPE;
+  // if (acceptedvalues && type != ARG_NO)
+  // return NOT_REQUESTED_TYPE;
 
-  if (n->acceptedvalues)
+  if (n->acceptedvalues && ! (n->type))
     n->type = ARG_STRING;
 
   n->default_given = (n->default_string != 0);
   if (n->default_given)
     {
-      char *end_of_string, *expected_eos;
-
-      expected_eos = (char *) (n->default_string + strlen(n->default_string));
-
-      switch ( n->type )
-        {
-        case ARG_INT :
-        case ARG_SHORT :
-        case ARG_LONG :
-        case ARG_LONGLONG :
-          (void) strtol(n->default_string, &end_of_string, 0);
-          break;
-
-        case ARG_FLOAT:
-        case ARG_DOUBLE:
-        case ARG_LONGDOUBLE:
-          (void) strtod(n->default_string, &end_of_string);
-          break;
-
-        default :
-          // This will allow us to factorise as a single line the
-          // test for correctness of the default value
-          end_of_string = expected_eos;
-          break;
-        }
-      if ( end_of_string != expected_eos )
+      if ( !check_numeric_validity(n->default_string, n->type) )
         {
           return INVALID_DEFAULT_VALUE;
         }
@@ -685,6 +683,11 @@ gengetopt_check_option (gengetopt_option *n, bool groupoption)
             return INVALID_DEFAULT_VALUE;
         }
     }
+
+  if (n->acceptedvalues) {
+      if (!check_values(n->acceptedvalues, n->type))
+          return INVALID_NUMERIC_VALUE;
+  }
 
   n->var_arg = NULL;
 

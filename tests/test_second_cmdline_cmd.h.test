@@ -60,8 +60,8 @@ struct test_second_cmdline_cmd_struct
 struct test_second_cmdline_cmd_parser_params
 {
   int override; /**< @brief whether to override possibly already present options (default 0) */
-  int initialize; /**< @brief whether to initialize the option structure test_second_cmdline_cmd_struct (default 0) */
-  int check_required; /**< @brief whether to check that all required options were provided (default 0) */
+  int initialize; /**< @brief whether to initialize the option structure test_second_cmdline_cmd_struct (default 1) */
+  int check_required; /**< @brief whether to check that all required options were provided (default 1) */
   int check_ambiguity; /**< @brief whether to check for options already specified in the option structure test_second_cmdline_cmd_struct (default 0) */
   int print_errors; /**< @brief whether getopt_long should print an error message for a bad option (default 1) */
 } ;
@@ -139,11 +139,18 @@ void test_second_cmdline_cmd_parser_print_help(void);
 void test_second_cmdline_cmd_parser_print_version(void);
 
 /**
+ * Initializes all the fields a test_second_cmdline_cmd_parser_params structure 
+ * to their default values
+ * @param params the structure to initialize
+ */
+void test_second_cmdline_cmd_parser_params_init(struct test_second_cmdline_cmd_parser_params *params);
+
+/**
  * Allocates dynamically a test_second_cmdline_cmd_parser_params structure and initializes
  * all its fields to their default values
- * @return the initialized test_second_cmdline_cmd_parser_params structure
+ * @return the created and initialized test_second_cmdline_cmd_parser_params structure
  */
-struct test_second_cmdline_cmd_parser_params *test_second_cmdline_cmd_parser_params_init(void);
+struct test_second_cmdline_cmd_parser_params *test_second_cmdline_cmd_parser_params_create(void);
 
 /**
  * Initializes the passed test_second_cmdline_cmd_struct structure's fields

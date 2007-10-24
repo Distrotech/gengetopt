@@ -19,3 +19,6 @@ option "multistring-values-def"      - "multiple string option with values and d
 option "multistring-values-no-short"      - "multiple string option with values no-short" typestr="BAR" values="foo","bar" no multiple
 
 groupoption "string-values-group"      - "group string option with values and default" typestr="FOO" values="foo","bar","foobar","barfoo" default="bar" group="group1"
+
+option "int-values"      i "int option with values" values="90","180","270","360" int optional
+option "int-values-def"      - "int option with values and default" values="90","180","270","360" default="180" int optional

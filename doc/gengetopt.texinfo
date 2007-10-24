@@ -452,7 +452,8 @@ of simply @code{STRING}, or @code{"portnumber"} instead of simply
 @item values
  
 a list of strings containing all the possible values that can be passed
-to the option.  The type is considered string and must not be specified.
+to the option.  If not specified, the type is considered
+string@footnote{Since version 2.22 the type can be specified}.
 
 @cindex default 
 @item default 
@@ -631,22 +632,23 @@ text ""
 @end example
 
 You can also specify the list of @code{values} that can be passed to an
-option (in that case the option has type @code{string}).  If a value
-that is not in the list is passed, an error is raised.  You can think of
-such options as @emph{enumerated} options.  It is not necessary to pass
-the complete value at the command line option: a non ambiguous prefix
-will do.  For instance, if the accepted values are
-@code{"foo","bar","foobar"}, then you can pass at the command line the
-value @code{"b"} and the value @code{"bar"} will be selected, or the
-value @code{"foob"} and the value @code{"foobar"} will be selected;
-instead, passing the value @code{"fo"} will raise an ambiguity error.
+option (if the type is not specified, the option has type
+@code{string}).  If a value that is not in the list is passed, an error
+is raised.  You can think of such options as @emph{enumerated} options.
+It is not necessary to pass the complete value at the command line
+option: a non ambiguous prefix will do.  For instance, if the accepted
+values are @code{"foo","bar","foobar"}, then you can pass at the command
+line the value @code{"b"} and the value @code{"bar"} will be selected,
+or the value @code{"foob"} and the value @code{"foobar"} will be
+selected; instead, passing the value @code{"fo"} will raise an ambiguity
+error.
  
 Here's an example of such a file (the file is called @file{sample1.ggo})
 
 @include sample1.ggo.texinfo
 
-
-The simplest way to use gengetopt is to pass this file as the standard input, i.e.: 
+The simplest way to use gengetopt is to pass this file as the standard
+input, i.e.:
 
 @example
 gengetopt < sample1.ggo
@@ -1246,7 +1248,7 @@ represented as @code{int} and they are @code{true} if they are set to
 @code{1} and @code{false} if they are set to @code{0}):
 
 @table @code
-@item int initialize
+@item int initialize (default = 1)
 @cindex initialize
 tells whether the args_info struct has to be initialized.
 
@@ -1258,7 +1260,7 @@ this is the case when you call a parser multiple times using the same
 args_info struct, see, e.g., @ref{Configuration files} and@ref{String
 Parsers and Multiple Parsers}).
 
-@item int check_required (default = 0)
+@item int check_required (default = 1)
 @cindex check_required
 tells whether the check for required options must be performed or not.
 
@@ -1278,22 +1280,32 @@ zero, @code{getopt_long} does not print any messages, but the generated
 parser will still return with error.
 @end table
 
-For instance, internally, the standard command line parser function is
-invoked with @code{initialize} and @code{check_required} set to 1 and
-@code{override} set to 0.
-
-Gengetopt also generates an initialization function for such structures,
-called @code{<cmd_parser_name>_params_init}, which returns a dynamically
+Gengetopt also generates an initialization function for such
+structures@footnote{The @code{<cmd_parser_name>_params_init} was
+introduced in version 2.21, but it used to initialize all its fields to
+0, which does not make much sense, since it's more helpful to have the
+fields initialized to their default values; in order not to silently
+break the semantics of previous code, the (void argument) creation
+function is now called @code{<cmd_parser_name>_params_create} and
+@code{<cmd_parser_name>_params_init} is now a procedure that initializes
+a passed pointer to the structure.  This will make previous code not
+compilable, since the signature of @code{<cmd_parser_name>_params_init}
+has changed; hopefully, this will force the programmer to realize that
+something has changed.  I'm sorry for the (hopefully little) problems
+this change might imply.}, called @code{<cmd_parser_name>_params_init},
+which takes as argument a pointer to such structure and initialize all
+its fields to their default values; it also generates a function called
+@code{<cmd_parser_name>_params_create} that returns a dynamically
 allocated structure with all fields initialized to their default values.
 
-We strongly advise to use such function for creating such a structure,
-since this will make your code scalable to future releases of gengetopt
-where such structure might contain additional fields.  Otherwise, you
-might risk to use a structure where some fields are not initialized,
-with unpredictable results.  Furthermore, since the function returns a
-pointer to a dynamically allocated structure (with @code{malloc}), it is
-up to you to deallocate that structure when you no longer need it (with
-@code{free}).
+We strongly advise to use such functions for creating and initializing
+such a structure, since this will make your code scalable to future
+releases of gengetopt where such structure might contain additional
+fields.  Otherwise, you might risk to use a structure where some fields
+are not initialized, with unpredictable results.  Furthermore, since the
+@code{<cmd_parser_name>_params_create} function returns a pointer to a
+dynamically allocated structure (with @code{malloc}), it is up to you to
+deallocate that structure when you no longer need it (with @code{free}).
 
 Some examples of usage of this parameters struct are shown in
 @ref{Configuration files}.

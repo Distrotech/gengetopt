@@ -28,6 +28,10 @@ class AcceptedValues : protected std::list<std::string>
     value_set values;
   
   public:
+    using std::list<std::string>::const_iterator;
+    using std::list<std::string>::begin;
+    using std::list<std::string>::end;
+
     void insert(const std::string &s);
     const std::string toString(bool escape = true) const;
     bool contains(const std::string &s) const;

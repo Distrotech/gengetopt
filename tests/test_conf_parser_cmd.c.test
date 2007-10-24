@@ -176,39 +176,40 @@ void clear_args (struct my_args_info *args_info)
 static
 void init_args_info(struct my_args_info *args_info)
 {
+
   args_info->help_help = my_args_info_help[0] ;
   args_info->version_help = my_args_info_help[1] ;
-  args_info->opta_help = my_args_info_help[2] ;
-  args_info->optb_help = my_args_info_help[3] ;
-  args_info->optc_help = my_args_info_help[4] ;
-  args_info->optd_help = my_args_info_help[5] ;
-  args_info->string_help = my_args_info_help[6] ;
-  args_info->int_help = my_args_info_help[7] ;
-  args_info->short_help = my_args_info_help[8] ;
-  args_info->long_help = my_args_info_help[9] ;
-  args_info->float_help = my_args_info_help[10] ;
-  args_info->double_help = my_args_info_help[11] ;
-  args_info->longdouble_help = my_args_info_help[12] ;
-  args_info->longlong_help = my_args_info_help[13] ;
-  args_info->flag_help = my_args_info_help[14] ;
-  args_info->function_help = my_args_info_help[15] ;
-  args_info->no_short_help = my_args_info_help[16] ;
-  args_info->required_help = my_args_info_help[17] ;
-  args_info->conf_file_help = my_args_info_help[18] ;
-  args_info->multi_string_help = my_args_info_help[19] ;
+  args_info->opta_help = my_args_info_help[3] ;
+  args_info->optb_help = my_args_info_help[4] ;
+  args_info->optc_help = my_args_info_help[6] ;
+  args_info->optd_help = my_args_info_help[7] ;
+  args_info->string_help = my_args_info_help[8] ;
+  args_info->int_help = my_args_info_help[9] ;
+  args_info->short_help = my_args_info_help[10] ;
+  args_info->long_help = my_args_info_help[11] ;
+  args_info->float_help = my_args_info_help[12] ;
+  args_info->double_help = my_args_info_help[13] ;
+  args_info->longdouble_help = my_args_info_help[14] ;
+  args_info->longlong_help = my_args_info_help[15] ;
+  args_info->flag_help = my_args_info_help[16] ;
+  args_info->function_help = my_args_info_help[17] ;
+  args_info->no_short_help = my_args_info_help[18] ;
+  args_info->required_help = my_args_info_help[19] ;
+  args_info->conf_file_help = my_args_info_help[20] ;
+  args_info->multi_string_help = my_args_info_help[21] ;
   args_info->multi_string_min = -1;
   args_info->multi_string_max = -1;
-  args_info->multi_string_def_help = my_args_info_help[20] ;
+  args_info->multi_string_def_help = my_args_info_help[22] ;
   args_info->multi_string_def_min = -1;
   args_info->multi_string_def_max = -1;
-  args_info->noarg_help = my_args_info_help[21] ;
+  args_info->noarg_help = my_args_info_help[23] ;
   args_info->noarg_min = -1;
   args_info->noarg_max = -1;
-  args_info->noarg_noshort_help = my_args_info_help[22] ;
+  args_info->noarg_noshort_help = my_args_info_help[24] ;
   args_info->noarg_noshort_min = -1;
   args_info->noarg_noshort_max = -1;
-  args_info->opt_arg_help = my_args_info_help[23] ;
-  args_info->file_save_help = my_args_info_help[24] ;
+  args_info->opt_arg_help = my_args_info_help[25] ;
+  args_info->file_save_help = my_args_info_help[26] ;
   
 }
 
@@ -227,7 +228,10 @@ test_conf_parser_cmd_parser_print_help (void)
   if (strlen(my_args_info_purpose) > 0)
     printf("\n%s\n", my_args_info_purpose);
 
-  printf("\n%s\n\n", my_args_info_usage);
+  if (strlen(my_args_info_usage) > 0)
+    printf("\n%s\n", my_args_info_usage);
+
+  printf("\n");
 
   if (strlen(my_args_info_description) > 0)
     printf("%s\n", my_args_info_description);
@@ -247,21 +251,25 @@ test_conf_parser_cmd_parser_init (struct my_args_info *args_info)
   args_info->inputs_num = 0;
 }
 
-struct test_conf_parser_cmd_parser_params *
-test_conf_parser_cmd_parser_params_init(void)
+void
+test_conf_parser_cmd_parser_params_init(struct test_conf_parser_cmd_parser_params *params)
 {
-  struct test_conf_parser_cmd_parser_params *params = 
-    (struct test_conf_parser_cmd_parser_params *)malloc(sizeof(struct test_conf_parser_cmd_parser_params));
-
   if (params)
     { 
       params->override = 0;
-      params->initialize = 0;
-      params->check_required = 0;
+      params->initialize = 1;
+      params->check_required = 1;
       params->check_ambiguity = 0;
       params->print_errors = 1;
     }
-    
+}
+
+struct test_conf_parser_cmd_parser_params *
+test_conf_parser_cmd_parser_params_create(void)
+{
+  struct test_conf_parser_cmd_parser_params *params = 
+    (struct test_conf_parser_cmd_parser_params *)malloc(sizeof(struct test_conf_parser_cmd_parser_params));
+  test_conf_parser_cmd_parser_params_init(params);  
   return params;
 }
 
@@ -745,7 +753,7 @@ static char *package_name = 0;
  * @param orig_field the pointer to the orig field
  * @param field_given the pointer to the number of occurrence of this option
  * @param prev_given the pointer to the number of occurrence already seen
- * @param val the argument for this option (if null no arg was specified)
+ * @param value the argument for this option (if null no arg was specified)
  * @param orig the actual argument (can be different in case of options with values)
  * @param possible_values the possible values for this option (if specified)
  * @param default_value the default value (in case the option only accepts fixed values)
@@ -761,7 +769,7 @@ static char *package_name = 0;
 static
 int update_arg(void *field, char **orig_field,
                unsigned int *field_given, unsigned int *prev_given, 
-               const char *val, char *orig,
+               const char *value, char *orig,
                char *possible_values[], const char *default_value,
                test_conf_parser_cmd_parser_arg_type arg_type,
                short check_ambiguity, short override,
@@ -769,7 +777,8 @@ int update_arg(void *field, char **orig_field,
                const char *long_opt, char short_opt,
                const char *additional_error)
 {
-  char *stop_char;
+  char *stop_char = 0;
+  const char *val = value;
   int found;
   char **string_field;
 
@@ -796,6 +805,8 @@ int update_arg(void *field, char **orig_field,
     (*prev_given)++;
   if (field_given)
     (*field_given)++;
+  if (possible_values)
+    val = possible_values[found];
 
   switch(arg_type) {
   case ARG_FLAG:
@@ -827,11 +838,11 @@ int update_arg(void *field, char **orig_field,
 #endif
     break;
   case ARG_STRING:
-    if (val || possible_values) {
+    if (val) {
       string_field = (char **)field;
       if (!no_free && *string_field)
         free (*string_field); /* free previous string */
-      *string_field = gengetopt_strdup (possible_values ? possible_values[found] : val);
+      *string_field = gengetopt_strdup (val);
     }
     break;
   default:

@@ -20,6 +20,16 @@ Version 2.22
      suppress getopt_long message printing (thanks to J. David Bryan)
    * if h is specified as a short option, then --help is still automatically
      generated, the same holds for --version and v (thanks to J. David Bryan)
+   * initializing of the structure for parser function parameters
+     was changed in order to initialize the fields to their default values
+     (instead of 0)
+   * list of acceptable values for options can be have a type different from
+     string
+   * usage string is printed only if not empty (as suggested by Gyozo Papp)
+   * in case of hidden options, the generated help string array reuses the 
+     strings of the full help array (as suggested by Gyozo Papp)
+   * the _help field for options is correctly generated even in the presence
+     of additional text before and after an option and also groups
 
 Version 2.21
 

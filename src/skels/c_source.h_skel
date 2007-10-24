@@ -29,12 +29,21 @@ const char *@args_info@_usage = "Usage:@if@ no_package @then@ " @package_var_nam
 
 const char *@args_info@_description = "@description@";
 
-const char *@args_info@_help[] = {
-  @help_option_print:method@  0
-};
 @IF@ has_hidden @THEN@
 const char *@args_info@_full_help[] = {
   @full_help_option_print:method@  0
+};
+
+static void
+init_help_array(void)
+{
+  @help_option_print:method@
+}
+
+const char *@args_info@_help[@help_string_num@];
+@ELSE@
+const char *@args_info@_help[] = {
+  @help_option_print:method@  0
 };
 @ENDIF@
 
@@ -128,6 +137,9 @@ void clear_args (struct @args_info@ *args_info)
 static
 void init_args_info(struct @args_info@ *args_info)
 {
+@IF@ has_hidden @THEN@
+  init_help_array();
+@endif@
   @init_args_info:method@
 }
 
@@ -146,7 +158,10 @@ void
   if (strlen(@args_info@_purpose) > 0)
     printf("\n%s\n", @args_info@_purpose);
 
-  printf("\n%s\n\n", @args_info@_usage);
+  if (strlen(@args_info@_usage) > 0)
+    printf("\n%s\n", @args_info@_usage);
+
+  printf("\n");
 
   if (strlen(@args_info@_description) > 0)
     printf("%s\n", @args_info@_description);
@@ -188,21 +203,25 @@ void
 @ENDIF@
 }
 
-struct @parser_name@_params *
-@parser_name@_params_init(void)
+void
+@parser_name@_params_init(struct @parser_name@_params *params)
 {
-  struct @parser_name@_params *params = 
-    (struct @parser_name@_params *)malloc(sizeof(struct @parser_name@_params));
-
   if (params)
     { 
       params->override = 0;
-      params->initialize = 0;
-      params->check_required = 0;
+      params->initialize = 1;
+      params->check_required = 1;
       params->check_ambiguity = 0;
       params->print_errors = 1;
     }
-    
+}
+
+struct @parser_name@_params *
+@parser_name@_params_create(void)
+{
+  struct @parser_name@_params *params = 
+    (struct @parser_name@_params *)malloc(sizeof(struct @parser_name@_params));
+  @parser_name@_params_init(params);  
   return params;
 }
 
@@ -663,7 +682,7 @@ static char *package_name = 0;
  * @@param orig_field the pointer to the orig field
  * @@param field_given the pointer to the number of occurrence of this option
  * @@param prev_given the pointer to the number of occurrence already seen
- * @@param val the argument for this option (if null no arg was specified)
+ * @@param value the argument for this option (if null no arg was specified)
  * @@param orig the actual argument (can be different in case of options with values)
  * @@param possible_values the possible values for this option (if specified)
  * @@param default_value the default value (in case the option only accepts fixed values)
@@ -679,7 +698,7 @@ static char *package_name = 0;
 static
 int update_arg(void *field, char **orig_field,
                unsigned int *field_given, unsigned int *prev_given, 
-               const char *val, char *orig,
+               const char *value, char *orig,
                char *possible_values[], const char *default_value,
                @parser_name@_arg_type arg_type,
                short check_ambiguity, short override,
@@ -687,7 +706,8 @@ int update_arg(void *field, char **orig_field,
                const char *long_opt, char short_opt,
                const char *additional_error)
 {
-  char *stop_char;
+  char *stop_char = 0;
+  const char *val = value;
   int found;
 @IF@ has_arg_string @THEN@
   char **string_field;
@@ -710,15 +730,15 @@ int update_arg(void *field, char **orig_field,
     }
 
 @IF@ check_possible_values @THEN@
-  if (possible_values && (found = check_possible_values((val ? val : default_value), possible_values)) < 0)
+  if (possible_values && (found = check_possible_values((value ? value : default_value), possible_values)) < 0)
     {
       if (short_opt != '-')
         fprintf (stderr, "%s: %s argument, \"%s\", for option `--%s' (`-%c')%s\n", 
-          package_name, (found == -2) ? "ambiguous" : "invalid", val, long_opt, short_opt,
+          package_name, (found == -2) ? "ambiguous" : "invalid", value, long_opt, short_opt,
           (additional_error ? additional_error : ""));
       else
         fprintf (stderr, "%s: %s argument, \"%s\", for option `--%s'%s\n", 
-          package_name, (found == -2) ? "ambiguous" : "invalid", val, long_opt,
+          package_name, (found == -2) ? "ambiguous" : "invalid", value, long_opt,
           (additional_error ? additional_error : ""));
       return 1; /* failure */
     }
@@ -730,6 +750,8 @@ int update_arg(void *field, char **orig_field,
     (*prev_given)++;
   if (field_given)
     (*field_given)++;
+  if (possible_values)
+    val = possible_values[found];
 
   switch(arg_type) {
 @IF@ has_arg_flag @THEN@
@@ -778,11 +800,11 @@ int update_arg(void *field, char **orig_field,
 @ENDIF@
 @IF@ has_arg_string @THEN@
   case ARG_STRING:
-    if (val || possible_values) {
+    if (val) {
       string_field = (char **)field;
       if (!no_free && *string_field)
         free (*string_field); /* free previous string */
-      *string_field = gengetopt_strdup (possible_values ? possible_values[found] : val);
+      *string_field = gengetopt_strdup (val);
     }
     break;
 @ENDIF@

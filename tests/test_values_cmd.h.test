@@ -64,6 +64,12 @@ struct gengetopt_args_info
   char * string_values_group_arg;	/**< @brief group string option with values and default (default='bar').  */
   char * string_values_group_orig;	/**< @brief group string option with values and default original value given at command line.  */
   const char *string_values_group_help; /**< @brief group string option with values and default help description.  */
+  int int_values_arg;	/**< @brief int option with values.  */
+  char * int_values_orig;	/**< @brief int option with values original value given at command line.  */
+  const char *int_values_help; /**< @brief int option with values help description.  */
+  int int_values_def_arg;	/**< @brief int option with values and default (default='180').  */
+  char * int_values_def_orig;	/**< @brief int option with values and default original value given at command line.  */
+  const char *int_values_def_help; /**< @brief int option with values and default help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
@@ -75,6 +81,8 @@ struct gengetopt_args_info
   unsigned int multistring_values_def_given ;	/**< @brief Whether multistring-values-def was given.  */
   unsigned int multistring_values_no_short_given ;	/**< @brief Whether multistring-values-no-short was given.  */
   unsigned int string_values_group_given ;	/**< @brief Whether string-values-group was given.  */
+  unsigned int int_values_given ;	/**< @brief Whether int-values was given.  */
+  unsigned int int_values_def_given ;	/**< @brief Whether int-values-def was given.  */
 
   char **inputs ; /**< @brief unamed options (options without names) */
   unsigned inputs_num ; /**< @brief unamed options number */
@@ -85,8 +93,8 @@ struct gengetopt_args_info
 struct test_values_cmd_parser_params
 {
   int override; /**< @brief whether to override possibly already present options (default 0) */
-  int initialize; /**< @brief whether to initialize the option structure gengetopt_args_info (default 0) */
-  int check_required; /**< @brief whether to check that all required options were provided (default 0) */
+  int initialize; /**< @brief whether to initialize the option structure gengetopt_args_info (default 1) */
+  int check_required; /**< @brief whether to check that all required options were provided (default 1) */
   int check_ambiguity; /**< @brief whether to check for options already specified in the option structure gengetopt_args_info (default 0) */
   int print_errors; /**< @brief whether getopt_long should print an error message for a bad option (default 1) */
 } ;
@@ -164,11 +172,18 @@ void test_values_cmd_parser_print_help(void);
 void test_values_cmd_parser_print_version(void);
 
 /**
+ * Initializes all the fields a test_values_cmd_parser_params structure 
+ * to their default values
+ * @param params the structure to initialize
+ */
+void test_values_cmd_parser_params_init(struct test_values_cmd_parser_params *params);
+
+/**
  * Allocates dynamically a test_values_cmd_parser_params structure and initializes
  * all its fields to their default values
- * @return the initialized test_values_cmd_parser_params structure
+ * @return the created and initialized test_values_cmd_parser_params structure
  */
-struct test_values_cmd_parser_params *test_values_cmd_parser_params_init(void);
+struct test_values_cmd_parser_params *test_values_cmd_parser_params_create(void);
 
 /**
  * Initializes the passed gengetopt_args_info structure's fields
@@ -201,6 +216,8 @@ extern char *test_values_cmd_parser_multistring_values_values[] ;	/**< @brief Po
 extern char *test_values_cmd_parser_multistring_values_def_values[] ;	/**< @brief Possible values for multistring-values-def.  */
 extern char *test_values_cmd_parser_multistring_values_no_short_values[] ;	/**< @brief Possible values for multistring-values-no-short.  */
 extern char *test_values_cmd_parser_string_values_group_values[] ;	/**< @brief Possible values for string-values-group.  */
+extern char *test_values_cmd_parser_int_values_values[] ;	/**< @brief Possible values for int-values.  */
+extern char *test_values_cmd_parser_int_values_def_values[] ;	/**< @brief Possible values for int-values-def.  */
 
 
 #ifdef __cplusplus

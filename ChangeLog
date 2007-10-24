@@ -1,3 +1,20 @@
+2007-10-24  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/gm.cc (generate_help_option_print): in case of hidden options,
+	the generated help string array reuses the strings of the full help
+	array
+	(generate_init_args_info): skip elements related to text before and
+	after an option and also related to groups
+
+2007-10-23  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/skels/c_source.h_skel: the params_init function now initializes
+	the structure fields to their default values.  a params_create function
+	was added to allocate such a structure and initialize it (to its
+	default values)
+	usage string is printed only if not empty (as suggested by
+	Gyozo Papp)
+
 2007-10-17  J. David Bryan
 
 	* src/gengetopt.cc (main): generate --help handling if only -h

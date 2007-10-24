@@ -39,11 +39,14 @@ const char *gengetopt_args_info_help[] = {
   "      --multistring-values-no-short=BAR\n                                multiple string option with values no-short  \n                                  (possible values=\"foo\", \"bar\")",
   "\n Group: group1",
   "      --string-values-group=FOO group string option with values and default  \n                                  (possible values=\"foo\", \"bar\", \n                                  \"foobar\", \"barfoo\" default=`bar')",
+  "  -i, --int-values=INT          int option with values  (possible \n                                  values=\"90\", \"180\", \"270\", \"360\")",
+  "      --int-values-def=INT      int option with values and default  (possible \n                                  values=\"90\", \"180\", \"270\", \"360\" \n                                  default=`180')",
     0
 };
 
 typedef enum {ARG_NO
   , ARG_STRING
+  , ARG_INT
 } test_values_cmd_parser_arg_type;
 
 static
@@ -66,6 +69,8 @@ char *test_values_cmd_parser_multistring_values_values[] = {"foo", "bar", 0} ;	/
 char *test_values_cmd_parser_multistring_values_def_values[] = {"foo", "bar", 0} ;	/* Possible values for multistring-values-def.  */
 char *test_values_cmd_parser_multistring_values_no_short_values[] = {"foo", "bar", 0} ;	/* Possible values for multistring-values-no-short.  */
 char *test_values_cmd_parser_string_values_group_values[] = {"foo", "bar", "foobar", "barfoo", 0} ;	/* Possible values for string-values-group.  */
+char *test_values_cmd_parser_int_values_values[] = {"90", "180", "270", "360", 0} ;	/* Possible values for int-values.  */
+char *test_values_cmd_parser_int_values_def_values[] = {"90", "180", "270", "360", 0} ;	/* Possible values for int-values-def.  */
 
 static char *
 gengetopt_strdup (const char *s);
@@ -83,6 +88,8 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->multistring_values_def_given = 0 ;
   args_info->multistring_values_no_short_given = 0 ;
   args_info->string_values_group_given = 0 ;
+  args_info->int_values_given = 0 ;
+  args_info->int_values_def_given = 0 ;
   args_info->group1_group_counter = 0 ;
 }
 
@@ -105,12 +112,16 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->multistring_values_no_short_orig = NULL;
   args_info->string_values_group_arg = gengetopt_strdup ("bar");
   args_info->string_values_group_orig = NULL;
+  args_info->int_values_orig = NULL;
+  args_info->int_values_def_arg = 180;
+  args_info->int_values_def_orig = NULL;
   
 }
 
 static
 void init_args_info(struct gengetopt_args_info *args_info)
 {
+
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->string_values_help = gengetopt_args_info_help[2] ;
@@ -126,7 +137,9 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->multistring_values_no_short_help = gengetopt_args_info_help[8] ;
   args_info->multistring_values_no_short_min = -1;
   args_info->multistring_values_no_short_max = -1;
-  args_info->string_values_group_help = gengetopt_args_info_help[9] ;
+  args_info->string_values_group_help = gengetopt_args_info_help[10] ;
+  args_info->int_values_help = gengetopt_args_info_help[11] ;
+  args_info->int_values_def_help = gengetopt_args_info_help[12] ;
   
 }
 
@@ -145,7 +158,10 @@ test_values_cmd_parser_print_help (void)
   if (strlen(gengetopt_args_info_purpose) > 0)
     printf("\n%s\n", gengetopt_args_info_purpose);
 
-  printf("\n%s\n\n", gengetopt_args_info_usage);
+  if (strlen(gengetopt_args_info_usage) > 0)
+    printf("\n%s\n", gengetopt_args_info_usage);
+
+  printf("\n");
 
   if (strlen(gengetopt_args_info_description) > 0)
     printf("%s\n", gengetopt_args_info_description);
@@ -165,21 +181,25 @@ test_values_cmd_parser_init (struct gengetopt_args_info *args_info)
   args_info->inputs_num = 0;
 }
 
-struct test_values_cmd_parser_params *
-test_values_cmd_parser_params_init(void)
+void
+test_values_cmd_parser_params_init(struct test_values_cmd_parser_params *params)
 {
-  struct test_values_cmd_parser_params *params = 
-    (struct test_values_cmd_parser_params *)malloc(sizeof(struct test_values_cmd_parser_params));
-
   if (params)
     { 
       params->override = 0;
-      params->initialize = 0;
-      params->check_required = 0;
+      params->initialize = 1;
+      params->check_required = 1;
       params->check_ambiguity = 0;
       params->print_errors = 1;
     }
-    
+}
+
+struct test_values_cmd_parser_params *
+test_values_cmd_parser_params_create(void)
+{
+  struct test_values_cmd_parser_params *params = 
+    (struct test_values_cmd_parser_params *)malloc(sizeof(struct test_values_cmd_parser_params));
+  test_values_cmd_parser_params_init(params);  
   return params;
 }
 
@@ -195,6 +215,7 @@ free_string_field (char **s)
 
 /** @brief generic value variable */
 union generic_value {
+    int int_arg;
     char *string_arg;
 };
 
@@ -254,6 +275,8 @@ test_values_cmd_parser_release (struct gengetopt_args_info *args_info)
   free_multiple_string_field (args_info->multistring_values_no_short_given, &(args_info->multistring_values_no_short_arg), &(args_info->multistring_values_no_short_orig));
   free_string_field (&(args_info->string_values_group_arg));
   free_string_field (&(args_info->string_values_group_orig));
+  free_string_field (&(args_info->int_values_orig));
+  free_string_field (&(args_info->int_values_def_orig));
   
   
   for (i = 0; i < args_info->inputs_num; ++i)
@@ -312,6 +335,10 @@ test_values_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info
   write_multiple_into_file(outfile, args_info->multistring_values_no_short_given, "multistring-values-no-short", args_info->multistring_values_no_short_orig);
   if (args_info->string_values_group_given)
     write_into_file(outfile, "string-values-group", args_info->string_values_group_orig);
+  if (args_info->int_values_given)
+    write_into_file(outfile, "int-values", args_info->int_values_orig);
+  if (args_info->int_values_def_given)
+    write_into_file(outfile, "int-values-def", args_info->int_values_def_orig);
   
 
   i = EXIT_SUCCESS;
@@ -636,7 +663,7 @@ static char *package_name = 0;
  * @param orig_field the pointer to the orig field
  * @param field_given the pointer to the number of occurrence of this option
  * @param prev_given the pointer to the number of occurrence already seen
- * @param val the argument for this option (if null no arg was specified)
+ * @param value the argument for this option (if null no arg was specified)
  * @param orig the actual argument (can be different in case of options with values)
  * @param possible_values the possible values for this option (if specified)
  * @param default_value the default value (in case the option only accepts fixed values)
@@ -652,7 +679,7 @@ static char *package_name = 0;
 static
 int update_arg(void *field, char **orig_field,
                unsigned int *field_given, unsigned int *prev_given, 
-               const char *val, char *orig,
+               const char *value, char *orig,
                char *possible_values[], const char *default_value,
                test_values_cmd_parser_arg_type arg_type,
                short check_ambiguity, short override,
@@ -660,7 +687,8 @@ int update_arg(void *field, char **orig_field,
                const char *long_opt, char short_opt,
                const char *additional_error)
 {
-  char *stop_char;
+  char *stop_char = 0;
+  const char *val = value;
   int found;
   char **string_field;
 
@@ -680,15 +708,15 @@ int update_arg(void *field, char **orig_field,
       return 1; /* failure */
     }
 
-  if (possible_values && (found = check_possible_values((val ? val : default_value), possible_values)) < 0)
+  if (possible_values && (found = check_possible_values((value ? value : default_value), possible_values)) < 0)
     {
       if (short_opt != '-')
         fprintf (stderr, "%s: %s argument, \"%s\", for option `--%s' (`-%c')%s\n", 
-          package_name, (found == -2) ? "ambiguous" : "invalid", val, long_opt, short_opt,
+          package_name, (found == -2) ? "ambiguous" : "invalid", value, long_opt, short_opt,
           (additional_error ? additional_error : ""));
       else
         fprintf (stderr, "%s: %s argument, \"%s\", for option `--%s'%s\n", 
-          package_name, (found == -2) ? "ambiguous" : "invalid", val, long_opt,
+          package_name, (found == -2) ? "ambiguous" : "invalid", value, long_opt,
           (additional_error ? additional_error : ""));
       return 1; /* failure */
     }
@@ -699,20 +727,36 @@ int update_arg(void *field, char **orig_field,
     (*prev_given)++;
   if (field_given)
     (*field_given)++;
+  if (possible_values)
+    val = possible_values[found];
 
   switch(arg_type) {
+  case ARG_INT:
+    if (val) *((int *)field) = strtol (val, &stop_char, 0);
+    break;
   case ARG_STRING:
-    if (val || possible_values) {
+    if (val) {
       string_field = (char **)field;
       if (!no_free && *string_field)
         free (*string_field); /* free previous string */
-      *string_field = gengetopt_strdup (possible_values ? possible_values[found] : val);
+      *string_field = gengetopt_strdup (val);
     }
     break;
   default:
     break;
   };
 
+  /* check numeric conversion */
+  switch(arg_type) {
+  case ARG_INT:
+    if (val && !(stop_char && *stop_char == '\0')) {
+      fprintf(stderr, "%s: invalid numeric value: %s\n", package_name, val);
+      return 1; /* failure */
+    }
+    break;
+  default:
+    ;
+  };
 
   /* store the original value */
   switch(arg_type) {
@@ -814,6 +858,8 @@ void update_multiple_arg(void *field, char ***orig_field,
     *orig_field = (char **) realloc (*orig_field, (field_given + prev_given) * sizeof (char *));
 
     switch(arg_type) {
+    case ARG_INT:
+      *((int **)field) = (int *)realloc (*((int **)field), (field_given + prev_given) * sizeof (int)); break;
     case ARG_STRING:
       *((char ***)field) = (char **)realloc (*((char ***)field), (field_given + prev_given) * sizeof (char *)); break;
     default:
@@ -825,6 +871,8 @@ void update_multiple_arg(void *field, char ***orig_field,
         tmp = list;
         
         switch(arg_type) {
+        case ARG_INT:
+          (*((int **)field))[i + field_given] = tmp->arg.int_arg; break;
         case ARG_STRING:
           (*((char ***)field))[i + field_given] = tmp->arg.string_arg; break;
         default:
@@ -837,6 +885,12 @@ void update_multiple_arg(void *field, char ***orig_field,
   } else { /* set the default value */
     if (default_value && ! field_given) {
       switch(arg_type) {
+      case ARG_INT:
+        if (! *((int **)field)) {
+          *((int **)field) = (int *)malloc (sizeof (int));
+          (*((int **)field))[0] = default_value->int_arg; 
+        }
+        break;
       case ARG_STRING:
         if (! *((char ***)field)) {
           *((char ***)field) = (char **)malloc (sizeof (char *));
@@ -903,10 +957,12 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
         { "multistring-values-def",	2, NULL, 0 },
         { "multistring-values-no-short",	1, NULL, 0 },
         { "string-values-group",	1, NULL, 0 },
+        { "int-values",	1, NULL, 'i' },
+        { "int-values-def",	1, NULL, 0 },
         { NULL,	0, NULL, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVs:S:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVs:S:i:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -937,6 +993,17 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           if (update_multiple_arg_temp(&multistring_values_list, 
               &(local_args_info.multistring_values_given), optarg, test_values_cmd_parser_multistring_values_values, 0, ARG_STRING,
               "multistring-values", 'S',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'i':	/* int option with values.  */
+        
+          if (update_arg( (void *)&(args_info->int_values_arg), 
+               &(args_info->int_values_orig), &(args_info->int_values_given),
+              &(local_args_info.int_values_given), optarg, optarg, test_values_cmd_parser_int_values_values, 0, ARG_INT,
+              check_ambiguity, override, 0, 0,
+              "int-values", 'i',
               additional_error))
             goto failure;
         
@@ -1014,6 +1081,19 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
                 &(local_args_info.string_values_group_given), optarg, optarg, test_values_cmd_parser_string_values_group_values, "bar", ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "string-values-group", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* int option with values and default.  */
+          else if (strcmp (long_options[option_index].name, "int-values-def") == 0)
+          {
+          
+            if (update_arg( (void *)&(args_info->int_values_def_arg), 
+                 &(args_info->int_values_def_orig), &(args_info->int_values_def_given),
+                &(local_args_info.int_values_def_given), optarg, optarg, test_values_cmd_parser_int_values_def_values, "180", ARG_INT,
+                check_ambiguity, override, 0, 0,
+                "int-values-def", '-',
                 additional_error))
               goto failure;
           

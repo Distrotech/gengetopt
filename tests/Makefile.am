@@ -83,7 +83,10 @@ test_sections.sh \
 test_default_values.sh \
 test_values.sh test_values_err.sh \
 test_dep.sh \
-test_multiple_parsers.sh
+test_multiple_parsers.sh \
+test_sections_option_help \
+test_all_opts_option_help \
+test_groups_option_help
 
 TESTS = $(VALGRINDTESTS) \
 test_show_help.sh \
@@ -98,7 +101,10 @@ test_conf_parser_ov3 \
 test_conf_parser_ov4 \
 test_conf_parser_file_save \
 test_multiple test_sections test_values test_redef_help \
-test_multiple_parsers
+test_multiple_parsers \
+test_sections_option_help \
+test_all_opts_option_help \
+test_groups_option_help
 
 hidden_options_programs = test_all_opts
 
@@ -149,6 +155,9 @@ test_sections_SOURCES = test_sections_cmd.ggo test_sections.c
 test_values_SOURCES = test_values_cmd.ggo test_values.c
 test_redef_help_SOURCES = test_redef_help_cmd.ggo test_redef_help.c
 test_multiple_parsers_SOURCES = test_main_cmdline_cmd.ggo test_first_cmdline_cmd.ggostr test_second_cmdline_cmd.ggostr test_multiple_parsers.c
+test_sections_option_help_SOURCES = test_sections_cmd.ggo test_sections_option_help.c
+test_all_opts_option_help_SOURCES = test_all_opts_cmd.ggo test_all_opts_option_help.c
+test_groups_option_help_SOURCES = test_groups_cmd.ggo test_groups_option_help.c
 
 CHECKDIFFFILES = no_strings_cmd.c no_strings_cmd.h \
 no_multi_strings_cmd.c no_multi_strings_cmd.h \
@@ -209,9 +218,9 @@ TESTSOUT = test.out
 TESTSOUTPUT = test.output
 
 ERRFILES = wrong_flag.err wrong_flag2.err wrong_group.err wrong_group2.err \
-wrong_type.err wrong_dep.err
+wrong_dep.err wrong_default.err wrong_numeric_value.err
 ERRGGOFILES = wrong_flag.ggo wrong_flag2.ggo wrong_group.ggo wrong_group2.ggo \
-wrong_type.ggo wrong_dep.ggo
+wrong_dep.ggo wrong_default.ggo wrong_numeric_value.ggo
 
 EXTRA_DIST = no_optgiven.sh.in more_than_once.sh.in \
 test_all_opts.sh.in test_all_opts_file_save.sh.in \
@@ -326,6 +335,7 @@ check-valgrind:
 	$(top_builddir)/tests/valgrind_tests.sh $(VALGRINDTESTS)
 	$(top_builddir)/tests/valgrind_tests.sh $(top_builddir)/tests/default_values$(EXEEXT) --help
 	$(top_builddir)/tests/valgrind_tests.sh $(top_builddir)/tests/default_values$(EXEEXT) --version
+	$(top_builddir)/tests/valgrind_tests.sh $(top_builddir)/tests/test_all_opts$(EXEEXT) --help
 
 clean-err:
 	rm -f *.err

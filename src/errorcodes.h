@@ -24,5 +24,6 @@
 #define SPECIFY_FLAG_STAT 9
 #define NOT_GROUP_OPTION 10
 #define SPECIFY_GROUP 11
+#define INVALID_NUMERIC_VALUE 12
 
 #endif

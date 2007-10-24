@@ -644,18 +644,80 @@ void
 CmdlineParserCreator::generate_help_option_print(ostream &stream,
                                                  unsigned int indent)
 {
-  OptionHelpList *option_list = generate_help_option_list();
+    OptionHelpList *option_list = generate_help_option_list();
 
-  print_help_string_gen_class print_gen;
+    print_help_string_gen_class print_gen;
+    print_gen.set_shared(false);
 
-  for (OptionHelpList::const_iterator it = option_list->begin();
-       it != option_list->end(); ++it)
-    {
-      print_gen.set_helpstring(*it);
-      print_gen.generate_print_help_string(stream, indent);
+    if (!c_source_gen_class::has_hidden) {
+        // simple help generation
+        for (OptionHelpList::const_iterator it = option_list->begin();
+        it != option_list->end(); ++it)
+        {
+            print_gen.set_helpstring(*it);
+            print_gen.generate_print_help_string(stream, indent);
+        }
+    } else {
+        // in order to avoid generating the same help string twice, and thus
+        // to save memory, in case of hidden options, we try to share most
+        // of the strings with the full help array
+        OptionHelpList *full_option_list = generate_help_option_list(true);
+
+        // the index into the help arrays
+        int i = 0, full_i = 0;
+        // num of help strings
+        int help_num = 0;
+
+        print_gen.set_args_info(c_source_gen_class::args_info);
+        print_gen.set_shared(true);
+        print_gen.set_last(false);
+
+        OptionHelpList::const_iterator it = option_list->begin();
+        OptionHelpList::const_iterator it2 = full_option_list->begin();
+        // the second list is surely longer so we scan that one
+        for (; it2 != full_option_list->end(); ++it2)
+        {
+            if (*it == *it2) {
+                // when the two strings are the same it means that's a non-hidden
+                // option, so we share it with the full help array
+                ostringstream converted_int;
+                converted_int << i;
+
+                // the index into the help array
+                print_gen.set_index(converted_int.str());
+
+                converted_int.str("");
+                converted_int << full_i;
+
+                // the index into the full help array
+                print_gen.set_full_index(converted_int.str());
+                print_gen.generate_print_help_string(stream, indent);
+
+                ++help_num;                
+                ++i;
+                ++it;
+            } 
+            ++full_i;
+        }
+
+        ostringstream converted_int;
+        converted_int << help_num;
+
+        // the final 0
+        print_gen.set_last(true);
+        print_gen.set_index(converted_int.str());
+        print_gen.generate_print_help_string(stream, indent);
+
+        // we increment it to store the final 0
+        converted_int.str("");
+        converted_int << ++help_num;
+
+        set_help_string_num(converted_int.str());
+
+        delete full_option_list;
     }
 
-  delete option_list;
+    delete option_list;
 }
 
 void
@@ -666,6 +728,7 @@ CmdlineParserCreator::generate_full_help_option_print(ostream &stream,
     OptionHelpList *option_list = generate_help_option_list(true);
 
     print_help_string_gen_class print_gen;
+    print_gen.set_shared(false);
 
     for (OptionHelpList::const_iterator it = option_list->begin();
          it != option_list->end(); ++it)
@@ -689,7 +752,7 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int inde
     help_string += (c_source_gen_class::has_hidden ? "_full_help" : "_help");
     init_args_info_gen.set_help_strings(help_string);
 
-    const char *current_section = 0;
+    const char *current_section = 0, *current_group = 0;
 
     // we have to skip section description references (that appear in the help vector)
     foropt {
@@ -707,7 +770,19 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int inde
             }
           }
         }
-
+        
+        // skip group desc
+        if (opt->group_value) {
+            if (!current_group || strcmp(current_group, opt->group_value) != 0) {
+                current_group = opt->group_value;
+                ++i;
+            }
+        }
+        
+        // also skip the text before
+        if (opt->text_before)
+            ++i;
+        
         index << i++;
 
         init_args_info_gen.set_var_arg(opt->var_arg);
@@ -722,6 +797,11 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int inde
         }
 
         init_args_info_gen.generate_init_args_info(stream, indent);
+        
+        // skip the text after
+        if (opt->text_after)
+            ++i;
+
     }
 }
 
@@ -810,63 +890,63 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden)
 
   foropt
     {
-	  // if the option is hidden, avoid to print a section containing only
-	  // hidden options
+      // if the option is hidden, avoid to print a section containing only
+      // hidden options
       if (opt->section &&
-          (!curr_section || strcmp (curr_section, opt->section)) &&
-          (!opt->hidden || generate_hidden))
+              (!curr_section || strcmp (curr_section, opt->section)) &&
+              (!opt->hidden || generate_hidden))
       {
-        curr_section = opt->section;
+          curr_section = opt->section;
 
-        ostringstream sec_string;
+          ostringstream sec_string;
 
-        if (! first_option)
-          sec_string << "\\n";
+          if (! first_option)
+              sec_string << "\\n";
 
-        sec_string << opt->section << ":" ;
+          sec_string << opt->section << ":" ;
 
-        string wrapped_def;
-        wrap_cstr(wrapped_def, 0, 0, sec_string.str());
-        option_list->push_back(wrapped_def);
+          string wrapped_def;
+          wrap_cstr(wrapped_def, 0, 0, sec_string.str());
+          option_list->push_back(wrapped_def);
 
-        if (opt->section_desc)
-        {
-          string wrapped_desc ( 2, ' ');
-          wrap_cstr ( wrapped_desc, 2, 0, opt->section_desc );
+          if (opt->section_desc)
+          {
+              string wrapped_desc ( 2, ' ');
+              wrap_cstr ( wrapped_desc, 2, 0, opt->section_desc );
 
-          option_list->push_back(wrapped_desc);
-        }
+              option_list->push_back(wrapped_desc);
+          }
       }
 
       if (opt->group_value &&
-          (! prev_group || strcmp (opt->group_value, prev_group) != 0))
-        {
+              (! prev_group || strcmp (opt->group_value, prev_group) != 0))
+      {
           string group_string = "\\n Group: ";
           string wrapped_desc;
 
           if (opt->group_desc && strlen (opt->group_desc))
-            {
+          {
               wrapped_desc = "\\n  ";
               wrap_cstr (wrapped_desc, 2, 0, opt->group_desc);
-            }
+          }
 
           group_string += opt->group_value + wrapped_desc;
 
           option_list->push_back (group_string);
 
           prev_group = opt->group_value;
-        }
+      }
 
-        // a possible description to be printed before this option
-        if (opt->text_before)
-        {
+      // a possible description to be printed before this option
+      if (opt->text_before)
+      {
           string wrapped_desc;
           wrap_cstr ( wrapped_desc, 0, 0, opt->text_before);
 
           option_list->push_back(wrapped_desc);
-        }
+      }
 
-        if (!opt->hidden || generate_hidden) {
+      if (!opt->hidden || generate_hidden) {
           first_option = false;
           const char * def_val = NULL;
           string def_str = "`";
@@ -874,85 +954,85 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden)
           ostringstream option_stream;
 
           if (opt->type == ARG_FLAG || opt->type == ARG_NO)
-            {
+          {
               def_val = NULL;
 
               if (opt->short_opt)
-                option_stream << "  -" << opt->short_opt << ", ";
+                  option_stream << "  -" << opt->short_opt << ", ";
               else
-                option_stream << "      ";
+                  option_stream << "      ";
 
               option_stream << "--" << opt->long_opt;
 
               if (opt->type == ARG_FLAG)
-                def_val = opt->flagstat ? "on" : "off";
-            }
+                  def_val = opt->flagstat ? "on" : "off";
+          }
           else
-            {
+          {
               def_val = NULL;
 
               if (opt->type_str)
-                type_str = opt->type_str;
+                  type_str = opt->type_str;
               else
-                type_str = arg_names[opt->type];
+                  type_str = arg_names[opt->type];
 
               type_len = strlen(type_str);
 
               if (opt->short_opt)
-                {
+              {
                   option_stream << "  -" << opt->short_opt << ", ";
-                }
+              }
               else
-                {
+              {
                   option_stream << "      ";
-                }
+              }
 
               bool arg_optional = opt->arg_is_optional;
               option_stream << "--" << opt->long_opt
-                    << (arg_optional ? "[" : "")
-                    << "=" << type_str
-                    << (arg_optional ? "]" : "");
+              << (arg_optional ? "[" : "")
+              << "=" << type_str
+              << (arg_optional ? "]" : "");
 
               if (opt->default_string)
-                {
+              {
                   def_str += opt->default_string;
                   def_str += "'";
                   def_val = def_str.c_str();
-                }
-            }
+              }
+          }
 
           const string &option_string = option_stream.str();
           stream << option_string;
           const char *opt_desc = opt->desc;
 
           if ((option_string.size() >= MAX_STARTING_COLUMN) ||
-              (desc_col <= option_string.size()))
-            {
+                  (desc_col <= option_string.size()))
+          {
               string indent (MAX_STARTING_COLUMN, ' ');
               stream << "\\n" << indent;
-            }
+          }
           else
-            {
+          {
               string indent (desc_col - option_string.size(), ' ');
               stream << indent;
-            }
+          }
 
           generate_help_desc_print(stream, desc_col, opt_desc, def_val,
-            (opt->acceptedvalues ? opt->acceptedvalues->toString() : ""),
-            (opt->required && show_required_string != "" ? show_required_string : ""));
+                  (opt->acceptedvalues ? opt->acceptedvalues->toString() : ""),
+                  (opt->required && show_required_string != "" ? show_required_string : ""));
 
           option_list->push_back(stream.str());
           stream.str("");
-        }
+      }
 
-        // a possible description to be printed after this option
-        if (opt->text_after)
-        {
+      // a possible description to be printed after this option
+      if (opt->text_after)
+      {
           string wrapped_desc;
           wrap_cstr ( wrapped_desc, 0, 0, opt->text_after);
 
           option_list->push_back(wrapped_desc);
-        }
+      }
     }
 
   return option_list;

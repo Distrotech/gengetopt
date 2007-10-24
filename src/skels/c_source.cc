@@ -120,24 +120,6 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << indent_str;
   stream << "\n";
   stream << indent_str;
-  stream << "const char *";
-  generate_string (args_info, stream, indent + indent_str.length ());
-  stream << "_help[] = {";
-  stream << "\n";
-  stream << indent_str;
-  indent = 2;
-  stream << "  ";
-  if (help_option_print.size () > 0)
-    generate_string (help_option_print, stream, indent + indent_str.length ());
-  else
-    generate_help_option_print (stream, indent + indent_str.length ());
-  stream << "  0";
-  indent = 0;
-  stream << "\n";
-  stream << indent_str;
-  stream << "};";
-  stream << "\n";
-  stream << indent_str;
   if (has_hidden)
     {
       stream << "const char *";
@@ -151,6 +133,59 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
         generate_string (full_help_option_print, stream, indent + indent_str.length ());
       else
         generate_full_help_option_print (stream, indent + indent_str.length ());
+      stream << "  0";
+      indent = 0;
+      stream << "\n";
+      stream << indent_str;
+      stream << "};";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "static void";
+      stream << "\n";
+      stream << indent_str;
+      stream << "init_help_array(void)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "{";
+      stream << "\n";
+      stream << indent_str;
+      indent = 2;
+      stream << "  ";
+      if (help_option_print.size () > 0)
+        generate_string (help_option_print, stream, indent + indent_str.length ());
+      else
+        generate_help_option_print (stream, indent + indent_str.length ());
+      indent = 0;
+      stream << "\n";
+      stream << indent_str;
+      stream << "}";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "const char *";
+      generate_string (args_info, stream, indent + indent_str.length ());
+      stream << "_help[";
+      generate_string (help_string_num, stream, indent + indent_str.length ());
+      stream << "];";
+      stream << "\n";
+      stream << indent_str;
+    }
+  else
+    {
+      stream << "const char *";
+      generate_string (args_info, stream, indent + indent_str.length ());
+      stream << "_help[] = {";
+      stream << "\n";
+      stream << indent_str;
+      indent = 2;
+      stream << "  ";
+      if (help_option_print.size () > 0)
+        generate_string (help_option_print, stream, indent + indent_str.length ());
+      else
+        generate_help_option_print (stream, indent + indent_str.length ());
       stream << "  0";
       indent = 0;
       stream << "\n";
@@ -420,6 +455,14 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "{";
   stream << "\n";
   stream << indent_str;
+  if (has_hidden)
+    {
+      stream << "  init_help_array();";
+      stream << "\n";
+      stream << indent_str;
+    }
+  stream << "\n";
+  stream << indent_str;
   indent = 2;
   stream << "  ";
   if (init_args_info.size () > 0)
@@ -490,9 +533,19 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << indent_str;
   stream << "\n";
   stream << indent_str;
-  stream << "  printf(\"\\n%s\\n\\n\", ";
+  stream << "  if (strlen(";
+  generate_string (args_info, stream, indent + indent_str.length ());
+  stream << "_usage) > 0)";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    printf(\"\\n%s\\n\", ";
   generate_string (args_info, stream, indent + indent_str.length ());
   stream << "_usage);";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  stream << "  printf(\"\\n\");";
   stream << "\n";
   stream << indent_str;
   stream << "\n";
@@ -632,13 +685,54 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << indent_str;
   stream << "\n";
   stream << indent_str;
+  stream << "void";
+  stream << "\n";
+  stream << indent_str;
+  generate_string (parser_name, stream, indent + indent_str.length ());
+  stream << "_params_init(struct ";
+  generate_string (parser_name, stream, indent + indent_str.length ());
+  stream << "_params *params)";
+  stream << "\n";
+  stream << indent_str;
+  stream << "{";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  if (params)";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    { ";
+  stream << "\n";
+  stream << indent_str;
+  stream << "      params->override = 0;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "      params->initialize = 1;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "      params->check_required = 1;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "      params->check_ambiguity = 0;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "      params->print_errors = 1;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    }";
+  stream << "\n";
+  stream << indent_str;
+  stream << "}";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
   stream << "struct ";
   generate_string (parser_name, stream, indent + indent_str.length ());
   stream << "_params *";
   stream << "\n";
   stream << indent_str;
   generate_string (parser_name, stream, indent + indent_str.length ());
-  stream << "_params_init(void)";
+  stream << "_params_create(void)";
   stream << "\n";
   stream << indent_str;
   stream << "{";
@@ -656,34 +750,10 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "_params));";
   stream << "\n";
   stream << indent_str;
-  stream << "\n";
-  stream << indent_str;
-  stream << "  if (params)";
-  stream << "\n";
-  stream << indent_str;
-  stream << "    { ";
-  stream << "\n";
-  stream << indent_str;
-  stream << "      params->override = 0;";
-  stream << "\n";
-  stream << indent_str;
-  stream << "      params->initialize = 0;";
-  stream << "\n";
-  stream << indent_str;
-  stream << "      params->check_required = 0;";
-  stream << "\n";
-  stream << indent_str;
-  stream << "      params->check_ambiguity = 0;";
-  stream << "\n";
-  stream << indent_str;
-  stream << "      params->print_errors = 1;";
-  stream << "\n";
-  stream << indent_str;
-  stream << "    }";
-  stream << "\n";
-  stream << indent_str;
-  indent = 4;
-  stream << "    ";
+  indent = 2;
+  stream << "  ";
+  generate_string (parser_name, stream, indent + indent_str.length ());
+  stream << "_params_init(params);  ";
   indent = 0;
   stream << "\n";
   stream << indent_str;
@@ -2055,7 +2125,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << indent_str;
   stream << " * ";
   stream << "@";
-  stream << "param val the argument for this option (if null no arg was specified)";
+  stream << "param value the argument for this option (if null no arg was specified)";
   stream << "\n";
   stream << indent_str;
   stream << " * ";
@@ -2133,7 +2203,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "               unsigned int *field_given, unsigned int *prev_given, ";
   stream << "\n";
   stream << indent_str;
-  stream << "               const char *val, char *orig,";
+  stream << "               const char *value, char *orig,";
   stream << "\n";
   stream << indent_str;
   stream << "               char *possible_values[], const char *default_value,";
@@ -2161,7 +2231,10 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "{";
   stream << "\n";
   stream << indent_str;
-  stream << "  char *stop_char;";
+  stream << "  char *stop_char = 0;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  const char *val = value;";
   stream << "\n";
   stream << indent_str;
   stream << "  int found;";
@@ -2223,7 +2296,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << indent_str;
   if (check_possible_values)
     {
-      stream << "  if (possible_values && (found = check_possible_values((val ? val : default_value), possible_values)) < 0)";
+      stream << "  if (possible_values && (found = check_possible_values((value ? value : default_value), possible_values)) < 0)";
       stream << "\n";
       stream << indent_str;
       stream << "    {";
@@ -2235,7 +2308,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "        fprintf (stderr, \"%s: %s argument, \\\"%s\\\", for option `--%s' (`-%c')%s\\n\", ";
       stream << "\n";
       stream << indent_str;
-      stream << "          package_name, (found == -2) ? \"ambiguous\" : \"invalid\", val, long_opt, short_opt,";
+      stream << "          package_name, (found == -2) ? \"ambiguous\" : \"invalid\", value, long_opt, short_opt,";
       stream << "\n";
       stream << indent_str;
       stream << "          (additional_error ? additional_error : \"\"));";
@@ -2247,7 +2320,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "        fprintf (stderr, \"%s: %s argument, \\\"%s\\\", for option `--%s'%s\\n\", ";
       stream << "\n";
       stream << indent_str;
-      stream << "          package_name, (found == -2) ? \"ambiguous\" : \"invalid\", val, long_opt,";
+      stream << "          package_name, (found == -2) ? \"ambiguous\" : \"invalid\", value, long_opt,";
       stream << "\n";
       stream << indent_str;
       stream << "          (additional_error ? additional_error : \"\"));";
@@ -2279,6 +2352,12 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "\n";
   stream << indent_str;
   stream << "    (*field_given)++;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "  if (possible_values)";
+  stream << "\n";
+  stream << indent_str;
+  stream << "    val = possible_values[found];";
   stream << "\n";
   stream << indent_str;
   stream << "\n";
@@ -2399,7 +2478,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "  case ARG_STRING:";
       stream << "\n";
       stream << indent_str;
-      stream << "    if (val || possible_values) {";
+      stream << "    if (val) {";
       stream << "\n";
       stream << indent_str;
       stream << "      string_field = (char **)field;";
@@ -2411,7 +2490,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "        free (*string_field); /* free previous string */";
       stream << "\n";
       stream << indent_str;
-      stream << "      *string_field = gengetopt_strdup (possible_values ? possible_values[found] : val);";
+      stream << "      *string_field = gengetopt_strdup (val);";
       stream << "\n";
       stream << indent_str;
       stream << "    }";

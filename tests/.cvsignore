@@ -42,3 +42,6 @@ test_conf.conf
 
 test_conf_parser_ov4
 test_conf_parser_ov4.c
+test_sections_option_help
+test_all_opts_option_help
+test_groups_option_help

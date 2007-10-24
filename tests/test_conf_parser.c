@@ -18,7 +18,7 @@ main (int argc, char **argv)
   struct test_conf_parser_cmd_parser_params *params;
   
   /* initialize the parameters structure */
-  params = test_conf_parser_cmd_parser_params_init();
+  params = test_conf_parser_cmd_parser_params_create();
 
   /* call the command line parser */
   if (test_conf_parser_cmd_parser (argc, argv, &args_info) != 0) {
@@ -29,12 +29,12 @@ main (int argc, char **argv)
   /* 
      override command line options,
      but do not initialize args_info, check for required options.
-     NOTICE: we might skip the 0 assignment, since the fields of the structure
-     are already initialized to 0. 
+     NOTICE: we must NOT skip the 0 assignment to initialize,
+     since its default value is 1 and override defaults to 0
+     while check_required is already set to its default value, 1
   */
   params->initialize = 0;
   params->override = 1;
-  params->check_required = 1;
 
   /* call the config file parser */
   if (test_conf_parser_cmd_parser_config_file

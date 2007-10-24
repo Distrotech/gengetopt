@@ -63,6 +63,19 @@ main (int argc, char **argv)
     printf ("specified --multistring-values-no-short with argument %s\n", 
             args_info.multistring_values_no_short_arg[i]);
 
+  if (args_info.int_values_given)
+    {
+      printf ("specified --int-values with argument %d\n",
+              args_info.int_values_arg);
+      printf ("specified --int-values with (original) argument %s\n",
+              args_info.int_values_orig);
+    }
+
+  if (!args_info.int_values_def_given)
+    printf ("(un)");
+  printf ("specified --int-values-def with argument %d\n",
+          args_info.int_values_def_arg);
+
  end:
   test_values_cmd_parser_free (&args_info);
 

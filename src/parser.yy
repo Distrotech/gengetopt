@@ -91,6 +91,9 @@ void check_result(int o, gengetopt_option *opt)
     case SPECIFY_GROUP:
       yyerror (opt, "missing group specification");
       break;
+    case INVALID_NUMERIC_VALUE:
+        yyerror (opt, "invalid numeric value");
+        break;
     }
   }
 }
