@@ -77,6 +77,7 @@ tabs [\t]+
 <INITIAL>double		updateTokenInfo (-1); yylval.argtype = ARG_DOUBLE; return TOK_ARGTYPE;
 <INITIAL>longdouble	updateTokenInfo (-1); yylval.argtype = ARG_LONGDOUBLE; return TOK_ARGTYPE;
 <INITIAL>longlong	updateTokenInfo (-1); yylval.argtype = ARG_LONGLONG; return TOK_ARGTYPE;
+<INITIAL>enum		updateTokenInfo (-1); yylval.argtype = ARG_ENUM; return TOK_ARGTYPE;
 
 <INITIAL>package        	updateTokenInfo (-1); return TOK_PACKAGE;
 <INITIAL>version        	updateTokenInfo (-1); return TOK_VERSION;

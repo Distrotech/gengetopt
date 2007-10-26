@@ -29,6 +29,10 @@ extern "C" {
 #define TEST_VALUES_CMD_PARSER_VERSION "1.0"
 #endif
 
+enum enum_values_first_enums { values_first_enums_arg_FOO = 0 , values_first_enums_arg_BAR, values_first_enums_arg_ANOTHER, values_first_enums_arg_SOMETHING };
+enum enum_values_second_enums { values_second_enums_arg_90 = 0 , values_second_enums_arg_180, values_second_enums_arg_270, values_second_enums_arg_360 };
+enum enum_values_multiple_enums { values_multiple_enums_arg_FIRST = 0 , values_multiple_enums_arg_SECOND, values_multiple_enums_arg_THIRD, values_multiple_enums_arg_FOURTH };
+
 /** @brief Where the command line options are stored */
 struct gengetopt_args_info
 {
@@ -67,9 +71,25 @@ struct gengetopt_args_info
   int int_values_arg;	/**< @brief int option with values.  */
   char * int_values_orig;	/**< @brief int option with values original value given at command line.  */
   const char *int_values_help; /**< @brief int option with values help description.  */
+  int* int_values_m_arg;	/**< @brief multiple int option with values.  */
+  char ** int_values_m_orig;	/**< @brief multiple int option with values original value given at command line.  */
+  int int_values_m_min; /**< @brief multiple int option with values's minimum occurreces */
+  int int_values_m_max; /**< @brief multiple int option with values's maximum occurreces */
+  const char *int_values_m_help; /**< @brief multiple int option with values help description.  */
   int int_values_def_arg;	/**< @brief int option with values and default (default='180').  */
   char * int_values_def_orig;	/**< @brief int option with values and default original value given at command line.  */
   const char *int_values_def_help; /**< @brief int option with values and default help description.  */
+  enum enum_values_first_enums values_first_enums_arg;	/**< @brief option with values and enums 1.  */
+  char * values_first_enums_orig;	/**< @brief option with values and enums 1 original value given at command line.  */
+  const char *values_first_enums_help; /**< @brief option with values and enums 1 help description.  */
+  enum enum_values_second_enums values_second_enums_arg;	/**< @brief option with values and enums 2 with default (default='180').  */
+  char * values_second_enums_orig;	/**< @brief option with values and enums 2 with default original value given at command line.  */
+  const char *values_second_enums_help; /**< @brief option with values and enums 2 with default help description.  */
+  enum enum_values_multiple_enums *values_multiple_enums_arg;	/**< @brief multiple option with values and enums (default='FOURTH').  */
+  char ** values_multiple_enums_orig;	/**< @brief multiple option with values and enums original value given at command line.  */
+  int values_multiple_enums_min; /**< @brief multiple option with values and enums's minimum occurreces */
+  int values_multiple_enums_max; /**< @brief multiple option with values and enums's maximum occurreces */
+  const char *values_multiple_enums_help; /**< @brief multiple option with values and enums help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
@@ -82,7 +102,11 @@ struct gengetopt_args_info
   unsigned int multistring_values_no_short_given ;	/**< @brief Whether multistring-values-no-short was given.  */
   unsigned int string_values_group_given ;	/**< @brief Whether string-values-group was given.  */
   unsigned int int_values_given ;	/**< @brief Whether int-values was given.  */
+  unsigned int int_values_m_given ;	/**< @brief Whether int-values-m was given.  */
   unsigned int int_values_def_given ;	/**< @brief Whether int-values-def was given.  */
+  unsigned int values_first_enums_given ;	/**< @brief Whether values-first-enums was given.  */
+  unsigned int values_second_enums_given ;	/**< @brief Whether values-second-enums was given.  */
+  unsigned int values_multiple_enums_given ;	/**< @brief Whether values-multiple-enums was given.  */
 
   char **inputs ; /**< @brief unamed options (options without names) */
   unsigned inputs_num ; /**< @brief unamed options number */
@@ -217,7 +241,11 @@ extern char *test_values_cmd_parser_multistring_values_def_values[] ;	/**< @brie
 extern char *test_values_cmd_parser_multistring_values_no_short_values[] ;	/**< @brief Possible values for multistring-values-no-short.  */
 extern char *test_values_cmd_parser_string_values_group_values[] ;	/**< @brief Possible values for string-values-group.  */
 extern char *test_values_cmd_parser_int_values_values[] ;	/**< @brief Possible values for int-values.  */
+extern char *test_values_cmd_parser_int_values_m_values[] ;	/**< @brief Possible values for int-values-m.  */
 extern char *test_values_cmd_parser_int_values_def_values[] ;	/**< @brief Possible values for int-values-def.  */
+extern char *test_values_cmd_parser_values_first_enums_values[] ;	/**< @brief Possible values for values-first-enums.  */
+extern char *test_values_cmd_parser_values_second_enums_values[] ;	/**< @brief Possible values for values-second-enums.  */
+extern char *test_values_cmd_parser_values_multiple_enums_values[] ;	/**< @brief Possible values for values-multiple-enums.  */
 
 
 #ifdef __cplusplus

@@ -754,7 +754,6 @@ static char *package_name = 0;
  * @param field_given the pointer to the number of occurrence of this option
  * @param prev_given the pointer to the number of occurrence already seen
  * @param value the argument for this option (if null no arg was specified)
- * @param orig the actual argument (can be different in case of options with values)
  * @param possible_values the possible values for this option (if specified)
  * @param default_value the default value (in case the option only accepts fixed values)
  * @param arg_type the type of this option
@@ -769,8 +768,7 @@ static char *package_name = 0;
 static
 int update_arg(void *field, char **orig_field,
                unsigned int *field_given, unsigned int *prev_given, 
-               const char *value, char *orig,
-               char *possible_values[], const char *default_value,
+               char *value, char *possible_values[], const char *default_value,
                test_conf_parser_cmd_parser_arg_type arg_type,
                short check_ambiguity, short override,
                short no_free, short multiple_option,
@@ -873,13 +871,13 @@ int update_arg(void *field, char **orig_field,
   case ARG_FLAG:
     break;
   default:
-    if (orig && orig_field) {
+    if (value && orig_field) {
       if (no_free) {
-        *orig_field = orig;
+        *orig_field = value;
       } else {
         if (*orig_field)
           free (*orig_field); /* free previous string */
-        *orig_field = gengetopt_strdup (orig);
+        *orig_field = gengetopt_strdup (value);
       }
     }
   };
@@ -913,7 +911,7 @@ int update_multiple_arg_temp(struct generic_list **list,
     {
       add_node (list);
       if (update_arg((void *)&((*list)->arg), &((*list)->orig), 0,
-          prev_given, multi_token, multi_token, possible_values, default_value, 
+          prev_given, multi_token, possible_values, default_value, 
           arg_type, 0, 1, 1, 1, long_opt, short_opt, additional_error)) {
         if (multi_token) free(multi_token);
         return 1; /* failure */
@@ -1182,7 +1180,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           if (update_arg( (void *)&(args_info->opta_arg), 
                &(args_info->opta_orig), &(args_info->opta_given),
-              &(local_args_info.opta_given), optarg, optarg, 0, 0, ARG_STRING,
+              &(local_args_info.opta_given), optarg, 0, 0, ARG_STRING,
               check_ambiguity, override, 0, 0,
               "opta", 'a',
               additional_error))
@@ -1196,7 +1194,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           if (update_arg( (void *)&(args_info->optb_arg), 
                &(args_info->optb_orig), &(args_info->optb_given),
-              &(local_args_info.optb_given), optarg, optarg, 0, 0, ARG_STRING,
+              &(local_args_info.optb_given), optarg, 0, 0, ARG_STRING,
               check_ambiguity, override, 0, 0,
               "optb", 'b',
               additional_error))
@@ -1210,7 +1208,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           if (update_arg( 0 , 
                0 , &(args_info->optd_given),
-              &(local_args_info.optd_given), optarg, optarg, 0, 0, ARG_NO,
+              &(local_args_info.optd_given), optarg, 0, 0, ARG_NO,
               check_ambiguity, override, 0, 0,
               "optd", 'C',
               additional_error))
@@ -1221,7 +1219,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           if (update_arg( (void *)&(args_info->string_arg), 
                &(args_info->string_orig), &(args_info->string_given),
-              &(local_args_info.string_given), optarg, optarg, 0, 0, ARG_STRING,
+              &(local_args_info.string_given), optarg, 0, 0, ARG_STRING,
               check_ambiguity, override, 0, 0,
               "string", 's',
               additional_error))
@@ -1232,7 +1230,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           if (update_arg( (void *)&(args_info->int_arg), 
                &(args_info->int_orig), &(args_info->int_given),
-              &(local_args_info.int_given), optarg, optarg, 0, 0, ARG_INT,
+              &(local_args_info.int_given), optarg, 0, 0, ARG_INT,
               check_ambiguity, override, 0, 0,
               "int", 'i',
               additional_error))
@@ -1243,7 +1241,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           if (update_arg( (void *)&(args_info->short_arg), 
                &(args_info->short_orig), &(args_info->short_given),
-              &(local_args_info.short_given), optarg, optarg, 0, 0, ARG_SHORT,
+              &(local_args_info.short_given), optarg, 0, 0, ARG_SHORT,
               check_ambiguity, override, 0, 0,
               "short", 'S',
               additional_error))
@@ -1254,7 +1252,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           if (update_arg( (void *)&(args_info->long_arg), 
                &(args_info->long_orig), &(args_info->long_given),
-              &(local_args_info.long_given), optarg, optarg, 0, 0, ARG_LONG,
+              &(local_args_info.long_given), optarg, 0, 0, ARG_LONG,
               check_ambiguity, override, 0, 0,
               "long", 'l',
               additional_error))
@@ -1265,7 +1263,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           if (update_arg( (void *)&(args_info->float_arg), 
                &(args_info->float_orig), &(args_info->float_given),
-              &(local_args_info.float_given), optarg, optarg, 0, 0, ARG_FLOAT,
+              &(local_args_info.float_given), optarg, 0, 0, ARG_FLOAT,
               check_ambiguity, override, 0, 0,
               "float", 'f',
               additional_error))
@@ -1276,7 +1274,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           if (update_arg( (void *)&(args_info->double_arg), 
                &(args_info->double_orig), &(args_info->double_given),
-              &(local_args_info.double_given), optarg, optarg, 0, 0, ARG_DOUBLE,
+              &(local_args_info.double_given), optarg, 0, 0, ARG_DOUBLE,
               check_ambiguity, override, 0, 0,
               "double", 'd',
               additional_error))
@@ -1287,7 +1285,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           if (update_arg( (void *)&(args_info->longdouble_arg), 
                &(args_info->longdouble_orig), &(args_info->longdouble_given),
-              &(local_args_info.longdouble_given), optarg, optarg, 0, 0, ARG_LONGDOUBLE,
+              &(local_args_info.longdouble_given), optarg, 0, 0, ARG_LONGDOUBLE,
               check_ambiguity, override, 0, 0,
               "longdouble", 'D',
               additional_error))
@@ -1298,7 +1296,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           if (update_arg( (void *)&(args_info->longlong_arg), 
                &(args_info->longlong_orig), &(args_info->longlong_given),
-              &(local_args_info.longlong_given), optarg, optarg, 0, 0, ARG_LONGLONG,
+              &(local_args_info.longlong_given), optarg, 0, 0, ARG_LONGLONG,
               check_ambiguity, override, 0, 0,
               "longlong", 'L',
               additional_error))
@@ -1308,7 +1306,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         case 'F':	/* flag option.  */
         
           if (update_arg((void *)&(args_info->flag_flag), 0, &(args_info->flag_given),
-              &(local_args_info.flag_given), optarg, optarg, 0, 0, ARG_FLAG,
+              &(local_args_info.flag_given), optarg, 0, 0, ARG_FLAG,
               check_ambiguity, override, 1, 0, "flag", 'F',
               additional_error))
             goto failure;
@@ -1318,7 +1316,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           if (update_arg( 0 , 
                0 , &(args_info->function_given),
-              &(local_args_info.function_given), optarg, optarg, 0, 0, ARG_NO,
+              &(local_args_info.function_given), optarg, 0, 0, ARG_NO,
               check_ambiguity, override, 0, 0,
               "function", 'u',
               additional_error))
@@ -1329,7 +1327,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           if (update_arg( (void *)&(args_info->required_arg), 
                &(args_info->required_orig), &(args_info->required_given),
-              &(local_args_info.required_given), optarg, optarg, 0, 0, ARG_STRING,
+              &(local_args_info.required_given), optarg, 0, 0, ARG_STRING,
               check_ambiguity, override, 0, 0,
               "required", 'r',
               additional_error))
@@ -1340,7 +1338,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           if (update_arg( (void *)&(args_info->conf_file_arg), 
                &(args_info->conf_file_orig), &(args_info->conf_file_given),
-              &(local_args_info.conf_file_given), optarg, optarg, 0, "test_conf.conf", ARG_STRING,
+              &(local_args_info.conf_file_given), optarg, 0, "test_conf.conf", ARG_STRING,
               check_ambiguity, override, 0, 0,
               "conf-file", 'c',
               additional_error))
@@ -1370,7 +1368,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           
             if (update_arg( 0 , 
                  0 , &(args_info->optc_given),
-                &(local_args_info.optc_given), optarg, optarg, 0, 0, ARG_NO,
+                &(local_args_info.optc_given), optarg, 0, 0, ARG_NO,
                 check_ambiguity, override, 0, 0,
                 "optc", '-',
                 additional_error))
@@ -1383,7 +1381,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           
             if (update_arg( 0 , 
                  0 , &(args_info->no_short_given),
-                &(local_args_info.no_short_given), optarg, optarg, 0, 0, ARG_NO,
+                &(local_args_info.no_short_given), optarg, 0, 0, ARG_NO,
                 check_ambiguity, override, 0, 0,
                 "no-short", '-',
                 additional_error))
@@ -1412,7 +1410,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           
             if (update_arg( (void *)&(args_info->opt_arg_arg), 
                  &(args_info->opt_arg_orig), &(args_info->opt_arg_given),
-                &(local_args_info.opt_arg_given), optarg, optarg, 0, 0, ARG_STRING,
+                &(local_args_info.opt_arg_given), optarg, 0, 0, ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "opt-arg", '-',
                 additional_error))
@@ -1425,7 +1423,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           
             if (update_arg( (void *)&(args_info->file_save_arg), 
                  &(args_info->file_save_orig), &(args_info->file_save_given),
-                &(local_args_info.file_save_given), optarg, optarg, 0, 0, ARG_STRING,
+                &(local_args_info.file_save_given), optarg, 0, 0, ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "file-save", '-',
                 additional_error))

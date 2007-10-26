@@ -96,6 +96,7 @@ This file documents GNU Gengetopt version @value{VERSION}.
 * Basic Usage::                 How to run Gengetopt; syntax of .ggo files
 * Invoking gengetopt::          gengetopt command line options
 * Terminology::                 Definitions of options, values, and so forth.
+* Options with enumerated values::  Options accepting only a list of values
 * Group options::               Mutual exclusive options
 * Parser function additional parameters::  
 * Configuration files::         Parsing a configuration file
@@ -328,9 +329,10 @@ simple make should do).
 
 The command line options, which have to be handled by gengetopt
 generated function, are specified in a file (typically with @file{.ggo}
-extension). This file consist in lines of sentences with the formats
-shown below.  Commands in @{@} are optional (the @code{option} sentences
-need not to be given in separate lines):
+extension). This file consists of sentences with the formats shown below
+(these sentences are allowed to span more than one line).  Commands in
+@{@} are optional (the @code{option} sentences need not to be given in
+separate lines):
 
 @example
 package "<packname>"
@@ -437,8 +439,10 @@ This description will be printed during the output of
 @item argtype 
 
 @code{string}, @code{int}, @code{short}, @code{long}, @code{float},
-@code{double}, @code{longdouble} or @code{longlong}.  If no type is
-specified the option does not accept an argument.
+@code{double}, @code{longdouble} or @code{longlong}.  If the option is
+an enumerated one (see @ref{Options with enumerated values}) the type
+can also be @code{enum}.  If no type is specified the option does not
+accept an argument.
 
 @cindex typestr 
 @item typestr 
@@ -453,7 +457,9 @@ of simply @code{STRING}, or @code{"portnumber"} instead of simply
  
 a list of strings containing all the possible values that can be passed
 to the option.  If not specified, the type is considered
-string@footnote{Since version 2.22 the type can be specified}.
+string@footnote{Since version 2.22 the type can be specified}.  For this
+kind of options, the type can also be @code{enum}.  More on this feature
+can be found in @ref{Options with enumerated values}.
 
 @cindex default 
 @item default 
@@ -633,15 +639,16 @@ text ""
 
 You can also specify the list of @code{values} that can be passed to an
 option (if the type is not specified, the option has type
-@code{string}).  If a value that is not in the list is passed, an error
-is raised.  You can think of such options as @emph{enumerated} options.
-It is not necessary to pass the complete value at the command line
-option: a non ambiguous prefix will do.  For instance, if the accepted
-values are @code{"foo","bar","foobar"}, then you can pass at the command
-line the value @code{"b"} and the value @code{"bar"} will be selected,
-or the value @code{"foob"} and the value @code{"foobar"} will be
-selected; instead, passing the value @code{"fo"} will raise an ambiguity
-error.
+@code{string}).  More on this feature can be found in @ref{Options with
+enumerated values}.  If a value that is not in the list is passed, an
+error is raised.  You can think of such options as @emph{enumerated}
+options.  It is not necessary to pass the complete value at the command
+line option: a non ambiguous prefix will do.  For instance, if the
+accepted values are @code{"foo","bar","foobar"}, then you can pass at
+the command line the value @code{"b"} and the value @code{"bar"} will be
+selected, or the value @code{"foob"} and the value @code{"foobar"} will
+be selected; instead, passing the value @code{"fo"} will raise an
+ambiguity error.
  
 Here's an example of such a file (the file is called @file{sample1.ggo})
 
@@ -1019,7 +1026,7 @@ $ ./gengetopt --zzzz
 Run gengetopt --help to see the list of options.
 @end example
 
-@node Terminology, Group options, Invoking gengetopt, Top
+@node Terminology, Options with enumerated values, Invoking gengetopt, Top
 @chapter Terminology
 @cindex Terminology
 @cindex argument, defined
@@ -1180,7 +1187,57 @@ the command line.  Gengetopt would create a tidy array for multiple
 options (see @ref{Multiple Options}, for further details about dealing
 with multiple options).
 
-@node Group options, Parser function additional parameters, Terminology, Top
+@node Options with enumerated values, Group options, Terminology, Top
+@chapter Options with enumerated values
+
+@cindex enumerated options
+@cindex values
+You can also specify the list of @code{values} that can be passed to an
+option (if the type is not specified, the option has type
+@code{string}).  If a value that is not in the list is passed, an error
+is raised.  You can think of such options as @emph{enumerated} options.
+It is not necessary to pass the complete value at the command line
+option: a non ambiguous prefix will do.  For instance, if the accepted
+values are @code{"foo","bar","foobar"}, then you can pass at the command
+line the value @code{"b"} and the value @code{"bar"} will be selected,
+or the value @code{"foob"} and the value @code{"foobar"} will be
+selected; instead, passing the value @code{"fo"} will raise an ambiguity
+error.
+
+Since version 2.22 options with values can be given a specific type (the
+default is string).  If you give a numeric type to such options,
+gengetopt will check that the enumerated values are actually valid
+values for that numeric type.
+
+As for other options, the @code{<option>_arg} field will have the
+specified type, while the @code{<option>_orig} field will always be a
+string (@code{char *}) storing the (non-ambiguous) prefix specified at
+the command line.
+
+For such an option, no matter what its type is, an array of strings,
+@code{<parser-name>_<option>_values}, will be generated that contains
+all the strings representing the possible accepted values.
+
+@cindex enum
+An option with enumerated values can also be given the type @code{enum};
+in that case, a C @code{enum} type is also generated with name
+@code{enum_<option>}; the values of such C enum will be generated
+according this pattern: @code{<option>_arg_<value>}, where @code{value}
+is the value specified in the input file.  For instance, if we specify
+in the input file the following option
+
+@example
+option "myopt" ... ... values="FOO","180","BAR" enum ...
+@end example
+
+@noindent
+then the following C enum will be generated:
+
+@example
+enum enum_myopt @{ myopt_arg_FOO, myopt_arg_180, myopt_arg_BAR @};
+@end example
+
+@node Group options, Parser function additional parameters, Options with enumerated values, Top
 @chapter Group options
 @cindex group options
 
@@ -2075,7 +2132,7 @@ mailing list),
 If you want to subscribe to a mailing list just go to the URL and follow
 the instructions, or send me an e-mail and I'll subscribe you.
 
-I'll describe new features in new releases also in my blog, at
+I'll describe new features in new releases also on my blog, at
 this URL:
 
 @uref{http://tronprog.blogspot.com/search/label/gengetopt}

@@ -94,6 +94,9 @@ void check_result(int o, gengetopt_option *opt)
     case INVALID_NUMERIC_VALUE:
         yyerror (opt, "invalid numeric value");
         break;
+    case INVALID_ENUM_TYPE_USE:
+    	yyerror (opt, "enum type can only be specified for options with values");
+        break;
     }
   }
 }

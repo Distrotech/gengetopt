@@ -662,6 +662,11 @@ gengetopt_check_option (gengetopt_option *n, bool groupoption)
     if (n->flagstat >= 0)
       return NOT_VALID_SPECIFICATION;
   }
+  
+  // enum type can only be specified with options with values
+  if (n->type == ARG_ENUM && !(n->acceptedvalues)) {
+      return INVALID_ENUM_TYPE_USE;
+  }
 
   // if (acceptedvalues && type != ARG_NO)
   // return NOT_REQUESTED_TYPE;

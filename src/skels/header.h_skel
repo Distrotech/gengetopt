@@ -28,6 +28,7 @@ extern "C" {
 /** @@brief the program version */
 #define @version_var_name@ @version_var_val@
 #endif
+@enum_types:method{iteration=true}@
 
 /** @@brief Where the command line options are stored */
 struct @args_info@

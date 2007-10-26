@@ -277,6 +277,9 @@ void CmdlineParserCreator::set_has_arg_types() {
         case ARG_LONGLONG:
             set_has_arg_longlong(true);
             break;
+        case ARG_ENUM:
+            set_has_arg_enum(true);
+            break;
         default:
             fprintf (stderr, "gengetopt: bug found in %s:%d!!\n",
                     __FILE__, __LINE__);
@@ -334,6 +337,50 @@ CmdlineParserCreator::generate_header_file ()
     return 0;
 }
 
+/**
+ * generate the enum value from a given option
+ * @param name the (canonized) name of the option
+ * @param val the value of the option
+ * @return the enum value string
+ */
+static const string from_value_to_enum(const string &name, const string &val) {
+    return name + "_arg_" + val;
+}
+
+void
+CmdlineParserCreator::generate_enum_types(ostream &stream,
+                                          unsigned int indent)
+{
+  struct gengetopt_option * opt;
+  
+  if (has_arg_enum)
+      stream << endl;
+
+  foropt {
+    // if type is enum then it should also have values (checked during parsing)
+    // but it's better to check it
+    if (opt->type == ARG_ENUM) {
+        if (! (opt->acceptedvalues)) {
+            fprintf (stderr, "gengetopt: bug found in %s:%d!!\n",
+                            __FILE__, __LINE__);
+            abort ();
+        }
+        stream << "enum enum_" << opt->var_arg << " { ";
+        for (AcceptedValues::const_iterator it = opt->acceptedvalues->begin();
+            it != opt->acceptedvalues->end(); ++it) {
+            // the first enum element is set to 0
+            if (it != opt->acceptedvalues->begin())
+                stream << ", ";
+            stream << from_value_to_enum(opt->var_arg, *it);
+            if (it == opt->acceptedvalues->begin())
+                stream << " = 0 ";
+                        
+        }
+        stream << " };" << endl;
+    }
+  }
+}
+
 void
 CmdlineParserCreator::generate_option_arg(ostream &stream,
                                           unsigned int indent)
@@ -371,6 +418,7 @@ _generate_option_arg(ostream &stream,
   option_arg_gen.set_desc(opt->desc);
   option_arg_gen.set_name(opt->var_arg);
   option_arg_gen.set_has_arg(opt->type != ARG_NO);
+  option_arg_gen.set_has_enum(opt->type == ARG_ENUM);
 
   if (opt->default_given)
     {
@@ -414,7 +462,9 @@ CmdlineParserCreator::generate_option_given(ostream &stream,
       case ARG_FLOAT:
       case ARG_DOUBLE:
       case ARG_LONGDOUBLE:
-      case ARG_LONGLONG: break;
+      case ARG_LONGLONG:
+      case ARG_ENUM: 
+          break;
       default:
         fprintf (stderr, "gengetopt: bug found in %s:%d!!\n",
                  __FILE__, __LINE__);
@@ -1186,6 +1236,8 @@ CmdlineParserCreator::generate_multiple_fill_array(ostream &stream, unsigned int
           if (opt->default_string) {
               if (opt->type == ARG_STRING)
                   default_string = string("\"") + opt->default_string + "\"";
+              else if (opt->type == ARG_ENUM)
+                  default_string = from_value_to_enum(opt->var_arg, opt->default_string);
               else
                   default_string = opt->default_string;
           }
@@ -1258,6 +1310,15 @@ CmdlineParserCreator::generate_clear_arg(ostream &stream, unsigned int indent)
           clear_arg.set_suffix("flag");
           clear_arg.set_value(opt->flagstat ? "1" : "0");
         }
+      else if (opt->type == ARG_ENUM)
+      {
+        // initialize enum arguments to -1 (unless they have a default)
+        clear_arg.set_has_arg(true);
+        if (opt->default_given)
+            clear_arg.set_value(from_value_to_enum(opt->var_arg, opt->default_string));
+        else
+            clear_arg.set_value("-1");
+      }
       else if (opt->default_given)
         {
           clear_arg.set_has_arg(true);

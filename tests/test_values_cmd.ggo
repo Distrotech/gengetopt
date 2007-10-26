@@ -21,4 +21,9 @@ option "multistring-values-no-short"      - "multiple string option with values 
 groupoption "string-values-group"      - "group string option with values and default" typestr="FOO" values="foo","bar","foobar","barfoo" default="bar" group="group1"
 
 option "int-values"      i "int option with values" values="90","180","270","360" int optional
+option "int-values-m"      I "multiple int option with values" values="900","1800","2700","3600" int optional multiple
 option "int-values-def"      - "int option with values and default" values="90","180","270","360" default="180" int optional
+
+option "values-first-enums"   e "option with values and enums 1" values="FOO","BAR","ANOTHER","SOMETHING" enum optional
+option "values-second-enums"   - "option with values and enums 2 with default" values="90","180","270","360" enum optional default="180"
+option "values-multiple-enums"   W "multiple option with values and enums" values="FIRST","SECOND","THIRD","FOURTH" enum optional multiple default="FOURTH"

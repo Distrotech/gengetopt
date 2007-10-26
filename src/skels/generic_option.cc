@@ -139,7 +139,7 @@ generic_option_gen_class::generate_generic_option(ostream &stream, unsigned int 
           stream << indent_str;
           stream << "      &(local_args_info.";
           generate_string (option_var_name, stream, indent + indent_str.length ());
-          stream << "_given), optarg, optarg, 0, 0, ";
+          stream << "_given), optarg, 0, 0, ";
           generate_string (arg_type, stream, indent + indent_str.length ());
           stream << ",";
           stream << "\n";
@@ -194,7 +194,7 @@ generic_option_gen_class::generate_generic_option(ostream &stream, unsigned int 
           stream << indent_str;
           stream << "      &(local_args_info.";
           generate_string (option_var_name, stream, indent + indent_str.length ());
-          stream << "_given), optarg, optarg, ";
+          stream << "_given), optarg, ";
           generate_string (possible_values, stream, indent + indent_str.length ());
           stream << ", ";
           generate_string (default_value, stream, indent + indent_str.length ());

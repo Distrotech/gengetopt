@@ -24,7 +24,8 @@ Version 2.22
      was changed in order to initialize the fields to their default values
      (instead of 0)
    * list of acceptable values for options can be have a type different from
-     string
+     string and can have type enum (that will generate a C enum)
+     (as suggested by Gyozo Papp)
    * usage string is printed only if not empty (as suggested by Gyozo Papp)
    * in case of hidden options, the generated help string array reuses the 
      strings of the full help array (as suggested by Gyozo Papp)

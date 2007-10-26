@@ -74,6 +74,9 @@ typedef enum {ARG_NO
 @ENDIF@
 @IF@ has_arg_longlong @THEN@
   , ARG_LONGLONG
+@ENDIF@
+@IF@ has_arg_enum @THEN@
+  , ARG_ENUM
 @ENDIF@} @parser_name@_arg_type;
 
 static
@@ -240,7 +243,7 @@ free_string_field (char **s)
 @IF@ multiple_options @THEN@
 /** @@brief generic value variable */
 union generic_value {
-@IF@ has_arg_int @THEN@
+@IF@ has_arg_int or has_arg_enum @THEN@
     int int_arg;
 @ENDIF@
 @IF@ has_arg_short @THEN@
@@ -683,7 +686,6 @@ static char *package_name = 0;
  * @@param field_given the pointer to the number of occurrence of this option
  * @@param prev_given the pointer to the number of occurrence already seen
  * @@param value the argument for this option (if null no arg was specified)
- * @@param orig the actual argument (can be different in case of options with values)
  * @@param possible_values the possible values for this option (if specified)
  * @@param default_value the default value (in case the option only accepts fixed values)
  * @@param arg_type the type of this option
@@ -698,8 +700,7 @@ static char *package_name = 0;
 static
 int update_arg(void *field, char **orig_field,
                unsigned int *field_given, unsigned int *prev_given, 
-               const char *value, char *orig,
-               char *possible_values[], const char *default_value,
+               char *value, char *possible_values[], const char *default_value,
                @parser_name@_arg_type arg_type,
                short check_ambiguity, short override,
                short no_free, short multiple_option,
@@ -798,6 +799,11 @@ int update_arg(void *field, char **orig_field,
 #endif
     break;
 @ENDIF@
+@IF@ has_arg_enum @THEN@
+  case ARG_ENUM:
+    if (val) *((int *)field) = found;
+    break;
+@ENDIF@
 @IF@ has_arg_string @THEN@
   case ARG_STRING:
     if (val) {
@@ -856,13 +862,13 @@ int update_arg(void *field, char **orig_field,
 @ENDIF@
     break;
   default:
-    if (orig && orig_field) {
+    if (value && orig_field) {
       if (no_free) {
-        *orig_field = orig;
+        *orig_field = value;
       } else {
         if (*orig_field)
           free (*orig_field); /* free previous string */
-        *orig_field = gengetopt_strdup (orig);
+        *orig_field = gengetopt_strdup (value);
       }
     }
   };
@@ -897,7 +903,7 @@ int update_multiple_arg_temp(struct generic_list **list,
     {
       add_node (list);
       if (update_arg((void *)&((*list)->arg), &((*list)->orig), 0,
-          prev_given, multi_token, multi_token, possible_values, default_value, 
+          prev_given, multi_token, possible_values, default_value, 
           arg_type, 0, 1, 1, 1, long_opt, short_opt, additional_error)) {
         if (multi_token) free(multi_token);
         return 1; /* failure */
@@ -952,8 +958,13 @@ void update_multiple_arg(void *field, char ***orig_field,
     *orig_field = (char **) realloc (*orig_field, (field_given + prev_given) * sizeof (char *));
 
     switch(arg_type) {
+@IF@ has_arg_int or has_arg_enum @THEN@
 @IF@ has_arg_int @THEN@
     case ARG_INT:
+@ENDIF@
+@IF@ has_arg_enum @THEN@
+    case ARG_ENUM:
+@ENDIF@
       *((int **)field) = (int *)realloc (*((int **)field), (field_given + prev_given) * sizeof (int)); break;
 @ENDIF@
 @IF@ has_arg_short @THEN@
@@ -1029,6 +1040,10 @@ void update_multiple_arg(void *field, char ***orig_field,
           (*((long **)field))[i + field_given] = tmp->arg.longlong_arg; break;
 #endif
 @ENDIF@
+@IF@ has_arg_enum @THEN@
+        case ARG_ENUM:
+          (*((int **)field))[i + field_given] = tmp->arg.int_arg; break;
+@ENDIF@
 @IF@ has_arg_string @THEN@
         case ARG_STRING:
           (*((char ***)field))[i + field_given] = tmp->arg.string_arg; break;
@@ -1043,8 +1058,13 @@ void update_multiple_arg(void *field, char ***orig_field,
   } else { /* set the default value */
     if (default_value && ! field_given) {
       switch(arg_type) {
+@IF@ has_arg_int or has_arg_enum @THEN@
 @IF@ has_arg_int @THEN@
       case ARG_INT:
+@ENDIF@
+@IF@ has_arg_enum @THEN@
+      case ARG_ENUM:
+@ENDIF@
         if (! *((int **)field)) {
           *((int **)field) = (int *)malloc (sizeof (int));
           (*((int **)field))[0] = default_value->int_arg; 

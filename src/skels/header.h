@@ -17,6 +17,7 @@ class header_gen_class
 {
  protected:
   string args_info;
+  string enum_types;
   bool generate_config_parser;
   bool generate_string_parser;
   string generator_version;
@@ -40,8 +41,8 @@ class header_gen_class
   {
   }
   
-  header_gen_class(const string &_args_info, bool _generate_config_parser, bool _generate_string_parser, const string &_generator_version, const string &_group_counters, bool _has_hidden, const string &_header_file_ext, const string &_header_file_name, const string &_ifndefname, const string &_option_arg, const string &_option_given, const string &_option_values_decl, const string &_package_var_name, const string &_package_var_val, const string &_parser_name, const string &_version_var_name, const string &_version_var_val) :
-    args_info (_args_info), generate_config_parser (_generate_config_parser), generate_string_parser (_generate_string_parser), generator_version (_generator_version), group_counters (_group_counters), has_hidden (_has_hidden), header_file_ext (_header_file_ext), header_file_name (_header_file_name), ifndefname (_ifndefname), option_arg (_option_arg), option_given (_option_given), option_values_decl (_option_values_decl), package_var_name (_package_var_name), package_var_val (_package_var_val), parser_name (_parser_name), version_var_name (_version_var_name), version_var_val (_version_var_val)
+  header_gen_class(const string &_args_info, const string &_enum_types, bool _generate_config_parser, bool _generate_string_parser, const string &_generator_version, const string &_group_counters, bool _has_hidden, const string &_header_file_ext, const string &_header_file_name, const string &_ifndefname, const string &_option_arg, const string &_option_given, const string &_option_values_decl, const string &_package_var_name, const string &_package_var_val, const string &_parser_name, const string &_version_var_name, const string &_version_var_val) :
+    args_info (_args_info), enum_types (_enum_types), generate_config_parser (_generate_config_parser), generate_string_parser (_generate_string_parser), generator_version (_generator_version), group_counters (_group_counters), has_hidden (_has_hidden), header_file_ext (_header_file_ext), header_file_name (_header_file_name), ifndefname (_ifndefname), option_arg (_option_arg), option_given (_option_given), option_values_decl (_option_values_decl), package_var_name (_package_var_name), package_var_val (_package_var_val), parser_name (_parser_name), version_var_name (_version_var_name), version_var_val (_version_var_val)
   {
   }
 
@@ -75,6 +76,13 @@ class header_gen_class
   void set_args_info(const string &_args_info)
   {
     args_info = _args_info;
+  }
+
+  virtual void generate_enum_types(ostream &stream, unsigned int indent) = 0;
+
+  void set_enum_types(const string &_enum_types)
+  {
+    enum_types = _enum_types;
   }
 
   void set_generate_config_parser(bool _generate_config_parser)

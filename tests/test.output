@@ -303,7 +303,20 @@ specified --multistring-values-no-short with argument bar
 specified --multistring-values-no-short with argument foo
 specified --int-values with argument 180
 specified --int-values with (original) argument 1
+specified --int-values-m with argument 1800
+specified --int-values-m with (original) argument 1
+specified --int-values-m with argument 2700
+specified --int-values-m with (original) argument 27
 (un)specified --int-values-def with argument 180
+(un)specified --values-second-enums with argument 1 (180)
+specified --values-multiple-enums with argument 0
+specified --values-multiple-enums with (original) argument FI
+specified --values-multiple-enums with argument 1
+specified --values-multiple-enums with (original) argument S
+specified --values-multiple-enums with argument 2
+specified --values-multiple-enums with (original) argument T
+specified --values-multiple-enums with argument 3
+specified --values-multiple-enums with (original) argument FOURTH
 *** test_values_err.sh
 ./test_values: ambiguous argument, "fo", for option `--string-values' (`-s')
 ./test_values: invalid argument, "fooa", for option `--multistring-values' (`-S')
@@ -487,12 +500,26 @@ Usage: test_values [OPTIONS]...
                                   "foobar", "barfoo" default=`bar')
   -i, --int-values=INT          int option with values  (possible 
                                   values="90", "180", "270", "360")
+  -I, --int-values-m=INT        multiple int option with values  (possible 
+                                  values="900", "1800", "2700", "3600")
       --int-values-def=INT      int option with values and default  (possible 
                                   values="90", "180", "270", "360" 
                                   default=`180')
+  -e, --values-first-enums=ENUM option with values and enums 1  (possible 
+                                  values="FOO", "BAR", "ANOTHER", 
+                                  "SOMETHING")
+      --values-second-enums=ENUM
+                                option with values and enums 2 with default  
+                                  (possible values="90", "180", "270", 
+                                  "360" default=`180')
+  -W, --values-multiple-enums=ENUM
+                                multiple option with values and enums  
+                                  (possible values="FIRST", "SECOND", 
+                                  "THIRD", "FOURTH" default=`FOURTH')
 *** test_err.sh
 diff wrong_default.err.out ./wrong_default.err
 diff wrong_dep.err.out ./wrong_dep.err
+diff wrong_enum_use.err.out ./wrong_enum_use.err
 diff wrong_flag.err.out ./wrong_flag.err
 diff wrong_flag2.err.out ./wrong_flag2.err
 diff wrong_group.err.out ./wrong_group.err
@@ -985,9 +1012,22 @@ Usage: test_values [OPTIONS]... [FILES]...
                                   "foobar", "barfoo" default=`bar')
   -i, --int-values=INT          int option with values  (possible 
                                   values="90", "180", "270", "360")
+  -I, --int-values-m=INT        multiple int option with values  (possible 
+                                  values="900", "1800", "2700", "3600")
       --int-values-def=INT      int option with values and default  (possible 
                                   values="90", "180", "270", "360" 
                                   default=`180')
+  -e, --values-first-enums=ENUM option with values and enums 1  (possible 
+                                  values="FOO", "BAR", "ANOTHER", 
+                                  "SOMETHING")
+      --values-second-enums=ENUM
+                                option with values and enums 2 with default  
+                                  (possible values="90", "180", "270", 
+                                  "360" default=`180')
+  -W, --values-multiple-enums=ENUM
+                                multiple option with values and enums  
+                                  (possible values="FIRST", "SECOND", 
+                                  "THIRD", "FOURTH" default=`FOURTH')
 *** test_redef_help -h
 specified --height
 *** test_multiple_parsers -h

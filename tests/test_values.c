@@ -71,10 +71,40 @@ main (int argc, char **argv)
               args_info.int_values_orig);
     }
 
+  for (i = 0; i < args_info.int_values_m_given; ++i) {
+    printf("specified --int-values-m with argument %d\n",
+           args_info.int_values_m_arg[i]);
+    printf ("specified --int-values-m with (original) argument %s\n",
+              args_info.int_values_m_orig[i]);
+  }
+
   if (!args_info.int_values_def_given)
     printf ("(un)");
   printf ("specified --int-values-def with argument %d\n",
           args_info.int_values_def_arg);
+
+  if (args_info.values_first_enums_given)
+    printf("specified --values-first-enums with argument %d (%s)\n",
+           args_info.values_first_enums_arg,
+           test_values_cmd_parser_values_first_enums_values
+           [args_info.values_first_enums_arg]);
+
+  if (!args_info.values_second_enums_given)
+    printf ("(un)");
+  printf("specified --values-second-enums with argument %d (%s)\n",
+         args_info.values_second_enums_arg,
+         test_values_cmd_parser_values_second_enums_values
+         [args_info.values_second_enums_arg]);
+
+  for (i = 0; i < args_info.values_multiple_enums_given; ++i) 
+    {
+      printf ("specified --values-multiple-enums with argument %d\n", 
+              args_info.values_multiple_enums_arg[i]);
+      printf 
+        ("specified --values-multiple-enums with (original) argument %s\n", 
+         (args_info.values_multiple_enums_orig[i] ?
+          args_info.values_multiple_enums_orig[i] : "(null)"));
+    }
 
  end:
   test_values_cmd_parser_free (&args_info);

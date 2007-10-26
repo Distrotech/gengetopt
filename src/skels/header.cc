@@ -122,6 +122,11 @@ header_gen_class::generate_header(ostream &stream, unsigned int indent)
   stream << "#endif";
   stream << "\n";
   stream << indent_str;
+  if (enum_types.size () > 0)
+    generate_string (enum_types, stream, indent + indent_str.length ());
+  else
+    generate_enum_types (stream, indent + indent_str.length ());
+  stream << indent_str;
   stream << "\n";
   stream << indent_str;
   stream << "/** ";

@@ -94,22 +94,49 @@ option_arg_gen_class::generate_option_arg(ostream &stream, unsigned int indent)
         {
           if (has_arg)
             {
-              generate_string (type, stream, indent + indent_str.length ());
-              stream << " ";
-              generate_string (name, stream, indent + indent_str.length ());
-              stream << "_arg;	/**< ";
-              stream << "@";
-              stream << "brief ";
-              generate_string (desc, stream, indent + indent_str.length ());
-              if (has_default)
+              if (has_enum)
                 {
-                  stream << " (default='";
-                  generate_string (default_value, stream, indent + indent_str.length ());
-                  stream << "')";
+                  stream << "enum enum_";
+                  generate_string (name, stream, indent + indent_str.length ());
+                  stream << " ";
+                  if (multiple)
+                    {
+                      stream << "*";
+                    }
+                  generate_string (name, stream, indent + indent_str.length ());
+                  stream << "_arg;	/**< ";
+                  stream << "@";
+                  stream << "brief ";
+                  generate_string (desc, stream, indent + indent_str.length ());
+                  if (has_default)
+                    {
+                      stream << " (default='";
+                      generate_string (default_value, stream, indent + indent_str.length ());
+                      stream << "')";
+                    }
+                  stream << ".  */";
+                  stream << "\n";
+                  stream << indent_str;
                 }
-              stream << ".  */";
-              stream << "\n";
-              stream << indent_str;
+              else
+                {
+                  generate_string (type, stream, indent + indent_str.length ());
+                  stream << " ";
+                  generate_string (name, stream, indent + indent_str.length ());
+                  stream << "_arg;	/**< ";
+                  stream << "@";
+                  stream << "brief ";
+                  generate_string (desc, stream, indent + indent_str.length ());
+                  if (has_default)
+                    {
+                      stream << " (default='";
+                      generate_string (default_value, stream, indent + indent_str.length ());
+                      stream << "')";
+                    }
+                  stream << ".  */";
+                  stream << "\n";
+                  stream << indent_str;
+                }
               generate_string (origtype, stream, indent + indent_str.length ());
               stream << " ";
               generate_string (name, stream, indent + indent_str.length ());

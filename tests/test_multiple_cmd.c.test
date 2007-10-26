@@ -718,7 +718,6 @@ static char *package_name = 0;
  * @param field_given the pointer to the number of occurrence of this option
  * @param prev_given the pointer to the number of occurrence already seen
  * @param value the argument for this option (if null no arg was specified)
- * @param orig the actual argument (can be different in case of options with values)
  * @param possible_values the possible values for this option (if specified)
  * @param default_value the default value (in case the option only accepts fixed values)
  * @param arg_type the type of this option
@@ -733,8 +732,7 @@ static char *package_name = 0;
 static
 int update_arg(void *field, char **orig_field,
                unsigned int *field_given, unsigned int *prev_given, 
-               const char *value, char *orig,
-               char *possible_values[], const char *default_value,
+               char *value, char *possible_values[], const char *default_value,
                test_multiple_cmd_parser_arg_type arg_type,
                short check_ambiguity, short override,
                short no_free, short multiple_option,
@@ -817,13 +815,13 @@ int update_arg(void *field, char **orig_field,
   case ARG_NO:
     break;
   default:
-    if (orig && orig_field) {
+    if (value && orig_field) {
       if (no_free) {
-        *orig_field = orig;
+        *orig_field = value;
       } else {
         if (*orig_field)
           free (*orig_field); /* free previous string */
-        *orig_field = gengetopt_strdup (orig);
+        *orig_field = gengetopt_strdup (value);
       }
     }
   };
@@ -857,7 +855,7 @@ int update_multiple_arg_temp(struct generic_list **list,
     {
       add_node (list);
       if (update_arg((void *)&((*list)->arg), &((*list)->orig), 0,
-          prev_given, multi_token, multi_token, possible_values, default_value, 
+          prev_given, multi_token, possible_values, default_value, 
           arg_type, 0, 1, 1, 1, long_opt, short_opt, additional_error)) {
         if (multi_token) free(multi_token);
         return 1; /* failure */
@@ -1212,7 +1210,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           
             if (update_arg( (void *)&(args_info->file_save_arg), 
                  &(args_info->file_save_orig), &(args_info->file_save_given),
-                &(local_args_info.file_save_given), optarg, optarg, 0, 0, ARG_STRING,
+                &(local_args_info.file_save_given), optarg, 0, 0, ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "file-save", '-',
                 additional_error))

@@ -84,6 +84,7 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   string generate_getopt_string();
 
   // to be implemented in header_gen_class
+  virtual void generate_enum_types(ostream &stream, unsigned int indent);
   virtual void generate_option_arg(ostream &stream, unsigned int indent);
   virtual void generate_option_given(ostream &stream, unsigned int indent);
   virtual void generate_option_values_decl(ostream &stream, unsigned int indent);

@@ -253,6 +253,12 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "\n";
       stream << indent_str;
     }
+  if (has_arg_enum)
+    {
+      stream << "  , ARG_ENUM";
+      stream << "\n";
+      stream << indent_str;
+    }
   stream << "} ";
   generate_string (parser_name, stream, indent + indent_str.length ());
   stream << "_arg_type;";
@@ -807,7 +813,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "union generic_value {";
       stream << "\n";
       stream << indent_str;
-      if (has_arg_int)
+      if (( has_arg_int || has_arg_enum ))
         {
           stream << "    int int_arg;";
           stream << "\n";
@@ -2130,11 +2136,6 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << indent_str;
   stream << " * ";
   stream << "@";
-  stream << "param orig the actual argument (can be different in case of options with values)";
-  stream << "\n";
-  stream << indent_str;
-  stream << " * ";
-  stream << "@";
   stream << "param possible_values the possible values for this option (if specified)";
   stream << "\n";
   stream << indent_str;
@@ -2203,10 +2204,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "               unsigned int *field_given, unsigned int *prev_given, ";
   stream << "\n";
   stream << indent_str;
-  stream << "               const char *value, char *orig,";
-  stream << "\n";
-  stream << indent_str;
-  stream << "               char *possible_values[], const char *default_value,";
+  stream << "               char *value, char *possible_values[], const char *default_value,";
   stream << "\n";
   stream << indent_str;
   indent = 15;
@@ -2473,6 +2471,18 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "\n";
       stream << indent_str;
     }
+  if (has_arg_enum)
+    {
+      stream << "  case ARG_ENUM:";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    if (val) *((int *)field) = found;";
+      stream << "\n";
+      stream << indent_str;
+      stream << "    break;";
+      stream << "\n";
+      stream << indent_str;
+    }
   if (has_arg_string)
     {
       stream << "  case ARG_STRING:";
@@ -2609,13 +2619,13 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "  default:";
   stream << "\n";
   stream << indent_str;
-  stream << "    if (orig && orig_field) {";
+  stream << "    if (value && orig_field) {";
   stream << "\n";
   stream << indent_str;
   stream << "      if (no_free) {";
   stream << "\n";
   stream << indent_str;
-  stream << "        *orig_field = orig;";
+  stream << "        *orig_field = value;";
   stream << "\n";
   stream << indent_str;
   stream << "      } else {";
@@ -2627,7 +2637,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "          free (*orig_field); /* free previous string */";
   stream << "\n";
   stream << indent_str;
-  stream << "        *orig_field = gengetopt_strdup (orig);";
+  stream << "        *orig_field = gengetopt_strdup (value);";
   stream << "\n";
   stream << indent_str;
   stream << "      }";
@@ -2734,7 +2744,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "      if (update_arg((void *)&((*list)->arg), &((*list)->orig), 0,";
       stream << "\n";
       stream << indent_str;
-      stream << "          prev_given, multi_token, multi_token, possible_values, default_value, ";
+      stream << "          prev_given, multi_token, possible_values, default_value, ";
       stream << "\n";
       stream << indent_str;
       stream << "          arg_type, 0, 1, 1, 1, long_opt, short_opt, additional_error)) {";
@@ -2901,11 +2911,20 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "    switch(arg_type) {";
       stream << "\n";
       stream << indent_str;
-      if (has_arg_int)
+      if (( has_arg_int || has_arg_enum ))
         {
-          stream << "    case ARG_INT:";
-          stream << "\n";
-          stream << indent_str;
+          if (has_arg_int)
+            {
+              stream << "    case ARG_INT:";
+              stream << "\n";
+              stream << indent_str;
+            }
+          if (has_arg_enum)
+            {
+              stream << "    case ARG_ENUM:";
+              stream << "\n";
+              stream << indent_str;
+            }
           stream << "      *((int **)field) = (int *)realloc (*((int **)field), (field_given + prev_given) * sizeof (int)); break;";
           stream << "\n";
           stream << indent_str;
@@ -3091,6 +3110,15 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
           stream << "\n";
           stream << indent_str;
         }
+      if (has_arg_enum)
+        {
+          stream << "        case ARG_ENUM:";
+          stream << "\n";
+          stream << indent_str;
+          stream << "          (*((int **)field))[i + field_given] = tmp->arg.int_arg; break;";
+          stream << "\n";
+          stream << indent_str;
+        }
       if (has_arg_string)
         {
           stream << "        case ARG_STRING:";
@@ -3130,11 +3158,20 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "      switch(arg_type) {";
       stream << "\n";
       stream << indent_str;
-      if (has_arg_int)
+      if (( has_arg_int || has_arg_enum ))
         {
-          stream << "      case ARG_INT:";
-          stream << "\n";
-          stream << indent_str;
+          if (has_arg_int)
+            {
+              stream << "      case ARG_INT:";
+              stream << "\n";
+              stream << indent_str;
+            }
+          if (has_arg_enum)
+            {
+              stream << "      case ARG_ENUM:";
+              stream << "\n";
+              stream << indent_str;
+            }
           stream << "        if (! *((int **)field)) {";
           stream << "\n";
           stream << indent_str;

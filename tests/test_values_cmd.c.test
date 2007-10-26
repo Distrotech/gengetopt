@@ -40,13 +40,18 @@ const char *gengetopt_args_info_help[] = {
   "\n Group: group1",
   "      --string-values-group=FOO group string option with values and default  \n                                  (possible values=\"foo\", \"bar\", \n                                  \"foobar\", \"barfoo\" default=`bar')",
   "  -i, --int-values=INT          int option with values  (possible \n                                  values=\"90\", \"180\", \"270\", \"360\")",
+  "  -I, --int-values-m=INT        multiple int option with values  (possible \n                                  values=\"900\", \"1800\", \"2700\", \"3600\")",
   "      --int-values-def=INT      int option with values and default  (possible \n                                  values=\"90\", \"180\", \"270\", \"360\" \n                                  default=`180')",
+  "  -e, --values-first-enums=ENUM option with values and enums 1  (possible \n                                  values=\"FOO\", \"BAR\", \"ANOTHER\", \n                                  \"SOMETHING\")",
+  "      --values-second-enums=ENUM\n                                option with values and enums 2 with default  \n                                  (possible values=\"90\", \"180\", \"270\", \n                                  \"360\" default=`180')",
+  "  -W, --values-multiple-enums=ENUM\n                                multiple option with values and enums  \n                                  (possible values=\"FIRST\", \"SECOND\", \n                                  \"THIRD\", \"FOURTH\" default=`FOURTH')",
     0
 };
 
 typedef enum {ARG_NO
   , ARG_STRING
   , ARG_INT
+  , ARG_ENUM
 } test_values_cmd_parser_arg_type;
 
 static
@@ -70,7 +75,11 @@ char *test_values_cmd_parser_multistring_values_def_values[] = {"foo", "bar", 0}
 char *test_values_cmd_parser_multistring_values_no_short_values[] = {"foo", "bar", 0} ;	/* Possible values for multistring-values-no-short.  */
 char *test_values_cmd_parser_string_values_group_values[] = {"foo", "bar", "foobar", "barfoo", 0} ;	/* Possible values for string-values-group.  */
 char *test_values_cmd_parser_int_values_values[] = {"90", "180", "270", "360", 0} ;	/* Possible values for int-values.  */
+char *test_values_cmd_parser_int_values_m_values[] = {"900", "1800", "2700", "3600", 0} ;	/* Possible values for int-values-m.  */
 char *test_values_cmd_parser_int_values_def_values[] = {"90", "180", "270", "360", 0} ;	/* Possible values for int-values-def.  */
+char *test_values_cmd_parser_values_first_enums_values[] = {"FOO", "BAR", "ANOTHER", "SOMETHING", 0} ;	/* Possible values for values-first-enums.  */
+char *test_values_cmd_parser_values_second_enums_values[] = {"90", "180", "270", "360", 0} ;	/* Possible values for values-second-enums.  */
+char *test_values_cmd_parser_values_multiple_enums_values[] = {"FIRST", "SECOND", "THIRD", "FOURTH", 0} ;	/* Possible values for values-multiple-enums.  */
 
 static char *
 gengetopt_strdup (const char *s);
@@ -89,7 +98,11 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->multistring_values_no_short_given = 0 ;
   args_info->string_values_group_given = 0 ;
   args_info->int_values_given = 0 ;
+  args_info->int_values_m_given = 0 ;
   args_info->int_values_def_given = 0 ;
+  args_info->values_first_enums_given = 0 ;
+  args_info->values_second_enums_given = 0 ;
+  args_info->values_multiple_enums_given = 0 ;
   args_info->group1_group_counter = 0 ;
 }
 
@@ -113,8 +126,16 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->string_values_group_arg = gengetopt_strdup ("bar");
   args_info->string_values_group_orig = NULL;
   args_info->int_values_orig = NULL;
+  args_info->int_values_m_arg = NULL;
+  args_info->int_values_m_orig = NULL;
   args_info->int_values_def_arg = 180;
   args_info->int_values_def_orig = NULL;
+  args_info->values_first_enums_arg = -1;
+  args_info->values_first_enums_orig = NULL;
+  args_info->values_second_enums_arg = values_second_enums_arg_180;
+  args_info->values_second_enums_orig = NULL;
+  args_info->values_multiple_enums_arg = NULL;
+  args_info->values_multiple_enums_orig = NULL;
   
 }
 
@@ -139,7 +160,15 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->multistring_values_no_short_max = -1;
   args_info->string_values_group_help = gengetopt_args_info_help[10] ;
   args_info->int_values_help = gengetopt_args_info_help[11] ;
-  args_info->int_values_def_help = gengetopt_args_info_help[12] ;
+  args_info->int_values_m_help = gengetopt_args_info_help[12] ;
+  args_info->int_values_m_min = -1;
+  args_info->int_values_m_max = -1;
+  args_info->int_values_def_help = gengetopt_args_info_help[13] ;
+  args_info->values_first_enums_help = gengetopt_args_info_help[14] ;
+  args_info->values_second_enums_help = gengetopt_args_info_help[15] ;
+  args_info->values_multiple_enums_help = gengetopt_args_info_help[16] ;
+  args_info->values_multiple_enums_min = -1;
+  args_info->values_multiple_enums_max = -1;
   
 }
 
@@ -238,6 +267,22 @@ static void add_node(struct generic_list **list) {
   new_node->orig = NULL;
 }
 
+static void
+free_multiple_field(unsigned int len, void **arg, char ***orig)
+{
+  unsigned int i;
+  if (*arg) {
+    for (i = 0; i < len; ++i)
+      {
+        free_string_field(&((*orig)[i]));
+      }
+
+    free (*arg);
+    *arg = 0;
+    free (*orig);
+    *orig = 0;
+  }
+}
 
 static void
 free_multiple_string_field(unsigned int len, char ***arg, char ***orig)
@@ -276,7 +321,11 @@ test_values_cmd_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->string_values_group_arg));
   free_string_field (&(args_info->string_values_group_orig));
   free_string_field (&(args_info->int_values_orig));
+  free_multiple_field (args_info->int_values_m_given, (void **)&(args_info->int_values_m_arg), &(args_info->int_values_m_orig));
   free_string_field (&(args_info->int_values_def_orig));
+  free_string_field (&(args_info->values_first_enums_orig));
+  free_string_field (&(args_info->values_second_enums_orig));
+  free_multiple_field (args_info->values_multiple_enums_given, (void **)&(args_info->values_multiple_enums_arg), &(args_info->values_multiple_enums_orig));
   
   
   for (i = 0; i < args_info->inputs_num; ++i)
@@ -337,8 +386,14 @@ test_values_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info
     write_into_file(outfile, "string-values-group", args_info->string_values_group_orig);
   if (args_info->int_values_given)
     write_into_file(outfile, "int-values", args_info->int_values_orig);
+  write_multiple_into_file(outfile, args_info->int_values_m_given, "int-values-m", args_info->int_values_m_orig);
   if (args_info->int_values_def_given)
     write_into_file(outfile, "int-values-def", args_info->int_values_def_orig);
+  if (args_info->values_first_enums_given)
+    write_into_file(outfile, "values-first-enums", args_info->values_first_enums_orig);
+  if (args_info->values_second_enums_given)
+    write_into_file(outfile, "values-second-enums", args_info->values_second_enums_orig);
+  write_multiple_into_file(outfile, args_info->values_multiple_enums_given, "values-multiple-enums", args_info->values_multiple_enums_orig);
   
 
   i = EXIT_SUCCESS;
@@ -648,6 +703,12 @@ test_values_cmd_parser_required2 (struct gengetopt_args_info *args_info, const c
   if (check_multiple_option_occurrences(prog_name, args_info->multistring_values_no_short_given, args_info->multistring_values_no_short_min, args_info->multistring_values_no_short_max, "'--multistring-values-no-short'"))
      error = 1;
   
+  if (check_multiple_option_occurrences(prog_name, args_info->int_values_m_given, args_info->int_values_m_min, args_info->int_values_m_max, "'--int-values-m' ('-I')"))
+     error = 1;
+  
+  if (check_multiple_option_occurrences(prog_name, args_info->values_multiple_enums_given, args_info->values_multiple_enums_min, args_info->values_multiple_enums_max, "'--values-multiple-enums' ('-W')"))
+     error = 1;
+  
   
   /* checks for dependences among options */
 
@@ -664,7 +725,6 @@ static char *package_name = 0;
  * @param field_given the pointer to the number of occurrence of this option
  * @param prev_given the pointer to the number of occurrence already seen
  * @param value the argument for this option (if null no arg was specified)
- * @param orig the actual argument (can be different in case of options with values)
  * @param possible_values the possible values for this option (if specified)
  * @param default_value the default value (in case the option only accepts fixed values)
  * @param arg_type the type of this option
@@ -679,8 +739,7 @@ static char *package_name = 0;
 static
 int update_arg(void *field, char **orig_field,
                unsigned int *field_given, unsigned int *prev_given, 
-               const char *value, char *orig,
-               char *possible_values[], const char *default_value,
+               char *value, char *possible_values[], const char *default_value,
                test_values_cmd_parser_arg_type arg_type,
                short check_ambiguity, short override,
                short no_free, short multiple_option,
@@ -734,6 +793,9 @@ int update_arg(void *field, char **orig_field,
   case ARG_INT:
     if (val) *((int *)field) = strtol (val, &stop_char, 0);
     break;
+  case ARG_ENUM:
+    if (val) *((int *)field) = found;
+    break;
   case ARG_STRING:
     if (val) {
       string_field = (char **)field;
@@ -763,13 +825,13 @@ int update_arg(void *field, char **orig_field,
   case ARG_NO:
     break;
   default:
-    if (orig && orig_field) {
+    if (value && orig_field) {
       if (no_free) {
-        *orig_field = orig;
+        *orig_field = value;
       } else {
         if (*orig_field)
           free (*orig_field); /* free previous string */
-        *orig_field = gengetopt_strdup (orig);
+        *orig_field = gengetopt_strdup (value);
       }
     }
   };
@@ -803,7 +865,7 @@ int update_multiple_arg_temp(struct generic_list **list,
     {
       add_node (list);
       if (update_arg((void *)&((*list)->arg), &((*list)->orig), 0,
-          prev_given, multi_token, multi_token, possible_values, default_value, 
+          prev_given, multi_token, possible_values, default_value, 
           arg_type, 0, 1, 1, 1, long_opt, short_opt, additional_error)) {
         if (multi_token) free(multi_token);
         return 1; /* failure */
@@ -859,6 +921,7 @@ void update_multiple_arg(void *field, char ***orig_field,
 
     switch(arg_type) {
     case ARG_INT:
+    case ARG_ENUM:
       *((int **)field) = (int *)realloc (*((int **)field), (field_given + prev_given) * sizeof (int)); break;
     case ARG_STRING:
       *((char ***)field) = (char **)realloc (*((char ***)field), (field_given + prev_given) * sizeof (char *)); break;
@@ -873,6 +936,8 @@ void update_multiple_arg(void *field, char ***orig_field,
         switch(arg_type) {
         case ARG_INT:
           (*((int **)field))[i + field_given] = tmp->arg.int_arg; break;
+        case ARG_ENUM:
+          (*((int **)field))[i + field_given] = tmp->arg.int_arg; break;
         case ARG_STRING:
           (*((char ***)field))[i + field_given] = tmp->arg.string_arg; break;
         default:
@@ -886,6 +951,7 @@ void update_multiple_arg(void *field, char ***orig_field,
     if (default_value && ! field_given) {
       switch(arg_type) {
       case ARG_INT:
+      case ARG_ENUM:
         if (! *((int **)field)) {
           *((int **)field) = (int *)malloc (sizeof (int));
           (*((int **)field))[0] = default_value->int_arg; 
@@ -917,6 +983,8 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
   struct generic_list * multistring_values_list = NULL;
   struct generic_list * multistring_values_def_list = NULL;
   struct generic_list * multistring_values_no_short_list = NULL;
+  struct generic_list * int_values_m_list = NULL;
+  struct generic_list * values_multiple_enums_list = NULL;
   int error = 0;
   struct gengetopt_args_info local_args_info;
   
@@ -958,11 +1026,15 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
         { "multistring-values-no-short",	1, NULL, 0 },
         { "string-values-group",	1, NULL, 0 },
         { "int-values",	1, NULL, 'i' },
+        { "int-values-m",	1, NULL, 'I' },
         { "int-values-def",	1, NULL, 0 },
+        { "values-first-enums",	1, NULL, 'e' },
+        { "values-second-enums",	1, NULL, 0 },
+        { "values-multiple-enums",	1, NULL, 'W' },
         { NULL,	0, NULL, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVs:S:i:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVs:S:i:I:e:W:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -982,7 +1054,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
         
           if (update_arg( (void *)&(args_info->string_values_arg), 
                &(args_info->string_values_orig), &(args_info->string_values_given),
-              &(local_args_info.string_values_given), optarg, optarg, test_values_cmd_parser_string_values_values, 0, ARG_STRING,
+              &(local_args_info.string_values_given), optarg, test_values_cmd_parser_string_values_values, 0, ARG_STRING,
               check_ambiguity, override, 0, 0,
               "string-values", 's',
               additional_error))
@@ -1001,9 +1073,36 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
         
           if (update_arg( (void *)&(args_info->int_values_arg), 
                &(args_info->int_values_orig), &(args_info->int_values_given),
-              &(local_args_info.int_values_given), optarg, optarg, test_values_cmd_parser_int_values_values, 0, ARG_INT,
+              &(local_args_info.int_values_given), optarg, test_values_cmd_parser_int_values_values, 0, ARG_INT,
               check_ambiguity, override, 0, 0,
               "int-values", 'i',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'I':	/* multiple int option with values.  */
+          if (update_multiple_arg_temp(&int_values_m_list, 
+              &(local_args_info.int_values_m_given), optarg, test_values_cmd_parser_int_values_m_values, 0, ARG_INT,
+              "int-values-m", 'I',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'e':	/* option with values and enums 1.  */
+        
+          if (update_arg( (void *)&(args_info->values_first_enums_arg), 
+               &(args_info->values_first_enums_orig), &(args_info->values_first_enums_given),
+              &(local_args_info.values_first_enums_given), optarg, test_values_cmd_parser_values_first_enums_values, 0, ARG_ENUM,
+              check_ambiguity, override, 0, 0,
+              "values-first-enums", 'e',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'W':	/* multiple option with values and enums.  */
+          if (update_multiple_arg_temp(&values_multiple_enums_list, 
+              &(local_args_info.values_multiple_enums_given), optarg, test_values_cmd_parser_values_multiple_enums_values, "FOURTH", ARG_ENUM,
+              "values-multiple-enums", 'W',
               additional_error))
             goto failure;
         
@@ -1016,7 +1115,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           
             if (update_arg( (void *)&(args_info->string_values_def_arg), 
                  &(args_info->string_values_def_orig), &(args_info->string_values_def_given),
-                &(local_args_info.string_values_def_given), optarg, optarg, test_values_cmd_parser_string_values_def_values, "bar", ARG_STRING,
+                &(local_args_info.string_values_def_given), optarg, test_values_cmd_parser_string_values_def_values, "bar", ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "string-values-def", '-',
                 additional_error))
@@ -1029,7 +1128,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           
             if (update_arg( (void *)&(args_info->string_values_def_argopt_arg), 
                  &(args_info->string_values_def_argopt_orig), &(args_info->string_values_def_argopt_given),
-                &(local_args_info.string_values_def_argopt_given), optarg, optarg, test_values_cmd_parser_string_values_def_argopt_values, "foobar", ARG_STRING,
+                &(local_args_info.string_values_def_argopt_given), optarg, test_values_cmd_parser_string_values_def_argopt_values, "foobar", ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "string-values-def-argopt", '-',
                 additional_error))
@@ -1042,7 +1141,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           
             if (update_arg( (void *)&(args_info->string_values_no_short_arg), 
                  &(args_info->string_values_no_short_orig), &(args_info->string_values_no_short_given),
-                &(local_args_info.string_values_no_short_given), optarg, optarg, test_values_cmd_parser_string_values_no_short_values, 0, ARG_STRING,
+                &(local_args_info.string_values_no_short_given), optarg, test_values_cmd_parser_string_values_no_short_values, 0, ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "string-values-no-short", '-',
                 additional_error))
@@ -1078,7 +1177,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           
             if (update_arg( (void *)&(args_info->string_values_group_arg), 
                  &(args_info->string_values_group_orig), &(args_info->string_values_group_given),
-                &(local_args_info.string_values_group_given), optarg, optarg, test_values_cmd_parser_string_values_group_values, "bar", ARG_STRING,
+                &(local_args_info.string_values_group_given), optarg, test_values_cmd_parser_string_values_group_values, "bar", ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "string-values-group", '-',
                 additional_error))
@@ -1091,9 +1190,22 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           
             if (update_arg( (void *)&(args_info->int_values_def_arg), 
                  &(args_info->int_values_def_orig), &(args_info->int_values_def_given),
-                &(local_args_info.int_values_def_given), optarg, optarg, test_values_cmd_parser_int_values_def_values, "180", ARG_INT,
+                &(local_args_info.int_values_def_given), optarg, test_values_cmd_parser_int_values_def_values, "180", ARG_INT,
                 check_ambiguity, override, 0, 0,
                 "int-values-def", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* option with values and enums 2 with default.  */
+          else if (strcmp (long_options[option_index].name, "values-second-enums") == 0)
+          {
+          
+            if (update_arg( (void *)&(args_info->values_second_enums_arg), 
+                 &(args_info->values_second_enums_orig), &(args_info->values_second_enums_given),
+                &(local_args_info.values_second_enums_given), optarg, test_values_cmd_parser_values_second_enums_values, "180", ARG_ENUM,
+                check_ambiguity, override, 0, 0,
+                "values-second-enums", '-',
                 additional_error))
               goto failure;
           
@@ -1130,6 +1242,15 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
     &(args_info->multistring_values_no_short_orig), args_info->multistring_values_no_short_given,
     local_args_info.multistring_values_no_short_given, 0 , 
     ARG_STRING, multistring_values_no_short_list);
+  update_multiple_arg((void *)&(args_info->int_values_m_arg),
+    &(args_info->int_values_m_orig), args_info->int_values_m_given,
+    local_args_info.int_values_m_given, 0 , 
+    ARG_INT, int_values_m_list);
+  multiple_default_value.int_arg = values_multiple_enums_arg_FOURTH;
+  update_multiple_arg((void *)&(args_info->values_multiple_enums_arg),
+    &(args_info->values_multiple_enums_orig), args_info->values_multiple_enums_given,
+    local_args_info.values_multiple_enums_given, &multiple_default_value , 
+    ARG_ENUM, values_multiple_enums_list);
 
   args_info->multistring_values_given += local_args_info.multistring_values_given;
   local_args_info.multistring_values_given = 0;
@@ -1137,6 +1258,10 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
   local_args_info.multistring_values_def_given = 0;
   args_info->multistring_values_no_short_given += local_args_info.multistring_values_no_short_given;
   local_args_info.multistring_values_no_short_given = 0;
+  args_info->int_values_m_given += local_args_info.int_values_m_given;
+  local_args_info.int_values_m_given = 0;
+  args_info->values_multiple_enums_given += local_args_info.values_multiple_enums_given;
+  local_args_info.values_multiple_enums_given = 0;
   
   if (check_required)
     {
@@ -1178,6 +1303,8 @@ failure:
   free_list (multistring_values_list, 1 );
   free_list (multistring_values_def_list, 1 );
   free_list (multistring_values_no_short_list, 1 );
+  free_list (int_values_m_list, 0 );
+  free_list (values_multiple_enums_list, 0 );
   
   test_values_cmd_parser_release (&local_args_info);
   return (EXIT_FAILURE);

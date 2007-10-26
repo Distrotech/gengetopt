@@ -8,7 +8,11 @@
 @ELSEIF@ flag_arg @THEN@
 @type@ @name@_flag;	/**< @@brief @desc@ (default=@if@ default_on @then@on@else@off@endif@).  */
 @ELSEIF@ has_arg @THEN@
+@IF@ has_enum @THEN@
+enum enum_@name@ @if@ multiple @THEN@ *@ENDIF@@name@_arg;	/**< @@brief @desc@@if@ has_default @then@ (default='@default_value@')@endif@.  */
+@ELSE@
 @type@ @name@_arg;	/**< @@brief @desc@@if@ has_default @then@ (default='@default_value@')@endif@.  */
+@ENDIF@
 @origtype@ @name@_orig;	/**< @@brief @desc@ original value given at command line.  */
 @ENDIF@
 @IF@ multiple @THEN@

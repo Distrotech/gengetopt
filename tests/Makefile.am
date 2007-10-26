@@ -218,9 +218,9 @@ TESTSOUT = test.out
 TESTSOUTPUT = test.output
 
 ERRFILES = wrong_flag.err wrong_flag2.err wrong_group.err wrong_group2.err \
-wrong_dep.err wrong_default.err wrong_numeric_value.err
+wrong_dep.err wrong_default.err wrong_numeric_value.err wrong_enum_use.err
 ERRGGOFILES = wrong_flag.ggo wrong_flag2.ggo wrong_group.ggo wrong_group2.ggo \
-wrong_dep.ggo wrong_default.ggo wrong_numeric_value.ggo
+wrong_dep.ggo wrong_default.ggo wrong_numeric_value.ggo wrong_enum_use.ggo
 
 EXTRA_DIST = no_optgiven.sh.in more_than_once.sh.in \
 test_all_opts.sh.in test_all_opts_file_save.sh.in \

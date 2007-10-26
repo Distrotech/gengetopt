@@ -22,6 +22,7 @@ class option_arg_gen_class
   bool flag_arg;
   bool has_arg;
   bool has_default;
+  bool has_enum;
   bool long_long_arg;
   string longlongtype;
   string longtype;
@@ -32,12 +33,12 @@ class option_arg_gen_class
 
  public:
   option_arg_gen_class() :
-    default_on (false), flag_arg (false), has_arg (false), has_default (false), long_long_arg (false), multiple (false)
+    default_on (false), flag_arg (false), has_arg (false), has_default (false), has_enum (false), long_long_arg (false), multiple (false)
   {
   }
   
-  option_arg_gen_class(bool _default_on, const string &_default_value, const string &_desc, bool _flag_arg, bool _has_arg, bool _has_default, bool _long_long_arg, const string &_longlongtype, const string &_longtype, bool _multiple, const string &_name, const string &_origtype, const string &_type) :
-    default_on (_default_on), default_value (_default_value), desc (_desc), flag_arg (_flag_arg), has_arg (_has_arg), has_default (_has_default), long_long_arg (_long_long_arg), longlongtype (_longlongtype), longtype (_longtype), multiple (_multiple), name (_name), origtype (_origtype), type (_type)
+  option_arg_gen_class(bool _default_on, const string &_default_value, const string &_desc, bool _flag_arg, bool _has_arg, bool _has_default, bool _has_enum, bool _long_long_arg, const string &_longlongtype, const string &_longtype, bool _multiple, const string &_name, const string &_origtype, const string &_type) :
+    default_on (_default_on), default_value (_default_value), desc (_desc), flag_arg (_flag_arg), has_arg (_has_arg), has_default (_has_default), has_enum (_has_enum), long_long_arg (_long_long_arg), longlongtype (_longlongtype), longtype (_longtype), multiple (_multiple), name (_name), origtype (_origtype), type (_type)
   {
   }
 
@@ -92,6 +93,11 @@ class option_arg_gen_class
   void set_has_default(bool _has_default)
   {
     has_default = _has_default;
+  }
+
+  void set_has_enum(bool _has_enum)
+  {
+    has_enum = _has_enum;
   }
 
   void set_long_long_arg(bool _long_long_arg)

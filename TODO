@@ -12,30 +12,6 @@ GENERAL TASKS:
 
 The current maintainer is taking patches. See the file `AUTHORS'.
 
---------
-LORENZO
---------
-
-remove some rules in parser.y by using possible empty symbols
-(such as argtype...)
-
-yesno should really be required?  If not given could be inferred as "no".
-
-CONF PARSER
-
-allow lines with comments at the end:
-option value # comment
-
-OPTIONS
-
-additional options such as multiple and argoptional could be
-given also in different order...  make a list of such options
-
-ENUM
-
-also in parsing, create an option struct, so that parsing rules
-can be re-used easily (e.g., the group options)
-
 Implement synonyms
 
 Should - be always interpreted as the standard output
@@ -49,24 +25,12 @@ switch present in most C compilers:
 
 maintainer-mode
 
-document that an option can span more lines.
-
 CLEANING
 
-- what was happening before, when an option that required an argument was
-not specified any argument?
 - test without any option at all
 - test all types in multiple options?
-- test multiple options with int
 - if multiple options without args avoid generating the functions?
-- value and orig are always the same?
-
 - code duplication in check_option and create_option in gengetopt.cc
-
-VALUES WITH TYPES
-
-- besides char *possible_values pass also void *possible_values that is
-cast to the correct type
 
 TESTS
 
