@@ -177,6 +177,7 @@ static
 void init_args_info(struct my_args_info *args_info)
 {
 
+
   args_info->help_help = my_args_info_help[0] ;
   args_info->version_help = my_args_info_help[1] ;
   args_info->opta_help = my_args_info_help[3] ;
@@ -219,10 +220,7 @@ test_conf_parser_cmd_parser_print_version (void)
   printf ("%s %s\n", TEST_CONF_PARSER_CMD_PARSER_PACKAGE, TEST_CONF_PARSER_CMD_PARSER_VERSION);
 }
 
-void
-test_conf_parser_cmd_parser_print_help (void)
-{
-  int i = 0;
+static void print_help_common(void) {
   test_conf_parser_cmd_parser_print_version ();
 
   if (strlen(my_args_info_purpose) > 0)
@@ -235,7 +233,13 @@ test_conf_parser_cmd_parser_print_help (void)
 
   if (strlen(my_args_info_description) > 0)
     printf("%s\n", my_args_info_description);
+}
 
+void
+test_conf_parser_cmd_parser_print_help (void)
+{
+  int i = 0;
+  print_help_common();
   while (my_args_info_help[i])
     printf("%s\n", my_args_info_help[i++]);
 }
@@ -485,8 +489,7 @@ test_conf_parser_cmd_parser_free (struct my_args_info *args_info)
 }
 
 
-/* gengetopt_strdup() */
-/* strdup.c replacement of strdup, which is not standard */
+/** @brief replacement of strdup, which is not standard */
 char *
 gengetopt_strdup (const char *s)
 {
@@ -1174,6 +1177,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           exit (EXIT_SUCCESS);
 
         case 'a':	/* string a.  */
+        
           if (args_info->grp1_group_counter && override)
             reset_group_grp1 (args_info);
           args_info->grp1_group_counter += 1;
@@ -1188,6 +1192,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           break;
         case 'b':	/* string b.  */
+        
           if (args_info->grp1_group_counter && override)
             reset_group_grp1 (args_info);
           args_info->grp1_group_counter += 1;
@@ -1202,6 +1207,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           break;
         case 'C':	/* string d.  */
+        
           if (args_info->my_grp2_group_counter && override)
             reset_group_my_grp2 (args_info);
           args_info->my_grp2_group_counter += 1;
@@ -1217,6 +1223,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           break;
         case 's':	/* string option.  */
         
+        
           if (update_arg( (void *)&(args_info->string_arg), 
                &(args_info->string_orig), &(args_info->string_given),
               &(local_args_info.string_given), optarg, 0, 0, ARG_STRING,
@@ -1227,6 +1234,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           break;
         case 'i':	/* int option.  */
+        
         
           if (update_arg( (void *)&(args_info->int_arg), 
                &(args_info->int_orig), &(args_info->int_given),
@@ -1239,6 +1247,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           break;
         case 'S':	/* short option.  */
         
+        
           if (update_arg( (void *)&(args_info->short_arg), 
                &(args_info->short_orig), &(args_info->short_given),
               &(local_args_info.short_given), optarg, 0, 0, ARG_SHORT,
@@ -1249,6 +1258,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           break;
         case 'l':	/* long option.  */
+        
         
           if (update_arg( (void *)&(args_info->long_arg), 
                &(args_info->long_orig), &(args_info->long_given),
@@ -1261,6 +1271,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           break;
         case 'f':	/* float option.  */
         
+        
           if (update_arg( (void *)&(args_info->float_arg), 
                &(args_info->float_orig), &(args_info->float_given),
               &(local_args_info.float_given), optarg, 0, 0, ARG_FLOAT,
@@ -1271,6 +1282,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           break;
         case 'd':	/* double option.  */
+        
         
           if (update_arg( (void *)&(args_info->double_arg), 
                &(args_info->double_orig), &(args_info->double_given),
@@ -1283,6 +1295,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           break;
         case 'D':	/* longdouble option.  */
         
+        
           if (update_arg( (void *)&(args_info->longdouble_arg), 
                &(args_info->longdouble_orig), &(args_info->longdouble_given),
               &(local_args_info.longdouble_given), optarg, 0, 0, ARG_LONGDOUBLE,
@@ -1293,6 +1306,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           break;
         case 'L':	/* longlong option.  */
+        
         
           if (update_arg( (void *)&(args_info->longlong_arg), 
                &(args_info->longlong_orig), &(args_info->longlong_given),
@@ -1305,6 +1319,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           break;
         case 'F':	/* flag option.  */
         
+        
           if (update_arg((void *)&(args_info->flag_flag), 0, &(args_info->flag_given),
               &(local_args_info.flag_given), optarg, 0, 0, ARG_FLAG,
               check_ambiguity, override, 1, 0, "flag", 'F',
@@ -1313,6 +1328,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           break;
         case 'u':	/* function option.  */
+        
         
           if (update_arg( 0 , 
                0 , &(args_info->function_given),
@@ -1325,6 +1341,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           break;
         case 'r':	/* required option.  */
         
+        
           if (update_arg( (void *)&(args_info->required_arg), 
                &(args_info->required_orig), &(args_info->required_given),
               &(local_args_info.required_given), optarg, 0, 0, ARG_STRING,
@@ -1336,6 +1353,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           break;
         case 'c':	/* config file.  */
         
+        
           if (update_arg( (void *)&(args_info->conf_file_arg), 
                &(args_info->conf_file_orig), &(args_info->conf_file_given),
               &(local_args_info.conf_file_given), optarg, 0, "test_conf.conf", ARG_STRING,
@@ -1346,6 +1364,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           break;
         case 'M':	/* multiple string option.  */
+        
           if (update_multiple_arg_temp(&multi_string_list, 
               &(local_args_info.multi_string_given), optarg, 0, 0, ARG_STRING,
               "multi-string", 'M',
@@ -1354,6 +1373,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
         
           break;
         case 'n':	/* multiple option with no arg.  */
+        
           local_args_info.noarg_given++;
         
           break;
@@ -1362,6 +1382,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           /* string c.  */
           if (strcmp (long_options[option_index].name, "optc") == 0)
           {
+          
             if (args_info->my_grp2_group_counter && override)
               reset_group_my_grp2 (args_info);
             args_info->my_grp2_group_counter += 1;
@@ -1379,6 +1400,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           else if (strcmp (long_options[option_index].name, "no-short") == 0)
           {
           
+          
             if (update_arg( 0 , 
                  0 , &(args_info->no_short_given),
                 &(local_args_info.no_short_given), optarg, 0, 0, ARG_NO,
@@ -1391,6 +1413,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           /* multiple string option with default.  */
           else if (strcmp (long_options[option_index].name, "multi-string-def") == 0)
           {
+          
             if (update_multiple_arg_temp(&multi_string_def_list, 
                 &(local_args_info.multi_string_def_given), optarg, 0, "this default", ARG_STRING,
                 "multi-string-def", '-',
@@ -1401,12 +1424,14 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           /* multiple option with no arg and no short.  */
           else if (strcmp (long_options[option_index].name, "noarg-noshort") == 0)
           {
+          
             local_args_info.noarg_noshort_given++;
           
           }
           /* option with optional arg.  */
           else if (strcmp (long_options[option_index].name, "opt-arg") == 0)
           {
+          
           
             if (update_arg( (void *)&(args_info->opt_arg_arg), 
                  &(args_info->opt_arg_orig), &(args_info->opt_arg_given),
@@ -1420,6 +1445,7 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
           /* save the passed options into a file.  */
           else if (strcmp (long_options[option_index].name, "file-save") == 0)
           {
+          
           
             if (update_arg( (void *)&(args_info->file_save_arg), 
                  &(args_info->file_save_orig), &(args_info->file_save_given),

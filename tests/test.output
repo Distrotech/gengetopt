@@ -1,5 +1,6 @@
 *** no_strings
 *** no_multi_strings
+*** no_multi_types
 *** no_unamed
 *** no_optgiven.sh
 ./no_optgiven: '--foo' ('-i') option required
@@ -55,6 +56,11 @@ optAmul arg: foo
 optAmul arg: bar
 optAmul arg: (null)
 optAmul arg: aaa
+*** test_modes.sh
+./test_modes: option --opta conflicts with option --optd
+./test_modes: option --opta conflicts with option --mopt
+./test_modes: option --optd conflicts with option --mopt
+./test_modes: option --optd conflicts with option --mopt
 *** test_conf_parser.sh
 value of required: this is a test
 value of string: another
@@ -398,6 +404,7 @@ optAmul_help:   -M, --optAmul[=STRING]  string M
 optb_help:   -b, --optb              string b
 optc_help:       --optc              string c
 optd_help:   -d, --optd              string d
+*** test_no_options
 *** test_show_help.sh
 test_all_opts 1.0
 
@@ -414,6 +421,8 @@ In ggo files comments start with # and end at EOL
 
 
   -h, --help                    Print help and exit
+      --detailed-help           Print help, including all details and hidden 
+                                  options, and exit
       --full-help               Print help, including hidden options, and exit
   -V, --version                 Print version and exit
 
@@ -544,6 +553,17 @@ Usage: no multi strings [OPTIONS]... [FILES]...
   -V, --version            Print version and exit
   -t, --test=A test value  This is a test option  (default=`5')
       --multi=Multivalue   This is a multi option
+*** no_multi_types -h
+no multi types 0.1
+
+Has multiple options none of which has type
+
+Usage: no multi types [OPTIONS]... [FILES]...
+
+  -h, --help               Print help and exit
+  -V, --version            Print version and exit
+  -t, --test=A test value  This is a test option  (default=`5')
+      --multi              This is a multi option with no type
 *** no_unamed -h
 no_unamed 1.0
 
@@ -630,6 +650,8 @@ command line type options.
 In ggo files comments start with # and end at EOL
 
   -h, --help                    Print help and exit
+      --detailed-help           Print help, including all details and hidden 
+                                  options, and exit
       --full-help               Print help, including hidden options, and exit
   -V, --version                 Print version and exit
 
@@ -694,6 +716,24 @@ some groups just for testing:
  Group: my grp2
       --optc              string c
   -d, --optd              string d
+*** test_modes -h
+test_modes 1.0
+
+Usage: test_modes [OPTIONS]... [FILES]...
+
+  -h, --help              Print help and exit
+  -V, --version           Print version and exit
+
+some modes just for testing:
+  -N, --no-mode           a generic option not beloging to any mode
+      --no-mode2=STRING   another generic option not beloging to any mode
+  -a, --opta              string a
+  -A, --optA[=STRING]     string A
+  -M, --optAmul[=STRING]  string M
+  -b, --optb              string b
+      --optc              string c
+  -d, --optd              string d
+  -m, --mopt=INT          option of my mode
 *** test_conf_parser -h
 test_conf_parser 1.0
 
@@ -1092,6 +1132,15 @@ optAmul_help:   -M, --optAmul[=STRING]  string M
 optb_help:   -b, --optb              string b
 optc_help:       --optc              string c
 optd_help:   -d, --optd              string d
+*** test_no_options -h
+test_no_options 1.0
+
+This is a program with no option but the default ones
+
+Usage: test_no_options [OPTIONS]... [FILES]...
+
+  -h, --help     Print help and exit
+  -V, --version  Print version and exit
 *** test_all_opts --full-help
 test_all_opts 1.0
 
@@ -1107,6 +1156,8 @@ command line type options.
 In ggo files comments start with # and end at EOL
 
   -h, --help                    Print help and exit
+      --detailed-help           Print help, including all details and hidden 
+                                  options, and exit
       --full-help               Print help, including hidden options, and exit
   -V, --version                 Print version and exit
 
@@ -1150,14 +1201,86 @@ Moreover, text can be specified more than once in the input file.
       --file-save=STRING        save the passed options into a file
 
 A text after all options.
+*** test_all_opts --detailed-help
 test_all_opts 1.0
 
 This is just a gengetopt's test file
 
-Usage: test_all_opts -rSTRING|--required=STRING [-h|--help] [--full-help] 
-         [-V|--version] [-sSTRING|--string=STRING] [-iINT|--int=INT] 
-         [-SSHORT|--short=SHORT] [-lLONG|--long=LONG] [-fFLOAT|--float=FLOAT] 
-         [-dDOUBLE|--double=DOUBLE] [-DLONGDOUBLE|--longdouble=LONGDOUBLE] 
+Usage: test_all_opts [OPTIONS]... [FILES]...
+
+This is just a test file
+
+to test all possible
+command line type options.
+
+In ggo files comments start with # and end at EOL
+
+  -h, --help                    Print help and exit
+      --detailed-help           Print help, including all details and hidden 
+                                  options, and exit
+      --full-help               Print help, including hidden options, and exit
+  -V, --version                 Print version and exit
+
+  -s, --string=STRING            string option
+  -i, --int=INT                 int option
+  -S, --short=SHORT             short option
+  -l, --long=LONG               long option
+  -f, --float=FLOAT             float option
+  -d, --double=DOUBLE           double option
+  -D, --longdouble=LONGDOUBLE   longdouble option
+  -L, --longlong=LONGLONG       longlong option
+  -F, --flag                    flag option  (default=on)
+  -u, --function                function option
+  
+  a function option is basically an option with no argument.  It can be used, 
+  e.g., to specify a specific behavior for a program.
+
+  Well, this further explanation is quite useless, but it's only to show an 
+  example of an option with details, which will be printed only when 
+  --detailed-help is given at the command line.
+
+      --no-short                no short option
+      --opt-arg[=STRING]        option with optional arg
+  -o, --opt-arg-short[=STRING]  option with optional arg (short)
+  -r, --required=STRING         required option (mandatory)
+  NOTICE: This option is required, so, unless you specify (-h)--help or 
+  (-V)--version, you must always specify this option (and its argument) at 
+  command line.
+
+Before the dependant option there is a hidden option, so it shouldn't be 
+visible in the output of --help, but it will be visible in the output of 
+--full-help.
+
+  -H, --hidden=INT              hidden option
+  -A, --dependant=STRING        option that depends on opt-arg
+
+This is a text line just to write something in the output
+
+Notice that a text line can contain line breaks, just like this very text, and 
+that, just like all the other texts, it is wrapped by gengetopt automatically 
+if it's too long.
+
+Moreover, text can be specified more than once in the input file.
+
+      --very-very-long-option=STRING
+                                the name of this option is long enough to make 
+                                  this description begin on a new line
+  -y, --assume-multimeth-virtual
+                                the name of this option is just as long as the 
+                                  maximum allowed, so this description begin on 
+                                  a new line
+      --file-save=STRING        save the passed options into a file
+
+A text after all options.
+test_all_opts 1.0
+
+This is just a gengetopt's test file
+
+Usage: test_all_opts -rSTRING|--required=STRING [-h|--help] [--detailed-help] 
+         [--full-help] [-V|--version] [-sSTRING|--string=STRING] 
+         [-iINT|--int=INT] [-SSHORT|--short=SHORT] [-lLONG|--long=LONG] 
+         [-fFLOAT|--float=FLOAT] [-dDOUBLE|--double=DOUBLE] 
+         [-DLONGDOUBLE|--longdouble=LONGDOUBLE] 
          [-LLONGLONG|--longlong=LONGLONG] [-F|--flag] [-u|--function] 
          [--no-short] [--opt-arg=STRING] [-oSTRING|--opt-arg-short=STRING] 
          [-ASTRING|--dependant=STRING] [--very-very-long-option=STRING] 
@@ -1172,6 +1295,8 @@ In ggo files comments start with # and end at EOL
 
 
   -h, --help                    Print help and exit
+      --detailed-help           Print help, including all details and hidden 
+                                  options, and exit
       --full-help               Print help, including hidden options, and exit
   -V, --version                 Print version and exit
 
@@ -1194,6 +1319,153 @@ Before the dependant option there is a hidden option, so it shouldn't be
 visible in the output of --help, but it will be visible in the output of 
 --full-help.
 
+  -A, --dependant=STRING        option that depends on opt-arg
+
+This is a text line just to write something in the output
+
+Notice that a text line can contain line breaks, just like this very text, and 
+that, just like all the other texts, it is wrapped by gengetopt automatically 
+if it's too long.
+
+Moreover, text can be specified more than once in the input file.
+
+      --very-very-long-option=STRING
+                                the name of this option is long enough to make 
+                                  this description begin on a new line
+  -y, --assume-multimeth-virtual
+                                the name of this option is just as long as the 
+                                  maximum allowed, so this description begin on 
+                                  a new line
+      --file-save=STRING        save the passed options into a file
+
+A text after all options.
+test_all_opts 1.0
+
+This is just a gengetopt's test file
+
+Usage: test_all_opts -rSTRING|--required=STRING [-h|--help] [--detailed-help] 
+         [--full-help] [-V|--version] [-sSTRING|--string=STRING] 
+         [-iINT|--int=INT] [-SSHORT|--short=SHORT] [-lLONG|--long=LONG] 
+         [-fFLOAT|--float=FLOAT] [-dDOUBLE|--double=DOUBLE] 
+         [-DLONGDOUBLE|--longdouble=LONGDOUBLE] 
+         [-LLONGLONG|--longlong=LONGLONG] [-F|--flag] [-u|--function] 
+         [--no-short] [--opt-arg=STRING] [-oSTRING|--opt-arg-short=STRING] 
+         [-ASTRING|--dependant=STRING] [--very-very-long-option=STRING] 
+         [-y|--assume-multimeth-virtual] [--file-save=STRING] 
+
+This is just a test file
+
+to test all possible
+command line type options.
+
+In ggo files comments start with # and end at EOL
+
+
+  -h, --help                    Print help and exit
+      --detailed-help           Print help, including all details and hidden 
+                                  options, and exit
+      --full-help               Print help, including hidden options, and exit
+  -V, --version                 Print version and exit
+
+  -s, --string=STRING            string option
+  -i, --int=INT                 int option
+  -S, --short=SHORT             short option
+  -l, --long=LONG               long option
+  -f, --float=FLOAT             float option
+  -d, --double=DOUBLE           double option
+  -D, --longdouble=LONGDOUBLE   longdouble option
+  -L, --longlong=LONGLONG       longlong option
+  -F, --flag                    flag option  (default=on)
+  -u, --function                function option
+      --no-short                no short option
+      --opt-arg[=STRING]        option with optional arg
+  -o, --opt-arg-short[=STRING]  option with optional arg (short)
+  -r, --required=STRING         required option
+
+Before the dependant option there is a hidden option, so it shouldn't be 
+visible in the output of --help, but it will be visible in the output of 
+--full-help.
+
+  -H, --hidden=INT              hidden option
+  -A, --dependant=STRING        option that depends on opt-arg
+
+This is a text line just to write something in the output
+
+Notice that a text line can contain line breaks, just like this very text, and 
+that, just like all the other texts, it is wrapped by gengetopt automatically 
+if it's too long.
+
+Moreover, text can be specified more than once in the input file.
+
+      --very-very-long-option=STRING
+                                the name of this option is long enough to make 
+                                  this description begin on a new line
+  -y, --assume-multimeth-virtual
+                                the name of this option is just as long as the 
+                                  maximum allowed, so this description begin on 
+                                  a new line
+      --file-save=STRING        save the passed options into a file
+
+A text after all options.
+test_all_opts 1.0
+
+This is just a gengetopt's test file
+
+Usage: test_all_opts -rSTRING|--required=STRING [-h|--help] [--detailed-help] 
+         [--full-help] [-V|--version] [-sSTRING|--string=STRING] 
+         [-iINT|--int=INT] [-SSHORT|--short=SHORT] [-lLONG|--long=LONG] 
+         [-fFLOAT|--float=FLOAT] [-dDOUBLE|--double=DOUBLE] 
+         [-DLONGDOUBLE|--longdouble=LONGDOUBLE] 
+         [-LLONGLONG|--longlong=LONGLONG] [-F|--flag] [-u|--function] 
+         [--no-short] [--opt-arg=STRING] [-oSTRING|--opt-arg-short=STRING] 
+         [-ASTRING|--dependant=STRING] [--very-very-long-option=STRING] 
+         [-y|--assume-multimeth-virtual] [--file-save=STRING] 
+
+This is just a test file
+
+to test all possible
+command line type options.
+
+In ggo files comments start with # and end at EOL
+
+
+  -h, --help                    Print help and exit
+      --detailed-help           Print help, including all details and hidden 
+                                  options, and exit
+      --full-help               Print help, including hidden options, and exit
+  -V, --version                 Print version and exit
+
+  -s, --string=STRING            string option
+  -i, --int=INT                 int option
+  -S, --short=SHORT             short option
+  -l, --long=LONG               long option
+  -f, --float=FLOAT             float option
+  -d, --double=DOUBLE           double option
+  -D, --longdouble=LONGDOUBLE   longdouble option
+  -L, --longlong=LONGLONG       longlong option
+  -F, --flag                    flag option  (default=on)
+  -u, --function                function option
+  
+  a function option is basically an option with no argument.  It can be used, 
+  e.g., to specify a specific behavior for a program.
+
+  Well, this further explanation is quite useless, but it's only to show an 
+  example of an option with details, which will be printed only when 
+  --detailed-help is given at the command line.
+
+      --no-short                no short option
+      --opt-arg[=STRING]        option with optional arg
+  -o, --opt-arg-short[=STRING]  option with optional arg (short)
+  -r, --required=STRING         required option
+  NOTICE: This option is required, so, unless you specify (-h)--help or 
+  (-V)--version, you must always specify this option (and its argument) at 
+  command line.
+
+Before the dependant option there is a hidden option, so it shouldn't be 
+visible in the output of --help, but it will be visible in the output of 
+--full-help.
+
+  -H, --hidden=INT              hidden option
   -A, --dependant=STRING        option that depends on opt-arg
 
 This is a text line just to write something in the output

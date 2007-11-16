@@ -90,6 +90,7 @@ static
 void init_args_info(struct gengetopt_args_info *args_info)
 {
 
+
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->opta_help = gengetopt_args_info_help[4] ;
@@ -111,10 +112,7 @@ test_groups_cmd_parser_print_version (void)
   printf ("%s %s\n", TEST_GROUPS_CMD_PARSER_PACKAGE, TEST_GROUPS_CMD_PARSER_VERSION);
 }
 
-void
-test_groups_cmd_parser_print_help (void)
-{
-  int i = 0;
+static void print_help_common(void) {
   test_groups_cmd_parser_print_version ();
 
   if (strlen(gengetopt_args_info_purpose) > 0)
@@ -127,7 +125,13 @@ test_groups_cmd_parser_print_help (void)
 
   if (strlen(gengetopt_args_info_description) > 0)
     printf("%s\n", gengetopt_args_info_description);
+}
 
+void
+test_groups_cmd_parser_print_help (void)
+{
+  int i = 0;
+  print_help_common();
   while (gengetopt_args_info_help[i])
     printf("%s\n", gengetopt_args_info_help[i++]);
 }
@@ -314,8 +318,7 @@ test_groups_cmd_parser_free (struct gengetopt_args_info *args_info)
 }
 
 
-/* gengetopt_strdup() */
-/* strdup.c replacement of strdup, which is not standard */
+/** @brief replacement of strdup, which is not standard */
 char *
 gengetopt_strdup (const char *s)
 {
@@ -860,6 +863,7 @@ test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           exit (EXIT_SUCCESS);
 
         case 'a':	/* string a.  */
+        
           local_args_info.opta_given++;
           if (!args_info->opta_group)
             {
@@ -869,6 +873,7 @@ test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
         
           break;
         case 'A':	/* string A.  */
+        
           if (args_info->grp1_group_counter && override)
             reset_group_grp1 (args_info);
           args_info->grp1_group_counter += 1;
@@ -883,6 +888,7 @@ test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
         
           break;
         case 'M':	/* string M.  */
+        
           if (update_multiple_arg_temp(&optAmul_list, 
               &(local_args_info.optAmul_given), optarg, 0, 0, ARG_STRING,
               "optAmul", 'M',
@@ -896,6 +902,7 @@ test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
         
           break;
         case 'b':	/* string b.  */
+        
           if (args_info->grp1_group_counter && override)
             reset_group_grp1 (args_info);
           args_info->grp1_group_counter += 1;
@@ -910,6 +917,7 @@ test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
         
           break;
         case 'd':	/* string d.  */
+        
           if (args_info->my_grp2_group_counter && override)
             reset_group_my_grp2 (args_info);
           args_info->my_grp2_group_counter += 1;
@@ -928,6 +936,7 @@ test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
           /* string c.  */
           if (strcmp (long_options[option_index].name, "optc") == 0)
           {
+          
             if (args_info->my_grp2_group_counter && override)
               reset_group_my_grp2 (args_info);
             args_info->my_grp2_group_counter += 1;

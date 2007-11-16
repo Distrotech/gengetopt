@@ -117,6 +117,7 @@ static
 void init_args_info(struct gengetopt_args_info *args_info)
 {
 
+
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->string_help = gengetopt_args_info_help[2] ;
@@ -140,10 +141,7 @@ test_sections_cmd_parser_print_version (void)
   printf ("%s %s\n", TEST_SECTIONS_CMD_PARSER_PACKAGE, TEST_SECTIONS_CMD_PARSER_VERSION);
 }
 
-void
-test_sections_cmd_parser_print_help (void)
-{
-  int i = 0;
+static void print_help_common(void) {
   test_sections_cmd_parser_print_version ();
 
   if (strlen(gengetopt_args_info_purpose) > 0)
@@ -156,7 +154,13 @@ test_sections_cmd_parser_print_help (void)
 
   if (strlen(gengetopt_args_info_description) > 0)
     printf("%s\n", gengetopt_args_info_description);
+}
 
+void
+test_sections_cmd_parser_print_help (void)
+{
+  int i = 0;
+  print_help_common();
   while (gengetopt_args_info_help[i])
     printf("%s\n", gengetopt_args_info_help[i++]);
 }
@@ -314,8 +318,7 @@ test_sections_cmd_parser_free (struct gengetopt_args_info *args_info)
 }
 
 
-/* gengetopt_strdup() */
-/* strdup.c replacement of strdup, which is not standard */
+/** @brief replacement of strdup, which is not standard */
 char *
 gengetopt_strdup (const char *s)
 {
@@ -623,6 +626,7 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
 
         case 's':	/* string option.  */
         
+        
           if (update_arg( (void *)&(args_info->string_arg), 
                &(args_info->string_orig), &(args_info->string_given),
               &(local_args_info.string_given), optarg, 0, 0, ARG_STRING,
@@ -633,6 +637,7 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         
           break;
         case 'i':	/* int option.  */
+        
         
           if (update_arg( (void *)&(args_info->int_arg), 
                &(args_info->int_orig), &(args_info->int_given),
@@ -645,6 +650,7 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
         case 'S':	/* short option.  */
         
+        
           if (update_arg( (void *)&(args_info->short_arg), 
                &(args_info->short_orig), &(args_info->short_given),
               &(local_args_info.short_given), optarg, 0, 0, ARG_SHORT,
@@ -655,6 +661,7 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         
           break;
         case 'l':	/* long option.  */
+        
         
           if (update_arg( (void *)&(args_info->long_arg), 
                &(args_info->long_orig), &(args_info->long_given),
@@ -667,6 +674,7 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
         case 'f':	/* float option.  */
         
+        
           if (update_arg( (void *)&(args_info->float_arg), 
                &(args_info->float_orig), &(args_info->float_given),
               &(local_args_info.float_given), optarg, 0, 0, ARG_FLOAT,
@@ -677,6 +685,7 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         
           break;
         case 'd':	/* double option.  */
+        
         
           if (update_arg( (void *)&(args_info->double_arg), 
                &(args_info->double_orig), &(args_info->double_given),
@@ -689,6 +698,7 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
         case 'D':	/* longdouble option.  */
         
+        
           if (update_arg( (void *)&(args_info->longdouble_arg), 
                &(args_info->longdouble_orig), &(args_info->longdouble_given),
               &(local_args_info.longdouble_given), optarg, 0, 0, ARG_LONGDOUBLE,
@@ -699,6 +709,7 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         
           break;
         case 'L':	/* longlong option.  */
+        
         
           if (update_arg( (void *)&(args_info->longlong_arg), 
                &(args_info->longlong_orig), &(args_info->longlong_given),
@@ -711,6 +722,7 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
         case 'F':	/* flag option.  */
         
+        
           if (update_arg((void *)&(args_info->flag_flag), 0, &(args_info->flag_given),
               &(local_args_info.flag_given), optarg, 0, 0, ARG_FLAG,
               check_ambiguity, override, 1, 0, "flag", 'F',
@@ -719,6 +731,7 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         
           break;
         case 'u':	/* function option.  */
+        
         
           if (update_arg( 0 , 
                0 , &(args_info->function_given),
@@ -730,6 +743,7 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         
           break;
         case 'r':	/* required option.  */
+        
         
           if (update_arg( (void *)&(args_info->required_arg), 
                &(args_info->required_orig), &(args_info->required_given),
@@ -745,6 +759,7 @@ test_sections_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           /* no short option.  */
           if (strcmp (long_options[option_index].name, "no-short") == 0)
           {
+          
           
             if (update_arg( 0 , 
                  0 , &(args_info->no_short_given),

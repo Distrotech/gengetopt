@@ -15,12 +15,14 @@ Try to launch me with some options
 For example: ./sample1 *.* --funct-opt
 sample1 2.0
 
-Usage: sample1 -iINT|--int-opt=INT [-h|--help] [--full-help] [-V|--version] 
-         [-sfilename|--str-opt=filename] [-mINT|--my-opt=INT] [--flag-opt] 
-         [-F|--funct-opt] [--long-opt=LONG] [--def-opt=STRING] 
+Usage: sample1 -iINT|--int-opt=INT [-h|--help] [--detailed-help] [--full-help] 
+         [-V|--version] [-sfilename|--str-opt=filename] [-mINT|--my-opt=INT] 
+         [--flag-opt] [-F|--funct-opt] [--long-opt=LONG] [--def-opt=STRING] 
          [--enum-opt=STRING] [-DINT|--dependant=INT]  [FILES]...
 
   -h, --help              Print help and exit
+      --detailed-help     Print help, including all details and hidden options, 
+                            and exit
       --full-help         Print help, including hidden options, and exit
   -V, --version           Print version and exit
   -s, --str-opt=filename  A string option, for a filename

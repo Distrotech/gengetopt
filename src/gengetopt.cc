@@ -59,7 +59,9 @@ char * gengetopt_version = NULL;
 char * gengetopt_purpose = NULL;
 char * gengetopt_description = NULL;
 char * gengetopt_usage = NULL;
+
 groups_collection_t gengetopt_groups;
+modes_collection_t gengetopt_modes;
 
 int gengetopt_count_line = 1;
 char * gengetopt_input_filename = 0;
@@ -86,6 +88,7 @@ static int gengetopt_create_option (gengetopt_option *&opt, const char * long_op
                           int type, int flagstat, int required,
                           const char *default_value,
                           const char * group_value,
+                          const char * mode_value,
                           const char * type_str,
                           const AcceptedValues *acceptedvalues,
                           int multiple = 0,
@@ -143,11 +146,14 @@ main (int argc, char **argv)
         }
     } /* else standard input is used */
 
-  if (yyparse ()) {
+  if (yyparse () != 0) {
         gengetopt_free ();
         return 1;
   }
 
+  // check whether some options were given in the input file
+  bool no_options = (gengetopt_options.size() == 0);
+  
   if (current_args) {
     // parse the arguments passed in the "args" part of the input file
     // by possibily overriding those given at command line
@@ -183,13 +189,19 @@ main (int argc, char **argv)
 
   if (has_version != REQ_LONG_OPTION) {
     gengetopt_create_option (opt, VERSION_LONG_OPT, has_version ? '-' : VERSION_SHORT_OPT,
-                                 VERSION_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0);
+                                 VERSION_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0, 0);
     gengetopt_options.push_front(opt);
   }
 
   if (has_hidden_options() && gengetopt_has_option(FULL_HELP_LONG_OPT, 0) == 0) {
       gengetopt_create_option (opt, FULL_HELP_LONG_OPT, '-',
-                               FULL_HELP_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0);
+                               FULL_HELP_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0, 0);
+      gengetopt_options.push_front(opt);
+  }
+
+  if (has_options_with_details() && gengetopt_has_option(DETAILED_HELP_LONG_OPT, 0) == 0) {
+      gengetopt_create_option (opt, DETAILED_HELP_LONG_OPT, '-',
+              DETAILED_HELP_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0, 0);
       gengetopt_options.push_front(opt);
   }
 
@@ -197,7 +209,7 @@ main (int argc, char **argv)
  
   if (has_help != REQ_LONG_OPTION) {
     gengetopt_create_option (opt, HELP_LONG_OPT, has_help ? '-' : HELP_SHORT_OPT,
-                                 HELP_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0);
+                                 HELP_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0, 0);
     gengetopt_options.push_front(opt);
   }
 
@@ -251,10 +263,11 @@ main (int argc, char **argv)
      args_info.string_parser_given,
      args_info.gen_version_flag,
      args_info.include_getopt_given,
+     no_options,
      command_line.str (),
      output_dir,
      (args_info.show_required_given ? args_info.show_required_arg : ""));
-
+  
   if (! gengetopt_package && (args_info.show_version_given || args_info.show_help_given))
     {
       cerr << "package not defined; please specify it with --set-package" << endl;
@@ -269,7 +282,8 @@ main (int argc, char **argv)
     {
       cout << gengetopt_package << " " << gengetopt_version << endl;
     }
-  else if (args_info.show_help_given || args_info.show_full_help_given)
+  else if (args_info.show_help_given || 
+          args_info.show_full_help_given || args_info.show_detailed_help_given)
     {
       cout << gengetopt_package << " " << gengetopt_version << "\n" << endl;
 
@@ -288,10 +302,10 @@ main (int argc, char **argv)
 
       // if --show-full-help is specified we have to generate also hidden options
       OptionHelpList *option_list =
-              cmdline_parser_creator.generate_help_option_list(args_info.show_full_help_given);
+          cmdline_parser_creator.generate_help_option_list(args_info.show_full_help_given, args_info.show_detailed_help_given);
 
       std::for_each(option_list->begin(), option_list->end(),
-                    output_formatted_string);
+              output_formatted_string);
 
       delete option_list;
     }
@@ -378,6 +392,19 @@ gengetopt_add_group (const char *s, const char *desc, int required)
     group_desc = desc;
   if ( !gengetopt_groups.insert
        (make_pair(string(s),Group (group_desc, required != 0))).second )
+    return 1;
+  else
+    return 0;
+}
+
+int
+gengetopt_add_mode (const char *s, const char *desc)
+{
+  string mode_desc;
+  if (desc)
+    mode_desc = desc;
+  if ( !gengetopt_modes.insert
+       (make_pair(string(s),Mode (mode_desc))).second )
     return 1;
   else
     return 0;
@@ -503,6 +530,7 @@ gengetopt_create_option (gengetopt_option *&n, const char * long_opt, char short
                       int type, int flagstat, int required,
                       const char * default_value,
                       const char * group_value,
+                      const char * mode_value,
                       const char * type_str,
                       const AcceptedValues *acceptedvalues,
                       int multiple,
@@ -568,6 +596,22 @@ gengetopt_create_option (gengetopt_option *&n, const char * long_opt, char short
     {
       n->group_value = 0;
     }
+  
+  if (mode_value != 0) {
+      n->mode_value = strdup(mode_value);
+      n->required = 0;
+      modes_collection_t::const_iterator it =
+          gengetopt_modes.find(string(n->mode_value));
+      if (it == gengetopt_modes.end())
+          return MODE_UNDEFINED;
+      n->mode_desc = strdup (it->second.desc.c_str ());  
+  } else {
+      n->mode_value = 0;
+  }
+
+  if (n->group_value && n->mode_value)
+      return FOUND_BUG;
+
 
   n->acceptedvalues = acceptedvalues;
 
@@ -606,7 +650,7 @@ gengetopt_create_option (gengetopt_option *&n, const char * long_opt, char short
 }
 
 int
-gengetopt_check_option (gengetopt_option *n, bool groupoption)
+gengetopt_check_option (gengetopt_option *n, bool groupoption, bool modeoption)
 {
   if ((n->long_opt == NULL) ||
       (n->long_opt[0] == 0) ||
@@ -625,24 +669,47 @@ gengetopt_check_option (gengetopt_option *n, bool groupoption)
   gengetopt_set_text(0);
 
   if (n->group_value != 0)
-    {
+  {
       if (! groupoption)
-        return NOT_GROUP_OPTION;
+          return NOT_GROUP_OPTION;
 
       n->required = 0;
       n->required_set = true;
 
       groups_collection_t::const_iterator it =
-        gengetopt_groups.find(string(n->group_value));
+          gengetopt_groups.find(string(n->group_value));
       if (it == gengetopt_groups.end())
-        return GROUP_UNDEFINED;
+          return GROUP_UNDEFINED;
       n->group_desc = strdup (it->second.desc.c_str ());
-    }
+  }
   else
   {
-    if (groupoption)
-      return SPECIFY_GROUP;
+      if (groupoption)
+          return SPECIFY_GROUP;
   }
+
+  if (n->mode_value != 0)
+  {
+      if (! modeoption)
+          return NOT_MODE_OPTION;
+
+      n->required = 0;
+      n->required_set = true;
+
+      modes_collection_t::const_iterator it =
+          gengetopt_modes.find(string(n->mode_value));
+      if (it == gengetopt_modes.end())
+          return MODE_UNDEFINED;
+      n->mode_desc = strdup (it->second.desc.c_str ());
+  }
+  else
+  {
+      if (modeoption)
+          return SPECIFY_MODE;
+  }
+  
+  if (n->group_value && n->mode_value)
+      return FOUND_BUG;
 
   // now we have to check for flag options
   if (n->type == ARG_FLAG)
@@ -705,6 +772,7 @@ gengetopt_add_option (const char * long_opt, char short_opt,
                       int type, int flagstat, int required,
                       const char * default_value,
                       const char * group_value,
+                      const char * mode_value,
                       const char * type_str,
                       const AcceptedValues *acceptedvalues,
                       int multiple,
@@ -718,8 +786,8 @@ gengetopt_add_option (const char * long_opt, char short_opt,
     return res;
 
   res = gengetopt_create_option(n, long_opt, short_opt,
-    desc, type, flagstat, required, default_value, group_value, type_str,
-    acceptedvalues, multiple, argoptional);
+    desc, type, flagstat, required, default_value, group_value, mode_value,
+    type_str, acceptedvalues, multiple, argoptional);
   if (res != 0)
     return res;
 

@@ -33,6 +33,7 @@ extern "C" {
 struct gengetopt_args_info
 {
   const char *help_help; /**< @brief Print help and exit help description.  */
+  const char *detailed_help_help; /**< @brief Print help, including all details and hidden options, and exit help description.  */
   const char *full_help_help; /**< @brief Print help, including hidden options, and exit help description.  */
   const char *version_help; /**< @brief Print version and exit help description.  */
   char * string_arg;	/**< @brief  string option.  */
@@ -91,6 +92,7 @@ struct gengetopt_args_info
   const char *file_save_help; /**< @brief save the passed options into a file help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
+  unsigned int detailed_help_given ;	/**< @brief Whether detailed-help was given.  */
   unsigned int full_help_given ;	/**< @brief Whether full-help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
   unsigned int string_given ;	/**< @brief Whether string was given.  */
@@ -135,6 +137,8 @@ extern const char *gengetopt_args_info_usage;
 extern const char *gengetopt_args_info_help[];
 /** @brief all the lines making the full help output (including hidden options) */
 extern const char *gengetopt_args_info_full_help[];
+/** @brief all the lines making the detailed help output (including hidden options and details) */
+extern const char *gengetopt_args_info_detailed_help[];
 
 /**
  * The command line parser
@@ -200,6 +204,10 @@ void test_all_opts_cmd_parser_print_help(void);
  * Print the full help (including hidden options)
  */
 void test_all_opts_cmd_parser_print_full_help(void);
+/**
+ * Print the detailed help (including hidden options and details)
+ */
+void test_all_opts_cmd_parser_print_detailed_help(void);
 /**
  * Print the version
  */

@@ -1,7 +1,5 @@
 #! @SHELL@
 
-# the next program must exit with error
-
 if $* ./test_groups; then
   false; 
 else

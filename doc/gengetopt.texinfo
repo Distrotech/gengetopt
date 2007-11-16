@@ -330,7 +330,7 @@ simple make should do).
 The command line options, which have to be handled by gengetopt
 generated function, are specified in a file (typically with @file{.ggo}
 extension). This file consists of sentences with the formats shown below
-(these sentences are allowed to span more than one line).  Commands in
+(these sentences are allowed to span more than one line).  Statements in
 @{@} are optional (the @code{option} sentences need not to be given in
 separate lines):
 
@@ -344,6 +344,7 @@ description "<description>"
 args "<command line options>"
 
 option <long> <short> "<desc>" 
+    @{details="<detailed description>"@} 
     @{argtype@} @{typestr="<type descr>"@} 
     @{values="<value1>","<value2>",...@} 
     @{default="<default value>"@} 
@@ -351,7 +352,7 @@ option <long> <short> "<desc>"
     @{required@} @{argoptional@} @{multiple@} 
     @{hidden@}
 
-option <long> <short> <desc> flag <on/off>
+option <long> <short> "<desc>" flag <on/off>
 
 section "section name" @{sectiondesc="optional section description"@}
 
@@ -431,9 +432,19 @@ option (thus long options with no associated short options are allowed).
 @item desc 
 
 @cindex wrapping
-
 This description will be printed during the output of
 @code{--help}.  Wrapping will be automatically performed.
+
+@item details
+@cindex details
+@cindex @code{--detailed-help}
+
+This is an extended description string for the option that will be
+printed (after the option) during the output of
+@code{--detailed-help}@footnote{Since version 2.22.}, which will be
+automatically generated.  Thus, these further details will NOT be
+printed with @code{--help}.  Wrapping will be automatically performed.
+Optional.
 
 @cindex argtype 
 @item argtype 
@@ -516,15 +527,20 @@ option must be specified.  Notice that this is independent from the
 @code{required} flag.  See @ref{Multiple Options}.
 
 @cindex hidden
+@cindex details
 @cindex @code{--full-help}
+@cindex @code{--detailed-help}
 @item hidden
 
-@anchor{hidden}If an option is ``hidden'' it will not
-appear in the output of @code{--help} but it can still be specified at
-command line@footnote{Since version 2.15.}.  In case hidden options
-are used, the command line option @code{--full-help} will also be
-generated.  This will print also the hidden options@footnote{Since
-version 2.16.}.
+@anchor{hidden}If an option is ``hidden'' it will not appear in the
+output of @code{--help} but it can still be specified at command
+line@footnote{Since version 2.15.}.  In case hidden options are used,
+the command line option @code{--full-help} will also be generated.  This
+will print also the hidden options@footnote{Since version 2.16.}.  If
+there's an option with @code{details}, then also
+@code{--detailed-help}@footnote{Since version 2.22.} will be
+automatically generated;  if one then specifies @code{--detailed-help}
+also hidden options will be printed (besides the details for options).
 
 @cindex on/off 
 @item on/off 
@@ -600,6 +616,12 @@ and you had to handle the help option manually}.  The same holds for
 In case hidden options are used, @xref{hidden,,Hidden options}, the
 command line option @code{--full-help} will also be generated.  This
 will print also the hidden options@footnote{Since version 2.16.}.
+
+@cindex @code{--detailed-help}
+If there's at least one option with @code{details}, the command line
+option @code{--detailed-help} will also be generated.  This will print
+also the details for options and hidden options@footnote{Since version
+2.22.}.
 
 @cindex section
 Options can be part of sections, that provide a more meaningful
@@ -731,10 +753,12 @@ the input file and the generated ``usage'' string as printed when
 printed when @code{--help} command line is given (this array is
 terminated by a null string element).  If hidden options are used also
 the @code{cmdline_parser_full_help} array is available (containing also
-help strings concerning hidden options).  All these strings can be used
-by the programmer to build a customized help output@footnote{These
-strings and the @code{<option>_help} were introduced in the release
-2.17.}.
+help strings concerning hidden options).  If at least one option has
+@code{details}, then the @code{cmdline_parser_detailed_help} array is
+available (containing also help strings concerning hidden options and
+details for options).  All these strings can be used by the programmer
+to build a customized help output@footnote{These strings and the
+@code{<option>_help} were introduced in the release 2.17.}.
 
 Even if @code{<option>_given} is 0, the corresponding
 @code{<option>_arg} is set to default value (if one has been specified
@@ -857,11 +881,13 @@ $ ./sample1 -i 10 --enum-opt b
 @end example
 
 @anchor{showrequired}
+@cindex @code{-h,--help}
 Here is the output of @code{--help} of the parser generated from
 @file{sample1.ggo} by specifying the following options to gengetopt:
 @code{--long-help -u --show-required} (see @ref{Invoking gengetopt} for
 further explanation for these command line options).
 
+@anchor{helpoutput}
 @example
 @include sample1.output.texinfo
 @end example
@@ -877,11 +903,26 @@ a newline request.  Also the usage string is wrapped.  Moreover, since
 an hidden option (@xref{hidden,,Hidden options}.) it is not printed;
 @cindex @code{--full-help}
 if you wanted that to be printed, you should use @code{--full-help}.
+@cindex details
+The option @code{--func-opt} has also the @code{details}, but they are
+not printed with @code{--help}.
 
 Finally, notice how the @code{text} strings are printed in the help
 output (and the empty line after the ``more involved options'' section
 achieved with an empty @code{text} string).
- 
+
+@cindex @code{-h,--detailed-help}
+Instead, here is the output of @code{--detailed-help} of the parser
+generated from @file{sample1.ggo}.  You may want to compare this output
+with the one produced by @code{--help} (@xref{helpoutput,,Output of
+@code{--help}}.); in particular, you may notice that the hidden option
+@code{--secret} is actually printed and the details of @code{--func-opt}
+are printed too:
+
+@example
+@include sample1_2.output.texinfo
+@end example
+
 If you're curious you may want to take a look at the generated C file
 @file{cmdline1.c}.
 
@@ -947,7 +988,11 @@ other information; then the function for printing the standard help
 (version) response can be used; this function is called
 @code{<parser-name>_print_help} (@code{<parser-name>_print_version}),
 where @code{<parser-name>} is the name specified with @code{--func-name}
-or the default, @code{cmdline_parser}.
+or the default, @code{cmdline_parser}.  In case hidden options are used,
+@xref{hidden,,Hidden options}, also the function
+@code{<parser-name>_print_full_help} will be generated; if
+@code{details} are used for at least one option, then also the function
+@code{<parser-name>_print_detailed_help} will be generated.
  
 @item --no-handle-error
 @cindex @code{--no-handle-error}
@@ -1250,12 +1295,12 @@ since the options of the same group are mutual exclusive) and the group
 to which the option belongs has to be specified.
 
 @example
-defgroup "<group name>" @{groupdesc="<group description>"@} @{yes@}
+defgroup "<group name>" @{groupdesc="<group description>"@} @{required@}
 groupoption <long> <short> "<desc>" <argtype> group="<group name>" \
      @{argoptional@} @{multiple@}
 @end example
 
-If a group is defined as required, then one (but only one) option
+If a group is defined as @code{required}, then one (but only one) option
 belonging to the group has to be specified.
  
 Here's an example (taken from the test @file{test_group_cmd.ggo}):
@@ -1819,7 +1864,10 @@ file the code of @code{getopt_long}, so that the include code will be
 used to actually parse the command line arguments, instead of that taken
 from the C library.
 
-This solution is actually quite easy, but it has two main drawbacks:
+@cindex @code{--include-getopt}
+This solution is actually quite easy, since you only need to specify the
+command line option @code{--include-getopt} (see @ref{Invoking
+gengetopt}), but it has two main drawbacks:
 
 @itemize
 @item 
@@ -2092,22 +2140,14 @@ features, as in the case of configuration file parsing (see
 @ref{Configuration files}) and multiple parsers (see @ref{String Parsers
 and Multiple Parsers}).
 
-To deal with this problem, in case one uses configuration parsers
-(@code{-C,--conf-parser}) or string parsers
-(@code{-S,--string-parser}) a customized version of
-@code{getopt_long}, called indeed 
-@cindex @code{custom_getopt_long}
-@code{custom_getopt_long} is
-inserted in the generated C file.  This version does not suffer from
-the problem above (and of course does not interfere with the standard
-@code{getopt_long}, which will be used to parse the actual command
-line arguments).
-
-Of course this is transparent to the programmer, and we report this
-detail here only because the inserted @code{custom_getopt_long} will
-add about 20k of C code in the generated file, so don't panic if you
-start to use configuration or string parsers and your program gets a
-little bigger than before :-).
+The parser generated by gengetopt checks whether the program name was
+actually considered a command line option, and in that case it removes
+it from the collected command line options; thus, this @code{optind}
+issue should not come up anyway.  In case you still don't feel
+comfortable, you can include a correct @code{getopt_long} implementation
+in the generated parser, so that you can be sure you will always use the
+same implementation of @code{getopt_long} (@ref{Include the getopt_long
+code into the parser}).
 
 @node Mailing Lists, Index, Bugs, Top
 @chapter Mailing Lists

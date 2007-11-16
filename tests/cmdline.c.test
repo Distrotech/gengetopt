@@ -76,6 +76,7 @@ static
 void init_args_info(struct gengetopt_args_info *args_info)
 {
 
+
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->foo_help = gengetopt_args_info_help[2] ;
@@ -89,10 +90,7 @@ cmdline_parser_print_version (void)
   printf ("%s %s\n", CMDLINE_PARSER_PACKAGE, CMDLINE_PARSER_VERSION);
 }
 
-void
-cmdline_parser_print_help (void)
-{
-  int i = 0;
+static void print_help_common(void) {
   cmdline_parser_print_version ();
 
   if (strlen(gengetopt_args_info_purpose) > 0)
@@ -105,7 +103,13 @@ cmdline_parser_print_help (void)
 
   if (strlen(gengetopt_args_info_description) > 0)
     printf("%s\n", gengetopt_args_info_description);
+}
 
+void
+cmdline_parser_print_help (void)
+{
+  int i = 0;
+  print_help_common();
   while (gengetopt_args_info_help[i])
     printf("%s\n", gengetopt_args_info_help[i++]);
 }
@@ -227,8 +231,7 @@ cmdline_parser_free (struct gengetopt_args_info *args_info)
 }
 
 
-/* gengetopt_strdup() */
-/* strdup.c replacement of strdup, which is not standard */
+/** @brief replacement of strdup, which is not standard */
 char *
 gengetopt_strdup (const char *s)
 {
@@ -465,6 +468,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
 
         case 'f':	/* foo option.  */
         
+        
           if (update_arg( (void *)&(args_info->foo_arg), 
                &(args_info->foo_orig), &(args_info->foo_given),
               &(local_args_info.foo_given), optarg, 0, "15000", ARG_INT,
@@ -475,6 +479,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
         
           break;
         case 'b':	/* bar option.  */
+        
         
           if (update_arg( (void *)&(args_info->bar_arg), 
                &(args_info->bar_orig), &(args_info->bar_given),

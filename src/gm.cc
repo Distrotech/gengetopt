@@ -67,6 +67,7 @@ extern "C"
 #include "skels/file_save_multiple.h"
 #include "skels/init_args_info.h"
 #include "skels/custom_getopt_gen.h"
+#include "skels/check_modes.h"
 #include "gm_utils.h"
 #include "fileutils.h"
 
@@ -96,6 +97,7 @@ extern char * gengetopt_usage;
 extern char * gengetopt_input_filename;
 
 extern groups_collection_t gengetopt_groups;
+extern modes_collection_t gengetopt_modes;
 
 static void _generate_option_arg(ostream &stream,
                                  unsigned int indent,
@@ -121,6 +123,7 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
                                             bool string_parser_,
                                             bool gen_version,
                                             bool gen_getopt,
+                                            bool no_options_,
                                             const string &comment_,
                                             const string &outdir,
                                             const string &show_required) :
@@ -163,7 +166,11 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   header_gen_class::set_args_info (args_info_name);
   c_source_gen_class::set_args_info (args_info_name);
   const string uppersand = "\"";
-
+  
+  // if no_options then we don't need to generate update_arg,
+  // but if we need to handle help or version we still need to generate it
+  set_no_options (no_options_ && !no_handle_help && !no_handle_version);
+  
   if (gengetopt_package)
     set_package_var_val
       (uppersand + gengetopt_package + uppersand);
@@ -215,12 +222,12 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   set_do_generate_strdup(gen_strdup);
   set_check_possible_values(has_values());
   set_multiple_token_functions(has_multiple_options_with_type());
-  set_multiple_token_vars(has_multiple_options_with_type());
   set_multiple_options_with_default(has_multiple_options_with_default());
   set_multiple_options(has_multiple_options());
   set_multiple_options_string(has_multiple_options_string());
   set_multiple_options_all_string(has_multiple_options_all_string());
   set_has_typed_options(has_options_with_type());
+  set_has_modes(has_options_with_mode());
   set_handle_unamed(unamed_options);
   set_check_required_options(has_required() || has_dependencies() || has_multiple_options());
   set_purpose(generate_purpose());
@@ -228,6 +235,8 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   set_no_package((gengetopt_package == 0));
   c_source_gen_class::set_has_hidden(has_hidden_options());
   header_gen_class::set_has_hidden(c_source_gen_class::has_hidden);
+  c_source_gen_class::set_has_details(has_options_with_details());
+  header_gen_class::set_has_details(c_source_gen_class::has_details);
   
   set_has_arg_types();
 }
@@ -691,15 +700,76 @@ generate_help_desc_print(ostream &stream,
 
 
 void
+CmdlineParserCreator::generate_help_option_print_from_lists(ostream &stream,
+        unsigned int indent, OptionHelpList *full_option_list,
+        OptionHelpList *option_list, const std::string &target_array,
+        const std::string &source_array) {
+    print_help_string_gen_class print_gen;
+
+    // the index into the help arrays
+    int i = 0, full_i = 0;
+    // num of help strings
+    int help_num = 0;
+
+    print_gen.set_target(target_array);
+    print_gen.set_from(source_array);
+    print_gen.set_shared(true);
+    print_gen.set_last(false);
+
+    OptionHelpList::const_iterator it = option_list->begin();
+    OptionHelpList::const_iterator it2 = full_option_list->begin();
+    // the second list is surely longer so we scan that one
+    for (; it2 != full_option_list->end(); ++it2)
+    {
+        if (*it == *it2) {
+            // when the two strings are the same it means that's a non-hidden
+            // option, so we share it with the full help array
+            ostringstream converted_int;
+            converted_int << i;
+
+            // the index into the help array
+            print_gen.set_index(converted_int.str());
+
+            converted_int.str("");
+            converted_int << full_i;
+
+            // the index into the full help array
+            print_gen.set_full_index(converted_int.str());
+            print_gen.generate_print_help_string(stream, indent);
+
+            ++help_num;                
+            ++i;
+            ++it;
+        } 
+        ++full_i;
+    }
+
+    ostringstream converted_int;
+    converted_int << help_num;
+
+    // the final 0
+    print_gen.set_last(true);
+    print_gen.set_index(converted_int.str());
+    print_gen.generate_print_help_string(stream, indent);
+
+    // we increment it to store the final 0
+    converted_int.str("");
+    converted_int << ++help_num;
+
+    set_help_string_num(converted_int.str());
+    
+}
+
+void
 CmdlineParserCreator::generate_help_option_print(ostream &stream,
                                                  unsigned int indent)
 {
     OptionHelpList *option_list = generate_help_option_list();
 
-    print_help_string_gen_class print_gen;
-    print_gen.set_shared(false);
+    if (!c_source_gen_class::has_hidden && !c_source_gen_class::has_details) {
+        print_help_string_gen_class print_gen;
+        print_gen.set_shared(false);
 
-    if (!c_source_gen_class::has_hidden) {
         // simple help generation
         for (OptionHelpList::const_iterator it = option_list->begin();
         it != option_list->end(); ++it)
@@ -709,61 +779,17 @@ CmdlineParserCreator::generate_help_option_print(ostream &stream,
         }
     } else {
         // in order to avoid generating the same help string twice, and thus
-        // to save memory, in case of hidden options, we try to share most
+        // to save memory, in case of hidden options (or details), we try to share most
         // of the strings with the full help array
-        OptionHelpList *full_option_list = generate_help_option_list(true);
+        OptionHelpList *full_option_list = generate_help_option_list(true, true);
 
-        // the index into the help arrays
-        int i = 0, full_i = 0;
-        // num of help strings
-        int help_num = 0;
-
-        print_gen.set_args_info(c_source_gen_class::args_info);
-        print_gen.set_shared(true);
-        print_gen.set_last(false);
-
-        OptionHelpList::const_iterator it = option_list->begin();
-        OptionHelpList::const_iterator it2 = full_option_list->begin();
-        // the second list is surely longer so we scan that one
-        for (; it2 != full_option_list->end(); ++it2)
-        {
-            if (*it == *it2) {
-                // when the two strings are the same it means that's a non-hidden
-                // option, so we share it with the full help array
-                ostringstream converted_int;
-                converted_int << i;
-
-                // the index into the help array
-                print_gen.set_index(converted_int.str());
-
-                converted_int.str("");
-                converted_int << full_i;
-
-                // the index into the full help array
-                print_gen.set_full_index(converted_int.str());
-                print_gen.generate_print_help_string(stream, indent);
-
-                ++help_num;                
-                ++i;
-                ++it;
-            } 
-            ++full_i;
-        }
-
-        ostringstream converted_int;
-        converted_int << help_num;
-
-        // the final 0
-        print_gen.set_last(true);
-        print_gen.set_index(converted_int.str());
-        print_gen.generate_print_help_string(stream, indent);
-
-        // we increment it to store the final 0
-        converted_int.str("");
-        converted_int << ++help_num;
-
-        set_help_string_num(converted_int.str());
-
+        generate_help_option_print_from_lists
+        (stream, indent, full_option_list, option_list,
+                c_source_gen_class::args_info + "_help",
+                (c_source_gen_class::has_details ? 
+                        c_source_gen_class::args_info + "_detailed_help" :
+                            c_source_gen_class::args_info + "_full_help"));
+        
         delete full_option_list;
     }
 
@@ -776,6 +802,40 @@ CmdlineParserCreator::generate_full_help_option_print(ostream &stream,
 {
     // generate also hidden options
     OptionHelpList *option_list = generate_help_option_list(true);
+
+    if (!c_source_gen_class::has_details) {
+        print_help_string_gen_class print_gen;
+        print_gen.set_shared(false);
+
+        for (OptionHelpList::const_iterator it = option_list->begin();
+        it != option_list->end(); ++it)
+        {
+            print_gen.set_helpstring(*it);
+            print_gen.generate_print_help_string(stream, indent);
+        }
+    } else {
+        // in order to avoid generating the same help string twice, and thus
+        // to save memory, in case of options with details, we try to share most
+        // of the strings with the full help array
+        OptionHelpList *full_option_list = generate_help_option_list(true, true);
+
+        generate_help_option_print_from_lists
+        (stream, indent, full_option_list, option_list,
+                c_source_gen_class::args_info + "_full_help",
+                c_source_gen_class::args_info + "_detailed_help");
+
+        delete full_option_list;
+    }
+
+    delete option_list;
+}
+
+void
+CmdlineParserCreator::generate_detailed_help_option_print(ostream &stream,
+        unsigned int indent)
+{
+    // generate also hidden options and details
+    OptionHelpList *option_list = generate_help_option_list(true, true);
 
     print_help_string_gen_class print_gen;
     print_gen.set_shared(false);
@@ -799,7 +859,14 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int inde
     ostringstream index;
 
     string help_string = c_source_gen_class::args_info;
-    help_string += (c_source_gen_class::has_hidden ? "_full_help" : "_help");
+    
+    if (c_source_gen_class::has_details) {
+        help_string += "_detailed_help";
+    } else if (c_source_gen_class::has_hidden) {
+        help_string += "_full_help";
+    } else {
+        help_string += "_help";
+    }
     init_args_info_gen.set_help_strings(help_string);
 
     const char *current_section = 0, *current_group = 0;
@@ -848,6 +915,10 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int inde
 
         init_args_info_gen.generate_init_args_info(stream, indent);
         
+        // skip the details
+        if (opt->details)
+            ++i;
+        
         // skip the text after
         if (opt->text_after)
             ++i;
@@ -890,7 +961,7 @@ CmdlineParserCreator::generate_description()
 
 
 OptionHelpList *
-CmdlineParserCreator::generate_help_option_list(bool generate_hidden)
+CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool generate_details)
 {
   OptionHelpList *option_list = new OptionHelpList;
 
@@ -900,6 +971,10 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden)
   int           type_len;
   const char   *type_str;
   ostringstream stream;
+  
+  // if we want to generate details then we will also generate hidden options
+  if (generate_details)
+      generate_hidden = true;
 
   /* calculate columns */
   desc_col = 0;
@@ -1075,6 +1150,15 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden)
           stream.str("");
       }
 
+      // before the text after we generate details if we need to
+      if (opt->details && generate_details) {
+          string wrapped_desc ( 2, ' ');
+          // details are indented
+          wrap_cstr ( wrapped_desc, 2, 0, opt->details);
+
+          option_list->push_back(wrapped_desc);
+      }
+      
       // a possible description to be printed after this option
       if (opt->text_after)
       {
@@ -1086,6 +1170,21 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden)
     }
 
   return option_list;
+}
+
+template <typename Collection>
+void generate_counter_init(const Collection &collection, const string &name, ostream &stream, unsigned int indent)
+{
+    string indent_str (indent, ' ');
+    typename Collection::const_iterator end = collection.end();
+
+    for ( typename Collection::const_iterator idx = collection.begin(); idx != end; ++idx)
+    {
+        stream << indent_str;
+        stream << ARGS_STRUCT << "->" << canonize_name (idx->first) << "_" <<
+            name << "_counter = 0 ;";
+        stream << endl;
+    }
 }
 
 void
@@ -1106,14 +1205,11 @@ CmdlineParserCreator::generate_given_init(ostream &stream,
       clear_given.generate_clear_given(stream);
     }
 
-  groups_collection_t::const_iterator end = gengetopt_groups.end();
-  for ( groups_collection_t::const_iterator idx = gengetopt_groups.begin();
-        idx != end; ++idx)
-    {
-      stream << indent_str;
-      stream << ARGS_STRUCT << "->" << canonize_name (idx->first) << "_group_counter = 0 ;";
-      stream << endl;
-    }
+  // for group counter initialization
+  generate_counter_init(gengetopt_groups, "group", stream, indent);
+
+  // for mode counter initialization
+  generate_counter_init(gengetopt_modes, "mode", stream, indent);
 }
 
 void
@@ -1275,6 +1371,68 @@ CmdlineParserCreator::generate_update_multiple_given(ostream &stream, unsigned i
 }
 
 void
+CmdlineParserCreator::generate_check_modes(ostream &stream, unsigned int indent)
+{
+    // no need to check for conflict if there's only one mode
+    if (gengetopt_modes.size() < 2)
+        return;
+
+    string indent_str (indent, ' ');
+
+    stream << endl;
+    stream << indent_str;
+
+    // build a map where for each mode we store the corresponding given field names
+    // and the options
+    typedef std::pair<string, string> OptionValueElem;
+    typedef std::list<OptionValueElem> ModeOptions;
+    typedef std::map<string, ModeOptions> ModeOptionMap;
+
+    ModeOptionMap modeOptionMap;
+
+    struct gengetopt_option * opt;
+    foropt {
+        if (opt->mode_value) {
+            modeOptionMap[opt->mode_value].push_back
+            (std::make_pair("args_info->" + string(opt->var_arg) + "_given",
+                    string("\"--") + opt->long_opt + "\""));
+        }
+    }
+    
+    check_modes_gen_class check_modes_gen;
+    
+    // now we check each mode options against every other mode options:
+    // the first one with the other n-1, the second one with the other n-2, etc.
+    ModeOptionMap::const_iterator map_it1, map_it2;
+    for (ModeOptionMap::const_iterator map_it = modeOptionMap.begin(); map_it != modeOptionMap.end(); ++map_it) {
+        map_it1 = map_it;
+        ++map_it;
+        if (map_it == modeOptionMap.end())
+            break;
+        for (map_it2 = map_it; map_it2 != modeOptionMap.end(); ++map_it2) {
+            const string mode1 = canonize_name(map_it1->first);
+            const string mode2 = canonize_name(map_it2->first);
+            
+            check_modes_gen.set_mode1_name(mode1);
+            check_modes_gen.set_mode2_name(mode2);
+            
+            ostringstream mode1_given, mode2_given, mode1_options, mode2_options;
+            
+            std::for_each(map_it1->second.begin(), map_it1->second.end(), pair_print_f<OptionValueElem>(mode1_given, mode1_options));
+            std::for_each(map_it2->second.begin(), map_it2->second.end(), pair_print_f<OptionValueElem>(mode2_given, mode2_options));
+
+            check_modes_gen.set_mode1_given_fields(mode1_given.str());
+            check_modes_gen.set_mode1_options(mode1_options.str());
+            check_modes_gen.set_mode2_given_fields(mode2_given.str());
+            check_modes_gen.set_mode2_options(mode2_options.str());
+
+            check_modes_gen.generate_check_modes(stream, indent);
+        }
+        map_it = map_it1;
+    }
+}
+
+void
 CmdlineParserCreator::generate_clear_arg(ostream &stream, unsigned int indent)
 {
   struct gengetopt_option * opt;
@@ -1412,8 +1570,10 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
           if ((opt->short_opt == HELP_SHORT_OPT && 
                   strcmp(opt->long_opt, HELP_LONG_OPT) == 0)
                   || strcmp(opt->long_opt, HELP_LONG_OPT) == 0
-                  || strcmp(opt->long_opt, FULL_HELP_LONG_OPT) == 0) {
+                  || strcmp(opt->long_opt, FULL_HELP_LONG_OPT) == 0
+                  || strcmp(opt->long_opt, DETAILED_HELP_LONG_OPT) == 0) {
               bool full_help = (strcmp(opt->long_opt, FULL_HELP_LONG_OPT) == 0);
+              bool detailed_help = (strcmp(opt->long_opt, DETAILED_HELP_LONG_OPT) == 0);
               if (no_handle_help) {
                     // we use the final_instructions parameter to call the free function
                     // and to return 0
@@ -1436,6 +1596,7 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
                   handle_help_gen_class help_gen;
                   help_gen.set_parser_name (parser_function_name);
                   help_gen.set_full_help(full_help);
+                  help_gen.set_detailed_help(detailed_help);
                   help_gen.set_short_opt(opt->short_opt == HELP_SHORT_OPT);
                   help_gen.generate_handle_help (stream, indent);
                   stream << endl;
@@ -1487,7 +1648,14 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
               option_gen.set_option_has_group(true);
           } else
               option_gen.set_option_has_group(false);
-          
+
+          if (opt->mode_value) {
+              // we reuse the variable group_var_name also for modes
+              option_gen.set_group_var_name (canonize_name (opt->mode_value));
+              option_gen.set_option_has_mode(true);
+          } else
+              option_gen.set_option_has_mode(false);
+
           option_gen.set_option_has_type(opt->type != 0);
 
           if (opt->multiple) {
@@ -1651,22 +1819,36 @@ CmdlineParserCreator::generate_handle_dependencies(ostream &stream,
       }
 }
 
+template <typename Collection>
+void generate_counters(const Collection &collection, const string &name, ostream &stream, unsigned int indent)
+{
+    group_counter_gen_class counter_gen;
+    string indent_str (indent, ' ');
+
+    counter_gen.set_name(name);
+    
+    typename Collection::const_iterator end = collection.end();
+    for ( typename Collection::const_iterator idx = collection.begin(); idx != end; ++idx) {
+        stream << indent_str;
+        counter_gen.set_group_name (canonize_name (idx->first));
+        counter_gen.generate_group_counter (stream, indent);
+        stream << endl;
+    }
+}
+
 void
 CmdlineParserCreator::generate_group_counters(ostream &stream,
                                               unsigned int indent)
 {
-  group_counter_gen_class counter_gen;
-  string indent_str (indent, ' ');
+    generate_counters(gengetopt_groups, "group", stream, indent);
+}
 
-  groups_collection_t::const_iterator end = gengetopt_groups.end();
-  for ( groups_collection_t::const_iterator idx = gengetopt_groups.begin();
-        idx != end; ++idx)
-    {
-      stream << indent_str;
-      counter_gen.set_group_name (canonize_name (idx->first));
-      counter_gen.generate_group_counter (stream, indent);
-      stream << endl;
-    }
+void
+CmdlineParserCreator::generate_mode_counters(ostream &stream,
+                                              unsigned int indent)
+{
+    // we can reuse group counter gen class also for modes
+    generate_counters(gengetopt_modes, "mode", stream, indent);
 }
 
 int

@@ -1,3 +1,10 @@
+2007-11-05  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/skels/c_source.h_skel: update_arg is not generated if no
+	option (besides the default ones) are specified in the .ggo file
+
+	* src/parser.yy: added the details for options
+
 2007-10-25  Lorenzo Bettini  <bettini@lorelap>
 
 	* src/scanner.ll: added the type enum that can be used for options

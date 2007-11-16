@@ -31,6 +31,7 @@ PROGNAME = $(top_builddir)/src/gengetopt$(EXEEXT) --gen-version
 
 PROGNAMESHOWHELP = $(PROGNAME) --show-help --long-help
 PROGNAMESHOWFULLHELP = $(PROGNAME) --show-full-help --long-help
+PROGNAMESHOWDETAILEDHELP = $(PROGNAME) --show-detailed-help --long-help
 
 PROGNAMESHOWHELPREQUIRED = $(PROGNAME) --show-help --long-help --show-required
 
@@ -65,12 +66,14 @@ LDADD = $(top_builddir)/gl/libgnu.la
 
 EXPECT = 1
 
-VALGRINDTESTS = no_strings no_multi_strings no_unamed no_optgiven.sh \
+VALGRINDTESTS = no_strings \
+no_multi_strings no_multi_types \
+no_unamed no_optgiven.sh \
 more_than_once.sh canonize-names \
 no_prog_name \
 default_values default_cmdline test_all_opts.sh \
 test_all_opts_file_save.sh \
-test_groups.sh \
+test_groups.sh test_modes.sh \
 test_conf_parser.sh test_conf_parser_ov.sh test_conf_parser_ov2.sh \
 test_conf_parser_ov3.sh \
 test_conf_parser_ov4.sh \
@@ -86,16 +89,21 @@ test_dep.sh \
 test_multiple_parsers.sh \
 test_sections_option_help \
 test_all_opts_option_help \
-test_groups_option_help
+test_groups_option_help \
+test_no_options
 
 TESTS = $(VALGRINDTESTS) \
 test_show_help.sh \
 test_err.sh
 
-check_PROGRAMS = no_strings no_multi_strings no_unamed no_optgiven \
+check_PROGRAMS = no_strings \
+no_multi_strings no_multi_types \
+no_unamed no_optgiven \
 no_optgiven2 more_than_once no_prog_name \
 canonize-names default_values default_cmdline test_all_opts \
-test_groups test_conf_parser test_conf_parser_ov \
+test_groups \
+test_modes \
+test_conf_parser test_conf_parser_ov \
 test_conf_parser_ov2 \
 test_conf_parser_ov3 \
 test_conf_parser_ov4 \
@@ -104,9 +112,11 @@ test_multiple test_sections test_values test_redef_help \
 test_multiple_parsers \
 test_sections_option_help \
 test_all_opts_option_help \
-test_groups_option_help
+test_groups_option_help \
+test_no_options
 
 hidden_options_programs = test_all_opts
+details_options_programs = test_all_opts
 
 # in order to make it work with parallel make we need to make
 # these deps explicit
@@ -114,6 +124,7 @@ hidden_options_programs = test_all_opts
 # since files in .deps are empty
 no_strings_cmd.h: no_strings_cmd.c
 no_multi_strings_cmd.h: no_multi_strings_cmd.c
+no_multi_types_cmd.h: no_multi_types_cmd.c
 no_unamed_cmd.h: no_unamed_cmd.c
 no_optgiven_cmd.h: no_optgiven_cmd.c
 more_than_once_cmd.h: more_than_once_cmd.c
@@ -122,6 +133,7 @@ default_values_cmd.h: default_values_cmd.c
 cmdline.h: cmdline.c
 test_all_opts_cmd.h: test_all_opts_cmd.c
 test_groups_cmd.h: test_groups_cmd.c
+test_modes_cmd.h: test_modes_cmd.c
 test_conf_parser_cmd.h: test_conf_parser_cmd.c
 test_multiple_cmd.h: test_multiple_cmd.c
 test_sections_cmd.h: test_sections_cmd.c
@@ -130,9 +142,11 @@ test_redef_help_cmd.h: test_redef_help_cmd.c
 test_main_cmdline_cmd.h: test_main_cmdline_cmd.c
 test_first_cmdline_cmd.h: test_first_cmdline_cmd.c
 test_second_cmdline_cmd.h: test_second_cmdline_cmd.c
+test_no_options_cmd.h: test_no_options_cmd.c
 
 no_strings_SOURCES = no_strings_cmd.ggo no_strings.c
 no_multi_strings_SOURCES = no_multi_strings_cmd.ggo no_multi_strings.c
+no_multi_types_SOURCES = no_multi_types_cmd.ggo no_multi_types.c
 no_unamed_SOURCES = no_unamed_cmd.ggonu no_unamed.c
 no_optgiven_SOURCES = no_optgiven_cmd.ggo no_optgiven.c
 no_optgiven2_SOURCES = no_optgiven_cmd.ggo no_optgiven2.c
@@ -144,6 +158,7 @@ test_all_opts_SOURCES = test_all_opts_cmd.ggo test_all_opts.c
 no_prog_name_SOURCES = test_all_opts_cmd.ggo no_prog_name.c 
 # force using our version of getopt
 test_groups_SOURCES = test_groups_cmd.ggo test_groups.c
+test_modes_SOURCES = test_modes_cmd.ggo test_modes.c
 test_conf_parser_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser.c
 test_conf_parser_ov_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_ov.c
 test_conf_parser_ov2_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_ov2.c
@@ -158,9 +173,11 @@ test_multiple_parsers_SOURCES = test_main_cmdline_cmd.ggo test_first_cmdline_cmd
 test_sections_option_help_SOURCES = test_sections_cmd.ggo test_sections_option_help.c
 test_all_opts_option_help_SOURCES = test_all_opts_cmd.ggo test_all_opts_option_help.c
 test_groups_option_help_SOURCES = test_groups_cmd.ggo test_groups_option_help.c
+test_no_options_SOURCES = test_no_options_cmd.ggo test_no_options.c
 
 CHECKDIFFFILES = no_strings_cmd.c no_strings_cmd.h \
 no_multi_strings_cmd.c no_multi_strings_cmd.h \
+no_multi_types_cmd.c no_multi_types_cmd.h \
 no_unamed_cmd.c no_unamed_cmd.h \
 no_optgiven_cmd.c no_optgiven_cmd.h \
 more_than_once_cmd.c more_than_once_cmd.h \
@@ -169,6 +186,7 @@ default_values_cmd.c default_values_cmd.h \
 cmdline.c cmdline.h \
 test_all_opts_cmd.c test_all_opts_cmd.h \
 test_groups_cmd.c test_groups_cmd.h \
+test_modes_cmd.c test_modes_cmd.h \
 test_conf_parser_cmd.c test_conf_parser_cmd.h \
 test_multiple_cmd.c test_multiple_cmd.h \
 test_sections_cmd.c \
@@ -176,7 +194,8 @@ test_values_cmd.c test_values_cmd.h \
 test_redef_help_cmd.c test_redef_help_cmd.h \
 test_main_cmdline_cmd.c test_main_cmdline_cmd.h \
 test_first_cmdline_cmd.c test_first_cmdline_cmd.h \
-test_second_cmdline_cmd.c test_second_cmdline_cmd.h  
+test_second_cmdline_cmd.c test_second_cmdline_cmd.h \
+test_no_options_cmd.h test_no_options_cmd.c
 
 BUILT_SOURCES = $(CHECKDIFFFILES) $(ERRFILES)
 
@@ -190,6 +209,7 @@ default_values_cmd.c.test default_values_cmd.h.test \
 cmdline.c.test cmdline.h.test \
 test_all_opts_cmd.c.test test_all_opts_cmd.h.test \
 test_groups_cmd.c.test test_groups_cmd.h.test \
+test_modes_cmd.c.test test_modes_cmd.h.test \
 test_conf_parser_cmd.c.test test_conf_parser_cmd.h.test \
 test_multiple_cmd.c.test test_multiple_cmd.h.test \
 test_sections_cmd.c.test \
@@ -224,7 +244,8 @@ wrong_dep.ggo wrong_default.ggo wrong_numeric_value.ggo wrong_enum_use.ggo
 
 EXTRA_DIST = no_optgiven.sh.in more_than_once.sh.in \
 test_all_opts.sh.in test_all_opts_file_save.sh.in \
-test_groups.sh.in test_conf_parser.sh.in test_conf_parser_save.sh.in \
+test_groups.sh.in test_modes.sh.in \
+test_conf_parser.sh.in test_conf_parser_save.sh.in \
 test_conf_parser_grp.sh.in \
 test_conf_parser_ov.sh.in test_conf_parser_ov2.sh.in \
 test_conf_parser_ov3.sh.in \
@@ -272,7 +293,13 @@ $(TESTSOUTPUT):
 	  echo "*** $$source --full-help" >> $@; \
 	  $(top_builddir)/tests/$$source --full-help >> $@ 2>&1; \
 	done && \
+	for source in $(details_options_programs); do \
+	  echo "*** $$source --detailed-help" >> $@; \
+	  $(top_builddir)/tests/$$source --detailed-help >> $@ 2>&1; \
+	done && \
 	$(PROGNAMESHOWHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $@ 2>&1;
+	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $@ 2>&1;
+	$(PROGNAMESHOWDETAILEDHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $@ 2>&1;
 	$(PROGNAMESHOWHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $@ 2>&1;
 	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $@ 2>&1;
 	$(PROGNAMESHOWHELPREQUIRED) < $(srcdir)/test_required_optional_cmd.ggo >> $@ 2>&1;
@@ -313,7 +340,13 @@ check-diff:
 	  echo "*** $$tests --full-help" >> $(srcdir)/$(TESTSOUT); \
 	  $(top_builddir)/tests/$$tests --full-help >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	done && \
+	for tests in $(details_options_programs); do \
+	  echo "*** $$tests --detailed-help" >> $(srcdir)/$(TESTSOUT); \
+	  $(top_builddir)/tests/$$tests --detailed-help >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	done && \
 	$(PROGNAMESHOWHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWDETAILEDHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWHELPREQUIRED) < $(srcdir)/test_required_optional_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \

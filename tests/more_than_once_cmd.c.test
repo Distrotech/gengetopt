@@ -75,6 +75,7 @@ static
 void init_args_info(struct gengetopt_args_info *args_info)
 {
 
+
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->foo_help = gengetopt_args_info_help[2] ;
@@ -88,10 +89,7 @@ more_than_once_cmd_parser_print_version (void)
   printf ("%s %s\n", MORE_THAN_ONCE_CMD_PARSER_PACKAGE, MORE_THAN_ONCE_CMD_PARSER_VERSION);
 }
 
-void
-more_than_once_cmd_parser_print_help (void)
-{
-  int i = 0;
+static void print_help_common(void) {
   more_than_once_cmd_parser_print_version ();
 
   if (strlen(gengetopt_args_info_purpose) > 0)
@@ -104,7 +102,13 @@ more_than_once_cmd_parser_print_help (void)
 
   if (strlen(gengetopt_args_info_description) > 0)
     printf("%s\n", gengetopt_args_info_description);
+}
 
+void
+more_than_once_cmd_parser_print_help (void)
+{
+  int i = 0;
+  print_help_common();
   while (gengetopt_args_info_help[i])
     printf("%s\n", gengetopt_args_info_help[i++]);
 }
@@ -234,8 +238,7 @@ more_than_once_cmd_parser_free (struct gengetopt_args_info *args_info)
 }
 
 
-/* gengetopt_strdup() */
-/* strdup.c replacement of strdup, which is not standard */
+/** @brief replacement of strdup, which is not standard */
 char *
 gengetopt_strdup (const char *s)
 {
@@ -472,6 +475,7 @@ more_than_once_cmd_parser_internal (int argc, char * const *argv, struct gengeto
 
         case 'f':	/* foo option.  */
         
+        
           if (update_arg( (void *)&(args_info->foo_arg), 
                &(args_info->foo_orig), &(args_info->foo_given),
               &(local_args_info.foo_given), optarg, 0, 0, ARG_INT,
@@ -482,6 +486,7 @@ more_than_once_cmd_parser_internal (int argc, char * const *argv, struct gengeto
         
           break;
         case 'b':	/* bar option.  */
+        
         
           if (update_arg( (void *)&(args_info->bar_arg), 
                &(args_info->bar_orig), &(args_info->bar_given),

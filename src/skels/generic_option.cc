@@ -39,6 +39,16 @@ generic_option_gen_class::generate_generic_option(ostream &stream, unsigned int 
       stream << "\n";
       stream << indent_str;
     }
+  if (option_has_mode)
+    {
+      stream << "  args_info->";
+      generate_string (group_var_name, stream, indent + indent_str.length ());
+      stream << "_mode_counter += 1;";
+      stream << "\n";
+      stream << indent_str;
+    }
+  stream << "\n";
+  stream << indent_str;
   if (multiple)
     {
       if (option_has_type)

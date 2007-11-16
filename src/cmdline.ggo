@@ -100,7 +100,8 @@ option  "gen-version" g "put gengetopt version in the generated file" flag on
 option  "set-package" - "set the package name (override package defined in the .ggo file)" string optional
 option  "set-version" - "set the version number (override version defined in the .ggo file)" string optional
 option  "show-help" - "show the output of --help instead of generating code" optional
-option  "show-full-help" - "show the output of --help (including hidden options) instead of generating code" optional
+option  "show-full-help" - "show the output of --full-help (i.e., including hidden options) instead of generating code" optional
+option  "show-detailed-help" - "show the output of --detailed-help (i.e., including details and hidden options) instead of generating code" optional
 option  "show-version" - "show the output of --version instead of generating code" optional
 
 text "\nPlease refer to the info manual for further explanations."

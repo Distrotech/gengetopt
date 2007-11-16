@@ -102,6 +102,7 @@ static
 void init_args_info(struct gengetopt_args_info *args_info)
 {
 
+
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->foo_help = gengetopt_args_info_help[2] ;
@@ -121,10 +122,7 @@ default_values_cmd_parser_print_version (void)
   printf ("%s %s\n", DEFAULT_VALUES_CMD_PARSER_PACKAGE, DEFAULT_VALUES_CMD_PARSER_VERSION);
 }
 
-void
-default_values_cmd_parser_print_help (void)
-{
-  int i = 0;
+static void print_help_common(void) {
   default_values_cmd_parser_print_version ();
 
   if (strlen(gengetopt_args_info_purpose) > 0)
@@ -137,7 +135,13 @@ default_values_cmd_parser_print_help (void)
 
   if (strlen(gengetopt_args_info_description) > 0)
     printf("%s\n", gengetopt_args_info_description);
+}
 
+void
+default_values_cmd_parser_print_help (void)
+{
+  int i = 0;
+  print_help_common();
   while (gengetopt_args_info_help[i])
     printf("%s\n", gengetopt_args_info_help[i++]);
 }
@@ -286,8 +290,7 @@ default_values_cmd_parser_free (struct gengetopt_args_info *args_info)
 }
 
 
-/* gengetopt_strdup() */
-/* strdup.c replacement of strdup, which is not standard */
+/** @brief replacement of strdup, which is not standard */
 char *
 gengetopt_strdup (const char *s)
 {
@@ -538,6 +541,7 @@ default_values_cmd_parser_internal (int argc, char * const *argv, struct gengeto
 
         case 'f':	/* foo option.  */
         
+        
           if (update_arg( (void *)&(args_info->foo_arg), 
                &(args_info->foo_orig), &(args_info->foo_given),
               &(local_args_info.foo_given), optarg, 0, "15000", ARG_INT,
@@ -548,6 +552,7 @@ default_values_cmd_parser_internal (int argc, char * const *argv, struct gengeto
         
           break;
         case 'b':	/* bar option.  */
+        
         
           if (update_arg( (void *)&(args_info->bar_arg), 
                &(args_info->bar_orig), &(args_info->bar_given),
@@ -560,6 +565,7 @@ default_values_cmd_parser_internal (int argc, char * const *argv, struct gengeto
           break;
         case 'F':	/* foo option with optional arg.  */
         
+        
           if (update_arg( (void *)&(args_info->foo_opt_arg), 
                &(args_info->foo_opt_orig), &(args_info->foo_opt_given),
               &(local_args_info.foo_opt_given), optarg, 0, "15000", ARG_INT,
@@ -570,6 +576,7 @@ default_values_cmd_parser_internal (int argc, char * const *argv, struct gengeto
         
           break;
         case 'B':	/* bar option with optional arg.  */
+        
         
           if (update_arg( (void *)&(args_info->bar_opt_arg), 
                &(args_info->bar_opt_orig), &(args_info->bar_opt_given),
@@ -582,6 +589,7 @@ default_values_cmd_parser_internal (int argc, char * const *argv, struct gengeto
           break;
         case 'p':	/* PI option.  */
         
+        
           if (update_arg( (void *)&(args_info->pi_arg), 
                &(args_info->pi_orig), &(args_info->pi_given),
               &(local_args_info.pi_given), optarg, 0, "3.1415926536", ARG_DOUBLE,
@@ -592,6 +600,7 @@ default_values_cmd_parser_internal (int argc, char * const *argv, struct gengeto
         
           break;
         case 's':	/* number of seconds after the scanning is cancelled if no progress is shown at all..  */
+        
         
           if (update_arg( (void *)&(args_info->timeout_arg), 
                &(args_info->timeout_orig), &(args_info->timeout_given),
@@ -608,6 +617,7 @@ default_values_cmd_parser_internal (int argc, char * const *argv, struct gengeto
           if (strcmp (long_options[option_index].name, "foofloat") == 0)
           {
           
+          
             if (update_arg( (void *)&(args_info->foofloat_arg), 
                  &(args_info->foofloat_orig), &(args_info->foofloat_given),
                 &(local_args_info.foofloat_given), optarg, 0, "15000", ARG_FLOAT,
@@ -620,6 +630,7 @@ default_values_cmd_parser_internal (int argc, char * const *argv, struct gengeto
           /* foo double option.  */
           else if (strcmp (long_options[option_index].name, "foodouble") == 0)
           {
+          
           
             if (update_arg( (void *)&(args_info->foodouble_arg), 
                  &(args_info->foodouble_orig), &(args_info->foodouble_given),

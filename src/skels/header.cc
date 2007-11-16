@@ -166,6 +166,13 @@ header_gen_class::generate_header(ostream &stream, unsigned int indent)
     generate_group_counters (stream, indent + indent_str.length ());
   indent = 0;
   stream << indent_str;
+  indent = 2;
+  if (mode_counters.size () > 0)
+    generate_string (mode_counters, stream, indent + indent_str.length ());
+  else
+    generate_mode_counters (stream, indent + indent_str.length ());
+  indent = 0;
+  stream << indent_str;
   stream << "} ;";
   stream << "\n";
   stream << indent_str;
@@ -258,6 +265,19 @@ header_gen_class::generate_header(ostream &stream, unsigned int indent)
       stream << "extern const char *";
       generate_string (args_info, stream, indent + indent_str.length ());
       stream << "_full_help[];";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_details)
+    {
+      stream << "/** ";
+      stream << "@";
+      stream << "brief all the lines making the detailed help output (including hidden options and details) */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "extern const char *";
+      generate_string (args_info, stream, indent + indent_str.length ());
+      stream << "_detailed_help[];";
       stream << "\n";
       stream << indent_str;
     }
@@ -524,6 +544,23 @@ header_gen_class::generate_header(ostream &stream, unsigned int indent)
       stream << "void ";
       generate_string (parser_name, stream, indent + indent_str.length ());
       stream << "_print_full_help(void);";
+      stream << "\n";
+      stream << indent_str;
+    }
+  if (has_details)
+    {
+      stream << "/**";
+      stream << "\n";
+      stream << indent_str;
+      stream << " * Print the detailed help (including hidden options and details)";
+      stream << "\n";
+      stream << indent_str;
+      stream << " */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "void ";
+      generate_string (parser_name, stream, indent + indent_str.length ());
+      stream << "_print_detailed_help(void);";
       stream << "\n";
       stream << indent_str;
     }

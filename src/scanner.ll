@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 1999-2005  Free Software Foundation, Inc.
+ * Copyright (C) 1999-2007  Free Software Foundation, Inc.
  *
  * This file is part of GNU gengetopt
  *
@@ -82,6 +82,7 @@ tabs [\t]+
 <INITIAL>package        	updateTokenInfo (-1); return TOK_PACKAGE;
 <INITIAL>version        	updateTokenInfo (-1); return TOK_VERSION;
 <INITIAL>groupoption     updateTokenInfo (-1); yylloc.first_line = gengetopt_count_line; return TOK_GROUPOPTION;
+<INITIAL>modeoption     updateTokenInfo (-1); yylloc.first_line = gengetopt_count_line; return TOK_MODEOPTION;
 <INITIAL>yes|required    updateTokenInfo (-1); return TOK_YES;
 <INITIAL>no|optional	updateTokenInfo (-1); return TOK_NO;
 <INITIAL>option		updateTokenInfo (-1); yylloc.first_line = gengetopt_count_line; return TOK_OPTION;
@@ -96,6 +97,9 @@ tabs [\t]+
 <INITIAL>group		updateTokenInfo (-1); return TOK_GROUP;
 <INITIAL>groupdesc	updateTokenInfo (-1); return TOK_GROUPDESC;
 <INITIAL>defgroup	updateTokenInfo (-1); return TOK_DEFGROUP;
+<INITIAL>mode		updateTokenInfo (-1); return TOK_MODE;
+<INITIAL>modedesc	updateTokenInfo (-1); return TOK_MODEDESC;
+<INITIAL>defmode	updateTokenInfo (-1); return TOK_DEFMODE;
 <INITIAL>multiple	updateTokenInfo (-1); return TOK_MULTIPLE;
 <INITIAL>argoptional	updateTokenInfo (-1); return TOK_ARGOPTIONAL;
 <INITIAL>sectiondesc     updateTokenInfo (-1); return TOK_SECTIONDESC;
@@ -103,6 +107,7 @@ tabs [\t]+
 <INITIAL>values          updateTokenInfo (-1); return TOK_VALUES;
 <INITIAL>hidden		updateTokenInfo (-1); return TOK_HIDDEN;
 <INITIAL>dependon	updateTokenInfo (-1); return TOK_DEPENDON;
+<INITIAL>details	updateTokenInfo (-1); return TOK_DETAILS;
 <INITIAL>text    	updateTokenInfo (-1); return TOK_TEXT;
 <INITIAL>args    	updateTokenInfo (-1); return TOK_ARGS;
 

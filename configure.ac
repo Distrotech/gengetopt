@@ -159,6 +159,7 @@ AC_OUTPUT([Makefile
            tests/test_all_opts.sh
            tests/test_all_opts_file_save.sh
            tests/test_groups.sh
+           tests/test_modes.sh
            tests/test_conf.conf
            tests/test_conf_inc.conf
            tests/test_conf_parser.sh
@@ -186,6 +187,7 @@ AC_OUTPUT([Makefile
            chmod +x tests/test_all_opts.sh
            chmod +x tests/test_all_opts_file_save.sh
            chmod +x tests/test_groups.sh
+           chmod +x tests/test_modes.sh
            chmod +x tests/test_conf_parser.sh
            chmod +x tests/test_conf_parser_save.sh
            chmod +x tests/test_conf_parser_grp.sh

@@ -73,6 +73,9 @@ void check_result(int o, gengetopt_option *opt)
     case GROUP_UNDEFINED:
         yyerror (opt, "group undefined");
         break;
+    case MODE_UNDEFINED:
+        yyerror (opt, "mode undefined");
+        break;
     case INVALID_DEFAULT_VALUE:
         yyerror (opt, "invalid default value");
         break;
@@ -88,8 +91,14 @@ void check_result(int o, gengetopt_option *opt)
     case NOT_GROUP_OPTION:
       yyerror (opt, "group specification for a non group option");
       break;
+    case NOT_MODE_OPTION:
+      yyerror (opt, "mode specification for an option not belonging to a mode");
+      break;
     case SPECIFY_GROUP:
       yyerror (opt, "missing group specification");
+      break;
+    case SPECIFY_MODE:
+      yyerror (opt, "missing mode specification");
       break;
     case INVALID_NUMERIC_VALUE:
         yyerror (opt, "invalid numeric value");
@@ -112,7 +121,7 @@ struct multiple_size
     /* if no limit is specified then initialized to -1.
        if the same size is specified for min and max, it means that a precise
        number of occurrences is required*/
-    multiple_size(char *m = "-1", char *M = "-1") :
+    multiple_size(const char *m = "-1", const char *M = "-1") :
         min(strdup(m)), max(strdup(M))
     {}
 };
@@ -136,6 +145,8 @@ struct multiple_size
 %token              TOK_OPTION		"option"
 %token              TOK_DEFGROUP	"defgroup"
 %token              TOK_GROUPOPTION	"groupoption"
+%token              TOK_DEFMODE		"defmode"
+%token              TOK_MODEOPTION	"modeoption"
 %token              TOK_YES		"yes"
 %token              TOK_NO		"no"
 %token              TOK_ON		"on"
@@ -147,10 +158,13 @@ struct multiple_size
 %token              TOK_DEFAULT		"default"
 %token              TOK_GROUP		"group"
 %token              TOK_GROUPDESC	"groupdesc"
+%token              TOK_MODE		"mode"
+%token              TOK_MODEDESC	"modedesc"
 %token              TOK_MULTIPLE	"multiple"
 %token              TOK_ARGOPTIONAL	"argoptional"
 %token              TOK_TYPESTR		"typestr"
 %token              TOK_SECTION		"section"
+%token              TOK_DETAILS		"details"
 %token              TOK_SECTIONDESC	"sectiondesc"
 %token              TOK_TEXT    	"text"
 %token              TOK_ARGS    	"args"
@@ -158,7 +172,6 @@ struct multiple_size
 %token              TOK_HIDDEN      "hidden"
 %token              TOK_DEPENDON      "dependon"
 %token <str>        TOK_STRING
-%token <str>        TOK_MLSTRING
 %token <chr>        TOK_CHAR
 %token <argtype>    TOK_ARGTYPE
 %token <str>        TOK_SIZE
@@ -168,6 +181,7 @@ struct multiple_size
 %type  <str>        quoted_string
 %type  <str>        opt_groupdesc
 %type  <str>        opt_sectiondesc
+%type  <str>        opt_modedesc
 %type  <ValueList>  listofvalues
 %type  <str>        acceptedvalue
 %type  <gengetopt_option> option_parts
@@ -195,6 +209,8 @@ statement
 	| text
 	| groupoption
 	| groupdef
+	| modeoption
+	| modedef
 	;
 
 
@@ -323,11 +339,20 @@ args
 groupdef
 	: TOK_DEFGROUP TOK_STRING opt_groupdesc optional_yesno
 	    {
-	      if (gengetopt_add_group ($2, $3, $4))
-		{
-		  yyerror ("group redefined");
-		  YYERROR;
-		}
+	      if (gengetopt_add_group ($2, $3, $4)) {
+		  	yyerror ("group redefined");
+		  	YYERROR;
+		  }
+	    }
+	;
+
+modedef
+	: TOK_DEFMODE TOK_STRING opt_modedesc
+	    {
+	      if (gengetopt_add_mode ($2, $3)) {
+		  	yyerror ("mode redefined");
+		  	YYERROR;
+		  }
 	    }
 	;
 
@@ -369,12 +394,30 @@ groupoption
 	    }
         ;
 
+modeoption
+	: TOK_MODEOPTION TOK_STRING TOK_CHAR quoted_string
+                option_parts
+	    {
+          $5->filename = gengetopt_input_filename;
+          $5->linenum = @1.first_line;
+	      $5->long_opt = strdup($2);
+          if ($3 != '-')
+            $5->short_opt = $3;
+          $5->desc = strdup($4);
+          int o = gengetopt_check_option ($5, false, true);
+          check_result(o, $5);
+          check_error;
+          o = gengetopt_add_option ($5);
+          check_result(o, $5);
+          check_error;
+	    }
+        ;
+
 
 /* ---------------------------------------------------------------------- */
 
 quoted_string
-	: TOK_MLSTRING
-	| TOK_STRING
+	: TOK_STRING
 	;
 
 option_parts: option_parts opt_yesno
@@ -393,6 +436,11 @@ option_parts: option_parts opt_yesno
 			  	$$ = $1;
 			  	$$->type_str = strdup($4);
 			  }
+			| option_parts TOK_DETAILS '=' quoted_string
+			  {
+			  	$$ = $1;
+			  	$$->details = strdup($4);
+			  }
 			| option_parts TOK_VALUES '=' listofvalues
 			  {
 			  	$$ = $1;
@@ -407,6 +455,11 @@ option_parts: option_parts opt_yesno
               {
                 $$ = $1;
                 $$->group_value = strdup($4);
+              }
+            | option_parts TOK_MODE '=' TOK_STRING
+              {
+                $$ = $1;
+                $$->mode_value = strdup($4);
               }
             | option_parts TOK_DEPENDON '=' TOK_STRING
               {
@@ -463,6 +516,11 @@ opt_yesno
 opt_groupdesc
 	: /* empty */			{ $$ = 0; }
         | TOK_GROUPDESC '=' TOK_STRING	{ $$ = $3; }
+	;
+
+opt_modedesc
+	: /* empty */			{ $$ = 0; }
+        | TOK_MODEDESC '=' TOK_STRING	{ $$ = $3; }
 	;
 
 opt_sectiondesc

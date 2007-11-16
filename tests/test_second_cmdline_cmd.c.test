@@ -104,6 +104,7 @@ static
 void init_args_info(struct test_second_cmdline_cmd_struct *args_info)
 {
 
+
   args_info->help_help = test_second_cmdline_cmd_struct_help[0] ;
   args_info->version_help = test_second_cmdline_cmd_struct_help[1] ;
   args_info->option_a_help = test_second_cmdline_cmd_struct_help[2] ;
@@ -120,10 +121,7 @@ test_second_cmdline_cmd_parser_print_version (void)
   printf ("%s %s\n", TEST_SECOND_CMDLINE_CMD_PARSER_PACKAGE, TEST_SECOND_CMDLINE_CMD_PARSER_VERSION);
 }
 
-void
-test_second_cmdline_cmd_parser_print_help (void)
-{
-  int i = 0;
+static void print_help_common(void) {
   test_second_cmdline_cmd_parser_print_version ();
 
   if (strlen(test_second_cmdline_cmd_struct_purpose) > 0)
@@ -136,7 +134,13 @@ test_second_cmdline_cmd_parser_print_help (void)
 
   if (strlen(test_second_cmdline_cmd_struct_description) > 0)
     printf("%s\n", test_second_cmdline_cmd_struct_description);
+}
 
+void
+test_second_cmdline_cmd_parser_print_help (void)
+{
+  int i = 0;
+  print_help_common();
   while (test_second_cmdline_cmd_struct_help[i])
     printf("%s\n", test_second_cmdline_cmd_struct_help[i++]);
 }
@@ -320,8 +324,7 @@ test_second_cmdline_cmd_parser_free (struct test_second_cmdline_cmd_struct *args
 }
 
 
-/* gengetopt_strdup() */
-/* strdup.c replacement of strdup, which is not standard */
+/** @brief replacement of strdup, which is not standard */
 char *
 gengetopt_strdup (const char *s)
 {
@@ -1459,6 +1462,7 @@ test_second_cmdline_cmd_parser_internal (int argc, char * const *argv, struct te
 
         case 'a':	/* option a of the second command line to parse.  */
         
+        
           if (update_arg( (void *)&(args_info->option_a_arg), 
                &(args_info->option_a_orig), &(args_info->option_a_given),
               &(local_args_info.option_a_given), optarg, 0, 0, ARG_STRING,
@@ -1470,6 +1474,7 @@ test_second_cmdline_cmd_parser_internal (int argc, char * const *argv, struct te
           break;
         case 'b':	/* option a of the second command line to parse.  */
         
+        
           if (update_arg( (void *)&(args_info->option_b_arg), 
                &(args_info->option_b_orig), &(args_info->option_b_given),
               &(local_args_info.option_b_given), optarg, 0, 0, ARG_STRING,
@@ -1480,6 +1485,7 @@ test_second_cmdline_cmd_parser_internal (int argc, char * const *argv, struct te
         
           break;
         case 'M':	/* multiple option of the second command line to parse.  */
+        
           if (update_multiple_arg_temp(&my_multi_list, 
               &(local_args_info.my_multi_given), optarg, 0, 0, ARG_STRING,
               "my-multi", 'M',

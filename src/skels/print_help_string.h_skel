@@ -1,5 +1,5 @@
 @IF@ shared @THEN@
-@args_info@_help[@index@] = @IF@ last @THEN@ 0; @ELSE@ @args_info@_full_help[@full_index@];@endif@
+@target@[@index@] = @IF@ last @THEN@ 0; @ELSE@ @from@[@full_index@];@endif@
 @ELSE@
 "@helpstring@",
 @ENDIF@

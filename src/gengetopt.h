@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 1999, 2000, 2001  Free Software Foundation, Inc.
+ * Copyright (C) 1999-2007  Free Software Foundation, Inc.
  *
  * This file is part of GNU gengetopt
  *
@@ -53,12 +53,15 @@ void gengetopt_set_text (const char * desc) ;
 void gengetopt_set_args (const char *args);
 
 int gengetopt_add_group (const char * s, const char *desc, int required) ;
+int gengetopt_add_mode (const char * s, const char *desc) ;
+
 int gengetopt_has_option (const char * long_opt, char short_opt);
 int gengetopt_add_option (const char * long_opt, char short_opt,
                           const char * desc,
                           int type, int flagstat, int required,
                           const char *default_value,
                           const char * group_value,
+                          const char * mode_value,
                           const char * type_str,
                           const AcceptedValues *acceptedvalues,
                           int multiple = 0,
@@ -66,7 +69,7 @@ int gengetopt_add_option (const char * long_opt, char short_opt,
 
 int gengetopt_has_option (gengetopt_option *opt);
 int gengetopt_check_option (gengetopt_option *opt,
-    bool groupoption);
+    bool groupoption = false, bool modeoption = false);
 int gengetopt_add_option (gengetopt_option *opt);
 
 #endif /* _GENGETOPT_H */

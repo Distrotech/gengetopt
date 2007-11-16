@@ -27,12 +27,18 @@ maintainer-mode
 
 CLEANING
 
-- test without any option at all
-- test all types in multiple options?
-- if multiple options without args avoid generating the functions?
 - code duplication in check_option and create_option in gengetopt.cc
 
 TESTS
 
 generate in the code also a test main with a string containing the test
 arguments and then in the main, check that the results are as expected.
+
+PARTITIONS (MODES)
+
+- in the help print a different usage for each mode
+- keep track of number of options given for each partition
+- check modes after parsing all options
+- test errors for modes
+- test_modes_option_help
+- print mode information in help

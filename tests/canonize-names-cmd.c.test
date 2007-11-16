@@ -70,6 +70,7 @@ static
 void init_args_info(struct gengetopt_args_info *args_info)
 {
 
+
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->foo_help = gengetopt_args_info_help[2] ;
@@ -82,10 +83,7 @@ canonize_names_cmd_parser_print_version (void)
   printf ("%s %s\n", CANONIZE_NAMES_CMD_PARSER_PACKAGE, CANONIZE_NAMES_CMD_PARSER_VERSION);
 }
 
-void
-canonize_names_cmd_parser_print_help (void)
-{
-  int i = 0;
+static void print_help_common(void) {
   canonize_names_cmd_parser_print_version ();
 
   if (strlen(gengetopt_args_info_purpose) > 0)
@@ -98,7 +96,13 @@ canonize_names_cmd_parser_print_help (void)
 
   if (strlen(gengetopt_args_info_description) > 0)
     printf("%s\n", gengetopt_args_info_description);
+}
 
+void
+canonize_names_cmd_parser_print_help (void)
+{
+  int i = 0;
+  print_help_common();
   while (gengetopt_args_info_help[i])
     printf("%s\n", gengetopt_args_info_help[i++]);
 }
@@ -216,8 +220,7 @@ canonize_names_cmd_parser_free (struct gengetopt_args_info *args_info)
 }
 
 
-/* gengetopt_strdup() */
-/* strdup.c replacement of strdup, which is not standard */
+/** @brief replacement of strdup, which is not standard */
 char *
 gengetopt_strdup (const char *s)
 {
@@ -443,6 +446,7 @@ canonize_names_cmd_parser_internal (int argc, char * const *argv, struct gengeto
           exit (EXIT_SUCCESS);
 
         case 'i':	/* foo option.  */
+        
         
           if (update_arg( (void *)&(args_info->foo_arg), 
                &(args_info->foo_orig), &(args_info->foo_given),

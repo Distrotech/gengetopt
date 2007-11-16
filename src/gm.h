@@ -101,9 +101,12 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   virtual void generate_handle_dependencies(ostream &stream, unsigned int indent);
   virtual void generate_handle_group(ostream &stream, unsigned int indent);
   virtual void generate_group_counters(ostream &stream, unsigned int indent);
+  virtual void generate_mode_counters(ostream &stream, unsigned int indent);
   virtual void generate_help_option_print(ostream &stream,
                                           unsigned int indent);
   virtual void generate_full_help_option_print(ostream &stream,
+                                          unsigned int indent);
+  virtual void generate_detailed_help_option_print(ostream &stream,
                                           unsigned int indent);
   virtual void generate_long_option_struct(ostream &stream,
                                            unsigned int indent);
@@ -129,7 +132,7 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
                         bool long_help, bool no_handle_help,
                         bool no_handle_version,
                         bool no_handle_error, bool conf_parser, bool string_parser,
-                        bool gen_version, bool gen_getopt,
+                        bool gen_version, bool gen_getopt, bool no_options,
                         const string &comment,
                         const string &outdir,
                         const string &show_required);
@@ -139,6 +142,8 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   virtual void generate_list_def(ostream &stream, unsigned int indent);
   virtual void generate_multiple_fill_array(ostream &stream, unsigned int indent);
   virtual void generate_update_multiple_given(ostream &stream, unsigned int indent);
+  virtual void generate_check_modes(ostream &stream, unsigned int indent);
+
   const string generate_purpose();
   const string generate_description();
   const string generate_usage_string(bool use_config_package = true);
@@ -148,8 +153,25 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
    * help output
    * 
    * @param generate_hidden if true, include also the hidden options
+   * @param generate_details if true, include also the hidden options and
+   * details for options that have them.
    */
-  OptionHelpList *generate_help_option_list(bool generate_hidden = false);
+  OptionHelpList *generate_help_option_list(bool generate_hidden = false,
+          bool generate_details = false);
+  
+  /**
+   * generate the sharing between a list of help string, using the
+   * complete_list as the list with all the strings (both for hidden
+   * options and details, e.g.) and the smaller_list as the list
+   * with less strings
+   * 
+   * @param target_array the name of the array to copy to
+   * @param source_array the name of the array to copy from
+   */
+  void generate_help_option_print_from_lists(ostream &stream,
+          unsigned int indent, OptionHelpList *complete_list,
+          OptionHelpList *smaller_list, const std::string &target_array,
+          const std::string &source_array);
   
   /**
    * Sets the has_arg_XXX by inspecting all the options types

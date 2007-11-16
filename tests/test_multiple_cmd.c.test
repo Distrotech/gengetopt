@@ -133,6 +133,7 @@ static
 void init_args_info(struct gengetopt_args_info *args_info)
 {
 
+
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->string_help = gengetopt_args_info_help[2] ;
@@ -190,10 +191,7 @@ test_multiple_cmd_parser_print_version (void)
   printf ("%s %s\n", TEST_MULTIPLE_CMD_PARSER_PACKAGE, TEST_MULTIPLE_CMD_PARSER_VERSION);
 }
 
-void
-test_multiple_cmd_parser_print_help (void)
-{
-  int i = 0;
+static void print_help_common(void) {
   test_multiple_cmd_parser_print_version ();
 
   if (strlen(gengetopt_args_info_purpose) > 0)
@@ -206,7 +204,13 @@ test_multiple_cmd_parser_print_help (void)
 
   if (strlen(gengetopt_args_info_description) > 0)
     printf("%s\n", gengetopt_args_info_description);
+}
 
+void
+test_multiple_cmd_parser_print_help (void)
+{
+  int i = 0;
+  print_help_common();
   while (gengetopt_args_info_help[i])
     printf("%s\n", gengetopt_args_info_help[i++]);
 }
@@ -432,8 +436,7 @@ test_multiple_cmd_parser_free (struct gengetopt_args_info *args_info)
 }
 
 
-/* gengetopt_strdup() */
-/* strdup.c replacement of strdup, which is not standard */
+/** @brief replacement of strdup, which is not standard */
 char *
 gengetopt_strdup (const char *s)
 {
@@ -1077,6 +1080,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           exit (EXIT_SUCCESS);
 
         case 's':	/* string option.  */
+        
           if (update_multiple_arg_temp(&string_list, 
               &(local_args_info.string_given), optarg, 0, "foo", ARG_STRING,
               "string", 's',
@@ -1085,6 +1089,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         
           break;
         case 'i':	/* int option.  */
+        
           if (update_multiple_arg_temp(&int_list, 
               &(local_args_info.int_given), optarg, 0, 0, ARG_INT,
               "int", 'i',
@@ -1093,6 +1098,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         
           break;
         case 'S':	/* short option.  */
+        
           if (update_multiple_arg_temp(&short_list, 
               &(local_args_info.short_given), optarg, 0, 0, ARG_SHORT,
               "short", 'S',
@@ -1101,6 +1107,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         
           break;
         case 'l':	/* long option.  */
+        
           if (update_multiple_arg_temp(&long_list, 
               &(local_args_info.long_given), optarg, 0, 0, ARG_LONG,
               "long", 'l',
@@ -1109,6 +1116,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         
           break;
         case 'L':	/* limited multiple option.  */
+        
           if (update_multiple_arg_temp(&limited_list, 
               &(local_args_info.limited_given), optarg, 0, 0, ARG_STRING,
               "limited", 'L',
@@ -1117,6 +1125,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         
           break;
         case 'f':	/* float option.  */
+        
           if (update_multiple_arg_temp(&float_list, 
               &(local_args_info.float_given), optarg, 0, "15000", ARG_FLOAT,
               "float", 'f',
@@ -1125,10 +1134,12 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         
           break;
         case 'n':	/* multiple option with no arg.  */
+        
           local_args_info.noarg_given++;
         
           break;
         case 'M':	/* multi with optional args.  */
+        
           if (update_multiple_arg_temp(&optarg_list, 
               &(local_args_info.optarg_given), optarg, 0, 0, ARG_STRING,
               "optarg", 'M',
@@ -1141,6 +1152,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           /* limited multiple option (with interval).  */
           if (strcmp (long_options[option_index].name, "limited-interval") == 0)
           {
+          
             if (update_multiple_arg_temp(&limited_interval_list, 
                 &(local_args_info.limited_interval_given), optarg, 0, 0, ARG_STRING,
                 "limited-interval", '-',
@@ -1151,6 +1163,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           /* limited multiple option (with interval).  */
           else if (strcmp (long_options[option_index].name, "big-limited-interval") == 0)
           {
+          
             if (update_multiple_arg_temp(&big_limited_interval_list, 
                 &(local_args_info.big_limited_interval_given), optarg, 0, 0, ARG_STRING,
                 "big-limited-interval", '-',
@@ -1161,6 +1174,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           /* limited multiple option (with interval right open).  */
           else if (strcmp (long_options[option_index].name, "limited-open-right") == 0)
           {
+          
             if (update_multiple_arg_temp(&limited_open_right_list, 
                 &(local_args_info.limited_open_right_given), optarg, 0, 0, ARG_STRING,
                 "limited-open-right", '-',
@@ -1171,6 +1185,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           /* limited multiple option (with interval left open).  */
           else if (strcmp (long_options[option_index].name, "limited-open-left") == 0)
           {
+          
             if (update_multiple_arg_temp(&limited_open_left_list, 
                 &(local_args_info.limited_open_left_given), optarg, 0, 0, ARG_STRING,
                 "limited-open-left", '-',
@@ -1181,6 +1196,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           /* string option with no short.  */
           else if (strcmp (long_options[option_index].name, "no-short-opt") == 0)
           {
+          
             if (update_multiple_arg_temp(&no_short_opt_list, 
                 &(local_args_info.no_short_opt_given), optarg, 0, 0, ARG_STRING,
                 "no-short-opt", '-',
@@ -1191,12 +1207,14 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           /* multiple option with no arg and no short.  */
           else if (strcmp (long_options[option_index].name, "noarg-noshort") == 0)
           {
+          
             local_args_info.noarg_noshort_given++;
           
           }
           /* multi with optional args and no short.  */
           else if (strcmp (long_options[option_index].name, "optarg-noshort") == 0)
           {
+          
             if (update_multiple_arg_temp(&optarg_noshort_list, 
                 &(local_args_info.optarg_noshort_given), optarg, 0, 0, ARG_STRING,
                 "optarg-noshort", '-',
@@ -1207,6 +1225,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           /* save the passed options into a file.  */
           else if (strcmp (long_options[option_index].name, "file-save") == 0)
           {
+          
           
             if (update_arg( (void *)&(args_info->file_save_arg), 
                  &(args_info->file_save_orig), &(args_info->file_save_given),

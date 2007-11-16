@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 1999, 2000, 2001, 2002  Free Software Foundation, Inc.
+ * Copyright (C) 1999-2007  Free Software Foundation, Inc.
  *
  * This file is part of GNU gengetopt 
  *
@@ -29,6 +29,10 @@
 #define FULL_HELP_LONG_OPT "full-help"
 #define FULL_HELP_LONG_OPT_FIELD "full_help"
 #define FULL_HELP_OPT_DESCR "Print help, including hidden options, and exit"
+
+#define DETAILED_HELP_LONG_OPT "detailed-help"
+#define DETAILED_HELP_LONG_OPT_FIELD "detailed_help"
+#define DETAILED_HELP_OPT_DESCR "Print help, including all details and hidden options, and exit"
 
 #define VERSION_LONG_OPT "version"
 #define VERSION_SHORT_OPT 'V'

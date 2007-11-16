@@ -22,10 +22,12 @@ class header_gen_class
   bool generate_string_parser;
   string generator_version;
   string group_counters;
+  bool has_details;
   bool has_hidden;
   string header_file_ext;
   string header_file_name;
   string ifndefname;
+  string mode_counters;
   string option_arg;
   string option_given;
   string option_values_decl;
@@ -37,12 +39,12 @@ class header_gen_class
 
  public:
   header_gen_class() :
-    generate_config_parser (false), generate_string_parser (false), has_hidden (false)
+    generate_config_parser (false), generate_string_parser (false), has_details (false), has_hidden (false)
   {
   }
   
-  header_gen_class(const string &_args_info, const string &_enum_types, bool _generate_config_parser, bool _generate_string_parser, const string &_generator_version, const string &_group_counters, bool _has_hidden, const string &_header_file_ext, const string &_header_file_name, const string &_ifndefname, const string &_option_arg, const string &_option_given, const string &_option_values_decl, const string &_package_var_name, const string &_package_var_val, const string &_parser_name, const string &_version_var_name, const string &_version_var_val) :
-    args_info (_args_info), enum_types (_enum_types), generate_config_parser (_generate_config_parser), generate_string_parser (_generate_string_parser), generator_version (_generator_version), group_counters (_group_counters), has_hidden (_has_hidden), header_file_ext (_header_file_ext), header_file_name (_header_file_name), ifndefname (_ifndefname), option_arg (_option_arg), option_given (_option_given), option_values_decl (_option_values_decl), package_var_name (_package_var_name), package_var_val (_package_var_val), parser_name (_parser_name), version_var_name (_version_var_name), version_var_val (_version_var_val)
+  header_gen_class(const string &_args_info, const string &_enum_types, bool _generate_config_parser, bool _generate_string_parser, const string &_generator_version, const string &_group_counters, bool _has_details, bool _has_hidden, const string &_header_file_ext, const string &_header_file_name, const string &_ifndefname, const string &_mode_counters, const string &_option_arg, const string &_option_given, const string &_option_values_decl, const string &_package_var_name, const string &_package_var_val, const string &_parser_name, const string &_version_var_name, const string &_version_var_val) :
+    args_info (_args_info), enum_types (_enum_types), generate_config_parser (_generate_config_parser), generate_string_parser (_generate_string_parser), generator_version (_generator_version), group_counters (_group_counters), has_details (_has_details), has_hidden (_has_hidden), header_file_ext (_header_file_ext), header_file_name (_header_file_name), ifndefname (_ifndefname), mode_counters (_mode_counters), option_arg (_option_arg), option_given (_option_given), option_values_decl (_option_values_decl), package_var_name (_package_var_name), package_var_val (_package_var_val), parser_name (_parser_name), version_var_name (_version_var_name), version_var_val (_version_var_val)
   {
   }
 
@@ -107,6 +109,11 @@ class header_gen_class
     group_counters = _group_counters;
   }
 
+  void set_has_details(bool _has_details)
+  {
+    has_details = _has_details;
+  }
+
   void set_has_hidden(bool _has_hidden)
   {
     has_hidden = _has_hidden;
@@ -125,6 +132,13 @@ class header_gen_class
   void set_ifndefname(const string &_ifndefname)
   {
     ifndefname = _ifndefname;
+  }
+
+  virtual void generate_mode_counters(ostream &stream, unsigned int indent) = 0;
+
+  void set_mode_counters(const string &_mode_counters)
+  {
+    mode_counters = _mode_counters;
   }
 
   virtual void generate_option_arg(ostream &stream, unsigned int indent) = 0;

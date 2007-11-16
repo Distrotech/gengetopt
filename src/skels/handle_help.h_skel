@@ -1,4 +1,7 @@
-@IF@ full_help @THEN@
+@IF@ detailed_help @THEN@
+if (strcmp (long_options[option_index].name, "detailed-help") == 0) {
+  @parser_name@_print_detailed_help ();
+@ELSEIF@ full_help @THEN@
 if (strcmp (long_options[option_index].name, "full-help") == 0) {
   @parser_name@_print_full_help ();
 @ELSE@

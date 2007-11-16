@@ -25,12 +25,16 @@ option "longdouble"  D "longdouble option" longdouble optional
 option "longlong"    L "longlong option" longlong optional
 option "flag"        F "flag option" flag on
 option "function"    u "function option" optional
+  details="\na function option is basically an option with no argument.  It can be used, e.g., to specify a specific behavior for a program.
+
+Well, this further explanation is quite useless, but it's only to show an example of an option with details, which will be printed only when --detailed-help is given at the command line.\n"
 option "no-short"    - "no short option" optional
 option "opt-arg"     - "option with optional arg" 
         argoptional string optional 
 option "opt-arg-short"     o "option with optional arg (short)" 
         optional string argoptional
 option "required"    r "required option" string yes
+      details="NOTICE: This option is required, so, unless you specify (-h)--help or (-V)--version, you must always specify this option (and its argument) at command line."
 text "\nBefore the dependant option there is a hidden option, \
 so it shouldn't be visible in the output of --help, \
 but it will be visible in the output of --full-help.\n"

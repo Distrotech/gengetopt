@@ -16,18 +16,19 @@ using std::ostream;
 class handle_help_gen_class
 {
  protected:
+  bool detailed_help;
   bool full_help;
   string parser_name;
   bool short_opt;
 
  public:
   handle_help_gen_class() :
-    full_help (false), short_opt (false)
+    detailed_help (false), full_help (false), short_opt (false)
   {
   }
   
-  handle_help_gen_class(bool _full_help, const string &_parser_name, bool _short_opt) :
-    full_help (_full_help), parser_name (_parser_name), short_opt (_short_opt)
+  handle_help_gen_class(bool _detailed_help, bool _full_help, const string &_parser_name, bool _short_opt) :
+    detailed_help (_detailed_help), full_help (_full_help), parser_name (_parser_name), short_opt (_short_opt)
   {
   }
 
@@ -52,6 +53,11 @@ class handle_help_gen_class
       }
     if (start+1 <= s.size ())
       stream << s.substr (start);
+  }
+
+  void set_detailed_help(bool _detailed_help)
+  {
+    detailed_help = _detailed_help;
   }
 
   void set_full_help(bool _full_help)

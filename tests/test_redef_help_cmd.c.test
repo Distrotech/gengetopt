@@ -70,6 +70,7 @@ static
 void init_args_info(struct gengetopt_args_info *args_info)
 {
 
+
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->height_help = gengetopt_args_info_help[2] ;
@@ -83,10 +84,7 @@ test_redef_help_cmd_parser_print_version (void)
   printf ("%s %s\n", TEST_REDEF_HELP_CMD_PARSER_PACKAGE, TEST_REDEF_HELP_CMD_PARSER_VERSION);
 }
 
-void
-test_redef_help_cmd_parser_print_help (void)
-{
-  int i = 0;
+static void print_help_common(void) {
   test_redef_help_cmd_parser_print_version ();
 
   if (strlen(gengetopt_args_info_purpose) > 0)
@@ -99,7 +97,13 @@ test_redef_help_cmd_parser_print_help (void)
 
   if (strlen(gengetopt_args_info_description) > 0)
     printf("%s\n", gengetopt_args_info_description);
+}
 
+void
+test_redef_help_cmd_parser_print_help (void)
+{
+  int i = 0;
+  print_help_common();
   while (gengetopt_args_info_help[i])
     printf("%s\n", gengetopt_args_info_help[i++]);
 }
@@ -217,8 +221,7 @@ test_redef_help_cmd_parser_free (struct gengetopt_args_info *args_info)
 }
 
 
-/* gengetopt_strdup() */
-/* strdup.c replacement of strdup, which is not standard */
+/** @brief replacement of strdup, which is not standard */
 char *
 gengetopt_strdup (const char *s)
 {
@@ -422,6 +425,7 @@ test_redef_help_cmd_parser_internal (int argc, char * const *argv, struct genget
         {
         case 'h':	/* height.  */
         
+        
           if (update_arg( 0 , 
                0 , &(args_info->height_given),
               &(local_args_info.height_given), optarg, 0, 0, ARG_NO,
@@ -432,6 +436,7 @@ test_redef_help_cmd_parser_internal (int argc, char * const *argv, struct genget
         
           break;
         case 'V':	/* vavoom instead of version.  */
+        
         
           if (update_arg( 0 , 
                0 , &(args_info->vavoom_given),

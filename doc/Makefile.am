@@ -59,7 +59,7 @@ GENERATEDINFOS = cmdline1.h.texinfo main1.cc.texinfo test_conf_parser.c.texinfo 
 test_conf_parser_ov2.c.texinfo help_output.texinfo \
 multiple_example.c.texinfo \
 test_multiple_parsers.c.texinfo \
-sample1.ggo.texinfo sample1.output.texinfo 
+sample1.ggo.texinfo sample1.output.texinfo sample1_2.output.texinfo 
 
 BUILT_SOURCES = $(GENERATEDINFOS)
 
@@ -67,7 +67,7 @@ RUNSOURCEHIGHLIGHT=$(SOURCEHIGHLIGHT) -f texinfo --style-file=texinfo.style --ou
 
 gengetopt.texinfo: $(GENERATEDINFOS)
 
-SUFFIXES = .h.texinfo .cc.texinfo .c.texinfo .ggo.texinfo
+SUFFIXES = .h.texinfo .cc.texinfo .c.texinfo .ggo.texinfo .ggo
 
 if NO_SOURCEHIGHLIGHT
 .h.h.texinfo:
@@ -120,6 +120,10 @@ help_output.texinfo: $(top_srcdir)/src/cmdline.ggo
 sample1.output.texinfo: sample1.ggo
 	$(MAKE) $(AM_MAKEFLAGS) sample1$(EXEEXT)
 	./sample1$(EXEEXT) --help | sed -f $(srcdir)/input.sed > $@
+
+sample1_2.output.texinfo: sample1.ggo
+	$(MAKE) $(AM_MAKEFLAGS) sample1$(EXEEXT)
+	./sample1$(EXEEXT) --detailed-help | sed -f $(srcdir)/input.sed > $@
 
 EXTRA_DIST = sample1.ggo sample2.ggo samples.stamp \
              cmdline1.c cmdline1.h cmdline2.c cmdline2.h \

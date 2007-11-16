@@ -5,6 +5,9 @@ case '@short_option@':	/* @option_comment@.  */
 @gen_else@if (strcmp (long_options[option_index].name, "@long_option@") == 0)
 {
 @ENDIF@
+@IF@ option_has_mode @THEN@
+  args_info->@group_var_name@_mode_counter += 1;
+@endif@
 @IF@ multiple @THEN@
 @IF@ option_has_type @THEN@
   if (update_multiple_arg_temp(&@structure@, 

@@ -36,6 +36,7 @@ struct @args_info@
   @option_arg:method@
   @option_given:method@
   @group_counters:method{iteration=true}@
+  @mode_counters:method{iteration=true}@
 } ;
 
 /** @@brief The additional parameters to pass to parser functions */
@@ -57,6 +58,10 @@ extern const char *@args_info@_help[];
 @IF@ has_hidden @THEN@
 /** @@brief all the lines making the full help output (including hidden options) */
 extern const char *@args_info@_full_help[];
+@ENDIF@
+@IF@ has_details @THEN@
+/** @@brief all the lines making the detailed help output (including hidden options and details) */
+extern const char *@args_info@_detailed_help[];
 @ENDIF@
 
 /**
@@ -124,6 +129,12 @@ void @parser_name@_print_help(void);
  * Print the full help (including hidden options)
  */
 void @parser_name@_print_full_help(void);
+@ENDIF@
+@IF@ has_details @THEN@
+/**
+ * Print the detailed help (including hidden options and details)
+ */
+void @parser_name@_print_detailed_help(void);
 @ENDIF@
 /**
  * Print the version

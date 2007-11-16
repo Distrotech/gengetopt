@@ -24,6 +24,9 @@
 #include "my_string.h"
 #include "my_map.h"
 
+/**
+ * Represents a group of options
+ */
 struct Group
 {
   string desc;
@@ -33,5 +36,17 @@ struct Group
 };
 
 typedef map<string,Group> groups_collection_t;
+
+/**
+ * Represents a mode of options
+ */
+struct Mode
+{
+  string desc;
+
+  Mode(const string &s) : desc (s) {}
+};
+
+typedef map<string,Mode> modes_collection_t;
 
 #endif // GROUPS_H

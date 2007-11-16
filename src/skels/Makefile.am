@@ -28,27 +28,7 @@ INCLUDES = -I@top_srcdir@/src
 
 noinst_LTLIBRARIES = libgen.la
 
-libgen_la_SOURCES = header.cc c_source.cc handle_help.cc handle_version.cc \
-generic_option.cc required_option.cc dependant_option.cc \
-group_counter.cc group_option.cc \
-print_help_string.cc \
-multiple_opt_list.cc multiple_opt_list.h \
-multiple_fill_array.cc multiple_fill_array.h \
-copyright.cc \
-free_string.cc free_string.h \
-free_multiple.cc free_multiple.h \
-reset_group.cc reset_group.h \
-exit_failure.cc exit_failure.h \
-update_given.cc update_given.h \
-option_arg.cc option_arg.h \
-given_field.cc given_field.h \
-clear_given.cc clear_given.h \
-clear_arg.cc clear_arg.h \
-free_list.cc free_list.h \
-file_save.cc file_save.h \
-file_save_multiple.cc file_save_multiple.h \
-init_args_info.cc init_args_info.h \
-custom_getopt_gen.cc custom_getopt_gen.h
+libgen_la_SOURCES = $(BUILT_SOURCES)
 
 BUILT_SOURCES = header.h c_source.h header.cc c_source.cc \
 handle_help.h handle_version.h handle_help.cc handle_version.cc \
@@ -73,7 +53,8 @@ free_list.cc free_list.h \
 file_save.cc file_save.h \
 file_save_multiple.cc file_save_multiple.h \
 init_args_info.cc init_args_info.h \
-custom_getopt_gen.cc custom_getopt_gen.h
+custom_getopt_gen.cc custom_getopt_gen.h \
+check_modes.cc check_modes.h
 
 EXTRA_DIST = header.h_skel c_source.h_skel handle_help.h_skel \
 handle_version.h_skel generic_option.h_skel \
@@ -96,6 +77,7 @@ file_save.h_skel \
 file_save_multiple.h_skel \
 init_args_info.h_skel \
 custom_getopt_gen.h_skel \
+check_modes.h_skel \
 $(BUILT_SOURCES)
 
 built-clean:

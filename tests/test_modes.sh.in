@@ -1,0 +1,19 @@
+#! @SHELL@
+
+if $* ./test_modes -a; then
+    if $* ./test_modes -a -b; then
+      if $* ./test_modes -a foo -m10 -d bar; then
+        false;
+      else
+        if $* ./test_modes -m10 -d bar; then
+          false;
+        else
+          true;
+        fi;
+      fi;
+    else
+      false;
+    fi
+else
+    false;
+fi

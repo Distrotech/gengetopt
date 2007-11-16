@@ -155,6 +155,20 @@ has_multiple_options_with_default()
 }
 
 bool
+has_options_with_details()
+{
+  gengetopt_option * opt = 0;
+
+  for (gengetopt_option_list::iterator it = gengetopt_options.begin();
+                    it != gengetopt_options.end() && (opt = *it);
+                    ++it)
+    if (opt->details)
+      return true;
+
+  return false;
+}
+
+bool
 has_options_with_type()
 {
   gengetopt_option * opt = 0;
@@ -163,6 +177,20 @@ has_options_with_type()
                     it != gengetopt_options.end() && (opt = *it);
                     ++it)
     if (opt->type)
+      return true;
+
+  return false;
+}
+
+bool
+has_options_with_mode()
+{
+  gengetopt_option * opt = 0;
+
+  for (gengetopt_option_list::iterator it = gengetopt_options.begin();
+                    it != gengetopt_options.end() && (opt = *it);
+                    ++it)
+    if (opt->mode_value)
       return true;
 
   return false;

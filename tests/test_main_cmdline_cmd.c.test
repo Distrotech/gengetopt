@@ -77,6 +77,7 @@ static
 void init_args_info(struct gengetopt_args_info *args_info)
 {
 
+
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->first_cmd_help = gengetopt_args_info_help[2] ;
@@ -94,10 +95,7 @@ test_main_cmdline_cmd_parser_print_version (void)
   printf ("%s %s\n", TEST_MAIN_CMDLINE_CMD_PARSER_PACKAGE, TEST_MAIN_CMDLINE_CMD_PARSER_VERSION);
 }
 
-void
-test_main_cmdline_cmd_parser_print_help (void)
-{
-  int i = 0;
+static void print_help_common(void) {
   test_main_cmdline_cmd_parser_print_version ();
 
   if (strlen(gengetopt_args_info_purpose) > 0)
@@ -110,7 +108,13 @@ test_main_cmdline_cmd_parser_print_help (void)
 
   if (strlen(gengetopt_args_info_description) > 0)
     printf("%s\n", gengetopt_args_info_description);
+}
 
+void
+test_main_cmdline_cmd_parser_print_help (void)
+{
+  int i = 0;
+  print_help_common();
   while (gengetopt_args_info_help[i])
     printf("%s\n", gengetopt_args_info_help[i++]);
 }
@@ -288,8 +292,7 @@ test_main_cmdline_cmd_parser_free (struct gengetopt_args_info *args_info)
 }
 
 
-/* gengetopt_strdup() */
-/* strdup.c replacement of strdup, which is not standard */
+/** @brief replacement of strdup, which is not standard */
 char *
 gengetopt_strdup (const char *s)
 {
@@ -808,6 +811,7 @@ test_main_cmdline_cmd_parser_internal (int argc, char * const *argv, struct geng
           exit (EXIT_SUCCESS);
 
         case 'F':	/* the first command line to parse.  */
+        
           if (update_multiple_arg_temp(&first_cmd_list, 
               &(local_args_info.first_cmd_given), optarg, 0, 0, ARG_STRING,
               "first-cmd", 'F',
@@ -816,6 +820,7 @@ test_main_cmdline_cmd_parser_internal (int argc, char * const *argv, struct geng
         
           break;
         case 'S':	/* the second command line to parse.  */
+        
           if (update_multiple_arg_temp(&second_cmd_list, 
               &(local_args_info.second_cmd_given), optarg, 0, 0, ARG_STRING,
               "second-cmd", 'S',

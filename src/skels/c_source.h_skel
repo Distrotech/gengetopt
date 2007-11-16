@@ -29,10 +29,25 @@ const char *@args_info@_usage = "Usage:@if@ no_package @then@ " @package_var_nam
 
 const char *@args_info@_description = "@description@";
 
+@IF@ has_hidden or has_details @THEN@
+@IF@ has_details @THEN@
+const char *@args_info@_detailed_help[] = {
+  @detailed_help_option_print:method@  0
+};
 @IF@ has_hidden @THEN@
+static void
+init_full_help_array(void)
+{
+  @full_help_option_print:method@
+}
+
+const char *@args_info@_full_help[@help_string_num@];
+@ENDIF@
+@ELSEIF@ has_hidden @THEN@
 const char *@args_info@_full_help[] = {
   @full_help_option_print:method@  0
 };
+@ENDIF@
 
 static void
 init_help_array(void)
@@ -140,9 +155,8 @@ void clear_args (struct @args_info@ *args_info)
 static
 void init_args_info(struct @args_info@ *args_info)
 {
-@IF@ has_hidden @THEN@
-  init_help_array();
-@endif@
+@IF@ has_hidden and has_details @then@  init_full_help_array(); @endif@
+@IF@ has_hidden or has_details @then@  init_help_array(); @endif@
   @init_args_info:method@
 }
 
@@ -152,10 +166,7 @@ void
   printf ("%s %s\n", @package_var_name@, @version_var_name@);
 }
 
-void
-@parser_name@_print_help (void)
-{
-  int i = 0;
+static void print_help_common(void) {
   @parser_name@_print_version ();
 
   if (strlen(@args_info@_purpose) > 0)
@@ -168,7 +179,13 @@ void
 
   if (strlen(@args_info@_description) > 0)
     printf("%s\n", @args_info@_description);
+}
 
+void
+@parser_name@_print_help (void)
+{
+  int i = 0;
+  print_help_common();
   while (@args_info@_help[i])
     printf("%s\n", @args_info@_help[i++]);
 }
@@ -178,18 +195,20 @@ void
 @parser_name@_print_full_help (void)
 {
   int i = 0;
-  @parser_name@_print_version ();
-
-  if (strlen(@args_info@_purpose) > 0)
-    printf("\n%s\n", @args_info@_purpose);
-
-  printf("\n%s\n\n", @args_info@_usage);
-
-  if (strlen(@args_info@_description) > 0)
-    printf("%s\n", @args_info@_description);
-
+  print_help_common();
   while (@args_info@_full_help[i])
     printf("%s\n", @args_info@_full_help[i++]);
+}
+
+@ENDIF@
+@IF@ has_details @THEN@
+void
+@parser_name@_print_detailed_help (void)
+{
+  int i = 0;
+  print_help_common();
+  while (@args_info@_detailed_help[i])
+    printf("%s\n", @args_info@_detailed_help[i++]);
 }
 
 @ENDIF@
@@ -240,7 +259,7 @@ free_string_field (char **s)
 }
 @ENDIF@
 
-@IF@ multiple_options @THEN@
+@IF@ multiple_token_functions @THEN@
 /** @@brief generic value variable */
 union generic_value {
 @IF@ has_arg_int or has_arg_enum @THEN@
@@ -290,7 +309,7 @@ static void add_node(struct generic_list **list) {
   new_node->orig = NULL;
 }
 
-@IF@ (not multiple_options_all_string) and multiple_token_vars @THEN@
+@IF@ (not multiple_options_all_string) and multiple_token_functions @THEN@
 static void
 free_multiple_field(unsigned int len, void **arg, char ***orig)
 {
@@ -453,8 +472,7 @@ check_possible_values(const char *val, char *values[])
 @ENDIF@
 
 @IF@ do_generate_strdup @THEN@
-/* gengetopt_strdup() */
-/* strdup.c replacement of strdup, which is not standard */
+/** @@brief replacement of strdup, which is not standard */
 char *
 gengetopt_strdup (const char *s)
 {
@@ -679,6 +697,7 @@ int
 
 static char *package_name = 0;
 
+@IF@ not no_options @THEN@
 /**
  * @@brief updates an option
  * @@param field the generic pointer to the field to update
@@ -875,8 +894,9 @@ int update_arg(void *field, char **orig_field,
 
   return 0; /* OK */
 }
+@ENDIF@
 
-@IF@ multiple_options @THEN@
+@IF@ multiple_token_functions @THEN@
 /**
  * @@brief store information about a multiple option in a temporary list
  * @@param list where to (temporarily) store multiple options
@@ -1144,6 +1164,30 @@ void update_multiple_arg(void *field, char ***orig_field,
   }
 }
 @ENDIF@
+@IF@ has_modes @THEN@
+
+static int check_modes(int given1[], const char *options1[],
+                       int given2[], const char *options2[])
+{
+  int i = 0, j = 0, errors = 0;
+  
+  while (given1[i] >= 0) {
+    if (given1[i]) {
+      while (given2[j] >= 0) {
+        if (given2[j]) {
+          ++errors;
+          fprintf(stderr, "%s: option %s conflicts with option %s\n",
+                  package_name, options1[i], options2[j]);
+        }
+        ++j;
+      }
+    }
+    ++i;
+  }
+  
+  return errors;
+}
+@ENDIF@
 
 int
 @parser_name@_internal (int argc, char * const *argv, struct @args_info@ *args_info,
@@ -1226,6 +1270,7 @@ int
 
   @multiple_fill_array:method{iteration=true}@
   @update_multiple_given:method{iteration=true}@
+  @check_modes:method{iteration=true}@
 
 @IF@ check_required_options @THEN@
   if (check_required)

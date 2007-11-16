@@ -14,9 +14,13 @@ group_counter_gen_class::generate_group_counter(ostream &stream, unsigned int in
 
   stream << "int ";
   generate_string (group_name, stream, indent + indent_str.length ());
-  stream << "_group_counter; /**< ";
+  stream << "_";
+  generate_string (name, stream, indent + indent_str.length ());
+  stream << "_counter; /**< ";
   stream << "@";
-  stream << "brief Counter for group ";
+  stream << "brief Counter for ";
+  generate_string (name, stream, indent + indent_str.length ());
+  stream << " ";
   generate_string (group_name, stream, indent + indent_str.length ());
   stream << " */";
 }

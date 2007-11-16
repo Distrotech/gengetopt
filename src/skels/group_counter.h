@@ -17,14 +17,15 @@ class group_counter_gen_class
 {
  protected:
   string group_name;
+  string name;
 
  public:
   group_counter_gen_class()
   {
   }
   
-  group_counter_gen_class(const string &_group_name) :
-    group_name (_group_name)
+  group_counter_gen_class(const string &_group_name, const string &_name) :
+    group_name (_group_name), name (_name)
   {
   }
 
@@ -54,6 +55,11 @@ class group_counter_gen_class
   void set_group_name(const string &_group_name)
   {
     group_name = _group_name;
+  }
+
+  void set_name(const string &_name)
+  {
+    name = _name;
   }
 
   void generate_group_counter(ostream &stream, unsigned int indent = 0);

@@ -31,6 +31,8 @@ Version 2.22
      strings of the full help array (as suggested by Gyozo Papp)
    * the _help field for options is correctly generated even in the presence
      of additional text before and after an option and also groups
+   * for an option one can specify the "details" which will be printed in
+     case --detailed-help is specified
 
 Version 2.21
 

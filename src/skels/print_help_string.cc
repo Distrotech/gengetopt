@@ -14,8 +14,8 @@ print_help_string_gen_class::generate_print_help_string(ostream &stream, unsigne
 
   if (shared)
     {
-      generate_string (args_info, stream, indent + indent_str.length ());
-      stream << "_help[";
+      generate_string (target, stream, indent + indent_str.length ());
+      stream << "[";
       generate_string (index, stream, indent + indent_str.length ());
       stream << "] = ";
       if (last)
@@ -24,8 +24,8 @@ print_help_string_gen_class::generate_print_help_string(ostream &stream, unsigne
         }
       else
         {
-          generate_string (args_info, stream, indent + indent_str.length ());
-          stream << "_full_help[";
+          generate_string (from, stream, indent + indent_str.length ());
+          stream << "[";
           generate_string (full_index, stream, indent + indent_str.length ());
           stream << "];";
         }
