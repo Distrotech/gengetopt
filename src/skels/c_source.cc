@@ -97,14 +97,13 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << indent_str;
   stream << "const char *";
   generate_string (args_info, stream, indent + indent_str.length ());
-  stream << "_usage = \"Usage:";
+  stream << "_usage = \"Usage: ";
   if (no_package)
     {
-      stream << " \" ";
+      stream << "\" ";
       generate_string (package_var_name, stream, indent + indent_str.length ());
       stream << " \"";
     }
-  stream << " ";
   generate_string (usage_string, stream, indent + indent_str.length ());
   stream << "\";";
   stream << "\n";

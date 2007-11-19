@@ -55,11 +55,14 @@ AM_MAKEINFOHTMLFLAGS=--no-split
 
 info_TEXINFOS = gengetopt.texinfo
 
-GENERATEDINFOS = cmdline1.h.texinfo main1.cc.texinfo test_conf_parser.c.texinfo \
+GENERATEDINFOS = cmdline1.h.texinfo main1.cc.texinfo \
+test_conf_parser.c.texinfo \
 test_conf_parser_ov2.c.texinfo help_output.texinfo \
 multiple_example.c.texinfo \
 test_multiple_parsers.c.texinfo \
-sample1.ggo.texinfo sample1.output.texinfo sample1_2.output.texinfo 
+sample1.ggo.texinfo sample1.output.texinfo sample1_2.output.texinfo \
+test_modes_cmd.ggo.texinfo \
+help_modes.output.texinfo
 
 BUILT_SOURCES = $(GENERATEDINFOS)
 
@@ -83,6 +86,9 @@ test_conf_parser_ov2.c.texinfo: $(top_srcdir)/tests/test_conf_parser_ov2.c
 	touch $@
 
 test_multiple_parsers.c.texinfo: $(top_srcdir)/tests/test_multiple_parsers.c
+	touch $@
+
+test_modes_cmd.ggo.texinfo: $(top_srcdir)/tests/test_modes_cmd.ggo
 	touch $@
 
 .c.c.texinfo:
@@ -110,12 +116,18 @@ test_multiple_parsers.c.texinfo: $(top_srcdir)/tests/test_multiple_parsers.c
 .c.c.texinfo:
 	$(RUNSOURCEHIGHLIGHT) $< 
 
+test_modes_cmd.ggo.texinfo: $(top_srcdir)/tests/test_modes_cmd.ggo
+	$(RUNSOURCEHIGHLIGHT) $(top_srcdir)/tests/test_modes_cmd.ggo --failsafe
+
 .ggo.ggo.texinfo:
 	$(RUNSOURCEHIGHLIGHT) $< --failsafe
 endif
 
 help_output.texinfo: $(top_srcdir)/src/cmdline.ggo
 	$(PROGNAME) --show-help -i $(top_srcdir)/src/cmdline.ggo --set-package="gengetopt" --set-version="" > $@
+
+help_modes.output.texinfo: $(top_srcdir)/tests/test_modes_cmd.ggo
+	$(PROGNAME) --show-help --long-help -i $(top_srcdir)/tests/test_modes_cmd.ggo > $@
 
 sample1.output.texinfo: sample1.ggo
 	$(MAKE) $(AM_MAKEFLAGS) sample1$(EXEEXT)

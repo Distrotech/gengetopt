@@ -70,8 +70,8 @@ struct gengetopt_args_info
 
   char **inputs ; /**< @brief unamed options (options without names) */
   unsigned inputs_num ; /**< @brief unamed options number */
-  int grp1_mode_counter; /**< @brief Counter for mode grp1 */
-  int my_grp2_mode_counter; /**< @brief Counter for mode my_grp2 */
+  int mode_2_mode_counter; /**< @brief Counter for mode mode_2 */
+  int mode1_mode_counter; /**< @brief Counter for mode mode1 */
   int my_mode_mode_counter; /**< @brief Counter for mode my_mode */
 } ;
 

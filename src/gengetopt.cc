@@ -599,7 +599,6 @@ gengetopt_create_option (gengetopt_option *&n, const char * long_opt, char short
   
   if (mode_value != 0) {
       n->mode_value = strdup(mode_value);
-      n->required = 0;
       modes_collection_t::const_iterator it =
           gengetopt_modes.find(string(n->mode_value));
       if (it == gengetopt_modes.end())
@@ -692,9 +691,6 @@ gengetopt_check_option (gengetopt_option *n, bool groupoption, bool modeoption)
   {
       if (! modeoption)
           return NOT_MODE_OPTION;
-
-      n->required = 0;
-      n->required_set = true;
 
       modes_collection_t::const_iterator it =
           gengetopt_modes.find(string(n->mode_value));

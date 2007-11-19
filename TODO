@@ -36,9 +36,10 @@ arguments and then in the main, check that the results are as expected.
 
 PARTITIONS (MODES)
 
-- in the help print a different usage for each mode
-- keep track of number of options given for each partition
-- check modes after parsing all options
-- test errors for modes
-- test_modes_option_help
-- print mode information in help
+- document modes: see where groups are named, and name also modes in those
+contexts
+
+HELP & VERSION
+
+- allow complete redefinition
+- use details in cmdline.ggo

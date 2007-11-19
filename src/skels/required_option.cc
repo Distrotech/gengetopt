@@ -14,7 +14,9 @@ required_option_gen_class::generate_required_option(ostream &stream, unsigned in
 
   if (checkrange)
     {
-      stream << "if (check_multiple_option_occurrences(";
+      stream << "if (";
+      generate_string (mode_condition, stream, indent + indent_str.length ());
+      stream << "check_multiple_option_occurrences(";
       generate_string (package_var_name, stream, indent + indent_str.length ());
       stream << ", args_info->";
       generate_string (option_var_name, stream, indent + indent_str.length ());
@@ -35,7 +37,9 @@ required_option_gen_class::generate_required_option(ostream &stream, unsigned in
     }
   else
     {
-      stream << "if (! args_info->";
+      stream << "if (";
+      generate_string (mode_condition, stream, indent + indent_str.length ());
+      stream << "! args_info->";
       generate_string (option_var_name, stream, indent + indent_str.length ());
       stream << "_given)";
       stream << "\n";

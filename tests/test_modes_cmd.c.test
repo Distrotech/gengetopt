@@ -33,12 +33,15 @@ const char *gengetopt_args_info_help[] = {
   "\nsome modes just for testing:",
   "  -N, --no-mode           a generic option not beloging to any mode",
   "      --no-mode2=STRING   another generic option not beloging to any mode",
+  "\n Mode: mode1\n  any option of this mode is in contrast with any option of the other mode\n  Notice that this description is quite long so it may spawn many lines...      \n          fortunately gengetopt will wrap it for you :-)",
   "  -a, --opta              string a",
-  "  -A, --optA[=STRING]     string A",
+  "  -A, --optA[=STRING]     string A (mandatory)",
   "  -M, --optAmul[=STRING]  string M",
   "  -b, --optb              string b",
+  "\n Mode: mode 2",
   "      --optc              string c",
-  "  -d, --optd              string d",
+  "  -d, --optd              string d (mandatory)",
+  "\n Mode: my mode",
   "  -m, --mopt=INT          option of my mode",
     0
 };
@@ -77,8 +80,8 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->optc_given = 0 ;
   args_info->optd_given = 0 ;
   args_info->mopt_given = 0 ;
-  args_info->grp1_mode_counter = 0 ;
-  args_info->my_grp2_mode_counter = 0 ;
+  args_info->mode_2_mode_counter = 0 ;
+  args_info->mode1_mode_counter = 0 ;
   args_info->my_mode_mode_counter = 0 ;
 }
 
@@ -104,17 +107,17 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->no_mode_help = gengetopt_args_info_help[3] ;
   args_info->no_mode2_help = gengetopt_args_info_help[4] ;
-  args_info->opta_help = gengetopt_args_info_help[5] ;
+  args_info->opta_help = gengetopt_args_info_help[6] ;
   args_info->opta_min = -1;
   args_info->opta_max = -1;
-  args_info->optA_help = gengetopt_args_info_help[6] ;
-  args_info->optAmul_help = gengetopt_args_info_help[7] ;
+  args_info->optA_help = gengetopt_args_info_help[7] ;
+  args_info->optAmul_help = gengetopt_args_info_help[8] ;
   args_info->optAmul_min = -1;
   args_info->optAmul_max = -1;
-  args_info->optb_help = gengetopt_args_info_help[8] ;
-  args_info->optc_help = gengetopt_args_info_help[9] ;
-  args_info->optd_help = gengetopt_args_info_help[10] ;
-  args_info->mopt_help = gengetopt_args_info_help[11] ;
+  args_info->optb_help = gengetopt_args_info_help[9] ;
+  args_info->optc_help = gengetopt_args_info_help[11] ;
+  args_info->optd_help = gengetopt_args_info_help[12] ;
+  args_info->mopt_help = gengetopt_args_info_help[14] ;
   
 }
 
@@ -558,11 +561,23 @@ test_modes_cmd_parser_required2 (struct gengetopt_args_info *args_info, const ch
   int error = 0;
 
   /* checks for required options */
-  if (check_multiple_option_occurrences(prog_name, args_info->opta_given, args_info->opta_min, args_info->opta_max, "'--opta' ('-a')"))
+  if (args_info->mode1_mode_counter && check_multiple_option_occurrences(prog_name, args_info->opta_given, args_info->opta_min, args_info->opta_max, "'--opta' ('-a')"))
      error = 1;
   
-  if (check_multiple_option_occurrences(prog_name, args_info->optAmul_given, args_info->optAmul_min, args_info->optAmul_max, "'--optAmul' ('-M')"))
+  if (args_info->mode1_mode_counter && ! args_info->optA_given)
+    {
+      fprintf (stderr, "%s: '--optA' ('-A') option required%s\n", prog_name, (additional_error ? additional_error : ""));
+      error = 1;
+    }
+  
+  if (args_info->mode1_mode_counter && check_multiple_option_occurrences(prog_name, args_info->optAmul_given, args_info->optAmul_min, args_info->optAmul_max, "'--optAmul' ('-M')"))
      error = 1;
+  
+  if (args_info->mode_2_mode_counter && ! args_info->optd_given)
+    {
+      fprintf (stderr, "%s: '--optd' ('-d') option required%s\n", prog_name, (additional_error ? additional_error : ""));
+      error = 1;
+    }
   
   
   /* checks for dependences among options */
@@ -911,13 +926,13 @@ test_modes_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_a
         
           break;
         case 'a':	/* string a.  */
-          args_info->grp1_mode_counter += 1;
+          args_info->mode1_mode_counter += 1;
         
           local_args_info.opta_given++;
         
           break;
         case 'A':	/* string A.  */
-          args_info->grp1_mode_counter += 1;
+          args_info->mode1_mode_counter += 1;
         
         
           if (update_arg( (void *)&(args_info->optA_arg), 
@@ -930,7 +945,7 @@ test_modes_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_a
         
           break;
         case 'M':	/* string M.  */
-          args_info->grp1_mode_counter += 1;
+          args_info->mode1_mode_counter += 1;
         
           if (update_multiple_arg_temp(&optAmul_list, 
               &(local_args_info.optAmul_given), optarg, 0, 0, ARG_STRING,
@@ -940,7 +955,7 @@ test_modes_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_a
         
           break;
         case 'b':	/* string b.  */
-          args_info->grp1_mode_counter += 1;
+          args_info->mode1_mode_counter += 1;
         
         
           if (update_arg( 0 , 
@@ -953,7 +968,7 @@ test_modes_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_a
         
           break;
         case 'd':	/* string d.  */
-          args_info->my_grp2_mode_counter += 1;
+          args_info->mode_2_mode_counter += 1;
         
         
           if (update_arg( 0 , 
@@ -997,7 +1012,7 @@ test_modes_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_a
           /* string c.  */
           else if (strcmp (long_options[option_index].name, "optc") == 0)
           {
-            args_info->my_grp2_mode_counter += 1;
+            args_info->mode_2_mode_counter += 1;
           
           
             if (update_arg( 0 , 
@@ -1032,24 +1047,24 @@ test_modes_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_a
   args_info->optAmul_given += local_args_info.optAmul_given;
   local_args_info.optAmul_given = 0;
   
-  if (args_info->grp1_mode_counter && args_info->my_grp2_mode_counter) {
-    error += check_modes(
-      (int []){args_info->opta_given, args_info->optA_given, args_info->optAmul_given, args_info->optb_given,  -1},
-      (const char *[]){"--opta", "--optA", "--optAmul", "--optb",  0},
-      (int []){args_info->optc_given, args_info->optd_given,  -1},
-      (const char *[]){"--optc", "--optd",  0});
-  }
-  if (args_info->grp1_mode_counter && args_info->my_mode_mode_counter) {
-    error += check_modes(
-      (int []){args_info->opta_given, args_info->optA_given, args_info->optAmul_given, args_info->optb_given,  -1},
-      (const char *[]){"--opta", "--optA", "--optAmul", "--optb",  0},
-      (int []){args_info->mopt_given,  -1},
-      (const char *[]){"--mopt",  0});
-  }
-  if (args_info->my_grp2_mode_counter && args_info->my_mode_mode_counter) {
+  if (args_info->mode_2_mode_counter && args_info->mode1_mode_counter) {
     error += check_modes(
       (int []){args_info->optc_given, args_info->optd_given,  -1},
       (const char *[]){"--optc", "--optd",  0},
+      (int []){args_info->opta_given, args_info->optA_given, args_info->optAmul_given, args_info->optb_given,  -1},
+      (const char *[]){"--opta", "--optA", "--optAmul", "--optb",  0});
+  }
+  if (args_info->mode_2_mode_counter && args_info->my_mode_mode_counter) {
+    error += check_modes(
+      (int []){args_info->optc_given, args_info->optd_given,  -1},
+      (const char *[]){"--optc", "--optd",  0},
+      (int []){args_info->mopt_given,  -1},
+      (const char *[]){"--mopt",  0});
+  }
+  if (args_info->mode1_mode_counter && args_info->my_mode_mode_counter) {
+    error += check_modes(
+      (int []){args_info->opta_given, args_info->optA_given, args_info->optAmul_given, args_info->optb_given,  -1},
+      (const char *[]){"--opta", "--optA", "--optAmul", "--optb",  0},
       (int []){args_info->mopt_given,  -1},
       (const char *[]){"--mopt",  0});
   }

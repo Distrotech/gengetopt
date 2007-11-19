@@ -25,7 +25,7 @@
 
 const char *@args_info@_purpose = "@purpose@";
 
-const char *@args_info@_usage = "Usage:@if@ no_package @then@ " @package_var_name@ "@endif@ @usage_string@";
+const char *@args_info@_usage = "Usage: @if@ no_package @then@" @package_var_name@ "@endif@@usage_string@";
 
 const char *@args_info@_description = "@description@";
 

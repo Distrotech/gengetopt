@@ -99,6 +99,49 @@ extern char * gengetopt_input_filename;
 extern groups_collection_t gengetopt_groups;
 extern modes_collection_t gengetopt_modes;
 
+// a map where for each mode we store the corresponding given field names
+// and the options
+typedef std::pair<string, string> OptionValueElem;
+typedef std::list<OptionValueElem> ModeOptions;
+typedef std::map<string, ModeOptions> ModeOptionMap;
+
+static ModeOptionMap modeOptionMap;
+
+static const ModeOptionMap &getModeOptionMap() {
+    if (modeOptionMap.size() == 0) {
+        // it's the first time, so we build it
+        struct gengetopt_option * opt;
+        foropt {
+            if (opt->mode_value) {
+                modeOptionMap[opt->mode_value].push_back
+                (std::make_pair("args_info->" + string(opt->var_arg) + "_given",
+                        string("\"--") + opt->long_opt + "\""));
+            }
+        }
+    }
+    
+    return modeOptionMap;
+}
+
+// a map associating to a mode the list of gengetopt_options
+typedef std::map<string, gengetopt_option_list> ModeOptMap;
+
+static ModeOptMap modeOptMap;
+
+static const ModeOptMap &getModeOptMap() {
+    if (modeOptMap.size() == 0) {
+        // it's the first time, so we build it
+        struct gengetopt_option * opt;
+        foropt {
+            if (opt->mode_value) {
+                modeOptMap[opt->mode_value].push_back(opt);
+            }
+        }
+    }
+    
+    return modeOptMap;
+}
+
 static void _generate_option_arg(ostream &stream,
                                  unsigned int indent,
                                  struct gengetopt_option * opt);
@@ -547,6 +590,48 @@ CmdlineParserCreator::generate_option_values(ostream &stream,
     stream << "\n";
 }
 
+static void generate_option_usage_string(gengetopt_option * opt, ostream &usage) {
+    const char   *type_str;
+
+    usage << " ";
+
+    if (!opt->required)
+        usage << "[";
+
+    switch (opt->type) {
+    case ARG_NO:
+    case ARG_FLAG:
+        if (opt->short_opt)
+            usage << "-" << opt->short_opt << "|";
+        usage << "--" << opt->long_opt;
+        break;
+    case ARG_INT:
+    case ARG_SHORT:
+    case ARG_LONG:
+    case ARG_FLOAT:
+    case ARG_DOUBLE:
+    case ARG_LONGDOUBLE:
+    case ARG_LONGLONG:
+    case ARG_STRING:
+        if (opt->type_str)
+            type_str = opt->type_str;
+        else
+            type_str = arg_names[opt->type];
+
+        if (opt->short_opt)
+            usage << "-" << opt->short_opt << type_str << "|";
+        usage << "--" << opt->long_opt << "=" << type_str;
+
+        break;
+    default: fprintf (stderr, "gengetopt: bug found in %s:%d!!\n",
+            __FILE__, __LINE__);
+    abort ();
+    }
+
+    if (!opt->required)
+        usage << "]";
+}
+
 const string
 CmdlineParserCreator::generate_usage_string(bool use_config_package)
 {
@@ -557,107 +642,60 @@ CmdlineParserCreator::generate_usage_string(bool use_config_package)
 
   struct gengetopt_option * opt;
   ostringstream usage;
-  const char   *type_str;
-
-  if (gengetopt_package)
-    usage << gengetopt_package << " ";
 
   // otherwise the config.h package constant will be used
-
-  if ( long_help )
-    {
+  if (gengetopt_package)
+    usage << gengetopt_package;
+ 
+  if ( long_help ) {
+      // we first generate usage strings of required options
+      // handle mode options separately
       foropt
-        if (opt->required && !opt->hidden) /* required options */
-          switch (opt->type) {
-          case ARG_NO:
-          case ARG_FLAG:
-            if (opt->short_opt)
-              {
-                usage << "-" << opt->short_opt << "|";
-              }
-            usage << "--" << opt->long_opt;
-            break;
-
-          case ARG_INT:
-          case ARG_SHORT:
-          case ARG_LONG:
-          case ARG_FLOAT:
-          case ARG_DOUBLE:
-          case ARG_LONGDOUBLE:
-          case ARG_LONGLONG:
-          case ARG_STRING:
-            if (opt->type_str)
-              type_str = opt->type_str;
-            else
-              type_str = arg_names[opt->type];
-
-            if (opt->short_opt)
-              {
-                usage << "-" << opt->short_opt
-                      << type_str << "|";
-              }
-            usage << "--" << opt->long_opt << "=" <<
-              type_str << " ";
-            break;
-          default:
-            fprintf (stderr, "gengetopt: bug found in %s:%d!!\n",
-                     __FILE__, __LINE__);
-            abort ();
+          if (opt->required && !opt->hidden && !opt->mode_value) {
+              generate_option_usage_string(opt, usage);
           }
+      
       foropt
-      if (!opt->required && !opt->hidden) {
-        usage << "[";
-
-          switch (opt->type) {
-          case ARG_NO:
-          case ARG_FLAG:
-            if (opt->short_opt)
-              {
-                usage << "-" << opt->short_opt << "|";
-              }
-            usage << "--" << opt->long_opt;
-            break;
-          case ARG_INT:
-          case ARG_SHORT:
-          case ARG_LONG:
-          case ARG_FLOAT:
-          case ARG_DOUBLE:
-          case ARG_LONGDOUBLE:
-          case ARG_LONGLONG:
-          case ARG_STRING:
-            if (opt->type_str)
-              type_str = opt->type_str;
-            else
-              type_str = arg_names[opt->type];
-
-            if (opt->short_opt)
-              {
-                usage << "-" << opt->short_opt
-                      << type_str << "|";
-              }
-            usage << "--" << opt->long_opt << "=" <<
-              type_str;
-            break;
-          default: fprintf (stderr, "gengetopt: bug found in %s:%d!!\n",
-                            __FILE__, __LINE__);
-            abort ();
+          if (!opt->required && !opt->hidden && !opt->mode_value) {
+              generate_option_usage_string(opt, usage);
           }
-
-          usage << "] ";
-
-      }
-    }
-  else
-    { /* if not long help we generate it as GNU standards */
-      usage << "[OPTIONS]...";
-    }
-
-  if ( unamed_options )
-    usage << " [" << unamed_options << "]...";
+  } else { /* if not long help we generate it as GNU standards */
+      usage << " [OPTIONS]...";
+  }
 
   string wrapped;
 
+  if ( unamed_options )
+      usage << " [" << unamed_options << "]...";
+
   wrap_cstr ( wrapped, strlen("Usage: "), 2, usage.str() );
+
+  // now deal with modes
+  if (has_modes && long_help) {
+      const ModeOptMap &modeOptMap = getModeOptMap();
+      
+      for (ModeOptMap::const_iterator map_it = modeOptMap.begin(); map_it != modeOptMap.end(); ++map_it) {
+          string mode_line; // a mode alternative in the usage string
+          gengetopt_option_list::const_iterator opt_it;
+          usage.str(""); // reset the usage string buffer
+          
+          for (opt_it = map_it->second.begin(); opt_it != map_it->second.end(); ++opt_it) {
+              if (((*opt_it)->required) && !((*opt_it)->hidden)) {
+                  generate_option_usage_string(*opt_it, usage);
+              }
+          }
+          
+          for (opt_it = map_it->second.begin(); opt_it != map_it->second.end(); ++opt_it) {
+              if (!((*opt_it)->required) && !((*opt_it)->hidden)) {
+                  generate_option_usage_string(*opt_it, usage);
+              }
+          }
+          
+          wrap_cstr ( mode_line, strlen("  or : "), 2, gengetopt_package + usage.str() );
+          wrapped += "\\n  or : "; 
+          wrapped += mode_line;
+      }
+  }
 
   return wrapped;
 }
@@ -869,7 +907,7 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int inde
     }
     init_args_info_gen.set_help_strings(help_string);
 
-    const char *current_section = 0, *current_group = 0;
+    const char *current_section = 0, *current_group = 0, *current_mode = 0;
 
     // we have to skip section description references (that appear in the help vector)
     foropt {
@@ -896,6 +934,14 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int inde
             }
         }
         
+        // skip mode desc
+        if (opt->mode_value) {
+            if (!current_mode || strcmp(current_mode, opt->mode_value) != 0) {
+                current_mode = opt->mode_value;
+                ++i;
+            }
+        }
+
         // also skip the text before
         if (opt->text_before)
             ++i;
@@ -1010,6 +1056,7 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 
   /* print justified options */
   char *prev_group = 0;
+  char *prev_mode = 0;
   char *curr_section = 0;
   bool first_option = true;
 
@@ -1060,6 +1107,25 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
           option_list->push_back (group_string);
 
           prev_group = opt->group_value;
+      }
+
+      if (opt->mode_value &&
+              (! prev_mode || strcmp (opt->mode_value, prev_mode) != 0))
+      {
+          string mode_string = "\\n Mode: ";
+          string wrapped_desc;
+
+          if (opt->mode_desc && strlen (opt->mode_desc))
+          {
+              wrapped_desc = "\\n  ";
+              wrap_cstr (wrapped_desc, 2, 0, opt->mode_desc);
+          }
+
+          mode_string += opt->mode_value + wrapped_desc;
+
+          option_list->push_back (mode_string);
+
+          prev_mode = opt->mode_value;
       }
 
       // a possible description to be printed before this option
@@ -1382,23 +1448,8 @@ CmdlineParserCreator::generate_check_modes(ostream &stream, unsigned int indent)
     stream << endl;
     stream << indent_str;
 
-    // build a map where for each mode we store the corresponding given field names
-    // and the options
-    typedef std::pair<string, string> OptionValueElem;
-    typedef std::list<OptionValueElem> ModeOptions;
-    typedef std::map<string, ModeOptions> ModeOptionMap;
+    const ModeOptionMap &modeOptionMap = getModeOptionMap();
 
-    ModeOptionMap modeOptionMap;
-
-    struct gengetopt_option * opt;
-    foropt {
-        if (opt->mode_value) {
-            modeOptionMap[opt->mode_value].push_back
-            (std::make_pair("args_info->" + string(opt->var_arg) + "_given",
-                    string("\"--") + opt->long_opt + "\""));
-        }
-    }
-    
     check_modes_gen_class check_modes_gen;
     
     // now we check each mode options against every other mode options:
@@ -1737,6 +1788,13 @@ CmdlineParserCreator::generate_handle_required(ostream &stream,
   foropt
     if ( opt->required || opt->multiple )
       {
+        if (opt->mode_value) {
+            opt_gen.set_mode_condition("args_info->" + 
+                    canonize_name(opt->mode_value) + "_mode_counter && ");
+        } else {
+            opt_gen.set_mode_condition("");
+        }
+        
         // build the option command line representation
         ostringstream req_opt;
         req_opt << "'--" << opt->long_opt << "'";

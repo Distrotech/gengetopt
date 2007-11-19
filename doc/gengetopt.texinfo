@@ -97,7 +97,8 @@ This file documents GNU Gengetopt version @value{VERSION}.
 * Invoking gengetopt::          gengetopt command line options
 * Terminology::                 Definitions of options, values, and so forth.
 * Options with enumerated values::  Options accepting only a list of values
-* Group options::               Mutual exclusive options
+* Group options::               Groups of mutual exclusive options
+* Mode options::                Mutual exclusive group of options
 * Parser function additional parameters::  
 * Configuration files::         Parsing a configuration file
 * Multiple Options::            Multiple options
@@ -532,7 +533,9 @@ option must be specified.  Notice that this is independent from the
 @cindex @code{--detailed-help}
 @item hidden
 
-@anchor{hidden}If an option is ``hidden'' it will not appear in the
+@anchor{hidden}
+@anchor{fullhelp}
+If an option is ``hidden'' it will not appear in the
 output of @code{--help} but it can still be specified at command
 line@footnote{Since version 2.15.}.  In case hidden options are used,
 the command line option @code{--full-help} will also be generated.  This
@@ -1282,7 +1285,7 @@ then the following C enum will be generated:
 enum enum_myopt @{ myopt_arg_FOO, myopt_arg_180, myopt_arg_BAR @};
 @end example
 
-@node Group options, Parser function additional parameters, Options with enumerated values, Top
+@node Group options, Mode options, Options with enumerated values, Top
 @chapter Group options
 @cindex group options
 
@@ -1332,7 +1335,99 @@ $ ./test_groups -a --optc -d
 test_groups: 2 options of group my grp2 were given. At most one is required
 @end example
 
-@node Parser function additional parameters, Configuration files, Group options, Top
+@node Mode options, Parser function additional parameters, Group options, Top
+@chapter Mode options
+@cindex mode options
+
+It is also possible to specify ``mode options''; options belonging to a
+@emph{mode} are considered @emph{in mutual exclusion} with options of a
+different mode.  Thus, you can specify more options belonging to the
+same mode, but you cannot specify, on the same command line, two options
+belonging to two different modes (thus, modes are different from groups,
+@ref{Group options}).
+
+These sets of options are called modes, since they represent the
+different modes (modalities), in which a program can be run.
+
+In order to use this feature, first the @code{mode} has to be defined,
+and then a @code{modeoption} can be defined.  A modeoption has basically
+the same syntax of a standard option, and it can be given the required
+flag must not be specified (with a slightly different semantics, see
+below) and the group to which the option belongs has to be specified.
+
+@example
+defmode "<mode name>" @{modedesc="<mode description>"@}
+modeoption <long> <short> "<desc>" <argtype> mode="<mode name>" \
+     @{argoptional@} @{multiple@} @{required@}
+@end example
+
+If a mode option is specified as @code{required}, then it will be
+required only if other options of the same mode are specified; this
+makes it possible to specify options of different modes as required.
+
+Options not belonging to any mode are not in conflict with mode options.
+
+For instance, let us consider the file @file{test_modes_cmd.ggo}:
+
+@include test_modes_cmd.ggo.texinfo
+
+@noindent
+Now, we use the program @file{test_modes} (that uses the generated
+parser for the input file above) to demonstrate how the parser generated
+by gengetopt perform checks on mode options.
+
+@example
+test_modes -N
+@end example
+
+@noindent
+This execution generates no errors (although there are required options
+which are not specified, these required options are part of modes and
+they are required only if that mode is used).
+
+@example
+test_modes -a
+./test_modes: '--optA' ('-A') option required
+@end example
+
+@noindent
+Since an option of a mode is specified, then required options of that
+mode must be provided, but, in this execution, we forgot to specify a
+required option of the mode that is being used.
+
+@example
+test_modes -a -A -N
+@end example
+
+@noindent
+This execution is correct: we specified two options of the same mode, in
+particular we also specified the required option of that mode.  Notice
+that we use also an option not belonging to any mode, which does not
+interfere with mode options.
+
+@example
+test_modes -a -A -N --optc
+test_modes: option --optc conflicts with option --opta
+test_modes: option --optc conflicts with option --optA
+test_modes: '--optd' ('-d') option required
+@end example
+
+@noindent
+Here we see a conflict, (actually two), since the last option we
+specified belongs to a mode that is different from the one of the first
+two options.
+
+If you require gengetopt to generate @code{--full-help}
+(@xref{fullhelp,,@code{--full-help}}), the usage string will be
+generated so that it will show the modes of the program; for instance,
+this is the output of @code{--help} of the generated parser for the
+input file above:
+
+@example
+@include help_modes.output.texinfo
+@end example
+
+@node Parser function additional parameters, Configuration files, Mode options, Top
 @chapter Parser function additional parameters
 @cindex parser parameters
 @cindex parameters

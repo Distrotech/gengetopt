@@ -33,6 +33,8 @@ Version 2.22
      of additional text before and after an option and also groups
    * for an option one can specify the "details" which will be printed in
      case --detailed-help is specified
+   * mode options: if an option of a mode is given no option of another
+     mode can be specified (mutually exclusive groups of options)
 
 Version 2.21
 

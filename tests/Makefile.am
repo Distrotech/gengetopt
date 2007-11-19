@@ -90,6 +90,7 @@ test_multiple_parsers.sh \
 test_sections_option_help \
 test_all_opts_option_help \
 test_groups_option_help \
+test_modes_option_help \
 test_no_options
 
 TESTS = $(VALGRINDTESTS) \
@@ -113,6 +114,7 @@ test_multiple_parsers \
 test_sections_option_help \
 test_all_opts_option_help \
 test_groups_option_help \
+test_modes_option_help \
 test_no_options
 
 hidden_options_programs = test_all_opts
@@ -173,6 +175,7 @@ test_multiple_parsers_SOURCES = test_main_cmdline_cmd.ggo test_first_cmdline_cmd
 test_sections_option_help_SOURCES = test_sections_cmd.ggo test_sections_option_help.c
 test_all_opts_option_help_SOURCES = test_all_opts_cmd.ggo test_all_opts_option_help.c
 test_groups_option_help_SOURCES = test_groups_cmd.ggo test_groups_option_help.c
+test_modes_option_help_SOURCES = test_modes_cmd.ggo test_modes_option_help.c
 test_no_options_SOURCES = test_no_options_cmd.ggo test_no_options.c
 
 CHECKDIFFFILES = no_strings_cmd.c no_strings_cmd.h \
@@ -299,6 +302,7 @@ $(TESTSOUTPUT):
 	done && \
 	$(PROGNAMESHOWHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $@ 2>&1;
 	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $@ 2>&1;
+	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_modes_cmd.ggo >> $@ 2>&1;
 	$(PROGNAMESHOWDETAILEDHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $@ 2>&1;
 	$(PROGNAMESHOWHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $@ 2>&1;
 	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $@ 2>&1;
@@ -346,6 +350,7 @@ check-diff:
 	done && \
 	$(PROGNAMESHOWHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_modes_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWDETAILEDHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \

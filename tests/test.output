@@ -57,9 +57,12 @@ optAmul arg: bar
 optAmul arg: (null)
 optAmul arg: aaa
 *** test_modes.sh
-./test_modes: option --opta conflicts with option --optd
-./test_modes: option --opta conflicts with option --mopt
+optA given
+optA given
+./test_modes: option --optd conflicts with option --opta
 ./test_modes: option --optd conflicts with option --mopt
+./test_modes: option --opta conflicts with option --mopt
+./test_modes: '--optA' ('-A') option required
 ./test_modes: option --optd conflicts with option --mopt
 *** test_conf_parser.sh
 value of required: this is a test
@@ -404,6 +407,16 @@ optAmul_help:   -M, --optAmul[=STRING]  string M
 optb_help:   -b, --optb              string b
 optc_help:       --optc              string c
 optd_help:   -d, --optd              string d
+*** test_modes_option_help
+help_help:   -h, --help              Print help and exit
+version_help:   -V, --version           Print version and exit
+opta_help:   -a, --opta              string a
+optA_help:   -A, --optA[=STRING]     string A (mandatory)
+optAmul_help:   -M, --optAmul[=STRING]  string M
+optb_help:   -b, --optb              string b
+optc_help:       --optc              string c
+optd_help:   -d, --optd              string d (mandatory)
+mopt_help:   -m, --mopt=INT          option of my mode
 *** test_no_options
 *** test_show_help.sh
 test_all_opts 1.0
@@ -724,15 +737,26 @@ Usage: test_modes [OPTIONS]... [FILES]...
   -h, --help              Print help and exit
   -V, --version           Print version and exit
 
-some modes just for testing:
+some non mode options:
   -N, --no-mode           a generic option not beloging to any mode
       --no-mode2=STRING   another generic option not beloging to any mode
+
+some modes just for testing:
+
+ Mode: mode1
+  any option of this mode is in contrast with any option of the other mode
+  Notice that this description is quite long so it may spawn many lines...      
+          fortunately gengetopt will wrap it for you :-)
   -a, --opta              string a
-  -A, --optA[=STRING]     string A
+  -A, --optA[=STRING]     string A (mandatory)
   -M, --optAmul[=STRING]  string M
   -b, --optb              string b
+
+ Mode: mode 2
       --optc              string c
-  -d, --optd              string d
+  -d, --optd              string d (mandatory)
+
+ Mode: my mode
   -m, --mopt=INT          option of my mode
 *** test_conf_parser -h
 test_conf_parser 1.0
@@ -1132,6 +1156,16 @@ optAmul_help:   -M, --optAmul[=STRING]  string M
 optb_help:   -b, --optb              string b
 optc_help:       --optc              string c
 optd_help:   -d, --optd              string d
+*** test_modes_option_help -h
+help_help:   -h, --help              Print help and exit
+version_help:   -V, --version           Print version and exit
+opta_help:   -a, --opta              string a
+optA_help:   -A, --optA[=STRING]     string A (mandatory)
+optAmul_help:   -M, --optAmul[=STRING]  string M
+optb_help:   -b, --optb              string b
+optc_help:       --optc              string c
+optd_help:   -d, --optd              string d (mandatory)
+mopt_help:   -m, --mopt=INT          option of my mode
 *** test_no_options -h
 test_no_options 1.0
 
@@ -1284,7 +1318,7 @@ Usage: test_all_opts -rSTRING|--required=STRING [-h|--help] [--detailed-help]
          [-LLONGLONG|--longlong=LONGLONG] [-F|--flag] [-u|--function] 
          [--no-short] [--opt-arg=STRING] [-oSTRING|--opt-arg-short=STRING] 
          [-ASTRING|--dependant=STRING] [--very-very-long-option=STRING] 
-         [-y|--assume-multimeth-virtual] [--file-save=STRING] 
+         [-y|--assume-multimeth-virtual] [--file-save=STRING]
 
 This is just a test file
 
@@ -1351,7 +1385,7 @@ Usage: test_all_opts -rSTRING|--required=STRING [-h|--help] [--detailed-help]
          [-LLONGLONG|--longlong=LONGLONG] [-F|--flag] [-u|--function] 
          [--no-short] [--opt-arg=STRING] [-oSTRING|--opt-arg-short=STRING] 
          [-ASTRING|--dependant=STRING] [--very-very-long-option=STRING] 
-         [-y|--assume-multimeth-virtual] [--file-save=STRING] 
+         [-y|--assume-multimeth-virtual] [--file-save=STRING]
 
 This is just a test file
 
@@ -1407,6 +1441,38 @@ Moreover, text can be specified more than once in the input file.
       --file-save=STRING        save the passed options into a file
 
 A text after all options.
+test_modes 1.0
+
+Usage: test_modes [-h|--help] [-V|--version] [-N|--no-mode] [--no-mode2=STRING]
+  or : test_modes -d|--optd [--optc]
+  or : test_modes -ASTRING|--optA=STRING [-a|--opta] 
+         [-MSTRING|--optAmul=STRING] [-b|--optb]
+  or : test_modes [-mINT|--mopt=INT]
+
+  -h, --help              Print help and exit
+  -V, --version           Print version and exit
+
+some non mode options:
+  -N, --no-mode           a generic option not beloging to any mode
+      --no-mode2=STRING   another generic option not beloging to any mode
+
+some modes just for testing:
+
+ Mode: mode1
+  any option of this mode is in contrast with any option of the other mode
+  Notice that this description is quite long so it may spawn many lines...      
+          fortunately gengetopt will wrap it for you :-)
+  -a, --opta              string a
+  -A, --optA[=STRING]     string A
+  -M, --optAmul[=STRING]  string M
+  -b, --optb              string b
+
+ Mode: mode 2
+      --optc              string c
+  -d, --optd              string d
+
+ Mode: my mode
+  -m, --mopt=INT          option of my mode
 test_all_opts 1.0
 
 This is just a gengetopt's test file
@@ -1419,7 +1485,7 @@ Usage: test_all_opts -rSTRING|--required=STRING [-h|--help] [--detailed-help]
          [-LLONGLONG|--longlong=LONGLONG] [-F|--flag] [-u|--function] 
          [--no-short] [--opt-arg=STRING] [-oSTRING|--opt-arg-short=STRING] 
          [-ASTRING|--dependant=STRING] [--very-very-long-option=STRING] 
-         [-y|--assume-multimeth-virtual] [--file-save=STRING] 
+         [-y|--assume-multimeth-virtual] [--file-save=STRING]
 
 This is just a test file
 
@@ -1489,7 +1555,7 @@ A text after all options.
 only_hidden 0.1
 
 Usage: only_hidden --nonhidden=STRING --nonhidden2=STRING [-h|--help] 
-         [--full-help] [-V|--version] 
+         [--full-help] [-V|--version]
 
   -h, --help               Print help and exit
       --full-help          Print help, including hidden options, and exit
@@ -1501,7 +1567,7 @@ First section.  This contains non hidden options:
 only_hidden 0.1
 
 Usage: only_hidden --nonhidden=STRING --nonhidden2=STRING [-h|--help] 
-         [--full-help] [-V|--version] 
+         [--full-help] [-V|--version]
 
   -h, --help               Print help and exit
       --full-help          Print help, including hidden options, and exit
@@ -1517,8 +1583,7 @@ Hidden section.  This contains only hidden options:
 required_or_optional 0.1
 
 Usage: required_or_optional --required=STRING --non-specified=STRING 
-         --non-specified2=STRING [-h|--help] [-V|--version] [--optional=STRING] 
-         
+         --non-specified2=STRING [-h|--help] [-V|--version] [--optional=STRING]
 
   -h, --help                   Print help and exit
   -V, --version                Print version and exit
@@ -1535,8 +1600,7 @@ This contains options with NON specified required/optional:
 required_or_optional 0.1
 
 Usage: required_or_optional --required=STRING [-h|--help] [-V|--version] 
-         [--optional=STRING] [--non-specified=STRING] [--non-specified2=STRING] 
-         
+         [--optional=STRING] [--non-specified=STRING] [--non-specified2=STRING]
 
   -h, --help                   Print help and exit
   -V, --version                Print version and exit
