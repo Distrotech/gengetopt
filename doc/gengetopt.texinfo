@@ -428,6 +428,7 @@ names.  This means that @code{.} and @code{-} are both replaced by
 The short option, a single upper or lower case char, or a digit.  If
 a @code{-} is specified, then no short option is considered for the long
 option (thus long options with no associated short options are allowed).
+Since version 2.22 you can also specify @code{?} as the short option.
 
 @cindex desc 
 @item desc 
@@ -995,7 +996,30 @@ or the default, @code{cmdline_parser}.  In case hidden options are used,
 @xref{hidden,,Hidden options}, also the function
 @code{<parser-name>_print_full_help} will be generated; if
 @code{details} are used for at least one option, then also the function
-@code{<parser-name>_print_detailed_help} will be generated.
+@code{<parser-name>_print_detailed_help} will be generated.  Notice
+that, although the programmer can handle these options manually, the
+parser will return after finding one of these options: the other command
+line options, if any, will be ignored.  In case you want to have full
+control on @code{--help|-h}, @code{--version|-V}, you should use the
+following options:
+
+@item --no-help
+@itemx --no-version
+@cindex @code{--no-help}
+@cindex @code{--no-version}
+With these options@footnote{Since version 2.22.} you can disable the
+automatic addition of options @code{--help|-h} and @code{--version|-V},
+respectively.  The programmer will then be able to add these options in
+the input file and handle them as he see fit.  Notice that
+@code{--no-help} will also disable the automatic options
+@code{--detailed-help} and @code{--full-help}.  The programmer can still
+define options with short character @code{h} and @code{V} as he wants,
+but he cannot define options @code{help} and @code{version}, unless he
+specifies @code{--no-help} and @code{--no-version}, respectively
+(otherwise an error will be printed).  An example using these options
+and manually handles @code{--help} and @code{--version} can be found in
+@file{test_manual_help_cmd.ggo} and @file{test_manual_help.c} in the
+@file{examples} directory.
  
 @item --no-handle-error
 @cindex @code{--no-handle-error}
@@ -1418,7 +1442,7 @@ specified belongs to a mode that is different from the one of the first
 two options.
 
 If you require gengetopt to generate @code{--full-help}
-(@xref{fullhelp,,@code{--full-help}}), the usage string will be
+(@xref{fullhelp,,@code{--full-help}}.), the usage string will be
 generated so that it will show the modes of the program; for instance,
 this is the output of @code{--help} of the generated parser for the
 input file above:

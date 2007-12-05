@@ -29,5 +29,7 @@
 #define MODE_UNDEFINED 14
 #define NOT_MODE_OPTION 15
 #define SPECIFY_MODE 16
+#define HELP_REDEFINED 17
+#define VERSION_REDEFINED 18
 
 #endif

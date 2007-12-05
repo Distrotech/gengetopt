@@ -1,5 +1,9 @@
 @IF@ has_short_option @THEN@
 case '@short_option@':	/* @option_comment@.  */
+@IF@ short_option:string = "?" @then@
+  if (optopt) /* '?' represents an unrecognized option */
+    goto failure;
+@ENDIF@
 @ELSE@
 /* @option_comment@.  */
 @gen_else@if (strcmp (long_options[option_index].name, "@long_option@") == 0)

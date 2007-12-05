@@ -49,7 +49,9 @@ const char *gengetopt_args_info_help[] = {
   "",
   "  -G, --include-getopt          adds the code for getopt_long in the generated \n                                  C file",
   "  -n, --no-handle-help          do not handle --help|-h automatically",
+  "      --no-help                 do not add --help|-h automatically",
   "  -N, --no-handle-version       do not handle --version|-V automatically",
+  "      --no-version              do not add --version|-V automatically",
   "  -e, --no-handle-error         do not exit on errors",
   "      --show-required[=STRING]  in the output of help will specify which \n                                  options are mandatory, by using the optional \n                                  passed string  (default=`(mandatory)')",
   "  -g, --gen-version             put gengetopt version in the generated file  \n                                  (default=on)",
@@ -124,7 +126,9 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->string_parser_given = 0 ;
   args_info->include_getopt_given = 0 ;
   args_info->no_handle_help_given = 0 ;
+  args_info->no_help_given = 0 ;
   args_info->no_handle_version_given = 0 ;
+  args_info->no_version_given = 0 ;
   args_info->no_handle_error_given = 0 ;
   args_info->show_required_given = 0 ;
   args_info->gen_version_given = 0 ;
@@ -186,16 +190,18 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->string_parser_help = gengetopt_args_info_help[16] ;
   args_info->include_getopt_help = gengetopt_args_info_help[19] ;
   args_info->no_handle_help_help = gengetopt_args_info_help[20] ;
-  args_info->no_handle_version_help = gengetopt_args_info_help[21] ;
-  args_info->no_handle_error_help = gengetopt_args_info_help[22] ;
-  args_info->show_required_help = gengetopt_args_info_help[23] ;
-  args_info->gen_version_help = gengetopt_args_info_help[24] ;
-  args_info->set_package_help = gengetopt_args_info_help[25] ;
-  args_info->set_version_help = gengetopt_args_info_help[26] ;
-  args_info->show_help_help = gengetopt_args_info_help[27] ;
-  args_info->show_full_help_help = gengetopt_args_info_help[28] ;
-  args_info->show_detailed_help_help = gengetopt_args_info_help[29] ;
-  args_info->show_version_help = gengetopt_args_info_help[30] ;
+  args_info->no_help_help = gengetopt_args_info_help[21] ;
+  args_info->no_handle_version_help = gengetopt_args_info_help[22] ;
+  args_info->no_version_help = gengetopt_args_info_help[23] ;
+  args_info->no_handle_error_help = gengetopt_args_info_help[24] ;
+  args_info->show_required_help = gengetopt_args_info_help[25] ;
+  args_info->gen_version_help = gengetopt_args_info_help[26] ;
+  args_info->set_package_help = gengetopt_args_info_help[27] ;
+  args_info->set_version_help = gengetopt_args_info_help[28] ;
+  args_info->show_help_help = gengetopt_args_info_help[29] ;
+  args_info->show_full_help_help = gengetopt_args_info_help[30] ;
+  args_info->show_detailed_help_help = gengetopt_args_info_help[31] ;
+  args_info->show_version_help = gengetopt_args_info_help[32] ;
   
 }
 
@@ -356,8 +362,12 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "include-getopt", 0 );
   if (args_info->no_handle_help_given)
     write_into_file(outfile, "no-handle-help", 0 );
+  if (args_info->no_help_given)
+    write_into_file(outfile, "no-help", 0 );
   if (args_info->no_handle_version_given)
     write_into_file(outfile, "no-handle-version", 0 );
+  if (args_info->no_version_given)
+    write_into_file(outfile, "no-version", 0 );
   if (args_info->no_handle_error_given)
     write_into_file(outfile, "no-handle-error", 0 );
   if (args_info->show_required_given)
@@ -615,7 +625,9 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
         { "string-parser",	0, NULL, 'S' },
         { "include-getopt",	0, NULL, 'G' },
         { "no-handle-help",	0, NULL, 'n' },
+        { "no-help",	0, NULL, 0 },
         { "no-handle-version",	0, NULL, 'N' },
+        { "no-version",	0, NULL, 0 },
         { "no-handle-error",	0, NULL, 'e' },
         { "show-required",	2, NULL, 0 },
         { "gen-version",	0, NULL, 'g' },
@@ -636,6 +648,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
         {
         case 'h':	/* Print help and exit.  */
         
+        
           if (update_arg( 0 , 
                0 , &(args_info->help_given),
               &(local_args_info.help_given), optarg, 0, 0, ARG_NO,
@@ -648,6 +661,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
         
           break;
         case 'V':	/* Print version and exit.  */
+        
         
           if (update_arg( 0 , 
                0 , &(args_info->version_given),
@@ -662,6 +676,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           break;
         case 'i':	/* input file (default std input).  */
         
+        
           if (update_arg( (void *)&(args_info->input_arg), 
                &(args_info->input_orig), &(args_info->input_given),
               &(local_args_info.input_given), optarg, 0, 0, ARG_STRING,
@@ -672,6 +687,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
         
           break;
         case 'f':	/* name of generated function.  */
+        
         
           if (update_arg( (void *)&(args_info->func_name_arg), 
                &(args_info->func_name_orig), &(args_info->func_name_given),
@@ -684,6 +700,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           break;
         case 'a':	/* name of generated args info struct.  */
         
+        
           if (update_arg( (void *)&(args_info->arg_struct_name_arg), 
                &(args_info->arg_struct_name_orig), &(args_info->arg_struct_name_given),
               &(local_args_info.arg_struct_name_given), optarg, 0, "gengetopt_args_info", ARG_STRING,
@@ -694,6 +711,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
         
           break;
         case 'F':	/* name of generated file.  */
+        
         
           if (update_arg( (void *)&(args_info->file_name_arg), 
                &(args_info->file_name_orig), &(args_info->file_name_given),
@@ -706,6 +724,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           break;
         case 'c':	/* extension of c file.  */
         
+        
           if (update_arg( (void *)&(args_info->c_extension_arg), 
                &(args_info->c_extension_orig), &(args_info->c_extension_given),
               &(local_args_info.c_extension_given), optarg, 0, "c", ARG_STRING,
@@ -716,6 +735,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
         
           break;
         case 'H':	/* extension of header file.  */
+        
         
           if (update_arg( (void *)&(args_info->header_extension_arg), 
                &(args_info->header_extension_orig), &(args_info->header_extension_given),
@@ -728,6 +748,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           break;
         case 'l':	/* long usage line in help.  */
         
+        
           if (update_arg( 0 , 
                0 , &(args_info->long_help_given),
               &(local_args_info.long_help_given), optarg, 0, 0, ARG_NO,
@@ -738,6 +759,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
         
           break;
         case 'u':	/* accept options without names (e.g., file names).  */
+        
         
           if (update_arg( (void *)&(args_info->unamed_opts_arg), 
                &(args_info->unamed_opts_orig), &(args_info->unamed_opts_given),
@@ -750,6 +772,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           break;
         case 'C':	/* generate a config file parser.  */
         
+        
           if (update_arg( 0 , 
                0 , &(args_info->conf_parser_given),
               &(local_args_info.conf_parser_given), optarg, 0, 0, ARG_NO,
@@ -760,6 +783,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
         
           break;
         case 'S':	/* generate a string parser (the string contains the command line).  */
+        
         
           if (update_arg( 0 , 
                0 , &(args_info->string_parser_given),
@@ -772,6 +796,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           break;
         case 'G':	/* adds the code for getopt_long in the generated C file.  */
         
+        
           if (update_arg( 0 , 
                0 , &(args_info->include_getopt_given),
               &(local_args_info.include_getopt_given), optarg, 0, 0, ARG_NO,
@@ -782,6 +807,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
         
           break;
         case 'n':	/* do not handle --help|-h automatically.  */
+        
         
           if (update_arg( 0 , 
                0 , &(args_info->no_handle_help_given),
@@ -794,6 +820,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           break;
         case 'N':	/* do not handle --version|-V automatically.  */
         
+        
           if (update_arg( 0 , 
                0 , &(args_info->no_handle_version_given),
               &(local_args_info.no_handle_version_given), optarg, 0, 0, ARG_NO,
@@ -805,6 +832,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           break;
         case 'e':	/* do not exit on errors.  */
         
+        
           if (update_arg( 0 , 
                0 , &(args_info->no_handle_error_given),
               &(local_args_info.no_handle_error_given), optarg, 0, 0, ARG_NO,
@@ -815,6 +843,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
         
           break;
         case 'g':	/* put gengetopt version in the generated file.  */
+        
         
           if (update_arg((void *)&(args_info->gen_version_flag), 0, &(args_info->gen_version_given),
               &(local_args_info.gen_version_given), optarg, 0, 0, ARG_FLAG,
@@ -829,6 +858,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           if (strcmp (long_options[option_index].name, "output-dir") == 0)
           {
           
+          
             if (update_arg( (void *)&(args_info->output_dir_arg), 
                  &(args_info->output_dir_orig), &(args_info->output_dir_given),
                 &(local_args_info.output_dir_given), optarg, 0, 0, ARG_STRING,
@@ -842,6 +872,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           else if (strcmp (long_options[option_index].name, "default-optional") == 0)
           {
           
+          
             if (update_arg( 0 , 
                  0 , &(args_info->default_optional_given),
                 &(local_args_info.default_optional_given), optarg, 0, 0, ARG_NO,
@@ -851,9 +882,38 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
               goto failure;
           
           }
+          /* do not add --help|-h automatically.  */
+          else if (strcmp (long_options[option_index].name, "no-help") == 0)
+          {
+          
+          
+            if (update_arg( 0 , 
+                 0 , &(args_info->no_help_given),
+                &(local_args_info.no_help_given), optarg, 0, 0, ARG_NO,
+                check_ambiguity, override, 0, 0,
+                "no-help", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* do not add --version|-V automatically.  */
+          else if (strcmp (long_options[option_index].name, "no-version") == 0)
+          {
+          
+          
+            if (update_arg( 0 , 
+                 0 , &(args_info->no_version_given),
+                &(local_args_info.no_version_given), optarg, 0, 0, ARG_NO,
+                check_ambiguity, override, 0, 0,
+                "no-version", '-',
+                additional_error))
+              goto failure;
+          
+          }
           /* in the output of help will specify which options are mandatory, by using the optional passed string.  */
           else if (strcmp (long_options[option_index].name, "show-required") == 0)
           {
+          
           
             if (update_arg( (void *)&(args_info->show_required_arg), 
                  &(args_info->show_required_orig), &(args_info->show_required_given),
@@ -868,6 +928,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           else if (strcmp (long_options[option_index].name, "set-package") == 0)
           {
           
+          
             if (update_arg( (void *)&(args_info->set_package_arg), 
                  &(args_info->set_package_orig), &(args_info->set_package_given),
                 &(local_args_info.set_package_given), optarg, 0, 0, ARG_STRING,
@@ -880,6 +941,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           /* set the version number (override version defined in the .ggo file).  */
           else if (strcmp (long_options[option_index].name, "set-version") == 0)
           {
+          
           
             if (update_arg( (void *)&(args_info->set_version_arg), 
                  &(args_info->set_version_orig), &(args_info->set_version_given),
@@ -894,6 +956,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           else if (strcmp (long_options[option_index].name, "show-help") == 0)
           {
           
+          
             if (update_arg( 0 , 
                  0 , &(args_info->show_help_given),
                 &(local_args_info.show_help_given), optarg, 0, 0, ARG_NO,
@@ -906,6 +969,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           /* show the output of --full-help (i.e., including hidden options) instead of generating code.  */
           else if (strcmp (long_options[option_index].name, "show-full-help") == 0)
           {
+          
           
             if (update_arg( 0 , 
                  0 , &(args_info->show_full_help_given),
@@ -920,6 +984,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           else if (strcmp (long_options[option_index].name, "show-detailed-help") == 0)
           {
           
+          
             if (update_arg( 0 , 
                  0 , &(args_info->show_detailed_help_given),
                 &(local_args_info.show_detailed_help_given), optarg, 0, 0, ARG_NO,
@@ -932,6 +997,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
           /* show the output of --version instead of generating code.  */
           else if (strcmp (long_options[option_index].name, "show-version") == 0)
           {
+          
           
             if (update_arg( 0 , 
                  0 , &(args_info->show_version_given),

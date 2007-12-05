@@ -35,6 +35,9 @@ Version 2.22
      case --detailed-help is specified
    * mode options: if an option of a mode is given no option of another
      mode can be specified (mutually exclusive groups of options)
+   * can use ? as short option
+   * --no-help, --no-version: don't add --help and --version automatically
+     (the user can specify those options manually)
 
 Version 2.21
 

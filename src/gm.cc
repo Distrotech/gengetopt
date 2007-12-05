@@ -160,7 +160,9 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
                                             char *header_ext, char *c_ext,
                                             bool long_help_,
                                             bool no_handle_help_,
+                                            bool no_help_,
                                             bool no_handle_version_,
+                                            bool no_version_,
                                             bool no_handle_error_,
                                             bool conf_parser_,
                                             bool string_parser_,
@@ -177,7 +179,10 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   unamed_options (unamed_options_),
   show_required_string (show_required),
   long_help (long_help_), no_handle_help (no_handle_help_),
-  no_handle_version (no_handle_version_), no_handle_error (no_handle_error_),
+  no_help (no_help_),
+  no_handle_version (no_handle_version_),
+  no_version (no_version_),
+  no_handle_error (no_handle_error_),
   conf_parser (conf_parser_), string_parser (string_parser_),
   gen_gengetopt_version (gen_version),
   tab_indentation (0)
@@ -1604,9 +1609,16 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
   bool first = true;
 
   option_gen.set_has_short_option (has_short);
+  
+  // by default we handle '?' case in the switch
+  // unless the user defined a short option as ?
+  set_handle_question_mark(true);
 
   foropt
     {
+      if (opt->short_opt == '?')
+          set_handle_question_mark(false);
+      
       if ((has_short && opt->short_opt) || (!has_short && !opt->short_opt))
         {
           if (has_short || first)
@@ -1618,11 +1630,11 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
           option_gen.set_option_var_name (opt->var_arg);
           option_gen.set_final_instructions("");
 
-          if ((opt->short_opt == HELP_SHORT_OPT && 
+          if (!no_help && ((opt->short_opt == HELP_SHORT_OPT && 
                   strcmp(opt->long_opt, HELP_LONG_OPT) == 0)
                   || strcmp(opt->long_opt, HELP_LONG_OPT) == 0
                   || strcmp(opt->long_opt, FULL_HELP_LONG_OPT) == 0
-                  || strcmp(opt->long_opt, DETAILED_HELP_LONG_OPT) == 0) {
+                  || strcmp(opt->long_opt, DETAILED_HELP_LONG_OPT) == 0)) {
               bool full_help = (strcmp(opt->long_opt, FULL_HELP_LONG_OPT) == 0);
               bool detailed_help = (strcmp(opt->long_opt, DETAILED_HELP_LONG_OPT) == 0);
               if (no_handle_help) {
@@ -1656,8 +1668,8 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
               }
           }
 
-          if ((opt->short_opt == VERSION_SHORT_OPT && strcmp(opt->long_opt, VERSION_LONG_OPT) == 0)
-                  || strcmp(opt->long_opt, VERSION_LONG_OPT) == 0) {
+          if (!no_version && ((opt->short_opt == VERSION_SHORT_OPT && strcmp(opt->long_opt, VERSION_LONG_OPT) == 0)
+                  || strcmp(opt->long_opt, VERSION_LONG_OPT) == 0)) {
               if (no_handle_version) {
                   option_gen.set_long_option (VERSION_LONG_OPT);
                   option_gen.set_short_option (VERSION_SHORT_OPT_STR);

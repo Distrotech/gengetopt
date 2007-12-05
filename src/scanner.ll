@@ -119,7 +119,7 @@ tabs [\t]+
 <SIZE_STATE>[[:digit:]]+ { updateTokenInfo (-1); yylval.str = strdup(yytext); return TOK_SIZE; }
 <SIZE_STATE>")" { POP(); updateTokenInfo (-1); return ')'; }
 
-<INITIAL>[[:alnum:]-]	 updateTokenInfo (-1); yylval.chr = yytext[0]; return TOK_CHAR;
+<INITIAL>[[:alnum:]-]|\?	 updateTokenInfo (-1); yylval.chr = yytext[0]; return TOK_CHAR;
 
 <INITIAL>\" { updateTokenInfo (-1); DEB("start string"); PUSH(STRING_STATE) ; }
 <STRING_STATE>\n+ {  update_count_line (yytext); buffer( yytext ) ; }

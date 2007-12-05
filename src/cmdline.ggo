@@ -91,7 +91,9 @@ section "Additional options"
 option  "include-getopt" G "adds the code for getopt_long in the generated C file" optional
 
 option  "no-handle-help"   n "do not handle --help|-h automatically" optional
+option  "no-help"   - "do not add --help|-h automatically" optional
 option  "no-handle-version"  N  "do not handle --version|-V automatically" optional
+option  "no-version"  -  "do not add --version|-V automatically" optional
 option  "no-handle-error" e "do not exit on errors" optional
 option  "show-required"   - "in the output of help will specify which options are mandatory, \
 by using the optional passed string" string default="(mandatory)" optional argoptional

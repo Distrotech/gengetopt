@@ -21,6 +21,17 @@ generic_option_gen_class::generate_generic_option(ostream &stream, unsigned int 
       stream << ".  */";
       stream << "\n";
       stream << indent_str;
+      if (( short_option == "?" ))
+        {
+          stream << "\n";
+          stream << indent_str;
+          stream << "  if (optopt) /* '?' represents an unrecognized option */";
+          stream << "\n";
+          stream << indent_str;
+          stream << "    goto failure;";
+          stream << "\n";
+          stream << indent_str;
+        }
     }
   else
     {

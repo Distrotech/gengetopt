@@ -334,6 +334,26 @@ specified --values-multiple-enums with (original) argument FOURTH
 *** test_dep.sh
 ./test_all_opts: '--dependant' ('-A') option depends on option 'opt-arg'
 specified --opt-arg with argument bar
+*** test_manual_help.sh
+specified --height 100
+      --height=INT     this is the description of height
+test_manual_help 1.0
+
+Usage: test_manual_help [OPTIONS]... [FILES]...
+
+  -h, --help           show help (possibly of other options)
+  -?, --detailed-help  show detailed help
+  -V, --version        show version of the program
+      --height=INT     this is the description of height
+  These are the details of option height
+      --vavoom=STRING  this is the description of vavoom
+specified --height 100
+specified --height 100
+      --height=INT     this is the description of height
+specified --vavoom foo
+      --vavoom=STRING  this is the description of vavoom
+test_manual_help 1.0
+specified --height 100
 *** test_multiple_parsers.sh
 second cmdline: -a20 -b10 --my-multi=a,b,c,d,e,f
   --option-a: 20
@@ -546,7 +566,9 @@ diff wrong_flag.err.out ./wrong_flag.err
 diff wrong_flag2.err.out ./wrong_flag2.err
 diff wrong_group.err.out ./wrong_group.err
 diff wrong_group2.err.out ./wrong_group2.err
+diff wrong_help_redef.err.out ./wrong_help_redef.err
 diff wrong_numeric_value.err.out ./wrong_numeric_value.err
+diff wrong_version_redef.err.out ./wrong_version_redef.err
 *** no_strings -h
 no_strings 1.0
 
@@ -1094,6 +1116,16 @@ Usage: test_values [OPTIONS]... [FILES]...
                                   "THIRD", "FOURTH" default=`FOURTH')
 *** test_redef_help -h
 specified --height
+*** test_manual_help -h
+test_manual_help 1.0
+
+Usage: test_manual_help [OPTIONS]... [FILES]...
+
+  -h, --help           show help (possibly of other options)
+  -?, --detailed-help  show detailed help
+  -V, --version        show version of the program
+      --height=INT     this is the description of height
+      --vavoom=STRING  this is the description of vavoom
 *** test_multiple_parsers -h
 gengetopt 1.0
 

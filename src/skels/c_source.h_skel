@@ -1256,9 +1256,11 @@ int
 
         case 0:	/* Long option with no short option */
           @handle_no_short_option:method{iteration=true}@
+@IF@ handle_question_mark @THEN@
         case '?':	/* Invalid option.  */
           /* `getopt_long' already printed an error message.  */
           goto failure;
+@ENDIF@
 
         default:	/* bug: option not considered.  */
           fprintf (stderr, "%s: option unknown: %c%s\n", @package_var_name@, c, (additional_error ? additional_error : ""));

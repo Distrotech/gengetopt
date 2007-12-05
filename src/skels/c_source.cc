@@ -3756,15 +3756,18 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
     generate_handle_no_short_option (stream, indent + indent_str.length ());
   indent = 0;
   stream << indent_str;
-  stream << "        case '?':	/* Invalid option.  */";
-  stream << "\n";
-  stream << indent_str;
-  stream << "          /* `getopt_long' already printed an error message.  */";
-  stream << "\n";
-  stream << indent_str;
-  stream << "          goto failure;";
-  stream << "\n";
-  stream << indent_str;
+  if (handle_question_mark)
+    {
+      stream << "        case '?':	/* Invalid option.  */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "          /* `getopt_long' already printed an error message.  */";
+      stream << "\n";
+      stream << indent_str;
+      stream << "          goto failure;";
+      stream << "\n";
+      stream << indent_str;
+    }
   stream << "\n";
   stream << indent_str;
   stream << "        default:	/* bug: option not considered.  */";

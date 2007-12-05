@@ -106,6 +106,12 @@ void check_result(int o, gengetopt_option *opt)
     case INVALID_ENUM_TYPE_USE:
     	yyerror (opt, "enum type can only be specified for options with values");
         break;
+    case HELP_REDEFINED:
+    	yyerror (opt, "if you want to redefine --help, please use option --no-help");
+        break;
+    case VERSION_REDEFINED:
+    	yyerror (opt, "if you want to redefine --version, please use option --no-version");
+        break;
     }
   }
 }

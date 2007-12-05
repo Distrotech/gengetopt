@@ -100,10 +100,12 @@ static int gengetopt_create_option (gengetopt_option *&opt, const char * long_op
 
 using namespace std;
 
+/// the structure for command line arguments
+struct gengetopt_args_info args_info ;
+
 int
 main (int argc, char **argv)
 {
-  struct gengetopt_args_info args_info ;
   char *cmdline_parser_name ; /* name of the generated function */
   char *cmdline_filename ; /* name of generated file */
   char *c_ext ; /* extenstion of c file */
@@ -187,19 +189,19 @@ main (int argc, char **argv)
 
   has_version = gengetopt_has_option (VERSION_LONG_OPT, VERSION_SHORT_OPT);
 
-  if (has_version != REQ_LONG_OPTION) {
+  if (has_version != REQ_LONG_OPTION && !args_info.no_version_given) {
     gengetopt_create_option (opt, VERSION_LONG_OPT, has_version ? '-' : VERSION_SHORT_OPT,
                                  VERSION_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0, 0);
     gengetopt_options.push_front(opt);
   }
 
-  if (has_hidden_options() && gengetopt_has_option(FULL_HELP_LONG_OPT, 0) == 0) {
+  if (!args_info.no_help_given && has_hidden_options() && gengetopt_has_option(FULL_HELP_LONG_OPT, 0) == 0) {
       gengetopt_create_option (opt, FULL_HELP_LONG_OPT, '-',
                                FULL_HELP_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0, 0);
       gengetopt_options.push_front(opt);
   }
 
-  if (has_options_with_details() && gengetopt_has_option(DETAILED_HELP_LONG_OPT, 0) == 0) {
+  if (!args_info.no_help_given && has_options_with_details() && gengetopt_has_option(DETAILED_HELP_LONG_OPT, 0) == 0) {
       gengetopt_create_option (opt, DETAILED_HELP_LONG_OPT, '-',
               DETAILED_HELP_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0, 0);
       gengetopt_options.push_front(opt);
@@ -207,7 +209,7 @@ main (int argc, char **argv)
 
   has_help = gengetopt_has_option(HELP_LONG_OPT, HELP_SHORT_OPT);
  
-  if (has_help != REQ_LONG_OPTION) {
+  if (has_help != REQ_LONG_OPTION && !args_info.no_help_given) {
     gengetopt_create_option (opt, HELP_LONG_OPT, has_help ? '-' : HELP_SHORT_OPT,
                                  HELP_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0, 0);
     gengetopt_options.push_front(opt);
@@ -257,7 +259,9 @@ main (int argc, char **argv)
      c_ext,
      args_info.long_help_given,
      args_info.no_handle_help_given,
+     args_info.no_help_given,
      args_info.no_handle_version_given,
+     args_info.no_version_given,
      args_info.no_handle_error_given,
      args_info.conf_parser_given,
      args_info.string_parser_given,
@@ -655,6 +659,12 @@ gengetopt_check_option (gengetopt_option *n, bool groupoption, bool modeoption)
       (n->long_opt[0] == 0) ||
       (n->desc == NULL))
     return FOUND_BUG;
+
+  if (strcmp(n->long_opt, HELP_LONG_OPT) == 0 && !args_info.no_help_given)
+      return HELP_REDEFINED;
+
+  if (strcmp(n->long_opt, VERSION_LONG_OPT) == 0 && !args_info.no_version_given)
+      return VERSION_REDEFINED;
 
   n->section = 0;
   n->section_desc = 0;

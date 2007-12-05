@@ -30,9 +30,10 @@ const char *gengetopt_args_info_description = "";
 const char *gengetopt_args_info_help[] = {
   "  -h, --help              Print help and exit",
   "  -V, --version           Print version and exit",
-  "\nsome modes just for testing:",
+  "\nsome non mode options:",
   "  -N, --no-mode           a generic option not beloging to any mode",
   "      --no-mode2=STRING   another generic option not beloging to any mode",
+  "\nsome modes just for testing:",
   "\n Mode: mode1\n  any option of this mode is in contrast with any option of the other mode\n  Notice that this description is quite long so it may spawn many lines...      \n          fortunately gengetopt will wrap it for you :-)",
   "  -a, --opta              string a",
   "  -A, --optA[=STRING]     string A (mandatory)",
@@ -107,17 +108,17 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->no_mode_help = gengetopt_args_info_help[3] ;
   args_info->no_mode2_help = gengetopt_args_info_help[4] ;
-  args_info->opta_help = gengetopt_args_info_help[6] ;
+  args_info->opta_help = gengetopt_args_info_help[7] ;
   args_info->opta_min = -1;
   args_info->opta_max = -1;
-  args_info->optA_help = gengetopt_args_info_help[7] ;
-  args_info->optAmul_help = gengetopt_args_info_help[8] ;
+  args_info->optA_help = gengetopt_args_info_help[8] ;
+  args_info->optAmul_help = gengetopt_args_info_help[9] ;
   args_info->optAmul_min = -1;
   args_info->optAmul_max = -1;
-  args_info->optb_help = gengetopt_args_info_help[9] ;
-  args_info->optc_help = gengetopt_args_info_help[11] ;
-  args_info->optd_help = gengetopt_args_info_help[12] ;
-  args_info->mopt_help = gengetopt_args_info_help[14] ;
+  args_info->optb_help = gengetopt_args_info_help[10] ;
+  args_info->optc_help = gengetopt_args_info_help[12] ;
+  args_info->optd_help = gengetopt_args_info_help[13] ;
+  args_info->mopt_help = gengetopt_args_info_help[15] ;
   
 }
 

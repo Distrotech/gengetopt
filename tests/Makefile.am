@@ -52,6 +52,9 @@ GGO_COMPILE = $(PROGNAME) --input=$< --func-name=$*_parser --file-name=$*
 .ggo.err:
 	$(PROGNAME) --unamed-opt -i $< --file-name null 2> $@ || true
 
+test_manual_help_cmd.c: $(srcdir)/test_manual_help_cmd.ggo
+	$(GGO_COMPILE) --unamed-opt --show-required --no-help --no-version
+
 # INCLUDES is added to LDFLAGS because .ggo file are sources, and thus
 # the .c files are passed to the linker, which also compiles, thus
 # the include options should be passed to it as well
@@ -86,6 +89,7 @@ test_sections.sh \
 test_default_values.sh \
 test_values.sh test_values_err.sh \
 test_dep.sh \
+test_manual_help.sh \
 test_multiple_parsers.sh \
 test_sections_option_help \
 test_all_opts_option_help \
@@ -109,7 +113,9 @@ test_conf_parser_ov2 \
 test_conf_parser_ov3 \
 test_conf_parser_ov4 \
 test_conf_parser_file_save \
-test_multiple test_sections test_values test_redef_help \
+test_multiple test_sections test_values \
+test_redef_help \
+test_manual_help \
 test_multiple_parsers \
 test_sections_option_help \
 test_all_opts_option_help \
@@ -141,6 +147,7 @@ test_multiple_cmd.h: test_multiple_cmd.c
 test_sections_cmd.h: test_sections_cmd.c
 test_values_cmd.h: test_values_cmd.c
 test_redef_help_cmd.h: test_redef_help_cmd.c
+test_manual_help_cmd.h: test_manual_help_cmd.c
 test_main_cmdline_cmd.h: test_main_cmdline_cmd.c
 test_first_cmdline_cmd.h: test_first_cmdline_cmd.c
 test_second_cmdline_cmd.h: test_second_cmdline_cmd.c
@@ -171,6 +178,7 @@ test_multiple_SOURCES = test_multiple_cmd.ggo test_multiple.c
 test_sections_SOURCES = test_sections_cmd.ggo test_sections.c
 test_values_SOURCES = test_values_cmd.ggo test_values.c
 test_redef_help_SOURCES = test_redef_help_cmd.ggo test_redef_help.c
+test_manual_help_SOURCES = test_manual_help_cmd.ggo test_manual_help.c
 test_multiple_parsers_SOURCES = test_main_cmdline_cmd.ggo test_first_cmdline_cmd.ggostr test_second_cmdline_cmd.ggostr test_multiple_parsers.c
 test_sections_option_help_SOURCES = test_sections_cmd.ggo test_sections_option_help.c
 test_all_opts_option_help_SOURCES = test_all_opts_cmd.ggo test_all_opts_option_help.c
@@ -195,6 +203,7 @@ test_multiple_cmd.c test_multiple_cmd.h \
 test_sections_cmd.c \
 test_values_cmd.c test_values_cmd.h \
 test_redef_help_cmd.c test_redef_help_cmd.h \
+test_manual_help_cmd.c test_manual_help_cmd.h \
 test_main_cmdline_cmd.c test_main_cmdline_cmd.h \
 test_first_cmdline_cmd.c test_first_cmdline_cmd.h \
 test_second_cmdline_cmd.c test_second_cmdline_cmd.h \
@@ -241,9 +250,14 @@ TESTSOUT = test.out
 TESTSOUTPUT = test.output
 
 ERRFILES = wrong_flag.err wrong_flag2.err wrong_group.err wrong_group2.err \
-wrong_dep.err wrong_default.err wrong_numeric_value.err wrong_enum_use.err
+wrong_dep.err wrong_default.err wrong_numeric_value.err wrong_enum_use.err \
+wrong_help_redef.err wrong_version_redef.err
 ERRGGOFILES = wrong_flag.ggo wrong_flag2.ggo wrong_group.ggo wrong_group2.ggo \
-wrong_dep.ggo wrong_default.ggo wrong_numeric_value.ggo wrong_enum_use.ggo
+wrong_dep.ggo wrong_default.ggo wrong_numeric_value.ggo wrong_enum_use.ggo \
+wrong_help_redef.ggo wrong_version_redef.ggo
+
+gengetoptexamples_DATA = test_manual_help_cmd.c test_manual_help_cmd.h \
+test_manual_help_cmd.ggo test_manual_help.c
 
 EXTRA_DIST = no_optgiven.sh.in more_than_once.sh.in \
 test_all_opts.sh.in test_all_opts_file_save.sh.in \
@@ -259,9 +273,10 @@ test_conf_parser_ov2.c.in test_conf_parser_ov3.c.in \
 test_conf_parser_ov4.c.in \
 test_values.sh.in test_values_err.sh.in test_show_help.sh.in \
 valgrind_tests.sh.in valgrind_suppressions.sh.in test_err.sh.in \
-test_dep.sh.in test_multiple_parsers.sh.in \
+test_dep.sh.in test_manual_help.sh.in test_multiple_parsers.sh.in \
 $(GENERATED_TESTS) \
 $(TESTSOUTPUT) \
+$(gengetoptexamples_DATA) \
 suppressions.supp \
 test_conf.conf.in \
 test_conf_inc.conf.in test_conf_inc_inc.conf test_conf_inc2.conf \

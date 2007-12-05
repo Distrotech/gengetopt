@@ -18,7 +18,7 @@ sample1 2.0
 Usage: sample1 -iINT|--int-opt=INT [-h|--help] [--detailed-help] [--full-help] 
          [-V|--version] [-sfilename|--str-opt=filename] [-mINT|--my-opt=INT] 
          [--flag-opt] [-F|--funct-opt] [--long-opt=LONG] [--def-opt=STRING] 
-         [--enum-opt=STRING] [-DINT|--dependant=INT]  [FILES]...
+         [--enum-opt=STRING] [-DINT|--dependant=INT] [FILES]...
 
   -h, --help              Print help and exit
       --detailed-help     Print help, including all details and hidden options, 

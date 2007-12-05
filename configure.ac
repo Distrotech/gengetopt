@@ -179,6 +179,7 @@ AC_OUTPUT([Makefile
            tests/test_sections.sh tests/test_default_values.sh
            tests/test_values.sh tests/test_values_err.sh
            tests/test_show_help.sh tests/test_err.sh tests/test_dep.sh
+           tests/test_manual_help.sh
            tests/test_multiple_parsers.sh],
           [chmod +x tests/valgrind_tests.sh
            chmod +x tests/valgrind_suppressions.sh
@@ -205,5 +206,6 @@ AC_OUTPUT([Makefile
            chmod +x tests/test_values_err.sh
            chmod +x tests/test_err.sh
            chmod +x tests/test_dep.sh
+           chmod +x tests/test_manual_help.sh
            chmod +x tests/test_show_help.sh
            chmod +x tests/test_multiple_parsers.sh])

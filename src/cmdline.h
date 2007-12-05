@@ -64,7 +64,9 @@ struct gengetopt_args_info
   const char *string_parser_help; /**< @brief generate a string parser (the string contains the command line) help description.  */
   const char *include_getopt_help; /**< @brief adds the code for getopt_long in the generated C file help description.  */
   const char *no_handle_help_help; /**< @brief do not handle --help|-h automatically help description.  */
+  const char *no_help_help; /**< @brief do not add --help|-h automatically help description.  */
   const char *no_handle_version_help; /**< @brief do not handle --version|-V automatically help description.  */
+  const char *no_version_help; /**< @brief do not add --version|-V automatically help description.  */
   const char *no_handle_error_help; /**< @brief do not exit on errors help description.  */
   char * show_required_arg;	/**< @brief in the output of help will specify which options are mandatory, by using the optional passed string (default='(mandatory)').  */
   char * show_required_orig;	/**< @brief in the output of help will specify which options are mandatory, by using the optional passed string original value given at command line.  */
@@ -98,7 +100,9 @@ struct gengetopt_args_info
   unsigned int string_parser_given ;	/**< @brief Whether string-parser was given.  */
   unsigned int include_getopt_given ;	/**< @brief Whether include-getopt was given.  */
   unsigned int no_handle_help_given ;	/**< @brief Whether no-handle-help was given.  */
+  unsigned int no_help_given ;	/**< @brief Whether no-help was given.  */
   unsigned int no_handle_version_given ;	/**< @brief Whether no-handle-version was given.  */
+  unsigned int no_version_given ;	/**< @brief Whether no-version was given.  */
   unsigned int no_handle_error_given ;	/**< @brief Whether no-handle-error was given.  */
   unsigned int show_required_given ;	/**< @brief Whether show-required was given.  */
   unsigned int gen_version_given ;	/**< @brief Whether gen-version was given.  */

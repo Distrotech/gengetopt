@@ -49,3 +49,4 @@ test_no_options
 no_multi_types
 test_modes
 test_modes_option_help
+test_manual_help
