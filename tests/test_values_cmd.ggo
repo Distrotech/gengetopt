@@ -27,3 +27,5 @@ option "int-values-def"      - "int option with values and default" values="90",
 option "values-first-enums"   e "option with values and enums 1" values="FOO","BAR","ANOTHER","SOMETHING" enum optional
 option "values-second-enums"   - "option with values and enums 2 with default" values="90","180","270","360" enum optional default="180"
 option "values-multiple-enums"   W "multiple option with values and enums" values="FIRST","SECOND","THIRD","FOURTH" enum optional multiple default="FOURTH"
+
+option "file-save"   - "save the passed options into a file" string no

@@ -1,3 +1,8 @@
+2007-12-13  Lorenzo Bettini  <bettini@lorelap>
+
+	* src/skels/c_source.h_skel: also write the corresponding value (not
+	only the orig filed) into file
+
 2007-11-05  Lorenzo Bettini  <bettini@lorelap>
 
 	* src/skels/c_source.h_skel: update_arg is not generated if no

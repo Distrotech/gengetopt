@@ -380,8 +380,9 @@ test_conf_parser_cmd_parser_release (struct my_args_info *args_info)
   clear_given (args_info);
 }
 
+
 static void
-write_into_file(FILE *outfile, const char *opt, const char *arg)
+write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
 {
   if (arg) {
     fprintf(outfile, "%s=\"%s\"\n", opt, arg);
@@ -391,12 +392,12 @@ write_into_file(FILE *outfile, const char *opt, const char *arg)
 }
 
 static void
-write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg)
+write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg, char *values[])
 {
   int i;
   
   for (i = 0; i < len; ++i)
-    write_into_file(outfile, opt, (arg ? arg[i] : 0));
+    write_into_file(outfile, opt, (arg ? arg[i] : 0), values);
 }
 
 int
@@ -411,51 +412,51 @@ test_conf_parser_cmd_parser_dump(FILE *outfile, struct my_args_info *args_info)
     }
 
   if (args_info->help_given)
-    write_into_file(outfile, "help", 0 );
+    write_into_file(outfile, "help", 0, 0 );
   if (args_info->version_given)
-    write_into_file(outfile, "version", 0 );
+    write_into_file(outfile, "version", 0, 0 );
   if (args_info->opta_given)
-    write_into_file(outfile, "opta", args_info->opta_orig);
+    write_into_file(outfile, "opta", args_info->opta_orig, 0);
   if (args_info->optb_given)
-    write_into_file(outfile, "optb", args_info->optb_orig);
+    write_into_file(outfile, "optb", args_info->optb_orig, 0);
   if (args_info->optc_given)
-    write_into_file(outfile, "optc", 0 );
+    write_into_file(outfile, "optc", 0, 0 );
   if (args_info->optd_given)
-    write_into_file(outfile, "optd", 0 );
+    write_into_file(outfile, "optd", 0, 0 );
   if (args_info->string_given)
-    write_into_file(outfile, "string", args_info->string_orig);
+    write_into_file(outfile, "string", args_info->string_orig, 0);
   if (args_info->int_given)
-    write_into_file(outfile, "int", args_info->int_orig);
+    write_into_file(outfile, "int", args_info->int_orig, 0);
   if (args_info->short_given)
-    write_into_file(outfile, "short", args_info->short_orig);
+    write_into_file(outfile, "short", args_info->short_orig, 0);
   if (args_info->long_given)
-    write_into_file(outfile, "long", args_info->long_orig);
+    write_into_file(outfile, "long", args_info->long_orig, 0);
   if (args_info->float_given)
-    write_into_file(outfile, "float", args_info->float_orig);
+    write_into_file(outfile, "float", args_info->float_orig, 0);
   if (args_info->double_given)
-    write_into_file(outfile, "double", args_info->double_orig);
+    write_into_file(outfile, "double", args_info->double_orig, 0);
   if (args_info->longdouble_given)
-    write_into_file(outfile, "longdouble", args_info->longdouble_orig);
+    write_into_file(outfile, "longdouble", args_info->longdouble_orig, 0);
   if (args_info->longlong_given)
-    write_into_file(outfile, "longlong", args_info->longlong_orig);
+    write_into_file(outfile, "longlong", args_info->longlong_orig, 0);
   if (args_info->flag_given)
-    write_into_file(outfile, "flag", 0 );
+    write_into_file(outfile, "flag", 0, 0 );
   if (args_info->function_given)
-    write_into_file(outfile, "function", 0 );
+    write_into_file(outfile, "function", 0, 0 );
   if (args_info->no_short_given)
-    write_into_file(outfile, "no-short", 0 );
+    write_into_file(outfile, "no-short", 0, 0 );
   if (args_info->required_given)
-    write_into_file(outfile, "required", args_info->required_orig);
+    write_into_file(outfile, "required", args_info->required_orig, 0);
   if (args_info->conf_file_given)
-    write_into_file(outfile, "conf-file", args_info->conf_file_orig);
-  write_multiple_into_file(outfile, args_info->multi_string_given, "multi-string", args_info->multi_string_orig);
-  write_multiple_into_file(outfile, args_info->multi_string_def_given, "multi-string-def", args_info->multi_string_def_orig);
-  write_multiple_into_file(outfile, args_info->noarg_given, "noarg", 0);
-  write_multiple_into_file(outfile, args_info->noarg_noshort_given, "noarg-noshort", 0);
+    write_into_file(outfile, "conf-file", args_info->conf_file_orig, 0);
+  write_multiple_into_file(outfile, args_info->multi_string_given, "multi-string", args_info->multi_string_orig, 0);
+  write_multiple_into_file(outfile, args_info->multi_string_def_given, "multi-string-def", args_info->multi_string_def_orig, 0);
+  write_multiple_into_file(outfile, args_info->noarg_given, "noarg", 0, 0);
+  write_multiple_into_file(outfile, args_info->noarg_noshort_given, "noarg-noshort", 0, 0);
   if (args_info->opt_arg_given)
-    write_into_file(outfile, "opt-arg", args_info->opt_arg_orig);
+    write_into_file(outfile, "opt-arg", args_info->opt_arg_orig, 0);
   if (args_info->file_save_given)
-    write_into_file(outfile, "file-save", args_info->file_save_orig);
+    write_into_file(outfile, "file-save", args_info->file_save_orig, 0);
   
 
   i = EXIT_SUCCESS;
@@ -487,7 +488,6 @@ test_conf_parser_cmd_parser_free (struct my_args_info *args_info)
 {
   test_conf_parser_cmd_parser_release (args_info);
 }
-
 
 /** @brief replacement of strdup, which is not standard */
 char *

@@ -152,6 +152,7 @@ test_main_cmdline_cmd.h: test_main_cmdline_cmd.c
 test_first_cmdline_cmd.h: test_first_cmdline_cmd.c
 test_second_cmdline_cmd.h: test_second_cmdline_cmd.c
 test_no_options_cmd.h: test_no_options_cmd.c
+test_align_cmd.h: test_align_cmd.c
 
 no_strings_SOURCES = no_strings_cmd.ggo no_strings.c
 no_multi_strings_SOURCES = no_multi_strings_cmd.ggo no_multi_strings.c
@@ -207,7 +208,8 @@ test_manual_help_cmd.c test_manual_help_cmd.h \
 test_main_cmdline_cmd.c test_main_cmdline_cmd.h \
 test_first_cmdline_cmd.c test_first_cmdline_cmd.h \
 test_second_cmdline_cmd.c test_second_cmdline_cmd.h \
-test_no_options_cmd.h test_no_options_cmd.c
+test_no_options_cmd.h test_no_options_cmd.c \
+test_align_cmd.h test_align_cmd.c
 
 BUILT_SOURCES = $(CHECKDIFFFILES) $(ERRFILES)
 
@@ -226,11 +228,14 @@ test_conf_parser_cmd.c.test test_conf_parser_cmd.h.test \
 test_multiple_cmd.c.test test_multiple_cmd.h.test \
 test_sections_cmd.c.test \
 test_values_cmd.c.test test_values_cmd.h.test \
-test_all_opts.save.test test_multiple.save.test test_conf_parser.save.test \
+test_all_opts.save.test test_multiple.save.test \
+test_conf_parser.save.test test_values.save.test \
 test_redef_help_cmd.c.test test_redef_help_cmd.h.test \
 test_main_cmdline_cmd.c.test test_main_cmdline_cmd.h.test \
 test_first_cmdline_cmd.c.test test_first_cmdline_cmd.h.test \
-test_second_cmdline_cmd.c.test test_second_cmdline_cmd.h.test
+test_second_cmdline_cmd.c.test test_second_cmdline_cmd.h.test \
+test_no_options_cmd.h.test test_no_options_cmd.c.test \
+test_align_cmd.h.test test_align_cmd.c.test
 
 # the original command line used to be:
 # $(GGO_COMPILE) --no-handle-error -u
@@ -284,6 +289,7 @@ test_conf2.conf test_conf3.conf test_conf_err.conf \
 test_conf_err_string.conf test_conf_err_string2.conf \
 test_section_with_all_hidden.ggo \
 test_required_optional_cmd.ggo \
+test_align_cmd.ggo \
 $(ERRFILES) $(ERRGGOFILES) 
 
 check-err: $(ERRFILES)
@@ -321,6 +327,8 @@ $(TESTSOUTPUT):
 	$(PROGNAMESHOWDETAILEDHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $@ 2>&1;
 	$(PROGNAMESHOWHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $@ 2>&1;
 	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $@ 2>&1;
+	$(PROGNAME) --show-help < $(srcdir)/test_align_cmd.ggo >> $@ 2>&1;
+	$(PROGNAME) --show-full-help < $(srcdir)/test_align_cmd.ggo >> $@ 2>&1;
 	$(PROGNAMESHOWHELPREQUIRED) < $(srcdir)/test_required_optional_cmd.ggo >> $@ 2>&1;
 	$(PROGNAMESHOWHELPREQUIRED) --default-optional < $(srcdir)/test_required_optional_cmd.ggo >> $@ 2>&1;
 
@@ -369,6 +377,8 @@ check-diff:
 	$(PROGNAMESHOWDETAILEDHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	$(PROGNAME) --show-help < $(srcdir)/test_align_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	$(PROGNAME) --show-full-help < $(srcdir)/test_align_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWHELPREQUIRED) < $(srcdir)/test_required_optional_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWHELPREQUIRED) --default-optional < $(srcdir)/test_required_optional_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
         echo "diff $(TESTSOUTPUT) $(TESTSOUT)"; \

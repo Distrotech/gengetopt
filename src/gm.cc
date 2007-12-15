@@ -1030,8 +1030,15 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
   /* calculate columns */
   desc_col = 0;
   foropt {
-    if (opt->hidden && !generate_hidden)
-        continue;
+    // if (opt->hidden && !generate_hidden)
+    //    continue;
+    // when computing columns, we also consider hidden_options, so that
+    // the --help and --full-help will be aligned just the same
+    // IMPORTANT: this is also crucial due to how the help string array
+    // is built starting from the full-help string array:
+    // we iterate over the two lists of options and check whether the
+    // corresponding strings are the same; thus, the help strings must
+    // have the same space alignments, otherwise they're not equal
 
     unsigned int width = 2 + 4 + 2;  // ws + "-a, " + ws
 
@@ -1992,11 +1999,15 @@ CmdlineParserCreator::generate_file_save_loop(ostream &stream, unsigned int inde
       file_save_multiple.set_has_arg(opt->type != ARG_NO);
       file_save_multiple.set_opt_var(opt->var_arg);
       file_save_multiple.set_opt_name(opt->long_opt);
+      file_save_multiple.set_values
+          ((opt->acceptedvalues ? OPTION_VALUES_NAME(opt->var_arg) : "0"));
 
       file_save_multiple.generate_file_save_multiple(stream, indent);
     } else {
       file_save.set_opt_name(opt->long_opt);
       file_save.set_given(opt->var_arg + suffix_given);
+      file_save.set_values
+          ((opt->acceptedvalues ? OPTION_VALUES_NAME(opt->var_arg) : "0"));
       
       if (opt->type != ARG_NO && opt->type != ARG_FLAG) {
         file_save.set_arg(opt->var_arg + suffix + (opt->multiple ? " [i]" : ""));

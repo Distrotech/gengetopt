@@ -215,8 +215,9 @@ default_values_cmd_parser_release (struct gengetopt_args_info *args_info)
   clear_given (args_info);
 }
 
+
 static void
-write_into_file(FILE *outfile, const char *opt, const char *arg)
+write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
 {
   if (arg) {
     fprintf(outfile, "%s=\"%s\"\n", opt, arg);
@@ -238,25 +239,25 @@ default_values_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args_i
     }
 
   if (args_info->help_given)
-    write_into_file(outfile, "help", 0 );
+    write_into_file(outfile, "help", 0, 0 );
   if (args_info->version_given)
-    write_into_file(outfile, "version", 0 );
+    write_into_file(outfile, "version", 0, 0 );
   if (args_info->foo_given)
-    write_into_file(outfile, "foo", args_info->foo_orig);
+    write_into_file(outfile, "foo", args_info->foo_orig, 0);
   if (args_info->bar_given)
-    write_into_file(outfile, "bar", args_info->bar_orig);
+    write_into_file(outfile, "bar", args_info->bar_orig, 0);
   if (args_info->foo_opt_given)
-    write_into_file(outfile, "foo-opt", args_info->foo_opt_orig);
+    write_into_file(outfile, "foo-opt", args_info->foo_opt_orig, 0);
   if (args_info->bar_opt_given)
-    write_into_file(outfile, "bar-opt", args_info->bar_opt_orig);
+    write_into_file(outfile, "bar-opt", args_info->bar_opt_orig, 0);
   if (args_info->foofloat_given)
-    write_into_file(outfile, "foofloat", args_info->foofloat_orig);
+    write_into_file(outfile, "foofloat", args_info->foofloat_orig, 0);
   if (args_info->foodouble_given)
-    write_into_file(outfile, "foodouble", args_info->foodouble_orig);
+    write_into_file(outfile, "foodouble", args_info->foodouble_orig, 0);
   if (args_info->pi_given)
-    write_into_file(outfile, "pi", args_info->pi_orig);
+    write_into_file(outfile, "pi", args_info->pi_orig, 0);
   if (args_info->timeout_given)
-    write_into_file(outfile, "timeout", args_info->timeout_orig);
+    write_into_file(outfile, "timeout", args_info->timeout_orig, 0);
   
 
   i = EXIT_SUCCESS;
@@ -288,7 +289,6 @@ default_values_cmd_parser_free (struct gengetopt_args_info *args_info)
 {
   default_values_cmd_parser_release (args_info);
 }
-
 
 /** @brief replacement of strdup, which is not standard */
 char *

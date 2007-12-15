@@ -202,8 +202,9 @@ test_manual_help_cmd_parser_release (struct gengetopt_args_info *args_info)
   clear_given (args_info);
 }
 
+
 static void
-write_into_file(FILE *outfile, const char *opt, const char *arg)
+write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
 {
   if (arg) {
     fprintf(outfile, "%s=\"%s\"\n", opt, arg);
@@ -225,15 +226,15 @@ test_manual_help_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args
     }
 
   if (args_info->help_given)
-    write_into_file(outfile, "help", 0 );
+    write_into_file(outfile, "help", 0, 0 );
   if (args_info->detailed_help_given)
-    write_into_file(outfile, "detailed-help", 0 );
+    write_into_file(outfile, "detailed-help", 0, 0 );
   if (args_info->version_given)
-    write_into_file(outfile, "version", 0 );
+    write_into_file(outfile, "version", 0, 0 );
   if (args_info->height_given)
-    write_into_file(outfile, "height", args_info->height_orig);
+    write_into_file(outfile, "height", args_info->height_orig, 0);
   if (args_info->vavoom_given)
-    write_into_file(outfile, "vavoom", args_info->vavoom_orig);
+    write_into_file(outfile, "vavoom", args_info->vavoom_orig, 0);
   
 
   i = EXIT_SUCCESS;
@@ -265,7 +266,6 @@ test_manual_help_cmd_parser_free (struct gengetopt_args_info *args_info)
 {
   test_manual_help_cmd_parser_release (args_info);
 }
-
 
 /** @brief replacement of strdup, which is not standard */
 char *

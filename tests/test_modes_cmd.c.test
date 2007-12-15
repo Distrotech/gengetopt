@@ -261,8 +261,9 @@ test_modes_cmd_parser_release (struct gengetopt_args_info *args_info)
   clear_given (args_info);
 }
 
+
 static void
-write_into_file(FILE *outfile, const char *opt, const char *arg)
+write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
 {
   if (arg) {
     fprintf(outfile, "%s=\"%s\"\n", opt, arg);
@@ -272,12 +273,12 @@ write_into_file(FILE *outfile, const char *opt, const char *arg)
 }
 
 static void
-write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg)
+write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg, char *values[])
 {
   int i;
   
   for (i = 0; i < len; ++i)
-    write_into_file(outfile, opt, (arg ? arg[i] : 0));
+    write_into_file(outfile, opt, (arg ? arg[i] : 0), values);
 }
 
 int
@@ -292,25 +293,25 @@ test_modes_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     }
 
   if (args_info->help_given)
-    write_into_file(outfile, "help", 0 );
+    write_into_file(outfile, "help", 0, 0 );
   if (args_info->version_given)
-    write_into_file(outfile, "version", 0 );
+    write_into_file(outfile, "version", 0, 0 );
   if (args_info->no_mode_given)
-    write_into_file(outfile, "no-mode", 0 );
+    write_into_file(outfile, "no-mode", 0, 0 );
   if (args_info->no_mode2_given)
-    write_into_file(outfile, "no-mode2", args_info->no_mode2_orig);
-  write_multiple_into_file(outfile, args_info->opta_given, "opta", 0);
+    write_into_file(outfile, "no-mode2", args_info->no_mode2_orig, 0);
+  write_multiple_into_file(outfile, args_info->opta_given, "opta", 0, 0);
   if (args_info->optA_given)
-    write_into_file(outfile, "optA", args_info->optA_orig);
-  write_multiple_into_file(outfile, args_info->optAmul_given, "optAmul", args_info->optAmul_orig);
+    write_into_file(outfile, "optA", args_info->optA_orig, 0);
+  write_multiple_into_file(outfile, args_info->optAmul_given, "optAmul", args_info->optAmul_orig, 0);
   if (args_info->optb_given)
-    write_into_file(outfile, "optb", 0 );
+    write_into_file(outfile, "optb", 0, 0 );
   if (args_info->optc_given)
-    write_into_file(outfile, "optc", 0 );
+    write_into_file(outfile, "optc", 0, 0 );
   if (args_info->optd_given)
-    write_into_file(outfile, "optd", 0 );
+    write_into_file(outfile, "optd", 0, 0 );
   if (args_info->mopt_given)
-    write_into_file(outfile, "mopt", args_info->mopt_orig);
+    write_into_file(outfile, "mopt", args_info->mopt_orig, 0);
   
 
   i = EXIT_SUCCESS;
@@ -342,7 +343,6 @@ test_modes_cmd_parser_free (struct gengetopt_args_info *args_info)
 {
   test_modes_cmd_parser_release (args_info);
 }
-
 
 /** @brief replacement of strdup, which is not standard */
 char *

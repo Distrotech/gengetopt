@@ -20,7 +20,9 @@ file_save_multiple_gen_class::generate_file_save_multiple(ostream &stream, unsig
       generate_string (opt_name, stream, indent + indent_str.length ());
       stream << "\", args_info->";
       generate_string (opt_var, stream, indent + indent_str.length ());
-      stream << "_orig);";
+      stream << "_orig, ";
+      generate_string (values, stream, indent + indent_str.length ());
+      stream << ");";
       stream << "\n";
       stream << indent_str;
     }
@@ -30,7 +32,7 @@ file_save_multiple_gen_class::generate_file_save_multiple(ostream &stream, unsig
       generate_string (opt_var, stream, indent + indent_str.length ());
       stream << "_given, \"";
       generate_string (opt_name, stream, indent + indent_str.length ());
-      stream << "\", 0);";
+      stream << "\", 0, 0);";
       stream << "\n";
       stream << indent_str;
     }

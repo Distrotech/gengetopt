@@ -326,6 +326,7 @@ specified --values-multiple-enums with argument 2
 specified --values-multiple-enums with (original) argument T
 specified --values-multiple-enums with argument 3
 specified --values-multiple-enums with (original) argument FOURTH
+saved configuration file test_values.save
 *** test_values_err.sh
 ./test_values: ambiguous argument, "fo", for option `--string-values' (`-s')
 ./test_values: invalid argument, "fooa", for option `--multistring-values' (`-S')
@@ -558,6 +559,7 @@ Usage: test_values [OPTIONS]...
                                 multiple option with values and enums  
                                   (possible values="FIRST", "SECOND", 
                                   "THIRD", "FOURTH" default=`FOURTH')
+      --file-save=STRING        save the passed options into a file
 *** test_err.sh
 diff wrong_default.err.out ./wrong_default.err
 diff wrong_dep.err.out ./wrong_dep.err
@@ -1114,6 +1116,7 @@ Usage: test_values [OPTIONS]... [FILES]...
                                 multiple option with values and enums  
                                   (possible values="FIRST", "SECOND", 
                                   "THIRD", "FOURTH" default=`FOURTH')
+      --file-save=STRING        save the passed options into a file
 *** test_redef_help -h
 specified --height
 *** test_manual_help -h
@@ -1612,6 +1615,45 @@ First section.  This contains non hidden options:
 Hidden section.  This contains only hidden options:
       --hidden=STRING      hidden
       --hidden2=STRING     hidden2
+test align 1.0
+
+this is just a test to check that the output of --help and --full-help are 
+aligned just the same
+
+Usage: test align [OPTIONS]...
+
+  -h, --help           Print help and exit
+      --full-help      Print help, including hidden options, and exit
+  -V, --version        Print version and exit
+
+Operation modes and settings:
+  
+  Non-absolute pathnames are relative to the executable's directory.
+
+
+ Mode: standalone
+  -y, --non-hidden     non-hidden option
+test align 1.0
+
+this is just a test to check that the output of --help and --full-help are 
+aligned just the same
+
+Usage: test align [OPTIONS]...
+
+  -h, --help           Print help and exit
+      --full-help      Print help, including hidden options, and exit
+  -V, --version        Print version and exit
+  -m, --hidden-option  This is the hidden option that is printed only with 
+                         --full-help; thanks to its long description we force a 
+                         possible different alignment for --full-help
+
+Operation modes and settings:
+  
+  Non-absolute pathnames are relative to the executable's directory.
+
+
+ Mode: standalone
+  -y, --non-hidden     non-hidden option
 required_or_optional 0.1
 
 Usage: required_or_optional --required=STRING --non-specified=STRING 

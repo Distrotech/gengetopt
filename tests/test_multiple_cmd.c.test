@@ -352,8 +352,9 @@ test_multiple_cmd_parser_release (struct gengetopt_args_info *args_info)
   clear_given (args_info);
 }
 
+
 static void
-write_into_file(FILE *outfile, const char *opt, const char *arg)
+write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
 {
   if (arg) {
     fprintf(outfile, "%s=\"%s\"\n", opt, arg);
@@ -363,12 +364,12 @@ write_into_file(FILE *outfile, const char *opt, const char *arg)
 }
 
 static void
-write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg)
+write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg, char *values[])
 {
   int i;
   
   for (i = 0; i < len; ++i)
-    write_into_file(outfile, opt, (arg ? arg[i] : 0));
+    write_into_file(outfile, opt, (arg ? arg[i] : 0), values);
 }
 
 int
@@ -383,26 +384,26 @@ test_multiple_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args_in
     }
 
   if (args_info->help_given)
-    write_into_file(outfile, "help", 0 );
+    write_into_file(outfile, "help", 0, 0 );
   if (args_info->version_given)
-    write_into_file(outfile, "version", 0 );
-  write_multiple_into_file(outfile, args_info->string_given, "string", args_info->string_orig);
-  write_multiple_into_file(outfile, args_info->int_given, "int", args_info->int_orig);
-  write_multiple_into_file(outfile, args_info->short_given, "short", args_info->short_orig);
-  write_multiple_into_file(outfile, args_info->long_given, "long", args_info->long_orig);
-  write_multiple_into_file(outfile, args_info->limited_given, "limited", args_info->limited_orig);
-  write_multiple_into_file(outfile, args_info->limited_interval_given, "limited-interval", args_info->limited_interval_orig);
-  write_multiple_into_file(outfile, args_info->big_limited_interval_given, "big-limited-interval", args_info->big_limited_interval_orig);
-  write_multiple_into_file(outfile, args_info->limited_open_right_given, "limited-open-right", args_info->limited_open_right_orig);
-  write_multiple_into_file(outfile, args_info->limited_open_left_given, "limited-open-left", args_info->limited_open_left_orig);
-  write_multiple_into_file(outfile, args_info->float_given, "float", args_info->float_orig);
-  write_multiple_into_file(outfile, args_info->no_short_opt_given, "no-short-opt", args_info->no_short_opt_orig);
-  write_multiple_into_file(outfile, args_info->noarg_given, "noarg", 0);
-  write_multiple_into_file(outfile, args_info->noarg_noshort_given, "noarg-noshort", 0);
-  write_multiple_into_file(outfile, args_info->optarg_given, "optarg", args_info->optarg_orig);
-  write_multiple_into_file(outfile, args_info->optarg_noshort_given, "optarg-noshort", args_info->optarg_noshort_orig);
+    write_into_file(outfile, "version", 0, 0 );
+  write_multiple_into_file(outfile, args_info->string_given, "string", args_info->string_orig, 0);
+  write_multiple_into_file(outfile, args_info->int_given, "int", args_info->int_orig, 0);
+  write_multiple_into_file(outfile, args_info->short_given, "short", args_info->short_orig, 0);
+  write_multiple_into_file(outfile, args_info->long_given, "long", args_info->long_orig, 0);
+  write_multiple_into_file(outfile, args_info->limited_given, "limited", args_info->limited_orig, 0);
+  write_multiple_into_file(outfile, args_info->limited_interval_given, "limited-interval", args_info->limited_interval_orig, 0);
+  write_multiple_into_file(outfile, args_info->big_limited_interval_given, "big-limited-interval", args_info->big_limited_interval_orig, 0);
+  write_multiple_into_file(outfile, args_info->limited_open_right_given, "limited-open-right", args_info->limited_open_right_orig, 0);
+  write_multiple_into_file(outfile, args_info->limited_open_left_given, "limited-open-left", args_info->limited_open_left_orig, 0);
+  write_multiple_into_file(outfile, args_info->float_given, "float", args_info->float_orig, 0);
+  write_multiple_into_file(outfile, args_info->no_short_opt_given, "no-short-opt", args_info->no_short_opt_orig, 0);
+  write_multiple_into_file(outfile, args_info->noarg_given, "noarg", 0, 0);
+  write_multiple_into_file(outfile, args_info->noarg_noshort_given, "noarg-noshort", 0, 0);
+  write_multiple_into_file(outfile, args_info->optarg_given, "optarg", args_info->optarg_orig, 0);
+  write_multiple_into_file(outfile, args_info->optarg_noshort_given, "optarg-noshort", args_info->optarg_noshort_orig, 0);
   if (args_info->file_save_given)
-    write_into_file(outfile, "file-save", args_info->file_save_orig);
+    write_into_file(outfile, "file-save", args_info->file_save_orig, 0);
   
 
   i = EXIT_SUCCESS;
@@ -434,7 +435,6 @@ test_multiple_cmd_parser_free (struct gengetopt_args_info *args_info)
 {
   test_multiple_cmd_parser_release (args_info);
 }
-
 
 /** @brief replacement of strdup, which is not standard */
 char *

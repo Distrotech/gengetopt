@@ -22,12 +22,14 @@ file_save_gen_class::generate_file_save(ostream &stream, unsigned int indent)
   stream << "\", ";
   if (( arg == "" ))
     {
-      stream << "0 ";
+      stream << "0, 0 ";
     }
   else
     {
       stream << "args_info->";
       generate_string (arg, stream, indent + indent_str.length ());
+      stream << ", ";
+      generate_string (values, stream, indent + indent_str.length ());
     }
   stream << ");";
   stream << "\n";

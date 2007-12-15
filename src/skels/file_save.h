@@ -19,14 +19,15 @@ class file_save_gen_class
   string arg;
   string given;
   string opt_name;
+  string values;
 
  public:
   file_save_gen_class()
   {
   }
   
-  file_save_gen_class(const string &_arg, const string &_given, const string &_opt_name) :
-    arg (_arg), given (_given), opt_name (_opt_name)
+  file_save_gen_class(const string &_arg, const string &_given, const string &_opt_name, const string &_values) :
+    arg (_arg), given (_given), opt_name (_opt_name), values (_values)
   {
   }
 
@@ -66,6 +67,11 @@ class file_save_gen_class
   void set_opt_name(const string &_opt_name)
   {
     opt_name = _opt_name;
+  }
+
+  void set_values(const string &_values)
+  {
+    values = _values;
   }
 
   void generate_file_save(ostream &stream, unsigned int indent = 0);

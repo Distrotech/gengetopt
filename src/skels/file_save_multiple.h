@@ -19,6 +19,7 @@ class file_save_multiple_gen_class
   bool has_arg;
   string opt_name;
   string opt_var;
+  string values;
 
  public:
   file_save_multiple_gen_class() :
@@ -26,8 +27,8 @@ class file_save_multiple_gen_class
   {
   }
   
-  file_save_multiple_gen_class(bool _has_arg, const string &_opt_name, const string &_opt_var) :
-    has_arg (_has_arg), opt_name (_opt_name), opt_var (_opt_var)
+  file_save_multiple_gen_class(bool _has_arg, const string &_opt_name, const string &_opt_var, const string &_values) :
+    has_arg (_has_arg), opt_name (_opt_name), opt_var (_opt_var), values (_values)
   {
   }
 
@@ -67,6 +68,11 @@ class file_save_multiple_gen_class
   void set_opt_var(const string &_opt_var)
   {
     opt_var = _opt_var;
+  }
+
+  void set_values(const string &_values)
+  {
+    values = _values;
   }
 
   void generate_file_save_multiple(ostream &stream, unsigned int indent = 0);

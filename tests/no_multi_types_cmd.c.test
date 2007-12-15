@@ -175,8 +175,9 @@ no_multi_types_cmd_parser_release (struct gengetopt_args_info *args_info)
   clear_given (args_info);
 }
 
+
 static void
-write_into_file(FILE *outfile, const char *opt, const char *arg)
+write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
 {
   if (arg) {
     fprintf(outfile, "%s=\"%s\"\n", opt, arg);
@@ -186,12 +187,12 @@ write_into_file(FILE *outfile, const char *opt, const char *arg)
 }
 
 static void
-write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg)
+write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg, char *values[])
 {
   int i;
   
   for (i = 0; i < len; ++i)
-    write_into_file(outfile, opt, (arg ? arg[i] : 0));
+    write_into_file(outfile, opt, (arg ? arg[i] : 0), values);
 }
 
 int
@@ -206,12 +207,12 @@ no_multi_types_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args_i
     }
 
   if (args_info->help_given)
-    write_into_file(outfile, "help", 0 );
+    write_into_file(outfile, "help", 0, 0 );
   if (args_info->version_given)
-    write_into_file(outfile, "version", 0 );
+    write_into_file(outfile, "version", 0, 0 );
   if (args_info->test_given)
-    write_into_file(outfile, "test", args_info->test_orig);
-  write_multiple_into_file(outfile, args_info->multi_given, "multi", 0);
+    write_into_file(outfile, "test", args_info->test_orig, 0);
+  write_multiple_into_file(outfile, args_info->multi_given, "multi", 0, 0);
   
 
   i = EXIT_SUCCESS;
@@ -243,7 +244,6 @@ no_multi_types_cmd_parser_free (struct gengetopt_args_info *args_info)
 {
   no_multi_types_cmd_parser_release (args_info);
 }
-
 
 /** @brief replacement of strdup, which is not standard */
 char *

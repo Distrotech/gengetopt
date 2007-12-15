@@ -45,6 +45,7 @@ const char *gengetopt_args_info_help[] = {
   "  -e, --values-first-enums=ENUM option with values and enums 1  (possible \n                                  values=\"FOO\", \"BAR\", \"ANOTHER\", \n                                  \"SOMETHING\")",
   "      --values-second-enums=ENUM\n                                option with values and enums 2 with default  \n                                  (possible values=\"90\", \"180\", \"270\", \n                                  \"360\" default=`180')",
   "  -W, --values-multiple-enums=ENUM\n                                multiple option with values and enums  \n                                  (possible values=\"FIRST\", \"SECOND\", \n                                  \"THIRD\", \"FOURTH\" default=`FOURTH')",
+  "      --file-save=STRING        save the passed options into a file",
     0
 };
 
@@ -103,6 +104,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->values_first_enums_given = 0 ;
   args_info->values_second_enums_given = 0 ;
   args_info->values_multiple_enums_given = 0 ;
+  args_info->file_save_given = 0 ;
   args_info->group1_group_counter = 0 ;
 }
 
@@ -136,6 +138,8 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->values_second_enums_orig = NULL;
   args_info->values_multiple_enums_arg = NULL;
   args_info->values_multiple_enums_orig = NULL;
+  args_info->file_save_arg = NULL;
+  args_info->file_save_orig = NULL;
   
 }
 
@@ -170,6 +174,7 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->values_multiple_enums_help = gengetopt_args_info_help[16] ;
   args_info->values_multiple_enums_min = -1;
   args_info->values_multiple_enums_max = -1;
+  args_info->file_save_help = gengetopt_args_info_help[17] ;
   
 }
 
@@ -330,6 +335,8 @@ test_values_cmd_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->values_first_enums_orig));
   free_string_field (&(args_info->values_second_enums_orig));
   free_multiple_field (args_info->values_multiple_enums_given, (void **)&(args_info->values_multiple_enums_arg), &(args_info->values_multiple_enums_orig));
+  free_string_field (&(args_info->file_save_arg));
+  free_string_field (&(args_info->file_save_orig));
   
   
   for (i = 0; i < args_info->inputs_num; ++i)
@@ -341,23 +348,66 @@ test_values_cmd_parser_release (struct gengetopt_args_info *args_info)
   clear_given (args_info);
 }
 
-static void
-write_into_file(FILE *outfile, const char *opt, const char *arg)
+/**
+ * @param val the value to check
+ * @param values the possible values
+ * @return the index of the matched value:
+ * -1 if no value matched,
+ * -2 if more than one value has matched
+ */
+static int
+check_possible_values(const char *val, char *values[])
 {
+  int i, found, last;
+  size_t len;
+
+  if (!val)   /* otherwise strlen() crashes below */
+    return -1; /* -1 means no argument for the option */
+
+  found = last = 0;
+
+  for (i = 0, len = strlen(val); values[i]; ++i)
+    {
+      if (strncmp(val, values[i], len) == 0)
+        {
+          ++found;
+          last = i;
+          if (strlen(values[i]) == len)
+            return i; /* exact macth no need to check more */
+        }
+    }
+
+  if (found == 1) /* one match: OK */
+    return last;
+
+  return (found ? -2 : -1); /* return many values or none matched */
+}
+
+
+static void
+write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
+{
+  int found = -1;
   if (arg) {
-    fprintf(outfile, "%s=\"%s\"\n", opt, arg);
+    if (values) {
+      found = check_possible_values(arg, values);      
+    }
+    if (found >= 0)
+      fprintf(outfile, "%s=\"%s\" # %s\n", opt, arg, values[found]);
+    else
+      fprintf(outfile, "%s=\"%s\"\n", opt, arg);
   } else {
     fprintf(outfile, "%s\n", opt);
   }
 }
 
 static void
-write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg)
+write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg, char *values[])
 {
   int i;
   
   for (i = 0; i < len; ++i)
-    write_into_file(outfile, opt, (arg ? arg[i] : 0));
+    write_into_file(outfile, opt, (arg ? arg[i] : 0), values);
 }
 
 int
@@ -372,32 +422,34 @@ test_values_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info
     }
 
   if (args_info->help_given)
-    write_into_file(outfile, "help", 0 );
+    write_into_file(outfile, "help", 0, 0 );
   if (args_info->version_given)
-    write_into_file(outfile, "version", 0 );
+    write_into_file(outfile, "version", 0, 0 );
   if (args_info->string_values_given)
-    write_into_file(outfile, "string-values", args_info->string_values_orig);
+    write_into_file(outfile, "string-values", args_info->string_values_orig, test_values_cmd_parser_string_values_values);
   if (args_info->string_values_def_given)
-    write_into_file(outfile, "string-values-def", args_info->string_values_def_orig);
+    write_into_file(outfile, "string-values-def", args_info->string_values_def_orig, test_values_cmd_parser_string_values_def_values);
   if (args_info->string_values_def_argopt_given)
-    write_into_file(outfile, "string-values-def-argopt", args_info->string_values_def_argopt_orig);
+    write_into_file(outfile, "string-values-def-argopt", args_info->string_values_def_argopt_orig, test_values_cmd_parser_string_values_def_argopt_values);
   if (args_info->string_values_no_short_given)
-    write_into_file(outfile, "string-values-no-short", args_info->string_values_no_short_orig);
-  write_multiple_into_file(outfile, args_info->multistring_values_given, "multistring-values", args_info->multistring_values_orig);
-  write_multiple_into_file(outfile, args_info->multistring_values_def_given, "multistring-values-def", args_info->multistring_values_def_orig);
-  write_multiple_into_file(outfile, args_info->multistring_values_no_short_given, "multistring-values-no-short", args_info->multistring_values_no_short_orig);
+    write_into_file(outfile, "string-values-no-short", args_info->string_values_no_short_orig, test_values_cmd_parser_string_values_no_short_values);
+  write_multiple_into_file(outfile, args_info->multistring_values_given, "multistring-values", args_info->multistring_values_orig, test_values_cmd_parser_multistring_values_values);
+  write_multiple_into_file(outfile, args_info->multistring_values_def_given, "multistring-values-def", args_info->multistring_values_def_orig, test_values_cmd_parser_multistring_values_def_values);
+  write_multiple_into_file(outfile, args_info->multistring_values_no_short_given, "multistring-values-no-short", args_info->multistring_values_no_short_orig, test_values_cmd_parser_multistring_values_no_short_values);
   if (args_info->string_values_group_given)
-    write_into_file(outfile, "string-values-group", args_info->string_values_group_orig);
+    write_into_file(outfile, "string-values-group", args_info->string_values_group_orig, test_values_cmd_parser_string_values_group_values);
   if (args_info->int_values_given)
-    write_into_file(outfile, "int-values", args_info->int_values_orig);
-  write_multiple_into_file(outfile, args_info->int_values_m_given, "int-values-m", args_info->int_values_m_orig);
+    write_into_file(outfile, "int-values", args_info->int_values_orig, test_values_cmd_parser_int_values_values);
+  write_multiple_into_file(outfile, args_info->int_values_m_given, "int-values-m", args_info->int_values_m_orig, test_values_cmd_parser_int_values_m_values);
   if (args_info->int_values_def_given)
-    write_into_file(outfile, "int-values-def", args_info->int_values_def_orig);
+    write_into_file(outfile, "int-values-def", args_info->int_values_def_orig, test_values_cmd_parser_int_values_def_values);
   if (args_info->values_first_enums_given)
-    write_into_file(outfile, "values-first-enums", args_info->values_first_enums_orig);
+    write_into_file(outfile, "values-first-enums", args_info->values_first_enums_orig, test_values_cmd_parser_values_first_enums_values);
   if (args_info->values_second_enums_given)
-    write_into_file(outfile, "values-second-enums", args_info->values_second_enums_orig);
-  write_multiple_into_file(outfile, args_info->values_multiple_enums_given, "values-multiple-enums", args_info->values_multiple_enums_orig);
+    write_into_file(outfile, "values-second-enums", args_info->values_second_enums_orig, test_values_cmd_parser_values_second_enums_values);
+  write_multiple_into_file(outfile, args_info->values_multiple_enums_given, "values-multiple-enums", args_info->values_multiple_enums_orig, test_values_cmd_parser_values_multiple_enums_values);
+  if (args_info->file_save_given)
+    write_into_file(outfile, "file-save", args_info->file_save_orig, 0);
   
 
   i = EXIT_SUCCESS;
@@ -429,42 +481,6 @@ test_values_cmd_parser_free (struct gengetopt_args_info *args_info)
 {
   test_values_cmd_parser_release (args_info);
 }
-
-/**
- * @param val the value to check
- * @param values the possible values
- * @return the index of the matched value:
- * -1 if no argument has been specified,
- * -2 if more than one value has matched
- */
-static int
-check_possible_values(const char *val, char *values[])
-{
-  int i, found, last;
-  size_t len;
-
-  if (!val)   /* otherwise strlen() crashes below */
-    return -1; /* -1 means no argument for the option */
-
-  found = last = 0;
-
-  for (i = 0, len = strlen(val); values[i]; ++i)
-    {
-      if (strncmp(val, values[i], len) == 0)
-        {
-          ++found;
-          last = i;
-          if (strlen(values[i]) == len)
-            return i; /* exact macth no need to check more */
-        }
-    }
-
-  if (found == 1) /* one match: OK */
-    return last;
-
-  return (found ? -2 : -1); /* return many values are matched */
-}
-
 
 /** @brief replacement of strdup, which is not standard */
 char *
@@ -1034,6 +1050,7 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
         { "values-first-enums",	1, NULL, 'e' },
         { "values-second-enums",	1, NULL, 0 },
         { "values-multiple-enums",	1, NULL, 'W' },
+        { "file-save",	1, NULL, 0 },
         { NULL,	0, NULL, 0 }
       };
 
@@ -1223,6 +1240,20 @@ test_values_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
                 &(local_args_info.values_second_enums_given), optarg, test_values_cmd_parser_values_second_enums_values, "180", ARG_ENUM,
                 check_ambiguity, override, 0, 0,
                 "values-second-enums", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* save the passed options into a file.  */
+          else if (strcmp (long_options[option_index].name, "file-save") == 0)
+          {
+          
+          
+            if (update_arg( (void *)&(args_info->file_save_arg), 
+                 &(args_info->file_save_orig), &(args_info->file_save_given),
+                &(local_args_info.file_save_given), optarg, 0, 0, ARG_STRING,
+                check_ambiguity, override, 0, 0,
+                "file-save", '-',
                 additional_error))
               goto failure;
           

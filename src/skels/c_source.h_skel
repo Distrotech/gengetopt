@@ -369,11 +369,62 @@ static void
   clear_given (args_info);
 }
 
-static void
-write_into_file(FILE *outfile, const char *opt, const char *arg)
+@IF@ check_possible_values @THEN@
+/**
+ * @@param val the value to check
+ * @@param values the possible values
+ * @@return the index of the matched value:
+ * -1 if no value matched,
+ * -2 if more than one value has matched
+ */
+static int
+check_possible_values(const char *val, char *values[])
 {
+  int i, found, last;
+  size_t len;
+
+  if (!val)   /* otherwise strlen() crashes below */
+    return -1; /* -1 means no argument for the option */
+
+  found = last = 0;
+
+  for (i = 0, len = strlen(val); values[i]; ++i)
+    {
+      if (strncmp(val, values[i], len) == 0)
+        {
+          ++found;
+          last = i;
+          if (strlen(values[i]) == len)
+            return i; /* exact macth no need to check more */
+        }
+    }
+
+  if (found == 1) /* one match: OK */
+    return last;
+
+  return (found ? -2 : -1); /* return many values or none matched */
+}
+
+@ENDIF@
+
+static void
+write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
+{
+  @IF@ check_possible_values @THEN@
+  int found = -1;
+  @ENDIF@
   if (arg) {
+    @IF@ check_possible_values @THEN@
+    if (values) {
+      found = check_possible_values(arg, values);      
+    }
+    if (found >= 0)
+      fprintf(outfile, "%s=\"%s\" # %s\n", opt, arg, values[found]);
+    else
+      fprintf(outfile, "%s=\"%s\"\n", opt, arg);
+    @ELSE@
     fprintf(outfile, "%s=\"%s\"\n", opt, arg);
+    @ENDIF@
   } else {
     fprintf(outfile, "%s\n", opt);
   }
@@ -381,12 +432,12 @@ write_into_file(FILE *outfile, const char *opt, const char *arg)
 
 @IF@ multiple_options @THEN@
 static void
-write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg)
+write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg, char *values[])
 {
   int i;
   
   for (i = 0; i < len; ++i)
-    write_into_file(outfile, opt, (arg ? arg[i] : 0));
+    write_into_file(outfile, opt, (arg ? arg[i] : 0), values);
 }
 @ENDIF@
 
@@ -432,44 +483,6 @@ void
 {
   @parser_name@_release (args_info);
 }
-
-@IF@ check_possible_values @THEN@
-/**
- * @@param val the value to check
- * @@param values the possible values
- * @@return the index of the matched value:
- * -1 if no argument has been specified,
- * -2 if more than one value has matched
- */
-static int
-check_possible_values(const char *val, char *values[])
-{
-  int i, found, last;
-  size_t len;
-
-  if (!val)   /* otherwise strlen() crashes below */
-    return -1; /* -1 means no argument for the option */
-
-  found = last = 0;
-
-  for (i = 0, len = strlen(val); values[i]; ++i)
-    {
-      if (strncmp(val, values[i], len) == 0)
-        {
-          ++found;
-          last = i;
-          if (strlen(values[i]) == len)
-            return i; /* exact macth no need to check more */
-        }
-    }
-
-  if (found == 1) /* one match: OK */
-    return last;
-
-  return (found ? -2 : -1); /* return many values are matched */
-}
-
-@ENDIF@
 
 @IF@ do_generate_strdup @THEN@
 /** @@brief replacement of strdup, which is not standard */

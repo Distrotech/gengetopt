@@ -90,6 +90,9 @@ struct gengetopt_args_info
   int values_multiple_enums_min; /**< @brief multiple option with values and enums's minimum occurreces */
   int values_multiple_enums_max; /**< @brief multiple option with values and enums's maximum occurreces */
   const char *values_multiple_enums_help; /**< @brief multiple option with values and enums help description.  */
+  char * file_save_arg;	/**< @brief save the passed options into a file.  */
+  char * file_save_orig;	/**< @brief save the passed options into a file original value given at command line.  */
+  const char *file_save_help; /**< @brief save the passed options into a file help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
@@ -107,6 +110,7 @@ struct gengetopt_args_info
   unsigned int values_first_enums_given ;	/**< @brief Whether values-first-enums was given.  */
   unsigned int values_second_enums_given ;	/**< @brief Whether values-second-enums was given.  */
   unsigned int values_multiple_enums_given ;	/**< @brief Whether values-multiple-enums was given.  */
+  unsigned int file_save_given ;	/**< @brief Whether file-save was given.  */
 
   char **inputs ; /**< @brief unamed options (options without names) */
   unsigned inputs_num ; /**< @brief unamed options number */

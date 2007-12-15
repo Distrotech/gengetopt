@@ -121,6 +121,8 @@ dnl AC_CHECK_FUNCS(getopt_long)
 
 AC_PATH_PROGS(TAR, tar gtar)
 
+dnl AM_MAINTAINER_MODE
+
 dnl this is only for highlighting source for documentation
 dnl GNU source-highlight can be found at
 dnl http://www.gnu.org/software/src-highlite
