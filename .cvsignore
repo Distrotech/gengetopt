@@ -29,3 +29,5 @@ gengetopt.kdevses
 config.rpath
 libtool
 ltmain.sh
+config.status.lineno
+configure.lineno

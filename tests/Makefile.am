@@ -116,6 +116,7 @@ test_conf_parser_file_save \
 test_multiple test_sections test_values \
 test_redef_help \
 test_manual_help \
+test_no_handle_help \
 test_multiple_parsers \
 test_sections_option_help \
 test_all_opts_option_help \
@@ -124,7 +125,7 @@ test_modes_option_help \
 test_no_options
 
 hidden_options_programs = test_all_opts
-details_options_programs = test_all_opts
+details_options_programs = test_all_opts test_no_handle_help
 
 # in order to make it work with parallel make we need to make
 # these deps explicit
@@ -148,6 +149,7 @@ test_sections_cmd.h: test_sections_cmd.c
 test_values_cmd.h: test_values_cmd.c
 test_redef_help_cmd.h: test_redef_help_cmd.c
 test_manual_help_cmd.h: test_manual_help_cmd.c
+test_no_handle_help_cmd.h: test_no_handle_help_cmd.c
 test_main_cmdline_cmd.h: test_main_cmdline_cmd.c
 test_first_cmdline_cmd.h: test_first_cmdline_cmd.c
 test_second_cmdline_cmd.h: test_second_cmdline_cmd.c
@@ -175,11 +177,12 @@ test_conf_parser_ov2_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_ov2
 test_conf_parser_ov3_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_ov3.c
 test_conf_parser_ov4_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_ov4.c
 test_conf_parser_file_save_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_file_save.c
-test_multiple_SOURCES = test_multiple_cmd.ggo test_multiple.c
+test_multiple_SOURCES = test_multiple_cmd.ggo test_multiple.cc
 test_sections_SOURCES = test_sections_cmd.ggo test_sections.c
 test_values_SOURCES = test_values_cmd.ggo test_values.c
 test_redef_help_SOURCES = test_redef_help_cmd.ggo test_redef_help.c
 test_manual_help_SOURCES = test_manual_help_cmd.ggo test_manual_help.c
+test_no_handle_help_SOURCES = test_no_handle_help_cmd.ggo test_no_handle_help.c
 test_multiple_parsers_SOURCES = test_main_cmdline_cmd.ggo test_first_cmdline_cmd.ggostr test_second_cmdline_cmd.ggostr test_multiple_parsers.c
 test_sections_option_help_SOURCES = test_sections_cmd.ggo test_sections_option_help.c
 test_all_opts_option_help_SOURCES = test_all_opts_cmd.ggo test_all_opts_option_help.c
@@ -205,6 +208,7 @@ test_sections_cmd.c \
 test_values_cmd.c test_values_cmd.h \
 test_redef_help_cmd.c test_redef_help_cmd.h \
 test_manual_help_cmd.c test_manual_help_cmd.h \
+test_no_handle_help_cmd.c test_no_handle_help_cmd.h \
 test_main_cmdline_cmd.c test_main_cmdline_cmd.h \
 test_first_cmdline_cmd.c test_first_cmdline_cmd.h \
 test_second_cmdline_cmd.c test_second_cmdline_cmd.h \

@@ -1,4 +1,4 @@
-# Copyright (C) 1999-2007  Free Software Foundation, Inc.
+# Copyright (C) 1999-2008  Free Software Foundation, Inc.
 #
 # This file is part of GNU gengetopt
 #
@@ -20,7 +20,7 @@ AC_INIT(autogen.sh)
 
 AM_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE(gengetopt,2.22b)
+AM_INIT_AUTOMAKE(gengetopt,2.22)
 
 dnl directory for docs (html)
 AC_SUBST(gengetoptdocdir)
@@ -148,6 +148,9 @@ dnl AM_CONDITIONAL(NO_SSTREAM, test -z "$ac_cv_cxx_have_sstream" )
 dnl we want to avoid tests in case we're crosscompiling
 dnl since we wouldn't be able to run the gengetopt executable in that case
 AM_CONDITIONAL(NO_CROSSCOMPILING, test "$cross_compiling" = no )
+
+dnl some scripts (e.g., valgrind_test.sh) need bash extensions
+AC_PATH_PROGS(BASH_SHELL, bash sh)
 
 AH_TEMPLATE(HAVE_LONG_LONG)
 

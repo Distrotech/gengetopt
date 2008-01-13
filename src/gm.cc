@@ -490,9 +490,13 @@ _generate_option_arg(ostream &stream,
 
   if (opt->type == ARG_LONGLONG)
     {
+      // the fallback type in case longlong is not supported by the compiler
+      string longtype = arg_types[ARG_LONG];
+      if (opt->multiple)
+          longtype += "*";
+      
       option_arg_gen.set_long_long_arg(true);
-      option_arg_gen.set_longlongtype(arg_types[opt->type]);
-      option_arg_gen.set_longtype(arg_types[ARG_LONG]);
+      option_arg_gen.set_longtype(longtype);
     }
 
   option_arg_gen.generate_option_arg(stream, indent);
@@ -762,7 +766,7 @@ CmdlineParserCreator::generate_help_option_print_from_lists(ostream &stream,
     OptionHelpList::const_iterator it = option_list->begin();
     OptionHelpList::const_iterator it2 = full_option_list->begin();
     // the second list is surely longer so we scan that one
-    for (; it2 != full_option_list->end(); ++it2)
+    for (; it != option_list->end() && it2 != full_option_list->end(); ++it2)
     {
         if (*it == *it2) {
             // when the two strings are the same it means that's a non-hidden
@@ -1656,12 +1660,15 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
                     if (full_help) {
                         option_gen.set_long_option (FULL_HELP_LONG_OPT);
                         option_gen.set_option_comment (FULL_HELP_OPT_DESCR);
+                    } else if (detailed_help) {
+                        option_gen.set_long_option (DETAILED_HELP_LONG_OPT);
+                        option_gen.set_option_comment (DETAILED_HELP_OPT_DESCR);
                     } else {
                         option_gen.set_long_option (HELP_LONG_OPT);
                         option_gen.set_short_option (HELP_SHORT_OPT_STR);
                         option_gen.set_option_comment (HELP_OPT_DESCR);
                     }
-                    option_gen.set_has_short_option (!full_help);
+                    //option_gen.set_has_short_option (!full_help);
               } else {
                   handle_help_gen_class help_gen;
                   help_gen.set_parser_name (parser_function_name);
@@ -1681,7 +1688,7 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
                   option_gen.set_long_option (VERSION_LONG_OPT);
                   option_gen.set_short_option (VERSION_SHORT_OPT_STR);
                   option_gen.set_option_comment (VERSION_OPT_DESCR);
-                  option_gen.set_has_short_option (true);
+                  //option_gen.set_has_short_option (true);
 
                   // we use the final_instrauctions parameter to call the free function
                   // and to return 0

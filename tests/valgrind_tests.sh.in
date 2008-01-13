@@ -1,4 +1,4 @@
-#! @SHELL@
+#! @BASH_SHELL@
 # --------------------------------------------------------------------- #
 #
 #  Script to run some examples through VALGRIND.
@@ -6,6 +6,8 @@
 #  Michael Hagemann <michael.hagemann@unibas.ch>
 #
 #  modified by Lorenzo Bettini <http://www.lorenzobettini.it>
+#
+#  needs bash extensions
 #
 # --------------------------------------------------------------------- #
 

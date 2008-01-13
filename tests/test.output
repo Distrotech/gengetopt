@@ -198,6 +198,10 @@ optarg_given 3 times
 optarg argument: no arg given
 optarg argument: first arg for optarg
 optarg argument: second arg for optarg
+longlong_given 3 times
+longlong argument: 1234567890
+longlong argument: 234567890
+longlong argument: 34567890
 optarg_noshort_given 2 times
 optarg_noshort argument: second arg for optarg
 optarg_noshort argument: no arg given
@@ -1009,6 +1013,7 @@ Usage: test_multiple [OPTIONS]... [FILES]...
   -i, --int=INT                 int option (mandatory)
   -S, --short=SHORT             short option
   -l, --long=LONG               long option
+      --longlong=LONGLONG       long long option
   -L, --limited=STRING          limited multiple option
       --limited-interval=STRING limited multiple option (with interval)
       --big-limited-interval=STRING
@@ -1129,6 +1134,23 @@ Usage: test_manual_help [OPTIONS]... [FILES]...
   -V, --version        show version of the program
       --height=INT     this is the description of height
       --vavoom=STRING  this is the description of vavoom
+*** test_no_handle_help -h
+####################
+# HEADER
+####################
+test_no_handle_help 1.0
+
+Usage: test_no_handle_help [OPTIONS]... [FILES]...
+
+  -h, --help           Print help and exit
+      --detailed-help  Print help, including all details and hidden options, 
+                         and exit
+  -V, --version        Print version and exit
+      --height=INT     this is the description of height
+      --vavoom=STRING  this is the description of vavoom
+####################
+# FOOTER
+####################
 *** test_multiple_parsers -h
 gengetopt 1.0
 
@@ -1341,6 +1363,24 @@ Moreover, text can be specified more than once in the input file.
       --file-save=STRING        save the passed options into a file
 
 A text after all options.
+*** test_no_handle_help --detailed-help
+####################
+# HEADER
+####################
+test_no_handle_help 1.0
+
+Usage: test_no_handle_help [OPTIONS]... [FILES]...
+
+  -h, --help           Print help and exit
+      --detailed-help  Print help, including all details and hidden options, 
+                         and exit
+  -V, --version        Print version and exit
+      --height=INT     this is the description of height
+  These are the details of option height
+      --vavoom=STRING  this is the description of vavoom
+####################
+# FOOTER
+####################
 test_all_opts 1.0
 
 This is just a gengetopt's test file

@@ -33,7 +33,7 @@ This manual is for GNU Gengetopt
 (version @value{VERSION}, @value{UPDATED}),
 a tool to write command line option parsers for C programs.
 
-Copyright @copyright{} 2001 - 2007 Free Software Foundation, Inc.
+Copyright @copyright{} 2001 - 2008 Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -1010,7 +1010,7 @@ following options:
 With these options@footnote{Since version 2.22.} you can disable the
 automatic addition of options @code{--help|-h} and @code{--version|-V},
 respectively.  The programmer will then be able to add these options in
-the input file and handle them as he see fit.  Notice that
+the input file and handle them as he sees fit.  Notice that
 @code{--no-help} will also disable the automatic options
 @code{--detailed-help} and @code{--full-help}.  The programmer can still
 define options with short character @code{h} and @code{V} as he wants,

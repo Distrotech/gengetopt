@@ -1,6 +1,6 @@
 @IF@ long_long_arg @THEN@
 #ifdef HAVE_LONG_LONG
-@longlongtype@ @name@_arg;	/**< @@brief @desc@@if@ has_default @then@ (default=@default_value@)@endif@.  */
+@type@ @name@_arg;	/**< @@brief @desc@@if@ has_default @then@ (default=@default_value@)@endif@.  */
 #else
 @longtype@ @name@_arg;	/**< @@brief @desc@@if@ has_default @then@ (default=@default_value@)@endif@.  */
 #endif

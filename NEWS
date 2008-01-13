@@ -38,6 +38,7 @@ Version 2.22
    * can use ? as short option
    * --no-help, --no-version: don't add --help and --version automatically
      (the user can specify those options manually)
+   * fixed a bug in generation of multiple options of type longlong
 
 Version 2.21
 

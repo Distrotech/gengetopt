@@ -54,6 +54,15 @@ struct gengetopt_args_info
   int long_min; /**< @brief long option's minimum occurreces */
   int long_max; /**< @brief long option's maximum occurreces */
   const char *long_help; /**< @brief long option help description.  */
+  #ifdef HAVE_LONG_LONG
+  long long int* longlong_arg;	/**< @brief long long option.  */
+  #else
+  long* longlong_arg;	/**< @brief long long option.  */
+  #endif
+  char ** longlong_orig;	/**< @brief long long option original value given at command line.  */
+  int longlong_min; /**< @brief long long option's minimum occurreces */
+  int longlong_max; /**< @brief long long option's maximum occurreces */
+  const char *longlong_help; /**< @brief long long option help description.  */
   char ** limited_arg;	/**< @brief limited multiple option.  */
   char ** limited_orig;	/**< @brief limited multiple option original value given at command line.  */
   int limited_min; /**< @brief limited multiple option's minimum occurreces */
@@ -115,6 +124,7 @@ struct gengetopt_args_info
   unsigned int int_given ;	/**< @brief Whether int was given.  */
   unsigned int short_given ;	/**< @brief Whether short was given.  */
   unsigned int long_given ;	/**< @brief Whether long was given.  */
+  unsigned int longlong_given ;	/**< @brief Whether longlong was given.  */
   unsigned int limited_given ;	/**< @brief Whether limited was given.  */
   unsigned int limited_interval_given ;	/**< @brief Whether limited-interval was given.  */
   unsigned int big_limited_interval_given ;	/**< @brief Whether big-limited-interval was given.  */

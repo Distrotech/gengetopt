@@ -50,3 +50,4 @@ no_multi_types
 test_modes
 test_modes_option_help
 test_manual_help
+test_no_handle_help

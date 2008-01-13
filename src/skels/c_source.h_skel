@@ -506,8 +506,7 @@ static char *
 get_multiple_arg_token(const char *arg)
 {
   char *tok, *ret;
-  size_t len, num_of_escape;
-  int i, j;
+  size_t len, num_of_escape, i, j;
 
   if (!arg)
     return NULL;
@@ -734,8 +733,8 @@ int update_arg(void *field, char **orig_field,
                unsigned int *field_given, unsigned int *prev_given, 
                char *value, char *possible_values[], const char *default_value,
                @parser_name@_arg_type arg_type,
-               short check_ambiguity, short override,
-               short no_free, short multiple_option,
+               int check_ambiguity, int override,
+               int no_free, int multiple_option,
                const char *long_opt, char short_opt,
                const char *additional_error)
 {

@@ -1,3 +1,20 @@
+2008-01-13  Lorenzo Bettini  <bettini@laptop>
+
+	* src/skels/c_source.h_skel: boolean parameters are not int instead
+	of short in order to avoid warnings
+	size_t used in get_multiple_token also for indexes to avoid warnings
+
+2008-01-10  Lorenzo Bettini  <bettini@laptop>
+
+	* src/gm.cc (handle_options): correctly call set_has_short_option
+
+	* tests/test_multiple.cc (main): renames test_multiple.c to employ
+	the C++ stronger type checking
+
+	* src/gm.cc (_generate_option_arg): fixed bug that did not generate
+	a longlong pointer in case of multiple options, reported by Richard
+	Eggert
+
 2007-12-13  Lorenzo Bettini  <bettini@lorelap>
 
 	* src/skels/c_source.h_skel: also write the corresponding value (not

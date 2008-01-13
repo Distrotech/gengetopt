@@ -32,7 +32,7 @@ gengetopt.1: $(top_srcdir)/src/cmdline.ggo
 	touch $@
 else
 gengetopt.1: $(top_srcdir)/src/cmdline.ggo
-	$(HELP2MAN) $(PROGNAME) > $@
+	$(HELP2MAN) $(PROGNAME) --help-option="--detailed-help" > $@
 endif
 
 

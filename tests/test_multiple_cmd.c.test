@@ -34,6 +34,7 @@ const char *gengetopt_args_info_help[] = {
   "  -i, --int=INT                 int option (mandatory)",
   "  -S, --short=SHORT             short option",
   "  -l, --long=LONG               long option",
+  "      --longlong=LONGLONG       long long option",
   "  -L, --limited=STRING          limited multiple option",
   "      --limited-interval=STRING limited multiple option (with interval)",
   "      --big-limited-interval=STRING\n                                limited multiple option (with interval)",
@@ -55,6 +56,7 @@ typedef enum {ARG_NO
   , ARG_SHORT
   , ARG_LONG
   , ARG_FLOAT
+  , ARG_LONGLONG
 } test_multiple_cmd_parser_arg_type;
 
 static
@@ -81,6 +83,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->int_given = 0 ;
   args_info->short_given = 0 ;
   args_info->long_given = 0 ;
+  args_info->longlong_given = 0 ;
   args_info->limited_given = 0 ;
   args_info->limited_interval_given = 0 ;
   args_info->big_limited_interval_given = 0 ;
@@ -106,6 +109,8 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->short_orig = NULL;
   args_info->long_arg = NULL;
   args_info->long_orig = NULL;
+  args_info->longlong_arg = NULL;
+  args_info->longlong_orig = NULL;
   args_info->limited_arg = NULL;
   args_info->limited_orig = NULL;
   args_info->limited_interval_arg = NULL;
@@ -148,40 +153,43 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->long_help = gengetopt_args_info_help[5] ;
   args_info->long_min = -1;
   args_info->long_max = -1;
-  args_info->limited_help = gengetopt_args_info_help[6] ;
+  args_info->longlong_help = gengetopt_args_info_help[6] ;
+  args_info->longlong_min = -1;
+  args_info->longlong_max = -1;
+  args_info->limited_help = gengetopt_args_info_help[7] ;
   args_info->limited_min = 3;
   args_info->limited_max = 3;
-  args_info->limited_interval_help = gengetopt_args_info_help[7] ;
+  args_info->limited_interval_help = gengetopt_args_info_help[8] ;
   args_info->limited_interval_min = 1;
   args_info->limited_interval_max = 3;
-  args_info->big_limited_interval_help = gengetopt_args_info_help[8] ;
+  args_info->big_limited_interval_help = gengetopt_args_info_help[9] ;
   args_info->big_limited_interval_min = 1;
   args_info->big_limited_interval_max = 30;
-  args_info->limited_open_right_help = gengetopt_args_info_help[9] ;
+  args_info->limited_open_right_help = gengetopt_args_info_help[10] ;
   args_info->limited_open_right_min = 3;
   args_info->limited_open_right_max = -1;
-  args_info->limited_open_left_help = gengetopt_args_info_help[10] ;
+  args_info->limited_open_left_help = gengetopt_args_info_help[11] ;
   args_info->limited_open_left_min = -1;
   args_info->limited_open_left_max = 3;
-  args_info->float_help = gengetopt_args_info_help[11] ;
+  args_info->float_help = gengetopt_args_info_help[12] ;
   args_info->float_min = -1;
   args_info->float_max = -1;
-  args_info->no_short_opt_help = gengetopt_args_info_help[12] ;
+  args_info->no_short_opt_help = gengetopt_args_info_help[13] ;
   args_info->no_short_opt_min = -1;
   args_info->no_short_opt_max = -1;
-  args_info->noarg_help = gengetopt_args_info_help[13] ;
+  args_info->noarg_help = gengetopt_args_info_help[14] ;
   args_info->noarg_min = -1;
   args_info->noarg_max = -1;
-  args_info->noarg_noshort_help = gengetopt_args_info_help[14] ;
+  args_info->noarg_noshort_help = gengetopt_args_info_help[15] ;
   args_info->noarg_noshort_min = -1;
   args_info->noarg_noshort_max = -1;
-  args_info->optarg_help = gengetopt_args_info_help[15] ;
+  args_info->optarg_help = gengetopt_args_info_help[16] ;
   args_info->optarg_min = -1;
   args_info->optarg_max = -1;
-  args_info->optarg_noshort_help = gengetopt_args_info_help[16] ;
+  args_info->optarg_noshort_help = gengetopt_args_info_help[17] ;
   args_info->optarg_noshort_min = -1;
   args_info->optarg_noshort_max = -1;
-  args_info->file_save_help = gengetopt_args_info_help[17] ;
+  args_info->file_save_help = gengetopt_args_info_help[18] ;
   
 }
 
@@ -264,6 +272,11 @@ union generic_value {
     short short_arg;
     long long_arg;
     float float_arg;
+#ifdef HAVE_LONG_LONG
+    long long int longlong_arg;
+#else
+    long longlong_arg;
+#endif
     char *string_arg;
 };
 
@@ -330,6 +343,7 @@ test_multiple_cmd_parser_release (struct gengetopt_args_info *args_info)
   free_multiple_field (args_info->int_given, (void **)&(args_info->int_arg), &(args_info->int_orig));
   free_multiple_field (args_info->short_given, (void **)&(args_info->short_arg), &(args_info->short_orig));
   free_multiple_field (args_info->long_given, (void **)&(args_info->long_arg), &(args_info->long_orig));
+  free_multiple_field (args_info->longlong_given, (void **)&(args_info->longlong_arg), &(args_info->longlong_orig));
   free_multiple_string_field (args_info->limited_given, &(args_info->limited_arg), &(args_info->limited_orig));
   free_multiple_string_field (args_info->limited_interval_given, &(args_info->limited_interval_arg), &(args_info->limited_interval_orig));
   free_multiple_string_field (args_info->big_limited_interval_given, &(args_info->big_limited_interval_arg), &(args_info->big_limited_interval_orig));
@@ -391,6 +405,7 @@ test_multiple_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args_in
   write_multiple_into_file(outfile, args_info->int_given, "int", args_info->int_orig, 0);
   write_multiple_into_file(outfile, args_info->short_given, "short", args_info->short_orig, 0);
   write_multiple_into_file(outfile, args_info->long_given, "long", args_info->long_orig, 0);
+  write_multiple_into_file(outfile, args_info->longlong_given, "longlong", args_info->longlong_orig, 0);
   write_multiple_into_file(outfile, args_info->limited_given, "limited", args_info->limited_orig, 0);
   write_multiple_into_file(outfile, args_info->limited_interval_given, "limited-interval", args_info->limited_interval_orig, 0);
   write_multiple_into_file(outfile, args_info->big_limited_interval_given, "big-limited-interval", args_info->big_limited_interval_orig, 0);
@@ -672,6 +687,9 @@ test_multiple_cmd_parser_required2 (struct gengetopt_args_info *args_info, const
   if (check_multiple_option_occurrences(prog_name, args_info->long_given, args_info->long_min, args_info->long_max, "'--long' ('-l')"))
      error = 1;
   
+  if (check_multiple_option_occurrences(prog_name, args_info->longlong_given, args_info->longlong_min, args_info->longlong_max, "'--longlong'"))
+     error = 1;
+  
   if (check_multiple_option_occurrences(prog_name, args_info->limited_given, args_info->limited_min, args_info->limited_max, "'--limited' ('-L')"))
      error = 1;
   
@@ -737,8 +755,8 @@ int update_arg(void *field, char **orig_field,
                unsigned int *field_given, unsigned int *prev_given, 
                char *value, char *possible_values[], const char *default_value,
                test_multiple_cmd_parser_arg_type arg_type,
-               short check_ambiguity, short override,
-               short no_free, short multiple_option,
+               int check_ambiguity, int override,
+               int no_free, int multiple_option,
                const char *long_opt, char short_opt,
                const char *additional_error)
 {
@@ -786,6 +804,13 @@ int update_arg(void *field, char **orig_field,
   case ARG_FLOAT:
     if (val) *((float *)field) = (float)strtod (val, &stop_char);
     break;
+  case ARG_LONGLONG:
+#ifdef HAVE_LONG_LONG
+    if (val) *((long long int*)field) = (long long int) strtol (val, &stop_char, 0);
+#else
+    if (val) *((long *)field) = (long)strtol (val, &stop_char, 0);
+#endif
+    break;
   case ARG_STRING:
     if (val) {
       string_field = (char **)field;
@@ -804,6 +829,7 @@ int update_arg(void *field, char **orig_field,
   case ARG_SHORT:
   case ARG_LONG:
   case ARG_FLOAT:
+  case ARG_LONGLONG:
     if (val && !(stop_char && *stop_char == '\0')) {
       fprintf(stderr, "%s: invalid numeric value: %s\n", package_name, val);
       return 1; /* failure */
@@ -921,6 +947,12 @@ void update_multiple_arg(void *field, char ***orig_field,
       *((long **)field) = (long *)realloc (*((long **)field), (field_given + prev_given) * sizeof (long)); break;
     case ARG_FLOAT:
       *((float **)field) = (float *)realloc (*((float **)field), (field_given + prev_given) * sizeof (float)); break;
+    case ARG_LONGLONG:
+#ifdef HAVE_LONG_LONG
+      *((long long int **)field) = (long long int *)realloc (*((long long int **)field), (field_given + prev_given) * sizeof (long long int)); break;
+#else
+      *((long **)field) = (long *)realloc (*((long **)field), (field_given + prev_given) * sizeof (long)); break;
+#endif
     case ARG_STRING:
       *((char ***)field) = (char **)realloc (*((char ***)field), (field_given + prev_given) * sizeof (char *)); break;
     default:
@@ -940,6 +972,12 @@ void update_multiple_arg(void *field, char ***orig_field,
           (*((long **)field))[i + field_given] = tmp->arg.long_arg; break;
         case ARG_FLOAT:
           (*((float **)field))[i + field_given] = tmp->arg.float_arg; break;
+        case ARG_LONGLONG:
+#ifdef HAVE_LONG_LONG
+          (*((long long int **)field))[i + field_given] = tmp->arg.longlong_arg; break;
+#else
+          (*((long **)field))[i + field_given] = tmp->arg.longlong_arg; break;
+#endif
         case ARG_STRING:
           (*((char ***)field))[i + field_given] = tmp->arg.string_arg; break;
         default:
@@ -976,6 +1014,19 @@ void update_multiple_arg(void *field, char ***orig_field,
           (*((float **)field))[0] = default_value->float_arg;
         }
         break;
+      case ARG_LONGLONG:
+#ifdef HAVE_LONG_LONG
+        if (! *((long long int **)field)) {
+          *((long long int **)field) = (long long int *)malloc (sizeof (long long int));
+          (*((long long int **)field))[0] = default_value->longlong_arg;
+        }
+#else
+        if (! *((long **)field)) {
+          *((long **)field) = (long *)malloc (sizeof (long));
+          (*((long **)field))[0] = default_value->longlong_arg;
+        }
+#endif
+        break;
       case ARG_STRING:
         if (! *((char ***)field)) {
           *((char ***)field) = (char **)malloc (sizeof (char *));
@@ -1003,6 +1054,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
   struct generic_list * int_list = NULL;
   struct generic_list * short_list = NULL;
   struct generic_list * long_list = NULL;
+  struct generic_list * longlong_list = NULL;
   struct generic_list * limited_list = NULL;
   struct generic_list * limited_interval_list = NULL;
   struct generic_list * big_limited_interval_list = NULL;
@@ -1048,6 +1100,7 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         { "int",	1, NULL, 'i' },
         { "short",	1, NULL, 'S' },
         { "long",	1, NULL, 'l' },
+        { "longlong",	1, NULL, 0 },
         { "limited",	1, NULL, 'L' },
         { "limited-interval",	1, NULL, 0 },
         { "big-limited-interval",	1, NULL, 0 },
@@ -1149,8 +1202,19 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
           break;
 
         case 0:	/* Long option with no short option */
+          /* long long option.  */
+          if (strcmp (long_options[option_index].name, "longlong") == 0)
+          {
+          
+            if (update_multiple_arg_temp(&longlong_list, 
+                &(local_args_info.longlong_given), optarg, 0, 0, ARG_LONGLONG,
+                "longlong", '-',
+                additional_error))
+              goto failure;
+          
+          }
           /* limited multiple option (with interval).  */
-          if (strcmp (long_options[option_index].name, "limited-interval") == 0)
+          else if (strcmp (long_options[option_index].name, "limited-interval") == 0)
           {
           
             if (update_multiple_arg_temp(&limited_interval_list, 
@@ -1266,6 +1330,10 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
     &(args_info->long_orig), args_info->long_given,
     local_args_info.long_given, 0 , 
     ARG_LONG, long_list);
+  update_multiple_arg((void *)&(args_info->longlong_arg),
+    &(args_info->longlong_orig), args_info->longlong_given,
+    local_args_info.longlong_given, 0 , 
+    ARG_LONGLONG, longlong_list);
   update_multiple_arg((void *)&(args_info->limited_arg),
     &(args_info->limited_orig), args_info->limited_given,
     local_args_info.limited_given, 0 , 
@@ -1312,6 +1380,8 @@ test_multiple_cmd_parser_internal (int argc, char * const *argv, struct gengetop
   local_args_info.short_given = 0;
   args_info->long_given += local_args_info.long_given;
   local_args_info.long_given = 0;
+  args_info->longlong_given += local_args_info.longlong_given;
+  local_args_info.longlong_given = 0;
   args_info->limited_given += local_args_info.limited_given;
   local_args_info.limited_given = 0;
   args_info->limited_interval_given += local_args_info.limited_interval_given;
@@ -1376,6 +1446,7 @@ failure:
   free_list (int_list, 0 );
   free_list (short_list, 0 );
   free_list (long_list, 0 );
+  free_list (longlong_list, 0 );
   free_list (limited_list, 1 );
   free_list (limited_interval_list, 1 );
   free_list (big_limited_interval_list, 1 );

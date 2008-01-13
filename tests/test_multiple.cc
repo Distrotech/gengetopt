@@ -4,15 +4,18 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
 
 #include "test_multiple_cmd.h"
 
 static struct gengetopt_args_info args_info;
 
+using namespace std;
+
 int
 main (int argc, char **argv)
 { 
-  int i = 0;
+  unsigned int i = 0;
   int result = 0;
  
   if (test_multiple_cmd_parser (argc, argv, &args_info) != 0) {
@@ -45,6 +48,11 @@ main (int argc, char **argv)
   for (i = 0; i < args_info.optarg_given; ++i)
     printf ("optarg argument: %s\n", 
             (args_info.optarg_arg[i] ? args_info.optarg_arg[i] : "no arg given"));
+
+  printf ("longlong_given %d times\n", args_info.longlong_given);
+  for (i = 0; i < args_info.longlong_given; ++i)
+    cout << "longlong argument: " << 
+      args_info.longlong_arg[i] << endl;
 
   printf ("optarg_noshort_given %d times\n", args_info.optarg_noshort_given);
   for (i = 0; i < args_info.optarg_noshort_given; ++i)

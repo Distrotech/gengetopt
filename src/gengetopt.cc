@@ -127,6 +127,14 @@ main (int argc, char **argv)
     print_reportbugs ();
     exit (0);
   }
+  
+  if (args_info.detailed_help_given)
+    {
+      printf ("GNU ");
+      cmdline_parser_print_detailed_help ();
+      print_reportbugs ();
+      exit (0);
+    }
 
   if (args_info.version_given)
   {

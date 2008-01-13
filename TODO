@@ -4,8 +4,6 @@ This file is licensed to you under the license specified in the included file
 
 GENERAL TASKS:
 
-* Implement `description' sentence in `sample'.
-
 * Generate C++ code
 
 * Generate Java code
@@ -33,13 +31,4 @@ TESTS
 
 generate in the code also a test main with a string containing the test
 arguments and then in the main, check that the results are as expected.
-
-PARTITIONS (MODES)
-
-- document modes: see where groups are named, and name also modes in those
-contexts
-
-HELP & VERSION
-
-- use details in cmdline.ggo
 
