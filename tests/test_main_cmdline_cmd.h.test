@@ -36,13 +36,13 @@ struct gengetopt_args_info
   const char *version_help; /**< @brief Print version and exit help description.  */
   char ** first_cmd_arg;	/**< @brief the first command line to parse.  */
   char ** first_cmd_orig;	/**< @brief the first command line to parse original value given at command line.  */
-  int first_cmd_min; /**< @brief the first command line to parse's minimum occurreces */
-  int first_cmd_max; /**< @brief the first command line to parse's maximum occurreces */
+  unsigned int first_cmd_min; /**< @brief the first command line to parse's minimum occurreces */
+  unsigned int first_cmd_max; /**< @brief the first command line to parse's maximum occurreces */
   const char *first_cmd_help; /**< @brief the first command line to parse help description.  */
   char ** second_cmd_arg;	/**< @brief the second command line to parse.  */
   char ** second_cmd_orig;	/**< @brief the second command line to parse original value given at command line.  */
-  int second_cmd_min; /**< @brief the second command line to parse's minimum occurreces */
-  int second_cmd_max; /**< @brief the second command line to parse's maximum occurreces */
+  unsigned int second_cmd_min; /**< @brief the second command line to parse's minimum occurreces */
+  unsigned int second_cmd_max; /**< @brief the second command line to parse's maximum occurreces */
   const char *second_cmd_help; /**< @brief the second command line to parse help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */

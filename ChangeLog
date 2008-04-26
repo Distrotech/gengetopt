@@ -1,3 +1,10 @@
+2008-01-18  Lorenzo Bettini  <bettini@laptop>
+
+	* src/skels/c_source.h_skel: _min and _max fields of multiple options
+	are unsigned int to avoid compilation warnings
+	(free_multiple_field): avoid using void **, in order to avoid
+	a warning when using -fstring-aliasing
+
 2008-01-13  Lorenzo Bettini  <bettini@laptop>
 
 	* src/skels/c_source.h_skel: boolean parameters are not int instead

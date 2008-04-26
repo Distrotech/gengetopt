@@ -198,17 +198,17 @@ void init_args_info(struct my_args_info *args_info)
   args_info->required_help = my_args_info_help[19] ;
   args_info->conf_file_help = my_args_info_help[20] ;
   args_info->multi_string_help = my_args_info_help[21] ;
-  args_info->multi_string_min = -1;
-  args_info->multi_string_max = -1;
+  args_info->multi_string_min = 0;
+  args_info->multi_string_max = 0;
   args_info->multi_string_def_help = my_args_info_help[22] ;
-  args_info->multi_string_def_min = -1;
-  args_info->multi_string_def_max = -1;
+  args_info->multi_string_def_min = 0;
+  args_info->multi_string_def_max = 0;
   args_info->noarg_help = my_args_info_help[23] ;
-  args_info->noarg_min = -1;
-  args_info->noarg_max = -1;
+  args_info->noarg_min = 0;
+  args_info->noarg_max = 0;
   args_info->noarg_noshort_help = my_args_info_help[24] ;
-  args_info->noarg_noshort_min = -1;
-  args_info->noarg_noshort_max = -1;
+  args_info->noarg_noshort_min = 0;
+  args_info->noarg_noshort_max = 0;
   args_info->opt_arg_help = my_args_info_help[25] ;
   args_info->file_save_help = my_args_info_help[26] ;
   
@@ -232,7 +232,7 @@ static void print_help_common(void) {
   printf("\n");
 
   if (strlen(my_args_info_description) > 0)
-    printf("%s\n", my_args_info_description);
+    printf("%s\n\n", my_args_info_description);
 }
 
 void
@@ -508,8 +508,7 @@ static char *
 get_multiple_arg_token(const char *arg)
 {
   char *tok, *ret;
-  size_t len, num_of_escape;
-  int i, j;
+  size_t len, num_of_escape, i, j;
 
   if (!arg)
     return NULL;
@@ -585,16 +584,16 @@ get_multiple_arg_token_next(const char *arg)
 }
 
 static int
-check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc);
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc);
 
 int
-check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc)
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc)
 {
   int error = 0;
 
-  if (option_given && ! (min < 0 && max < 0))
+  if (option_given && (min > 0 || max > 0))
     {
-      if (min >= 0 && max >= 0)
+      if (min > 0 && max > 0)
         {
           if (min == max)
             {
@@ -615,7 +614,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               error = 1;
             }
         }
-      else if (min >= 0)
+      else if (min > 0)
         {
           /* at least check */
           if (option_given < min)
@@ -625,7 +624,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               error = 1;
             }
         }
-      else if (max >= 0)
+      else if (max > 0)
         {
           /* at most check */
           if (option_given > max)
@@ -737,7 +736,7 @@ test_conf_parser_cmd_parser_required2 (struct my_args_info *args_info, const cha
   
   if (args_info->grp1_group_counter == 0)
     {
-      fprintf (stderr, "%s: %d options of group grp1 were given. One is required.%s\n", prog_name, args_info->grp1_group_counter, (additional_error ? additional_error : ""));
+      fprintf (stderr, "%s: %d options of group grp1 were given. One is required%s.\n", prog_name, args_info->grp1_group_counter, (additional_error ? additional_error : ""));
       error = 1;
     }
   
@@ -1470,13 +1469,13 @@ test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_ar
 
   if (args_info->grp1_group_counter > 1)
     {
-      fprintf (stderr, "%s: %d options of group grp1 were given. One is required.%s\n", argv[0], args_info->grp1_group_counter, (additional_error ? additional_error : ""));
+      fprintf (stderr, "%s: %d options of group grp1 were given. One is required%s.\n", argv[0], args_info->grp1_group_counter, (additional_error ? additional_error : ""));
       error = 1;
     }
   
   if (args_info->my_grp2_group_counter > 1)
     {
-      fprintf (stderr, "%s: %d options of group my grp2 were given. At most one is required.%s\n", argv[0], args_info->my_grp2_group_counter, (additional_error ? additional_error : ""));
+      fprintf (stderr, "%s: %d options of group my grp2 were given. At most one is required%s.\n", argv[0], args_info->my_grp2_group_counter, (additional_error ? additional_error : ""));
       error = 1;
     }
   

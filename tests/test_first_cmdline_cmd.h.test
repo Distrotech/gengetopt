@@ -39,8 +39,8 @@ struct test_first_cmdline_cmd_struct
   const char *option_a_help; /**< @brief option a of the first command line to parse help description.  */
   char ** multi_arg;	/**< @brief multiple option of the first command line to parse.  */
   char ** multi_orig;	/**< @brief multiple option of the first command line to parse original value given at command line.  */
-  int multi_min; /**< @brief multiple option of the first command line to parse's minimum occurreces */
-  int multi_max; /**< @brief multiple option of the first command line to parse's maximum occurreces */
+  unsigned int multi_min; /**< @brief multiple option of the first command line to parse's minimum occurreces */
+  unsigned int multi_max; /**< @brief multiple option of the first command line to parse's maximum occurreces */
   const char *multi_help; /**< @brief multiple option of the first command line to parse help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */

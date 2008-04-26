@@ -105,8 +105,8 @@ void init_args_info(struct test_first_cmdline_cmd_struct *args_info)
   args_info->version_help = test_first_cmdline_cmd_struct_help[1] ;
   args_info->option_a_help = test_first_cmdline_cmd_struct_help[2] ;
   args_info->multi_help = test_first_cmdline_cmd_struct_help[3] ;
-  args_info->multi_min = -1;
-  args_info->multi_max = -1;
+  args_info->multi_min = 0;
+  args_info->multi_max = 0;
   
 }
 
@@ -128,7 +128,7 @@ static void print_help_common(void) {
   printf("\n");
 
   if (strlen(test_first_cmdline_cmd_struct_description) > 0)
-    printf("%s\n", test_first_cmdline_cmd_struct_description);
+    printf("%s\n\n", test_first_cmdline_cmd_struct_description);
 }
 
 void
@@ -334,8 +334,7 @@ static char *
 get_multiple_arg_token(const char *arg)
 {
   char *tok, *ret;
-  size_t len, num_of_escape;
-  int i, j;
+  size_t len, num_of_escape, i, j;
 
   if (!arg)
     return NULL;
@@ -411,16 +410,16 @@ get_multiple_arg_token_next(const char *arg)
 }
 
 static int
-check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc);
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc);
 
 int
-check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc)
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc)
 {
   int error = 0;
 
-  if (option_given && ! (min < 0 && max < 0))
+  if (option_given && (min > 0 || max > 0))
     {
-      if (min >= 0 && max >= 0)
+      if (min > 0 && max > 0)
         {
           if (min == max)
             {
@@ -441,7 +440,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               error = 1;
             }
         }
-      else if (min >= 0)
+      else if (min > 0)
         {
           /* at least check */
           if (option_given < min)
@@ -451,7 +450,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               error = 1;
             }
         }
-      else if (max >= 0)
+      else if (max > 0)
         {
           /* at most check */
           if (option_given > max)
@@ -984,7 +983,7 @@ static int check_short_opt(int argc, char *const *argv, const char *optstring,
 		int print_errors, struct custom_getopt_data *d)
 {
 	char c = *d->nextchar++;
-	char *temp = strchr(optstring, c);
+	const char *temp = strchr(optstring, c);
 
 	/* Increment `custom_optind' when we start to process its last character.  */
 	if (*d->nextchar == '\0')

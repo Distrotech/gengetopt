@@ -42,8 +42,8 @@ struct test_second_cmdline_cmd_struct
   const char *option_b_help; /**< @brief option a of the second command line to parse help description.  */
   char ** my_multi_arg;	/**< @brief multiple option of the second command line to parse.  */
   char ** my_multi_orig;	/**< @brief multiple option of the second command line to parse original value given at command line.  */
-  int my_multi_min; /**< @brief multiple option of the second command line to parse's minimum occurreces */
-  int my_multi_max; /**< @brief multiple option of the second command line to parse's maximum occurreces */
+  unsigned int my_multi_min; /**< @brief multiple option of the second command line to parse's minimum occurreces */
+  unsigned int my_multi_max; /**< @brief multiple option of the second command line to parse's maximum occurreces */
   const char *my_multi_help; /**< @brief multiple option of the second command line to parse help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */

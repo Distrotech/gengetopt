@@ -260,10 +260,10 @@ TESTSOUTPUT = test.output
 
 ERRFILES = wrong_flag.err wrong_flag2.err wrong_group.err wrong_group2.err \
 wrong_dep.err wrong_default.err wrong_numeric_value.err wrong_enum_use.err \
-wrong_help_redef.err wrong_version_redef.err
+wrong_help_redef.err wrong_version_redef.err wrong_multiple_occurrence.err
 ERRGGOFILES = wrong_flag.ggo wrong_flag2.ggo wrong_group.ggo wrong_group2.ggo \
 wrong_dep.ggo wrong_default.ggo wrong_numeric_value.ggo wrong_enum_use.ggo \
-wrong_help_redef.ggo wrong_version_redef.ggo
+wrong_help_redef.ggo wrong_version_redef.ggo wrong_multiple_occurrence.ggo
 
 gengetoptexamples_DATA = test_manual_help_cmd.c test_manual_help_cmd.h \
 test_manual_help_cmd.ggo test_manual_help.c

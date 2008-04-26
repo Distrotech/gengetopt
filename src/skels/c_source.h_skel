@@ -178,7 +178,7 @@ static void print_help_common(void) {
   printf("\n");
 
   if (strlen(@args_info@_description) > 0)
-    printf("%s\n", @args_info@_description);
+    printf("%s\n\n", @args_info@_description);
 }
 
 void
@@ -310,18 +310,20 @@ static void add_node(struct generic_list **list) {
 }
 
 @IF@ (not multiple_options_all_string) and multiple_token_functions @THEN@
+/**
+ * The passed arg parameter is NOT set to 0 from this function
+ */
 static void
-free_multiple_field(unsigned int len, void **arg, char ***orig)
+free_multiple_field(unsigned int len, void *arg, char ***orig)
 {
   unsigned int i;
-  if (*arg) {
+  if (arg) {
     for (i = 0; i < len; ++i)
       {
         free_string_field(&((*orig)[i]));
       }
 
-    free (*arg);
-    *arg = 0;
+    free (arg);
     free (*orig);
     *orig = 0;
   }
@@ -584,16 +586,16 @@ get_multiple_arg_token_next(const char *arg)
 @ENDIF@
 @IF@ multiple_options @THEN@
 static int
-check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc);
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc);
 
 int
-check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc)
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc)
 {
   int error = 0;
 
-  if (option_given && ! (min < 0 && max < 0))
+  if (option_given && (min > 0 || max > 0))
     {
-      if (min >= 0 && max >= 0)
+      if (min > 0 && max > 0)
         {
           if (min == max)
             {
@@ -614,7 +616,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               error = 1;
             }
         }
-      else if (min >= 0)
+      else if (min > 0)
         {
           /* at least check */
           if (option_given < min)
@@ -624,7 +626,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               error = 1;
             }
         }
-      else if (max >= 0)
+      else if (max > 0)
         {
           /* at most check */
           if (option_given > max)

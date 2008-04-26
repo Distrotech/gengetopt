@@ -142,20 +142,20 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->string_help = gengetopt_args_info_help[2] ;
-  args_info->string_min = -1;
-  args_info->string_max = -1;
+  args_info->string_min = 0;
+  args_info->string_max = 0;
   args_info->int_help = gengetopt_args_info_help[3] ;
-  args_info->int_min = -1;
-  args_info->int_max = -1;
+  args_info->int_min = 0;
+  args_info->int_max = 0;
   args_info->short_help = gengetopt_args_info_help[4] ;
-  args_info->short_min = -1;
-  args_info->short_max = -1;
+  args_info->short_min = 0;
+  args_info->short_max = 0;
   args_info->long_help = gengetopt_args_info_help[5] ;
-  args_info->long_min = -1;
-  args_info->long_max = -1;
+  args_info->long_min = 0;
+  args_info->long_max = 0;
   args_info->longlong_help = gengetopt_args_info_help[6] ;
-  args_info->longlong_min = -1;
-  args_info->longlong_max = -1;
+  args_info->longlong_min = 0;
+  args_info->longlong_max = 0;
   args_info->limited_help = gengetopt_args_info_help[7] ;
   args_info->limited_min = 3;
   args_info->limited_max = 3;
@@ -167,28 +167,28 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->big_limited_interval_max = 30;
   args_info->limited_open_right_help = gengetopt_args_info_help[10] ;
   args_info->limited_open_right_min = 3;
-  args_info->limited_open_right_max = -1;
+  args_info->limited_open_right_max = 0;
   args_info->limited_open_left_help = gengetopt_args_info_help[11] ;
-  args_info->limited_open_left_min = -1;
+  args_info->limited_open_left_min = 0;
   args_info->limited_open_left_max = 3;
   args_info->float_help = gengetopt_args_info_help[12] ;
-  args_info->float_min = -1;
-  args_info->float_max = -1;
+  args_info->float_min = 0;
+  args_info->float_max = 0;
   args_info->no_short_opt_help = gengetopt_args_info_help[13] ;
-  args_info->no_short_opt_min = -1;
-  args_info->no_short_opt_max = -1;
+  args_info->no_short_opt_min = 0;
+  args_info->no_short_opt_max = 0;
   args_info->noarg_help = gengetopt_args_info_help[14] ;
-  args_info->noarg_min = -1;
-  args_info->noarg_max = -1;
+  args_info->noarg_min = 0;
+  args_info->noarg_max = 0;
   args_info->noarg_noshort_help = gengetopt_args_info_help[15] ;
-  args_info->noarg_noshort_min = -1;
-  args_info->noarg_noshort_max = -1;
+  args_info->noarg_noshort_min = 0;
+  args_info->noarg_noshort_max = 0;
   args_info->optarg_help = gengetopt_args_info_help[16] ;
-  args_info->optarg_min = -1;
-  args_info->optarg_max = -1;
+  args_info->optarg_min = 0;
+  args_info->optarg_max = 0;
   args_info->optarg_noshort_help = gengetopt_args_info_help[17] ;
-  args_info->optarg_noshort_min = -1;
-  args_info->optarg_noshort_max = -1;
+  args_info->optarg_noshort_min = 0;
+  args_info->optarg_noshort_max = 0;
   args_info->file_save_help = gengetopt_args_info_help[18] ;
   
 }
@@ -211,7 +211,7 @@ static void print_help_common(void) {
   printf("\n");
 
   if (strlen(gengetopt_args_info_description) > 0)
-    printf("%s\n", gengetopt_args_info_description);
+    printf("%s\n\n", gengetopt_args_info_description);
 }
 
 void
@@ -299,18 +299,20 @@ static void add_node(struct generic_list **list) {
   new_node->orig = NULL;
 }
 
+/**
+ * The passed arg parameter is NOT set to 0 from this function
+ */
 static void
-free_multiple_field(unsigned int len, void **arg, char ***orig)
+free_multiple_field(unsigned int len, void *arg, char ***orig)
 {
   unsigned int i;
-  if (*arg) {
+  if (arg) {
     for (i = 0; i < len; ++i)
       {
         free_string_field(&((*orig)[i]));
       }
 
-    free (*arg);
-    *arg = 0;
+    free (arg);
     free (*orig);
     *orig = 0;
   }
@@ -340,16 +342,21 @@ test_multiple_cmd_parser_release (struct gengetopt_args_info *args_info)
 {
   unsigned int i;
   free_multiple_string_field (args_info->string_given, &(args_info->string_arg), &(args_info->string_orig));
-  free_multiple_field (args_info->int_given, (void **)&(args_info->int_arg), &(args_info->int_orig));
-  free_multiple_field (args_info->short_given, (void **)&(args_info->short_arg), &(args_info->short_orig));
-  free_multiple_field (args_info->long_given, (void **)&(args_info->long_arg), &(args_info->long_orig));
-  free_multiple_field (args_info->longlong_given, (void **)&(args_info->longlong_arg), &(args_info->longlong_orig));
+  free_multiple_field (args_info->int_given, (void *)(args_info->int_arg), &(args_info->int_orig));
+  args_info->int_arg = 0;
+  free_multiple_field (args_info->short_given, (void *)(args_info->short_arg), &(args_info->short_orig));
+  args_info->short_arg = 0;
+  free_multiple_field (args_info->long_given, (void *)(args_info->long_arg), &(args_info->long_orig));
+  args_info->long_arg = 0;
+  free_multiple_field (args_info->longlong_given, (void *)(args_info->longlong_arg), &(args_info->longlong_orig));
+  args_info->longlong_arg = 0;
   free_multiple_string_field (args_info->limited_given, &(args_info->limited_arg), &(args_info->limited_orig));
   free_multiple_string_field (args_info->limited_interval_given, &(args_info->limited_interval_arg), &(args_info->limited_interval_orig));
   free_multiple_string_field (args_info->big_limited_interval_given, &(args_info->big_limited_interval_arg), &(args_info->big_limited_interval_orig));
   free_multiple_string_field (args_info->limited_open_right_given, &(args_info->limited_open_right_arg), &(args_info->limited_open_right_orig));
   free_multiple_string_field (args_info->limited_open_left_given, &(args_info->limited_open_left_arg), &(args_info->limited_open_left_orig));
-  free_multiple_field (args_info->float_given, (void **)&(args_info->float_arg), &(args_info->float_orig));
+  free_multiple_field (args_info->float_given, (void *)(args_info->float_arg), &(args_info->float_orig));
+  args_info->float_arg = 0;
   free_multiple_string_field (args_info->no_short_opt_given, &(args_info->no_short_opt_arg), &(args_info->no_short_opt_orig));
   free_multiple_string_field (args_info->optarg_given, &(args_info->optarg_arg), &(args_info->optarg_orig));
   free_multiple_string_field (args_info->optarg_noshort_given, &(args_info->optarg_noshort_arg), &(args_info->optarg_noshort_orig));
@@ -470,8 +477,7 @@ static char *
 get_multiple_arg_token(const char *arg)
 {
   char *tok, *ret;
-  size_t len, num_of_escape;
-  int i, j;
+  size_t len, num_of_escape, i, j;
 
   if (!arg)
     return NULL;
@@ -547,16 +553,16 @@ get_multiple_arg_token_next(const char *arg)
 }
 
 static int
-check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc);
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc);
 
 int
-check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc)
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc)
 {
   int error = 0;
 
-  if (option_given && ! (min < 0 && max < 0))
+  if (option_given && (min > 0 || max > 0))
     {
-      if (min >= 0 && max >= 0)
+      if (min > 0 && max > 0)
         {
           if (min == max)
             {
@@ -577,7 +583,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               error = 1;
             }
         }
-      else if (min >= 0)
+      else if (min > 0)
         {
           /* at least check */
           if (option_given < min)
@@ -587,7 +593,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               error = 1;
             }
         }
-      else if (max >= 0)
+      else if (max > 0)
         {
           /* at most check */
           if (option_given > max)

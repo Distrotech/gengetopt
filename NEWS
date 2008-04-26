@@ -7,6 +7,13 @@ Please send gengetopt bug reports to bug-gengetopt at gnu.org
 For details about the new features, you can take a look at:
 http://tronprog.blogspot.com/search/label/gengetopt
 
+Version 2.22.1
+
+   * removed compilation warnings for generated files
+   * fixed a bug with --long-help and enum options
+   * output of --help and output of --show-help correspond
+   * fixed a compilation problem in generated output with mode options
+
 Version 2.22
 
    * avoid test suite if crosscompiling

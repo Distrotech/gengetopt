@@ -614,7 +614,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "_description) > 0)";
   stream << "\n";
   stream << indent_str;
-  stream << "    printf(\"%s\\n\", ";
+  stream << "    printf(\"%s\\n\\n\", ";
   generate_string (args_info, stream, indent + indent_str.length ());
   stream << "_description);";
   stream << "\n";
@@ -1005,10 +1005,19 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << indent_str;
       if (( ( ! multiple_options_all_string ) && multiple_token_functions ))
         {
+          stream << "/**";
+          stream << "\n";
+          stream << indent_str;
+          stream << " * The passed arg parameter is NOT set to 0 from this function";
+          stream << "\n";
+          stream << indent_str;
+          stream << " */";
+          stream << "\n";
+          stream << indent_str;
           stream << "static void";
           stream << "\n";
           stream << indent_str;
-          stream << "free_multiple_field(unsigned int len, void **arg, char ***orig)";
+          stream << "free_multiple_field(unsigned int len, void *arg, char ***orig)";
           stream << "\n";
           stream << indent_str;
           stream << "{";
@@ -1017,7 +1026,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
           stream << "  unsigned int i;";
           stream << "\n";
           stream << indent_str;
-          stream << "  if (*arg) {";
+          stream << "  if (arg) {";
           stream << "\n";
           stream << indent_str;
           stream << "    for (i = 0; i < len; ++i)";
@@ -1034,10 +1043,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
           stream << indent_str;
           stream << "\n";
           stream << indent_str;
-          stream << "    free (*arg);";
-          stream << "\n";
-          stream << indent_str;
-          stream << "    *arg = 0;";
+          stream << "    free (arg);";
           stream << "\n";
           stream << indent_str;
           stream << "    free (*orig);";
@@ -1796,7 +1802,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "static int";
       stream << "\n";
       stream << indent_str;
-      stream << "check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc);";
+      stream << "check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc);";
       stream << "\n";
       stream << indent_str;
       stream << "\n";
@@ -1804,7 +1810,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "int";
       stream << "\n";
       stream << indent_str;
-      stream << "check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc)";
+      stream << "check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc)";
       stream << "\n";
       stream << indent_str;
       stream << "{";
@@ -1815,13 +1821,13 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << indent_str;
       stream << "\n";
       stream << indent_str;
-      stream << "  if (option_given && ! (min < 0 && max < 0))";
+      stream << "  if (option_given && (min > 0 || max > 0))";
       stream << "\n";
       stream << indent_str;
       stream << "    {";
       stream << "\n";
       stream << indent_str;
-      stream << "      if (min >= 0 && max >= 0)";
+      stream << "      if (min > 0 && max > 0)";
       stream << "\n";
       stream << indent_str;
       stream << "        {";
@@ -1884,7 +1890,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "        }";
       stream << "\n";
       stream << indent_str;
-      stream << "      else if (min >= 0)";
+      stream << "      else if (min > 0)";
       stream << "\n";
       stream << indent_str;
       stream << "        {";
@@ -1914,7 +1920,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "        }";
       stream << "\n";
       stream << indent_str;
-      stream << "      else if (max >= 0)";
+      stream << "      else if (max > 0)";
       stream << "\n";
       stream << indent_str;
       stream << "        {";

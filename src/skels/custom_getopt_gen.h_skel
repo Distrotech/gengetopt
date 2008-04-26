@@ -440,7 +440,7 @@ static int check_short_opt(int argc, char *const *argv, const char *optstring,
 		int print_errors, struct custom_getopt_data *d)
 {
 	char c = *d->nextchar++;
-	char *temp = strchr(optstring, c);
+	const char *temp = strchr(optstring, c);
 
 	/* Increment `custom_optind' when we start to process its last character.  */
 	if (*d->nextchar == '\0')

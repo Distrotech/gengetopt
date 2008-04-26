@@ -152,7 +152,7 @@ option_arg_gen_class::generate_option_arg(ostream &stream, unsigned int indent)
     }
   if (multiple)
     {
-      stream << "int ";
+      stream << "unsigned int ";
       generate_string (name, stream, indent + indent_str.length ());
       stream << "_min; /**< ";
       stream << "@";
@@ -161,7 +161,7 @@ option_arg_gen_class::generate_option_arg(ostream &stream, unsigned int indent)
       stream << "'s minimum occurreces */";
       stream << "\n";
       stream << indent_str;
-      stream << "int ";
+      stream << "unsigned int ";
       generate_string (name, stream, indent + indent_str.length ());
       stream << "_max; /**< ";
       stream << "@";

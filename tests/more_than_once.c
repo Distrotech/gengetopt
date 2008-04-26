@@ -37,7 +37,7 @@ main (int argc, char **argv)
 void
 print_args (void)
 {
-  int i;
+  unsigned int i;
 
   if (args_info.foo_given)
     printf ("foo option: %d\n", args_info.foo_arg);

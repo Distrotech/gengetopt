@@ -10,8 +10,7 @@ description "This is just a test file
 to test all possible
 command line type options.
 
-In ggo files comments start with # and end at EOL
-"
+In ggo files comments start with # and end at EOL"
 
 # this empty text will simply add a line break in the help output
 text ""
@@ -25,7 +24,7 @@ option "longdouble"  D "longdouble option" longdouble optional
 option "longlong"    L "longlong option" longlong optional
 option "flag"        F "flag option" flag on
 option "function"    u "function option" optional
-  details="\na function option is basically an option with no argument.  It can be used, e.g., to specify a specific behavior for a program.
+  details="\na `function' option is basically an option with no argument.  It can be used, e.g., to specify a specific behavior for a program.
 
 Well, this further explanation is quite useless, but it's only to show an example of an option with details, which will be printed only when --detailed-help is given at the command line.\n"
 option "no-short"    - "no short option" optional

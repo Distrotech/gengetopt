@@ -25,7 +25,7 @@ const char *gengetopt_args_info_purpose = "This is just a gengetopt's test file"
 
 const char *gengetopt_args_info_usage = "Usage: test_all_opts [OPTIONS]... [FILES]...";
 
-const char *gengetopt_args_info_description = "This is just a test file\n\nto test all possible\ncommand line type options.\n\nIn ggo files comments start with # and end at EOL\n";
+const char *gengetopt_args_info_description = "This is just a test file\n\nto test all possible\ncommand line type options.\n\nIn ggo files comments start with # and end at EOL";
 
 const char *gengetopt_args_info_detailed_help[] = {
   "  -h, --help                    Print help and exit",
@@ -43,7 +43,7 @@ const char *gengetopt_args_info_detailed_help[] = {
   "  -L, --longlong=LONGLONG       longlong option",
   "  -F, --flag                    flag option  (default=on)",
   "  -u, --function                function option",
-  "  \n  a function option is basically an option with no argument.  It can be used, \n  e.g., to specify a specific behavior for a program.\n\n  Well, this further explanation is quite useless, but it's only to show an \n  example of an option with details, which will be printed only when \n  --detailed-help is given at the command line.\n",
+  "  \n  a `function' option is basically an option with no argument.  It can be used, \n  e.g., to specify a specific behavior for a program.\n\n  Well, this further explanation is quite useless, but it's only to show an \n  example of an option with details, which will be printed only when \n  --detailed-help is given at the command line.\n",
   "      --no-short                no short option",
   "      --opt-arg[=STRING]        option with optional arg",
   "  -o, --opt-arg-short[=STRING]  option with optional arg (short)",
@@ -263,7 +263,7 @@ static void print_help_common(void) {
   printf("\n");
 
   if (strlen(gengetopt_args_info_description) > 0)
-    printf("%s\n", gengetopt_args_info_description);
+    printf("%s\n\n", gengetopt_args_info_description);
 }
 
 void

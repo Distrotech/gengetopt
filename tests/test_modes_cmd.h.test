@@ -38,16 +38,16 @@ struct gengetopt_args_info
   char * no_mode2_arg;	/**< @brief another generic option not beloging to any mode.  */
   char * no_mode2_orig;	/**< @brief another generic option not beloging to any mode original value given at command line.  */
   const char *no_mode2_help; /**< @brief another generic option not beloging to any mode help description.  */
-  int opta_min; /**< @brief string a's minimum occurreces */
-  int opta_max; /**< @brief string a's maximum occurreces */
+  unsigned int opta_min; /**< @brief string a's minimum occurreces */
+  unsigned int opta_max; /**< @brief string a's maximum occurreces */
   const char *opta_help; /**< @brief string a help description.  */
   char * optA_arg;	/**< @brief string A.  */
   char * optA_orig;	/**< @brief string A original value given at command line.  */
   const char *optA_help; /**< @brief string A help description.  */
   char ** optAmul_arg;	/**< @brief string M.  */
   char ** optAmul_orig;	/**< @brief string M original value given at command line.  */
-  int optAmul_min; /**< @brief string M's minimum occurreces */
-  int optAmul_max; /**< @brief string M's maximum occurreces */
+  unsigned int optAmul_min; /**< @brief string M's minimum occurreces */
+  unsigned int optAmul_max; /**< @brief string M's maximum occurreces */
   const char *optAmul_help; /**< @brief string M help description.  */
   const char *optb_help; /**< @brief string b help description.  */
   const char *optc_help; /**< @brief string c help description.  */

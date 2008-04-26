@@ -80,8 +80,8 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->test_help = gengetopt_args_info_help[2] ;
   args_info->multi_help = gengetopt_args_info_help[3] ;
-  args_info->multi_min = -1;
-  args_info->multi_max = -1;
+  args_info->multi_min = 0;
+  args_info->multi_max = 0;
   
 }
 
@@ -103,7 +103,7 @@ static void print_help_common(void) {
   printf("\n");
 
   if (strlen(gengetopt_args_info_description) > 0)
-    printf("%s\n", gengetopt_args_info_description);
+    printf("%s\n\n", gengetopt_args_info_description);
 }
 
 void
@@ -261,16 +261,16 @@ gengetopt_strdup (const char *s)
 }
 
 static int
-check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc);
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc);
 
 int
-check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc)
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc)
 {
   int error = 0;
 
-  if (option_given && ! (min < 0 && max < 0))
+  if (option_given && (min > 0 || max > 0))
     {
-      if (min >= 0 && max >= 0)
+      if (min > 0 && max > 0)
         {
           if (min == max)
             {
@@ -291,7 +291,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               error = 1;
             }
         }
-      else if (min >= 0)
+      else if (min > 0)
         {
           /* at least check */
           if (option_given < min)
@@ -301,7 +301,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               error = 1;
             }
         }
-      else if (max >= 0)
+      else if (max > 0)
         {
           /* at most check */
           if (option_given > max)

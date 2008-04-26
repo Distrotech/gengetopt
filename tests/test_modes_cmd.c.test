@@ -109,12 +109,12 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->no_mode_help = gengetopt_args_info_help[3] ;
   args_info->no_mode2_help = gengetopt_args_info_help[4] ;
   args_info->opta_help = gengetopt_args_info_help[7] ;
-  args_info->opta_min = -1;
-  args_info->opta_max = -1;
+  args_info->opta_min = 0;
+  args_info->opta_max = 0;
   args_info->optA_help = gengetopt_args_info_help[8] ;
   args_info->optAmul_help = gengetopt_args_info_help[9] ;
-  args_info->optAmul_min = -1;
-  args_info->optAmul_max = -1;
+  args_info->optAmul_min = 0;
+  args_info->optAmul_max = 0;
   args_info->optb_help = gengetopt_args_info_help[10] ;
   args_info->optc_help = gengetopt_args_info_help[12] ;
   args_info->optd_help = gengetopt_args_info_help[13] ;
@@ -140,7 +140,7 @@ static void print_help_common(void) {
   printf("\n");
 
   if (strlen(gengetopt_args_info_description) > 0)
-    printf("%s\n", gengetopt_args_info_description);
+    printf("%s\n\n", gengetopt_args_info_description);
 }
 
 void
@@ -363,8 +363,7 @@ static char *
 get_multiple_arg_token(const char *arg)
 {
   char *tok, *ret;
-  size_t len, num_of_escape;
-  int i, j;
+  size_t len, num_of_escape, i, j;
 
   if (!arg)
     return NULL;
@@ -440,16 +439,16 @@ get_multiple_arg_token_next(const char *arg)
 }
 
 static int
-check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc);
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc);
 
 int
-check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc)
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc)
 {
   int error = 0;
 
-  if (option_given && ! (min < 0 && max < 0))
+  if (option_given && (min > 0 || max > 0))
     {
-      if (min >= 0 && max >= 0)
+      if (min > 0 && max > 0)
         {
           if (min == max)
             {
@@ -470,7 +469,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               error = 1;
             }
         }
-      else if (min >= 0)
+      else if (min > 0)
         {
           /* at least check */
           if (option_given < min)
@@ -480,7 +479,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               error = 1;
             }
         }
-      else if (max >= 0)
+      else if (max > 0)
         {
           /* at most check */
           if (option_given > max)
@@ -1049,25 +1048,25 @@ test_modes_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_a
   local_args_info.optAmul_given = 0;
   
   if (args_info->mode_2_mode_counter && args_info->mode1_mode_counter) {
-    error += check_modes(
-      (int []){args_info->optc_given, args_info->optd_given,  -1},
-      (const char *[]){"--optc", "--optd",  0},
-      (int []){args_info->opta_given, args_info->optA_given, args_info->optAmul_given, args_info->optb_given,  -1},
-      (const char *[]){"--opta", "--optA", "--optAmul", "--optb",  0});
+    int mode_2_given[] = {args_info->optc_given, args_info->optd_given,  -1};
+    const char *mode_2_desc[] = {"--optc", "--optd",  0};
+    int mode1_given[] = {args_info->opta_given, args_info->optA_given, args_info->optAmul_given, args_info->optb_given,  -1};
+    const char *mode1_desc[] = {"--opta", "--optA", "--optAmul", "--optb",  0};
+    error += check_modes(mode_2_given, mode_2_desc, mode1_given, mode1_desc);
   }
   if (args_info->mode_2_mode_counter && args_info->my_mode_mode_counter) {
-    error += check_modes(
-      (int []){args_info->optc_given, args_info->optd_given,  -1},
-      (const char *[]){"--optc", "--optd",  0},
-      (int []){args_info->mopt_given,  -1},
-      (const char *[]){"--mopt",  0});
+    int mode_2_given[] = {args_info->optc_given, args_info->optd_given,  -1};
+    const char *mode_2_desc[] = {"--optc", "--optd",  0};
+    int my_mode_given[] = {args_info->mopt_given,  -1};
+    const char *my_mode_desc[] = {"--mopt",  0};
+    error += check_modes(mode_2_given, mode_2_desc, my_mode_given, my_mode_desc);
   }
   if (args_info->mode1_mode_counter && args_info->my_mode_mode_counter) {
-    error += check_modes(
-      (int []){args_info->opta_given, args_info->optA_given, args_info->optAmul_given, args_info->optb_given,  -1},
-      (const char *[]){"--opta", "--optA", "--optAmul", "--optb",  0},
-      (int []){args_info->mopt_given,  -1},
-      (const char *[]){"--mopt",  0});
+    int mode1_given[] = {args_info->opta_given, args_info->optA_given, args_info->optAmul_given, args_info->optb_given,  -1};
+    const char *mode1_desc[] = {"--opta", "--optA", "--optAmul", "--optb",  0};
+    int my_mode_given[] = {args_info->mopt_given,  -1};
+    const char *my_mode_desc[] = {"--mopt",  0};
+    error += check_modes(mode1_given, mode1_desc, my_mode_given, my_mode_desc);
   }
   
   if (check_required)

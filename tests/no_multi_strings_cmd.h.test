@@ -39,8 +39,8 @@ struct gengetopt_args_info
   const char *test_help; /**< @brief This is a test option help description.  */
   int* multi_arg;	/**< @brief This is a multi option.  */
   char ** multi_orig;	/**< @brief This is a multi option original value given at command line.  */
-  int multi_min; /**< @brief This is a multi option's minimum occurreces */
-  int multi_max; /**< @brief This is a multi option's maximum occurreces */
+  unsigned int multi_min; /**< @brief This is a multi option's minimum occurreces */
+  unsigned int multi_max; /**< @brief This is a multi option's maximum occurreces */
   const char *multi_help; /**< @brief This is a multi option help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */

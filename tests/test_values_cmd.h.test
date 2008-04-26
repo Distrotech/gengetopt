@@ -52,18 +52,18 @@ struct gengetopt_args_info
   const char *string_values_no_short_help; /**< @brief string option with values no short help description.  */
   char ** multistring_values_arg;	/**< @brief multiple string option with values.  */
   char ** multistring_values_orig;	/**< @brief multiple string option with values original value given at command line.  */
-  int multistring_values_min; /**< @brief multiple string option with values's minimum occurreces */
-  int multistring_values_max; /**< @brief multiple string option with values's maximum occurreces */
+  unsigned int multistring_values_min; /**< @brief multiple string option with values's minimum occurreces */
+  unsigned int multistring_values_max; /**< @brief multiple string option with values's maximum occurreces */
   const char *multistring_values_help; /**< @brief multiple string option with values help description.  */
   char ** multistring_values_def_arg;	/**< @brief multiple string option with values and default (default='foo').  */
   char ** multistring_values_def_orig;	/**< @brief multiple string option with values and default original value given at command line.  */
-  int multistring_values_def_min; /**< @brief multiple string option with values and default's minimum occurreces */
-  int multistring_values_def_max; /**< @brief multiple string option with values and default's maximum occurreces */
+  unsigned int multistring_values_def_min; /**< @brief multiple string option with values and default's minimum occurreces */
+  unsigned int multistring_values_def_max; /**< @brief multiple string option with values and default's maximum occurreces */
   const char *multistring_values_def_help; /**< @brief multiple string option with values and default help description.  */
   char ** multistring_values_no_short_arg;	/**< @brief multiple string option with values no-short.  */
   char ** multistring_values_no_short_orig;	/**< @brief multiple string option with values no-short original value given at command line.  */
-  int multistring_values_no_short_min; /**< @brief multiple string option with values no-short's minimum occurreces */
-  int multistring_values_no_short_max; /**< @brief multiple string option with values no-short's maximum occurreces */
+  unsigned int multistring_values_no_short_min; /**< @brief multiple string option with values no-short's minimum occurreces */
+  unsigned int multistring_values_no_short_max; /**< @brief multiple string option with values no-short's maximum occurreces */
   const char *multistring_values_no_short_help; /**< @brief multiple string option with values no-short help description.  */
   char * string_values_group_arg;	/**< @brief group string option with values and default (default='bar').  */
   char * string_values_group_orig;	/**< @brief group string option with values and default original value given at command line.  */
@@ -73,8 +73,8 @@ struct gengetopt_args_info
   const char *int_values_help; /**< @brief int option with values help description.  */
   int* int_values_m_arg;	/**< @brief multiple int option with values.  */
   char ** int_values_m_orig;	/**< @brief multiple int option with values original value given at command line.  */
-  int int_values_m_min; /**< @brief multiple int option with values's minimum occurreces */
-  int int_values_m_max; /**< @brief multiple int option with values's maximum occurreces */
+  unsigned int int_values_m_min; /**< @brief multiple int option with values's minimum occurreces */
+  unsigned int int_values_m_max; /**< @brief multiple int option with values's maximum occurreces */
   const char *int_values_m_help; /**< @brief multiple int option with values help description.  */
   int int_values_def_arg;	/**< @brief int option with values and default (default='180').  */
   char * int_values_def_orig;	/**< @brief int option with values and default original value given at command line.  */
@@ -87,8 +87,8 @@ struct gengetopt_args_info
   const char *values_second_enums_help; /**< @brief option with values and enums 2 with default help description.  */
   enum enum_values_multiple_enums *values_multiple_enums_arg;	/**< @brief multiple option with values and enums (default='FOURTH').  */
   char ** values_multiple_enums_orig;	/**< @brief multiple option with values and enums original value given at command line.  */
-  int values_multiple_enums_min; /**< @brief multiple option with values and enums's minimum occurreces */
-  int values_multiple_enums_max; /**< @brief multiple option with values and enums's maximum occurreces */
+  unsigned int values_multiple_enums_min; /**< @brief multiple option with values and enums's minimum occurreces */
+  unsigned int values_multiple_enums_max; /**< @brief multiple option with values and enums's maximum occurreces */
   const char *values_multiple_enums_help; /**< @brief multiple option with values and enums help description.  */
   char * file_save_arg;	/**< @brief save the passed options into a file.  */
   char * file_save_orig;	/**< @brief save the passed options into a file original value given at command line.  */

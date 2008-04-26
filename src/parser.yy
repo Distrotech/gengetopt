@@ -124,10 +124,10 @@ struct multiple_size
     char *min;
     char *max;
 
-    /* if no limit is specified then initialized to -1.
-       if the same size is specified for min and max, it means that a precise
+    /* if no limit is specified then initialized to 0.
+       if the same size is specified for min and max, it means that an exact
        number of occurrences is required*/
-    multiple_size(const char *m = "-1", const char *M = "-1") :
+    multiple_size(const char *m = "0", const char *M = "0") :
         min(strdup(m)), max(strdup(M))
     {}
 };
@@ -546,8 +546,8 @@ acceptedvalue
 multiple_size
     : { $$ = new multiple_size; }
     | '(' TOK_SIZE ')' { $$ = new multiple_size($2, $2); }
-    | '(' TOK_SIZE '-' ')' { $$ = new multiple_size($2, "-1"); free($2); }
-    | '(' '-' TOK_SIZE  ')' { $$ = new multiple_size("-1", $3); free($3); }
+    | '(' TOK_SIZE '-' ')' { $$ = new multiple_size($2, "0"); free($2); }
+    | '(' '-' TOK_SIZE  ')' { $$ = new multiple_size("0", $3); free($3); }
     | '(' TOK_SIZE '-' TOK_SIZE  ')' { $$ = new multiple_size($2, $4); free($2); free($4); }
     ;
 

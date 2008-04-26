@@ -14,7 +14,7 @@ static struct my_args_info args_info;
 int
 main (int argc, char **argv)
 {  
-  int i;
+  unsigned int i;
 
   if (test_conf_parser_cmd_parser (argc, argv, &args_info) != 0)
     exit(1) ;

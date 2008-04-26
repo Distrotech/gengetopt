@@ -12,7 +12,7 @@ static struct my_args_info args_info;
 int
 main (int argc, char **argv)
 {  
-  int i;
+  unsigned int i;
   int result = 0;
 
   struct test_conf_parser_cmd_parser_params *params;

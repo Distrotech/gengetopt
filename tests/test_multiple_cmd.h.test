@@ -36,23 +36,23 @@ struct gengetopt_args_info
   const char *version_help; /**< @brief Print version and exit help description.  */
   char ** string_arg;	/**< @brief string option (default='foo').  */
   char ** string_orig;	/**< @brief string option original value given at command line.  */
-  int string_min; /**< @brief string option's minimum occurreces */
-  int string_max; /**< @brief string option's maximum occurreces */
+  unsigned int string_min; /**< @brief string option's minimum occurreces */
+  unsigned int string_max; /**< @brief string option's maximum occurreces */
   const char *string_help; /**< @brief string option help description.  */
   int* int_arg;	/**< @brief int option.  */
   char ** int_orig;	/**< @brief int option original value given at command line.  */
-  int int_min; /**< @brief int option's minimum occurreces */
-  int int_max; /**< @brief int option's maximum occurreces */
+  unsigned int int_min; /**< @brief int option's minimum occurreces */
+  unsigned int int_max; /**< @brief int option's maximum occurreces */
   const char *int_help; /**< @brief int option help description.  */
   short* short_arg;	/**< @brief short option.  */
   char ** short_orig;	/**< @brief short option original value given at command line.  */
-  int short_min; /**< @brief short option's minimum occurreces */
-  int short_max; /**< @brief short option's maximum occurreces */
+  unsigned int short_min; /**< @brief short option's minimum occurreces */
+  unsigned int short_max; /**< @brief short option's maximum occurreces */
   const char *short_help; /**< @brief short option help description.  */
   long* long_arg;	/**< @brief long option.  */
   char ** long_orig;	/**< @brief long option original value given at command line.  */
-  int long_min; /**< @brief long option's minimum occurreces */
-  int long_max; /**< @brief long option's maximum occurreces */
+  unsigned int long_min; /**< @brief long option's minimum occurreces */
+  unsigned int long_max; /**< @brief long option's maximum occurreces */
   const char *long_help; /**< @brief long option help description.  */
   #ifdef HAVE_LONG_LONG
   long long int* longlong_arg;	/**< @brief long long option.  */
@@ -60,59 +60,59 @@ struct gengetopt_args_info
   long* longlong_arg;	/**< @brief long long option.  */
   #endif
   char ** longlong_orig;	/**< @brief long long option original value given at command line.  */
-  int longlong_min; /**< @brief long long option's minimum occurreces */
-  int longlong_max; /**< @brief long long option's maximum occurreces */
+  unsigned int longlong_min; /**< @brief long long option's minimum occurreces */
+  unsigned int longlong_max; /**< @brief long long option's maximum occurreces */
   const char *longlong_help; /**< @brief long long option help description.  */
   char ** limited_arg;	/**< @brief limited multiple option.  */
   char ** limited_orig;	/**< @brief limited multiple option original value given at command line.  */
-  int limited_min; /**< @brief limited multiple option's minimum occurreces */
-  int limited_max; /**< @brief limited multiple option's maximum occurreces */
+  unsigned int limited_min; /**< @brief limited multiple option's minimum occurreces */
+  unsigned int limited_max; /**< @brief limited multiple option's maximum occurreces */
   const char *limited_help; /**< @brief limited multiple option help description.  */
   char ** limited_interval_arg;	/**< @brief limited multiple option (with interval).  */
   char ** limited_interval_orig;	/**< @brief limited multiple option (with interval) original value given at command line.  */
-  int limited_interval_min; /**< @brief limited multiple option (with interval)'s minimum occurreces */
-  int limited_interval_max; /**< @brief limited multiple option (with interval)'s maximum occurreces */
+  unsigned int limited_interval_min; /**< @brief limited multiple option (with interval)'s minimum occurreces */
+  unsigned int limited_interval_max; /**< @brief limited multiple option (with interval)'s maximum occurreces */
   const char *limited_interval_help; /**< @brief limited multiple option (with interval) help description.  */
   char ** big_limited_interval_arg;	/**< @brief limited multiple option (with interval).  */
   char ** big_limited_interval_orig;	/**< @brief limited multiple option (with interval) original value given at command line.  */
-  int big_limited_interval_min; /**< @brief limited multiple option (with interval)'s minimum occurreces */
-  int big_limited_interval_max; /**< @brief limited multiple option (with interval)'s maximum occurreces */
+  unsigned int big_limited_interval_min; /**< @brief limited multiple option (with interval)'s minimum occurreces */
+  unsigned int big_limited_interval_max; /**< @brief limited multiple option (with interval)'s maximum occurreces */
   const char *big_limited_interval_help; /**< @brief limited multiple option (with interval) help description.  */
   char ** limited_open_right_arg;	/**< @brief limited multiple option (with interval right open).  */
   char ** limited_open_right_orig;	/**< @brief limited multiple option (with interval right open) original value given at command line.  */
-  int limited_open_right_min; /**< @brief limited multiple option (with interval right open)'s minimum occurreces */
-  int limited_open_right_max; /**< @brief limited multiple option (with interval right open)'s maximum occurreces */
+  unsigned int limited_open_right_min; /**< @brief limited multiple option (with interval right open)'s minimum occurreces */
+  unsigned int limited_open_right_max; /**< @brief limited multiple option (with interval right open)'s maximum occurreces */
   const char *limited_open_right_help; /**< @brief limited multiple option (with interval right open) help description.  */
   char ** limited_open_left_arg;	/**< @brief limited multiple option (with interval left open).  */
   char ** limited_open_left_orig;	/**< @brief limited multiple option (with interval left open) original value given at command line.  */
-  int limited_open_left_min; /**< @brief limited multiple option (with interval left open)'s minimum occurreces */
-  int limited_open_left_max; /**< @brief limited multiple option (with interval left open)'s maximum occurreces */
+  unsigned int limited_open_left_min; /**< @brief limited multiple option (with interval left open)'s minimum occurreces */
+  unsigned int limited_open_left_max; /**< @brief limited multiple option (with interval left open)'s maximum occurreces */
   const char *limited_open_left_help; /**< @brief limited multiple option (with interval left open) help description.  */
   float* float_arg;	/**< @brief float option (default='15000').  */
   char ** float_orig;	/**< @brief float option original value given at command line.  */
-  int float_min; /**< @brief float option's minimum occurreces */
-  int float_max; /**< @brief float option's maximum occurreces */
+  unsigned int float_min; /**< @brief float option's minimum occurreces */
+  unsigned int float_max; /**< @brief float option's maximum occurreces */
   const char *float_help; /**< @brief float option help description.  */
   char ** no_short_opt_arg;	/**< @brief string option with no short.  */
   char ** no_short_opt_orig;	/**< @brief string option with no short original value given at command line.  */
-  int no_short_opt_min; /**< @brief string option with no short's minimum occurreces */
-  int no_short_opt_max; /**< @brief string option with no short's maximum occurreces */
+  unsigned int no_short_opt_min; /**< @brief string option with no short's minimum occurreces */
+  unsigned int no_short_opt_max; /**< @brief string option with no short's maximum occurreces */
   const char *no_short_opt_help; /**< @brief string option with no short help description.  */
-  int noarg_min; /**< @brief multiple option with no arg's minimum occurreces */
-  int noarg_max; /**< @brief multiple option with no arg's maximum occurreces */
+  unsigned int noarg_min; /**< @brief multiple option with no arg's minimum occurreces */
+  unsigned int noarg_max; /**< @brief multiple option with no arg's maximum occurreces */
   const char *noarg_help; /**< @brief multiple option with no arg help description.  */
-  int noarg_noshort_min; /**< @brief multiple option with no arg and no short's minimum occurreces */
-  int noarg_noshort_max; /**< @brief multiple option with no arg and no short's maximum occurreces */
+  unsigned int noarg_noshort_min; /**< @brief multiple option with no arg and no short's minimum occurreces */
+  unsigned int noarg_noshort_max; /**< @brief multiple option with no arg and no short's maximum occurreces */
   const char *noarg_noshort_help; /**< @brief multiple option with no arg and no short help description.  */
   char ** optarg_arg;	/**< @brief multi with optional args.  */
   char ** optarg_orig;	/**< @brief multi with optional args original value given at command line.  */
-  int optarg_min; /**< @brief multi with optional args's minimum occurreces */
-  int optarg_max; /**< @brief multi with optional args's maximum occurreces */
+  unsigned int optarg_min; /**< @brief multi with optional args's minimum occurreces */
+  unsigned int optarg_max; /**< @brief multi with optional args's maximum occurreces */
   const char *optarg_help; /**< @brief multi with optional args help description.  */
   char ** optarg_noshort_arg;	/**< @brief multi with optional args and no short.  */
   char ** optarg_noshort_orig;	/**< @brief multi with optional args and no short original value given at command line.  */
-  int optarg_noshort_min; /**< @brief multi with optional args and no short's minimum occurreces */
-  int optarg_noshort_max; /**< @brief multi with optional args and no short's maximum occurreces */
+  unsigned int optarg_noshort_min; /**< @brief multi with optional args and no short's minimum occurreces */
+  unsigned int optarg_noshort_max; /**< @brief multi with optional args and no short's maximum occurreces */
   const char *optarg_noshort_help; /**< @brief multi with optional args and no short help description.  */
   char * file_save_arg;	/**< @brief save the passed options into a file.  */
   char * file_save_orig;	/**< @brief save the passed options into a file original value given at command line.  */

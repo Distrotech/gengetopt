@@ -94,12 +94,12 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->opta_help = gengetopt_args_info_help[4] ;
-  args_info->opta_min = -1;
-  args_info->opta_max = -1;
+  args_info->opta_min = 0;
+  args_info->opta_max = 0;
   args_info->optA_help = gengetopt_args_info_help[5] ;
   args_info->optAmul_help = gengetopt_args_info_help[6] ;
-  args_info->optAmul_min = -1;
-  args_info->optAmul_max = -1;
+  args_info->optAmul_min = 0;
+  args_info->optAmul_max = 0;
   args_info->optb_help = gengetopt_args_info_help[7] ;
   args_info->optc_help = gengetopt_args_info_help[9] ;
   args_info->optd_help = gengetopt_args_info_help[10] ;
@@ -124,7 +124,7 @@ static void print_help_common(void) {
   printf("\n");
 
   if (strlen(gengetopt_args_info_description) > 0)
-    printf("%s\n", gengetopt_args_info_description);
+    printf("%s\n\n", gengetopt_args_info_description);
 }
 
 void
@@ -337,8 +337,7 @@ static char *
 get_multiple_arg_token(const char *arg)
 {
   char *tok, *ret;
-  size_t len, num_of_escape;
-  int i, j;
+  size_t len, num_of_escape, i, j;
 
   if (!arg)
     return NULL;
@@ -414,16 +413,16 @@ get_multiple_arg_token_next(const char *arg)
 }
 
 static int
-check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc);
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc);
 
 int
-check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, int min, int max, const char *option_desc)
+check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc)
 {
   int error = 0;
 
-  if (option_given && ! (min < 0 && max < 0))
+  if (option_given && (min > 0 || max > 0))
     {
-      if (min >= 0 && max >= 0)
+      if (min > 0 && max > 0)
         {
           if (min == max)
             {
@@ -444,7 +443,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               error = 1;
             }
         }
-      else if (min >= 0)
+      else if (min > 0)
         {
           /* at least check */
           if (option_given < min)
@@ -454,7 +453,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               error = 1;
             }
         }
-      else if (max >= 0)
+      else if (max > 0)
         {
           /* at most check */
           if (option_given > max)
@@ -573,7 +572,7 @@ test_groups_cmd_parser_required2 (struct gengetopt_args_info *args_info, const c
   
   if (args_info->grp1_group_counter == 0)
     {
-      fprintf (stderr, "%s: %d options of group grp1 were given. One is required.%s\n", prog_name, args_info->grp1_group_counter, (additional_error ? additional_error : ""));
+      fprintf (stderr, "%s: %d options of group grp1 were given. One is required%s.\n", prog_name, args_info->grp1_group_counter, (additional_error ? additional_error : ""));
       error = 1;
     }
   
@@ -964,13 +963,13 @@ test_groups_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_
 
   if (args_info->grp1_group_counter > 1)
     {
-      fprintf (stderr, "%s: %d options of group grp1 were given. One is required.%s\n", argv[0], args_info->grp1_group_counter, (additional_error ? additional_error : ""));
+      fprintf (stderr, "%s: %d options of group grp1 were given. One is required%s.\n", argv[0], args_info->grp1_group_counter, (additional_error ? additional_error : ""));
       error = 1;
     }
   
   if (args_info->my_grp2_group_counter > 1)
     {
-      fprintf (stderr, "%s: %d options of group my grp2 were given. At most one is required.%s\n", argv[0], args_info->my_grp2_group_counter, (additional_error ? additional_error : ""));
+      fprintf (stderr, "%s: %d options of group my grp2 were given. At most one is required%s.\n", argv[0], args_info->my_grp2_group_counter, (additional_error ? additional_error : ""));
       error = 1;
     }
   

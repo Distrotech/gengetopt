@@ -1786,11 +1786,11 @@ requires that the multiple option, if given, must be given not less than
 @code{number1} times and no more than @code{number2} times
 
 @item (number-)
-requires that the multiple option, if given, must be given not less than
+requires that the multiple option, if given, must be given at least
 @code{number} times
 
 @item (-number)
-requires that the multiple option, if given, must be given not more than
+requires that the multiple option, if given, must be given at most
 @code{number} times
 @end table
 

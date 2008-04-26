@@ -622,6 +622,7 @@ static void generate_option_usage_string(gengetopt_option * opt, ostream &usage)
     case ARG_LONGDOUBLE:
     case ARG_LONGLONG:
     case ARG_STRING:
+    case ARG_ENUM: 
         if (opt->type_str)
             type_str = opt->type_str;
         else

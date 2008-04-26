@@ -10,10 +10,13 @@
 //
 //
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "fileutils.h"
+
+using namespace std;
 
 char *
 create_filename (char *name, char *ext)

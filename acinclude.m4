@@ -5,7 +5,7 @@ dnl Currently supports g++ and gcc.
 dnl This macro must be put after AC_PROG_CC and AC_PROG_CXX in
 dnl configure.in
 dnl
-dnl @version $Id: acinclude.m4,v 1.16 2008/01/13 15:59:00 bettini Exp $
+dnl @version $Id: acinclude.m4,v 1.17 2008/04/26 10:39:54 bettini Exp $
 dnl @author Loic Dachary <loic@senga.org>
 dnl
 AC_DEFUN([AC_COMPILE_WARNINGS],
@@ -14,7 +14,7 @@ if test -n "$CXX"
 then
   if test "$GXX" = "yes"
   then
-    ac_compile_warnings_opt='-Wall -W -Wno-unused-parameter'
+    ac_compile_warnings_opt='-Wall -W -Wno-unused-parameter -fstrict-aliasing'
   fi
   CXXFLAGS="$CXXFLAGS $ac_compile_warnings_opt"
   ac_compile_warnings_msg="$ac_compile_warnings_opt for C++"
@@ -24,7 +24,7 @@ if test -n "$CC"
 then
   if test "$GCC" = "yes"
   then
-    ac_compile_warnings_opt='-Wall -W -Wno-unused-parameter'
+    ac_compile_warnings_opt='-Wall -W -Wno-unused-parameter -fstrict-aliasing'
   fi
   CFLAGS="$CFLAGS $ac_compile_warnings_opt"
   ac_compile_warnings_msg="$ac_compile_warnings_msg $ac_compile_warnings_opt for C"
@@ -75,7 +75,7 @@ dnl
 dnl If the compiler can prevent names clashes using namespaces, define
 dnl HAVE_NAMESPACES.
 dnl
-dnl @version $Id: acinclude.m4,v 1.16 2008/01/13 15:59:00 bettini Exp $
+dnl @version $Id: acinclude.m4,v 1.17 2008/04/26 10:39:54 bettini Exp $
 dnl @author Luc Maisonobe
 dnl
 AC_DEFUN([AC_CXX_NAMESPACES],
@@ -98,7 +98,7 @@ dnl @synopsis AC_CXX_HAVE_STL
 dnl
 dnl If the compiler supports the Standard Template Library, define HAVE_STL.
 dnl
-dnl @version $Id: acinclude.m4,v 1.16 2008/01/13 15:59:00 bettini Exp $
+dnl @version $Id: acinclude.m4,v 1.17 2008/04/26 10:39:54 bettini Exp $
 dnl @author Luc Maisonobe
 dnl
 AC_DEFUN([AC_CXX_HAVE_STL],
@@ -126,7 +126,7 @@ dnl
 dnl If the C++ library has a working stringstream, define HAVE_SSTREAM.
 dnl
 dnl @author Ben Stanley
-dnl @version $Id: acinclude.m4,v 1.16 2008/01/13 15:59:00 bettini Exp $
+dnl @version $Id: acinclude.m4,v 1.17 2008/04/26 10:39:54 bettini Exp $
 dnl
 AC_DEFUN([AC_CXX_HAVE_SSTREAM],
 [AC_CACHE_CHECK(whether the compiler has stringstream,

@@ -82,19 +82,19 @@ struct my_args_info
   const char *conf_file_help; /**< @brief config file help description.  */
   char ** multi_string_arg;	/**< @brief multiple string option.  */
   char ** multi_string_orig;	/**< @brief multiple string option original value given at command line.  */
-  int multi_string_min; /**< @brief multiple string option's minimum occurreces */
-  int multi_string_max; /**< @brief multiple string option's maximum occurreces */
+  unsigned int multi_string_min; /**< @brief multiple string option's minimum occurreces */
+  unsigned int multi_string_max; /**< @brief multiple string option's maximum occurreces */
   const char *multi_string_help; /**< @brief multiple string option help description.  */
   char ** multi_string_def_arg;	/**< @brief multiple string option with default (default='this default').  */
   char ** multi_string_def_orig;	/**< @brief multiple string option with default original value given at command line.  */
-  int multi_string_def_min; /**< @brief multiple string option with default's minimum occurreces */
-  int multi_string_def_max; /**< @brief multiple string option with default's maximum occurreces */
+  unsigned int multi_string_def_min; /**< @brief multiple string option with default's minimum occurreces */
+  unsigned int multi_string_def_max; /**< @brief multiple string option with default's maximum occurreces */
   const char *multi_string_def_help; /**< @brief multiple string option with default help description.  */
-  int noarg_min; /**< @brief multiple option with no arg's minimum occurreces */
-  int noarg_max; /**< @brief multiple option with no arg's maximum occurreces */
+  unsigned int noarg_min; /**< @brief multiple option with no arg's minimum occurreces */
+  unsigned int noarg_max; /**< @brief multiple option with no arg's maximum occurreces */
   const char *noarg_help; /**< @brief multiple option with no arg help description.  */
-  int noarg_noshort_min; /**< @brief multiple option with no arg and no short's minimum occurreces */
-  int noarg_noshort_max; /**< @brief multiple option with no arg and no short's maximum occurreces */
+  unsigned int noarg_noshort_min; /**< @brief multiple option with no arg and no short's minimum occurreces */
+  unsigned int noarg_noshort_max; /**< @brief multiple option with no arg and no short's maximum occurreces */
   const char *noarg_noshort_help; /**< @brief multiple option with no arg and no short help description.  */
   char * opt_arg_arg;	/**< @brief option with optional arg.  */
   char * opt_arg_orig;	/**< @brief option with optional arg original value given at command line.  */

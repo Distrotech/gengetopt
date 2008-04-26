@@ -11,7 +11,8 @@ main(int argc, char **argv)
   struct gengetopt_args_info main_args_info;
   struct test_first_cmdline_cmd_struct first_args_info;
   struct test_second_cmdline_cmd_struct second_args_info;
-  int exit_code = 0, i, j;
+  int exit_code = 0;
+  unsigned int i, j;
 
   if (test_main_cmdline_cmd_parser (argc, argv, &main_args_info) != 0) {
     exit_code = 1;

@@ -14,7 +14,7 @@ static struct my_args_info args_info;
 int
 main (int argc, char **argv)
 {
-  int i;
+  unsigned int i;
 
   /* do not override command line options, initialize args_info */
   if (test_conf_parser_cmd_parser_configfile

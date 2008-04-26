@@ -18,7 +18,7 @@ char conf_file[256];
 int
 main (int argc, char **argv)
 {  
-  int i;
+  unsigned int i;
   int result = 0;
 
   /* initialized but no check required */

@@ -457,7 +457,6 @@ command line type options.
 
 In ggo files comments start with # and end at EOL
 
-
   -h, --help                    Print help and exit
       --detailed-help           Print help, including all details and hidden 
                                   options, and exit
@@ -573,6 +572,7 @@ diff wrong_flag2.err.out ./wrong_flag2.err
 diff wrong_group.err.out ./wrong_group.err
 diff wrong_group2.err.out ./wrong_group2.err
 diff wrong_help_redef.err.out ./wrong_help_redef.err
+diff wrong_multiple_occurrence.err.out ./wrong_multiple_occurrence.err
 diff wrong_numeric_value.err.out ./wrong_numeric_value.err
 diff wrong_version_redef.err.out ./wrong_version_redef.err
 *** no_strings -h
@@ -1323,7 +1323,7 @@ In ggo files comments start with # and end at EOL
   -F, --flag                    flag option  (default=on)
   -u, --function                function option
   
-  a function option is basically an option with no argument.  It can be used, 
+  a `function' option is basically an option with no argument.  It can be used, 
   e.g., to specify a specific behavior for a program.
 
   Well, this further explanation is quite useless, but it's only to show an 
@@ -1402,7 +1402,6 @@ command line type options.
 
 In ggo files comments start with # and end at EOL
 
-
   -h, --help                    Print help and exit
       --detailed-help           Print help, including all details and hidden 
                                   options, and exit
@@ -1468,7 +1467,6 @@ to test all possible
 command line type options.
 
 In ggo files comments start with # and end at EOL
-
 
   -h, --help                    Print help and exit
       --detailed-help           Print help, including all details and hidden 
@@ -1569,7 +1567,6 @@ command line type options.
 
 In ggo files comments start with # and end at EOL
 
-
   -h, --help                    Print help and exit
       --detailed-help           Print help, including all details and hidden 
                                   options, and exit
@@ -1587,7 +1584,7 @@ In ggo files comments start with # and end at EOL
   -F, --flag                    flag option  (default=on)
   -u, --function                function option
   
-  a function option is basically an option with no argument.  It can be used, 
+  a `function' option is basically an option with no argument.  It can be used, 
   e.g., to specify a specific behavior for a program.
 
   Well, this further explanation is quite useless, but it's only to show an 
