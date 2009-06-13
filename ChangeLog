@@ -1,6 +1,7 @@
 2009-06-13  bettini  <bettini@bettini-desktop>
 
 	* configure.ac: some cleanup
+	correctly use --docdir
 	* gl/getopt_.h: Removed.
 	* gl/m4/onceonly_2_57.m4: Removed.
 	* gl/strdup.h: Removed.

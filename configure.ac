@@ -24,7 +24,7 @@ AM_INIT_AUTOMAKE()
 
 dnl directory for docs (html)
 AC_SUBST(gengetoptdocdir)
-gengetoptdocdir=$datadir/doc/gengetopt
+gengetoptdocdir=$docdir
 
 dnl directory for examples
 AC_SUBST(gengetoptexamplesdir)

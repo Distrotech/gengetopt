@@ -15,6 +15,7 @@ Version 2.22.2
    * removed dependency from flex library (that generated problems in
      compilation in open solaris)
    * uses PACKAGE_NAME, if defined, for printing help and version
+   * uses --docdir if specified for installing documentation
 
 Version 2.22.1
 
