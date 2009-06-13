@@ -34,3 +34,4 @@ configure.lineno
 *.lnk
 compile
 link-warning.h
+build_mingw

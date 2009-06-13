@@ -9,13 +9,16 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 # if gengen is not installed we simply ignore the changes
-# FIXME: maybe we have to notify the developer about it
 
 SUFFIXES = .h_skel
 
 if NO_GENGEN
-.h_skel.cc:
-	touch $@
+#.h_skel.cc:
+#	echo "Not regenerating $@ since gengen is not installed"
+# better not to use touch, otherwise we will create an empty file in
+# the build directory
+#	touch $@
+
 else
 GENERATE = $(GENGEN)
 
@@ -32,7 +35,7 @@ noinst_LTLIBRARIES = libgen.la
 
 libgen_la_SOURCES = $(BUILT_SOURCES)
 
-BUILT_SOURCES = header.h c_source.h header.cc c_source.cc \
+BUILT_SOURCES = header.h header.cc c_source.h c_source.cc \
 handle_help.h handle_version.h handle_help.cc handle_version.cc \
 generic_option.h required_option.h dependant_option.h \
 generic_option.cc required_option.cc dependant_option.cc \
