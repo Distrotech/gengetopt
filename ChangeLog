@@ -1,5 +1,7 @@
 2009-06-13  bettini  <bettini@bettini-desktop>
 
+	* doc/gengetopt.texinfo: specified that package and version
+	are required unless you use autoconf
 	* configure.ac: some cleanup
 	correctly use --docdir
 	* gl/getopt_.h: Removed.
