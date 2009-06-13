@@ -18,6 +18,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -26,10 +30,6 @@
 #include <algorithm> // for pair
 
 #include <fstream>
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 extern "C"
 {
@@ -71,13 +71,9 @@ extern "C"
 #include "gm_utils.h"
 #include "fileutils.h"
 
-/*
-#ifndef HAVE_STRDUP
-extern "C" char *strdup (const char *s) ;
-#endif
-*/
-
-#include "strdup.h"
+#ifndef FIX_UNUSED
+#define FIX_UNUSED(X) (void) (X)
+#endif // FIX_UNUSED
 
 #define MAX_STARTING_COLUMN 32
 
@@ -119,7 +115,7 @@ static const ModeOptionMap &getModeOptionMap() {
             }
         }
     }
-    
+
     return modeOptionMap;
 }
 
@@ -138,7 +134,7 @@ static const ModeOptMap &getModeOptMap() {
             }
         }
     }
-    
+
     return modeOptMap;
 }
 
@@ -214,11 +210,11 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   header_gen_class::set_args_info (args_info_name);
   c_source_gen_class::set_args_info (args_info_name);
   const string uppersand = "\"";
-  
+
   // if no_options then we don't need to generate update_arg,
   // but if we need to handle help or version we still need to generate it
   set_no_options (no_options_ && !no_handle_help && !no_handle_version);
-  
+
   if (gengetopt_package)
     set_package_var_val
       (uppersand + gengetopt_package + uppersand);
@@ -285,7 +281,7 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   header_gen_class::set_has_hidden(c_source_gen_class::has_hidden);
   c_source_gen_class::set_has_details(has_options_with_details());
   header_gen_class::set_has_details(c_source_gen_class::has_details);
-  
+
   set_has_arg_types();
 }
 
@@ -408,8 +404,9 @@ void
 CmdlineParserCreator::generate_enum_types(ostream &stream,
                                           unsigned int indent)
 {
+  FIX_UNUSED (indent);
   struct gengetopt_option * opt;
-  
+
   if (has_arg_enum)
       stream << endl;
 
@@ -431,7 +428,7 @@ CmdlineParserCreator::generate_enum_types(ostream &stream,
             stream << from_value_to_enum(opt->var_arg, *it);
             if (it == opt->acceptedvalues->begin())
                 stream << " = 0 ";
-                        
+
         }
         stream << " };" << endl;
     }
@@ -494,7 +491,7 @@ _generate_option_arg(ostream &stream,
       string longtype = arg_types[ARG_LONG];
       if (opt->multiple)
           longtype += "*";
-      
+
       option_arg_gen.set_long_long_arg(true);
       option_arg_gen.set_longtype(longtype);
     }
@@ -524,7 +521,7 @@ CmdlineParserCreator::generate_option_given(ostream &stream,
       case ARG_DOUBLE:
       case ARG_LONGDOUBLE:
       case ARG_LONGLONG:
-      case ARG_ENUM: 
+      case ARG_ENUM:
           break;
       default:
         fprintf (stderr, "gengetopt: bug found in %s:%d!!\n",
@@ -556,6 +553,7 @@ void
 CmdlineParserCreator::generate_option_values_decl(ostream &stream,
                                                   unsigned int indent)
 {
+  FIX_UNUSED (indent);
   struct gengetopt_option * opt;
   bool first = true;
 
@@ -566,8 +564,8 @@ CmdlineParserCreator::generate_option_values_decl(ostream &stream,
           first = false;
         }
 
-        stream << "extern char *" << OPTION_VALUES_NAME(opt->var_arg) <<
-          "[] ;\t/**< @brief Possible values for " << opt->long_opt << ".  */\n";
+        stream << "extern const char *" << OPTION_VALUES_NAME(opt->var_arg) <<
+          "[];  /**< @brief Possible values for " << opt->long_opt << ". */\n";
       }
     }
 
@@ -579,6 +577,7 @@ void
 CmdlineParserCreator::generate_option_values(ostream &stream,
                                              unsigned int indent)
 {
+  FIX_UNUSED (indent);
   struct gengetopt_option * opt;
   bool first = true;
 
@@ -589,9 +588,9 @@ CmdlineParserCreator::generate_option_values(ostream &stream,
           first = false;
         }
 
-        stream << "char *" << OPTION_VALUES_NAME(opt->var_arg) <<
+        stream << "const char *" << OPTION_VALUES_NAME(opt->var_arg) <<
           "[] = {" << opt->acceptedvalues->toString(false) <<
-          ", 0} ;\t/* Possible values for " << opt->long_opt << ".  */\n";
+          ", 0}; /*< Possible values for " << opt->long_opt << ". */\n";
       }
     }
 
@@ -622,7 +621,7 @@ static void generate_option_usage_string(gengetopt_option * opt, ostream &usage)
     case ARG_LONGDOUBLE:
     case ARG_LONGLONG:
     case ARG_STRING:
-    case ARG_ENUM: 
+    case ARG_ENUM:
         if (opt->type_str)
             type_str = opt->type_str;
         else
@@ -645,6 +644,7 @@ static void generate_option_usage_string(gengetopt_option * opt, ostream &usage)
 const string
 CmdlineParserCreator::generate_usage_string(bool use_config_package)
 {
+  FIX_UNUSED (use_config_package);
   // if specified by the programmer, the usage string has the precedence
   if (gengetopt_usage) {
     return gengetopt_usage;
@@ -656,7 +656,7 @@ CmdlineParserCreator::generate_usage_string(bool use_config_package)
   // otherwise the config.h package constant will be used
   if (gengetopt_package)
     usage << gengetopt_package;
- 
+
   if ( long_help ) {
       // we first generate usage strings of required options
       // handle mode options separately
@@ -664,7 +664,7 @@ CmdlineParserCreator::generate_usage_string(bool use_config_package)
           if (opt->required && !opt->hidden && !opt->mode_value) {
               generate_option_usage_string(opt, usage);
           }
-      
+
       foropt
           if (!opt->required && !opt->hidden && !opt->mode_value) {
               generate_option_usage_string(opt, usage);
@@ -683,26 +683,26 @@ CmdlineParserCreator::generate_usage_string(bool use_config_package)
   // now deal with modes
   if (has_modes && long_help) {
       const ModeOptMap &modeOptMap = getModeOptMap();
-      
+
       for (ModeOptMap::const_iterator map_it = modeOptMap.begin(); map_it != modeOptMap.end(); ++map_it) {
           string mode_line; // a mode alternative in the usage string
           gengetopt_option_list::const_iterator opt_it;
           usage.str(""); // reset the usage string buffer
-          
+
           for (opt_it = map_it->second.begin(); opt_it != map_it->second.end(); ++opt_it) {
               if (((*opt_it)->required) && !((*opt_it)->hidden)) {
                   generate_option_usage_string(*opt_it, usage);
               }
           }
-          
+
           for (opt_it = map_it->second.begin(); opt_it != map_it->second.end(); ++opt_it) {
               if (!((*opt_it)->required) && !((*opt_it)->hidden)) {
                   generate_option_usage_string(*opt_it, usage);
               }
           }
-          
+
           wrap_cstr ( mode_line, strlen("  or : "), 2, gengetopt_package + usage.str() );
-          wrapped += "\\n  or : "; 
+          wrapped += "\\n  or : ";
           wrapped += mode_line;
       }
   }
@@ -785,10 +785,10 @@ CmdlineParserCreator::generate_help_option_print_from_lists(ostream &stream,
             print_gen.set_full_index(converted_int.str());
             print_gen.generate_print_help_string(stream, indent);
 
-            ++help_num;                
+            ++help_num;
             ++i;
             ++it;
-        } 
+        }
         ++full_i;
     }
 
@@ -805,7 +805,7 @@ CmdlineParserCreator::generate_help_option_print_from_lists(ostream &stream,
     converted_int << ++help_num;
 
     set_help_string_num(converted_int.str());
-    
+
 }
 
 void
@@ -834,10 +834,10 @@ CmdlineParserCreator::generate_help_option_print(ostream &stream,
         generate_help_option_print_from_lists
         (stream, indent, full_option_list, option_list,
                 c_source_gen_class::args_info + "_help",
-                (c_source_gen_class::has_details ? 
+                (c_source_gen_class::has_details ?
                         c_source_gen_class::args_info + "_detailed_help" :
                             c_source_gen_class::args_info + "_full_help"));
-        
+
         delete full_option_list;
     }
 
@@ -907,7 +907,7 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int inde
     ostringstream index;
 
     string help_string = c_source_gen_class::args_info;
-    
+
     if (c_source_gen_class::has_details) {
         help_string += "_detailed_help";
     } else if (c_source_gen_class::has_hidden) {
@@ -935,7 +935,7 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int inde
             }
           }
         }
-        
+
         // skip group desc
         if (opt->group_value) {
             if (!current_group || strcmp(current_group, opt->group_value) != 0) {
@@ -943,7 +943,7 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int inde
                 ++i;
             }
         }
-        
+
         // skip mode desc
         if (opt->mode_value) {
             if (!current_mode || strcmp(current_mode, opt->mode_value) != 0) {
@@ -955,7 +955,7 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int inde
         // also skip the text before
         if (opt->text_before)
             ++i;
-        
+
         index << i++;
 
         init_args_info_gen.set_var_arg(opt->var_arg);
@@ -970,11 +970,11 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int inde
         }
 
         init_args_info_gen.generate_init_args_info(stream, indent);
-        
+
         // skip the details
         if (opt->details)
             ++i;
-        
+
         // skip the text after
         if (opt->text_after)
             ++i;
@@ -1027,7 +1027,7 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
   int           type_len;
   const char   *type_str;
   ostringstream stream;
-  
+
   // if we want to generate details then we will also generate hidden options
   if (generate_details)
       generate_hidden = true;
@@ -1241,7 +1241,7 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 
           option_list->push_back(wrapped_desc);
       }
-      
+
       // a possible description to be printed after this option
       if (opt->text_after)
       {
@@ -1421,9 +1421,9 @@ CmdlineParserCreator::generate_multiple_fill_array(ostream &stream, unsigned int
                   default_string = opt->default_string;
           }
           filler.set_default_value (default_string);
-          
+
           filler.generate_multiple_fill_array (stream, indent);
-          
+
           stream << endl;
         }
     }
@@ -1468,7 +1468,7 @@ CmdlineParserCreator::generate_check_modes(ostream &stream, unsigned int indent)
     const ModeOptionMap &modeOptionMap = getModeOptionMap();
 
     check_modes_gen_class check_modes_gen;
-    
+
     // now we check each mode options against every other mode options:
     // the first one with the other n-1, the second one with the other n-2, etc.
     ModeOptionMap::const_iterator map_it1, map_it2;
@@ -1480,12 +1480,12 @@ CmdlineParserCreator::generate_check_modes(ostream &stream, unsigned int indent)
         for (map_it2 = map_it; map_it2 != modeOptionMap.end(); ++map_it2) {
             const string mode1 = canonize_name(map_it1->first);
             const string mode2 = canonize_name(map_it2->first);
-            
+
             check_modes_gen.set_mode1_name(mode1);
             check_modes_gen.set_mode2_name(mode2);
-            
+
             ostringstream mode1_given, mode2_given, mode1_options, mode2_options;
-            
+
             std::for_each(map_it1->second.begin(), map_it1->second.end(), pair_print_f<OptionValueElem>(mode1_given, mode1_options));
             std::for_each(map_it2->second.begin(), map_it2->second.end(), pair_print_f<OptionValueElem>(mode2_given, mode2_options));
 
@@ -1621,7 +1621,7 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
   bool first = true;
 
   option_gen.set_has_short_option (has_short);
-  
+
   // by default we handle '?' case in the switch
   // unless the user defined a short option as ?
   set_handle_question_mark(true);
@@ -1630,7 +1630,7 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
     {
       if (opt->short_opt == '?')
           set_handle_question_mark(false);
-      
+
       if ((has_short && opt->short_opt) || (!has_short && !opt->short_opt))
         {
           if (has_short || first)
@@ -1642,7 +1642,7 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
           option_gen.set_option_var_name (opt->var_arg);
           option_gen.set_final_instructions("");
 
-          if (!no_help && ((opt->short_opt == HELP_SHORT_OPT && 
+          if (!no_help && ((opt->short_opt == HELP_SHORT_OPT &&
                   strcmp(opt->long_opt, HELP_LONG_OPT) == 0)
                   || strcmp(opt->long_opt, HELP_LONG_OPT) == 0
                   || strcmp(opt->long_opt, FULL_HELP_LONG_OPT) == 0
@@ -1713,7 +1713,7 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
               option_gen.set_possible_values (OPTION_VALUES_NAME(opt->var_arg));
           else
               option_gen.set_possible_values ("0");
-            
+
           string default_string = "0";
           if (opt->default_string)
               default_string = string("\"") + opt->default_string + "\"";
@@ -1816,12 +1816,12 @@ CmdlineParserCreator::generate_handle_required(ostream &stream,
     if ( opt->required || opt->multiple )
       {
         if (opt->mode_value) {
-            opt_gen.set_mode_condition("args_info->" + 
+            opt_gen.set_mode_condition("args_info->" +
                     canonize_name(opt->mode_value) + "_mode_counter && ");
         } else {
             opt_gen.set_mode_condition("");
         }
-        
+
         // build the option command line representation
         ostringstream req_opt;
         req_opt << "'--" << opt->long_opt << "'";
@@ -1911,7 +1911,7 @@ void generate_counters(const Collection &collection, const string &name, ostream
     string indent_str (indent, ' ');
 
     counter_gen.set_name(name);
-    
+
     typename Collection::const_iterator end = collection.end();
     for ( typename Collection::const_iterator idx = collection.begin(); idx != end; ++idx) {
         stream << indent_str;
@@ -1998,7 +1998,7 @@ CmdlineParserCreator::generate_file_save_loop(ostream &stream, unsigned int inde
 
   file_save_multiple_gen_class file_save_multiple;
   file_save_gen_class file_save;
-  
+
   const string suffix = "_orig";
   const string suffix_given = "_given";
 
@@ -2016,7 +2016,7 @@ CmdlineParserCreator::generate_file_save_loop(ostream &stream, unsigned int inde
       file_save.set_given(opt->var_arg + suffix_given);
       file_save.set_values
           ((opt->acceptedvalues ? OPTION_VALUES_NAME(opt->var_arg) : "0"));
-      
+
       if (opt->type != ARG_NO && opt->type != ARG_FLAG) {
         file_save.set_arg(opt->var_arg + suffix + (opt->multiple ? " [i]" : ""));
       } else {

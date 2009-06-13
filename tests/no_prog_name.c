@@ -57,7 +57,7 @@ main (int argc, char **argv)
   if (args_info.required_given)
     printf ("specified --required: %s\n", args_info.required_arg);
 
-  for (i = 0; i < args_info.inputs_num; ++i) {
+  for (i = 0; i < args_info.inputs_num; i++) {
     printf ("additional: %s\n", args_info.inputs[i]);
     if (strcmp(args_info.inputs[i], "prog name") == 0)
       result = 1;

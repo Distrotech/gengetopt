@@ -65,6 +65,8 @@ AM_LDFLAGS = $(DEFS) $(INCLUDES)
 # these are for gnulib
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl
 
+#AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl -Wall -Wunused -W -Wcast-align -Wfloat-equal -Wpointer-arith -Wwrite-strings
+
 LDADD = $(top_builddir)/gl/libgnu.la
 
 EXPECT = 1
@@ -166,6 +168,7 @@ more_than_once_SOURCES = more_than_once_cmd.ggo more_than_once.c
 canonize_names_SOURCES = canonize-names-cmd.ggo canonize-names.c
 default_values_SOURCES = default_values_cmd.ggo default_values.c
 default_cmdline_SOURCES = cmdline.ggo default_cmdline.c
+#default_cmdline_CPPFLAGS = -DPACKAGE_NAME="\"default_cmdline\""
 test_all_opts_SOURCES = test_all_opts_cmd.ggo test_all_opts.c
 no_prog_name_SOURCES = test_all_opts_cmd.ggo no_prog_name.c 
 # force using our version of getopt
@@ -385,6 +388,7 @@ check-diff:
 	$(PROGNAME) --show-full-help < $(srcdir)/test_align_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWHELPREQUIRED) < $(srcdir)/test_required_optional_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWHELPREQUIRED) --default-optional < $(srcdir)/test_required_optional_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	sed -i -e "s/\.exe//g" $(TESTSOUT) ; \
         echo "diff $(TESTSOUTPUT) $(TESTSOUT)"; \
         if ! diff $(TESTSOUTPUT) $(srcdir)/$(TESTSOUT); \
         then errors=1; fi; \

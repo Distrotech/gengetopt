@@ -20,8 +20,21 @@ extern "C" {
 #endif /* __cplusplus */
 
 #ifndef @package_var_name@
-/** @@brief the program name */
+/** @@brief the program name (used for printing errors) */
 #define @package_var_name@ @package_var_val@
+#endif
+
+#ifndef @package_var_name@_NAME
+/** @@brief the complete program name (used for help and version) */
+@IF@ package_var_val:string != "PACKAGE" @THEN@
+#define @package_var_name@_NAME @package_var_val@
+@ELSE@
+#ifdef PACKAGE_NAME
+#define @package_var_name@_NAME PACKAGE_NAME
+#else
+#define @package_var_name@_NAME PACKAGE
+#endif
+@ENDIF@
 #endif
 
 #ifndef @version_var_name@
@@ -179,7 +192,7 @@ void @parser_name@_free (struct @args_info@ *args_info);
  * @@return 0 if everything went fine, NON 0 if an error took place
  * @@deprecated use @parser_name@_config_file() instead
  */
-int @parser_name@_configfile (char * const filename,
+int @parser_name@_configfile (const char *filename,
   struct @args_info@ *args_info,
   int override, int initialize, int check_required);
 
@@ -190,7 +203,7 @@ int @parser_name@_configfile (char * const filename,
  * @@param params additional parameters for the parser
  * @@return 0 if everything went fine, NON 0 if an error took place
  */
-int @parser_name@_config_file (char * const filename,
+int @parser_name@_config_file (const char *filename,
   struct @args_info@ *args_info,
   struct @parser_name@_params *params);
 

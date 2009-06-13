@@ -20,8 +20,13 @@ extern "C" {
 #endif /* __cplusplus */
 
 #ifndef TEST_MODES_CMD_PARSER_PACKAGE
-/** @brief the program name */
+/** @brief the program name (used for printing errors) */
 #define TEST_MODES_CMD_PARSER_PACKAGE "test_modes"
+#endif
+
+#ifndef TEST_MODES_CMD_PARSER_PACKAGE_NAME
+/** @brief the complete program name (used for help and version) */
+#define TEST_MODES_CMD_PARSER_PACKAGE_NAME "test_modes"
 #endif
 
 #ifndef TEST_MODES_CMD_PARSER_VERSION

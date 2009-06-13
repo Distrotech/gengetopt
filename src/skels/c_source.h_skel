@@ -17,6 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef FIX_UNUSED
+#define FIX_UNUSED(X) (void) (X) /* avoid warnings for unused params */
+#endif
+
 @IF@ not include_getopt @THEN@
 #include "getopt.h"
 @ENDIF@
@@ -149,6 +153,7 @@ void clear_given (struct @args_info@ *args_info)
 static
 void clear_args (struct @args_info@ *args_info)
 {
+  FIX_UNUSED (args_info);
   @clear_arg:method@
 }
 
@@ -163,7 +168,9 @@ void init_args_info(struct @args_info@ *args_info)
 void
 @parser_name@_print_version (void)
 {
-  printf ("%s %s\n", @package_var_name@, @version_var_name@);
+  printf ("%s %s\n",
+     (strlen(@package_var_name@_NAME) ? @package_var_name@_NAME : @package_var_name@),
+     @version_var_name@);
 }
 
 static void print_help_common(void) {
@@ -220,7 +227,7 @@ void
   init_args_info (args_info);
 @IF@ handle_unamed @THEN@
 
-  args_info->inputs = NULL;
+  args_info->inputs = 0;
   args_info->inputs_num = 0;
 @ENDIF@
 }
@@ -288,6 +295,7 @@ union generic_value {
 #endif
 @ENDIF@
     char *string_arg;
+    const char *default_string_arg;
 };
 
 /** @@brief holds temporary values for multiple options */
@@ -305,8 +313,8 @@ static void add_node(struct generic_list **list) {
   struct generic_list *new_node = (struct generic_list *) malloc (sizeof (struct generic_list));
   new_node->next = *list;
   *list = new_node;
-  new_node->arg.string_arg = NULL;
-  new_node->orig = NULL;
+  new_node->arg.string_arg = 0;
+  new_node->orig = 0;
 }
 
 @IF@ (not multiple_options_all_string) and multiple_token_functions @THEN@
@@ -380,7 +388,7 @@ static void
  * -2 if more than one value has matched
  */
 static int
-check_possible_values(const char *val, char *values[])
+check_possible_values(const char *val, const char *values[])
 {
   int i, found, last;
   size_t len;
@@ -410,10 +418,12 @@ check_possible_values(const char *val, char *values[])
 @ENDIF@
 
 static void
-write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
+write_into_file(FILE *outfile, const char *opt, const char *arg, const char *values[])
 {
   @IF@ check_possible_values @THEN@
   int found = -1;
+  @ELSE@
+  FIX_UNUSED (values);
   @ENDIF@
   if (arg) {
     @IF@ check_possible_values @THEN@
@@ -434,7 +444,7 @@ write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
 
 @IF@ multiple_options @THEN@
 static void
-write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg, char *values[])
+write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg, const char *values[])
 {
   int i;
   
@@ -491,7 +501,7 @@ void
 char *
 gengetopt_strdup (const char *s)
 {
-  char *result = NULL;
+  char *result = 0;
   if (!s)
     return result;
 
@@ -511,7 +521,7 @@ get_multiple_arg_token(const char *arg)
   size_t len, num_of_escape, i, j;
 
   if (!arg)
-    return NULL;
+    return 0;
 
   tok = strchr (arg, ',');
   num_of_escape = 0;
@@ -561,7 +571,7 @@ get_multiple_arg_token_next(const char *arg)
   char *tok;
 
   if (!arg)
-    return NULL;
+    return 0;
 
   tok = strchr (arg, ',');
 
@@ -600,15 +610,15 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
           if (min == max)
             {
               /* specific occurrences */
-              if (option_given != min)
+              if (option_given != (unsigned int) min)
                 {
                   fprintf (stderr, "%s: %s option occurrences must be %d\n",
                     prog_name, option_desc, min);
                   error = 1;
                 }
             }
-          else if (option_given < min
-              || option_given > max)
+          else if (option_given < (unsigned int) min
+                || option_given > (unsigned int) max)
             {
               /* range occurrences */
               fprintf (stderr, "%s: %s option occurrences must be between %d and %d\n",
@@ -653,7 +663,7 @@ int
                    struct @parser_name@_params *params)
 {
   int result;
-  result = @parser_name@_internal (argc, argv, args_info, params, NULL);
+  result = @parser_name@_internal (argc, argv, args_info, params, 0);
 
   @final_exit@
 }
@@ -670,7 +680,7 @@ int
   params.check_ambiguity = 0;
   params.print_errors = 1;
 
-  result = @parser_name@_internal (argc, argv, args_info, &params, NULL);
+  result = @parser_name@_internal (argc, argv, args_info, &params, 0);
 
   @final_exit@
 }
@@ -681,11 +691,13 @@ int
 @IF@ check_required_options @THEN@
   int result = EXIT_SUCCESS;
 
-  if (@parser_name@_required2(args_info, prog_name, NULL) > 0)
+  if (@parser_name@_required2(args_info, prog_name, 0) > 0)
     result = EXIT_FAILURE;
 
   @final_exit@
 @ELSE@
+  FIX_UNUSED (args_info);
+  FIX_UNUSED (prog_name);
   return EXIT_SUCCESS;
 @ENDIF@
 }
@@ -694,6 +706,7 @@ int
 int
 @parser_name@_required2 (struct @args_info@ *args_info, const char *prog_name, const char *additional_error)
 {
+  FIX_UNUSED (additional_error);
   int error = 0;
 
   /* checks for required options */
@@ -733,13 +746,15 @@ static char *package_name = 0;
 static
 int update_arg(void *field, char **orig_field,
                unsigned int *field_given, unsigned int *prev_given, 
-               char *value, char *possible_values[], const char *default_value,
+               char *value, const char *possible_values[],
+               const char *default_value,
                @parser_name@_arg_type arg_type,
                int check_ambiguity, int override,
                int no_free, int multiple_option,
                const char *long_opt, char short_opt,
                const char *additional_error)
 {
+  FIX_UNUSED (field);
   char *stop_char = 0;
   const char *val = value;
   int found;
@@ -776,6 +791,8 @@ int update_arg(void *field, char **orig_field,
           (additional_error ? additional_error : ""));
       return 1; /* failure */
     }
+@ELSE@
+  FIX_UNUSED (default_value);
 @ENDIF@
     
   if (field_given && *field_given && ! override)
@@ -918,7 +935,7 @@ int update_arg(void *field, char **orig_field,
 static
 int update_multiple_arg_temp(struct generic_list **list,
                unsigned int *prev_given, const char *val,
-               char *possible_values[], const char *default_value,
+               const char *possible_values[], const char *default_value,
                @parser_name@_arg_type arg_type,
                const char *long_opt, char short_opt,
                const char *additional_error)
@@ -1172,7 +1189,7 @@ void update_multiple_arg(void *field, char ***orig_field,
       }
       if (!(*orig_field)) {
         *orig_field = (char **) malloc (sizeof (char *));
-        (*orig_field)[0] = NULL;
+        (*orig_field)[0] = 0;
       }
     }
   }
@@ -1180,7 +1197,8 @@ void update_multiple_arg(void *field, char ***orig_field,
 @ENDIF@
 @IF@ has_modes @THEN@
 
-static int check_modes(int given1[], const char *options1[],
+static int check_modes(
+  int given1[], const char *options1[],
                        int given2[], const char *options2[])
 {
   int i = 0, j = 0, errors = 0;
@@ -1204,7 +1222,8 @@ static int check_modes(int given1[], const char *options1[],
 @ENDIF@
 
 int
-@parser_name@_internal (int argc, char * const *argv, struct @args_info@ *args_info,
+@parser_name@_internal (
+  int argc, char * const *argv, struct @args_info@ *args_info,
                         struct @parser_name@_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
@@ -1219,6 +1238,13 @@ int
   int initialize;
   int check_required;
   int check_ambiguity;
+@IF@ include_getopt @THEN@
+
+  char *optarg;
+  int optind;
+  int opterr;
+  int optopt;
+@ENDIF@
   
   package_name = argv[0];
   
@@ -1243,7 +1269,7 @@ int
 
       static struct option long_options[] = {
         @long_option_struct:method{iteration=true}@
-        { NULL,	0, NULL, 0 }
+        { 0,  0, 0, 0 }
       };
 
       @IF@ include_getopt @THEN@
@@ -1351,7 +1377,7 @@ failure:
 /* 3 is for "--" and "=" */
 
 static int
-_@parser_name@_configfile (char * const filename, int *my_argc)
+_@parser_name@_configfile (const char *filename, int *my_argc)
 {
   FILE* file;
   char my_argv[CONFIG_FILE_LINE_BUFFER_SIZE+1];
@@ -1363,14 +1389,14 @@ _@parser_name@_configfile (char * const filename, int *my_argc)
   size_t len, next_token;
   char delimiter;
 
-  if ((file = fopen(filename, "r")) == NULL)
+  if ((file = fopen(filename, "r")) == 0)
     {
       fprintf (stderr, "%s: Error opening configuration file '%s'\n",
                @package_var_name@, filename);
       return EXIT_FAILURE;
     }
 
-  while ((fgets(linebuf, CONFIG_FILE_LINE_SIZE, file)) != NULL)
+  while ((fgets(linebuf, CONFIG_FILE_LINE_SIZE, file)) != 0)
     {
       ++line_num;
       my_argv[0] = '\0';
@@ -1397,7 +1423,7 @@ _@parser_name@_configfile (char * const filename, int *my_argc)
 
       if (fopt[next_token] == '\0') /* the line is over */
         {
-          farg  = NULL;
+          farg  = 0;
           equal = 0;
           goto noarg;
         }
@@ -1488,7 +1514,8 @@ _@parser_name@_configfile (char * const filename, int *my_argc)
 }
 
 int
-@parser_name@_configfile (char * const filename,
+@parser_name@_configfile (
+  const char *filename,
                            struct @args_info@ *args_info,
                            int override, int initialize, int check_required)
 {
@@ -1504,7 +1531,7 @@ int
 }
 
 int
-@parser_name@_config_file (char * const filename,
+@parser_name@_config_file (const char *filename,
                            struct @args_info@ *args_info,
                            struct @parser_name@_params *params)
 {
@@ -1604,7 +1631,7 @@ static unsigned int
       cmd_line_list_tmp = cmd_line_list_tmp->next;
     }
 
-  (*argv_ptr)[n] = NULL;
+  (*argv_ptr)[n] = 0;
 
   free(cmdline);
   return n;

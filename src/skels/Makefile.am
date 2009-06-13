@@ -1,4 +1,4 @@
-# Copyright (C) 1999-2007  Free Software Foundation, Inc.
+# Copyright (C) 1999-2008 Free Software Foundation, Inc.
 #
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without
@@ -20,7 +20,9 @@ else
 GENERATE = $(GENGEN)
 
 .h_skel.cc:
-	$(GENERATE) -i $< --file-name $*.h --gen-name $* --separate-files --expand-tabs
+	name="`echo $* | sed 's/^.*\///g'`"; \
+	echo "$$name"; \
+	$(GENERATE) -i $< -F $*.h -f $$name --separate-files --expand-tabs
 	touch $@
 endif
 
@@ -81,4 +83,4 @@ check_modes.h_skel \
 $(BUILT_SOURCES)
 
 built-clean:
-	rm -f $(BUILT_SOURCES)
+	cd @srcdir@ && rm -f $(BUILT_SOURCES)

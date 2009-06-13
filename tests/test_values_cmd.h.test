@@ -20,8 +20,13 @@ extern "C" {
 #endif /* __cplusplus */
 
 #ifndef TEST_VALUES_CMD_PARSER_PACKAGE
-/** @brief the program name */
+/** @brief the program name (used for printing errors) */
 #define TEST_VALUES_CMD_PARSER_PACKAGE "test_values"
+#endif
+
+#ifndef TEST_VALUES_CMD_PARSER_PACKAGE_NAME
+/** @brief the complete program name (used for help and version) */
+#define TEST_VALUES_CMD_PARSER_PACKAGE_NAME "test_values"
 #endif
 
 #ifndef TEST_VALUES_CMD_PARSER_VERSION
@@ -236,20 +241,20 @@ void test_values_cmd_parser_free (struct gengetopt_args_info *args_info);
 int test_values_cmd_parser_required (struct gengetopt_args_info *args_info,
   const char *prog_name);
 
-extern char *test_values_cmd_parser_string_values_values[] ;	/**< @brief Possible values for string-values.  */
-extern char *test_values_cmd_parser_string_values_def_values[] ;	/**< @brief Possible values for string-values-def.  */
-extern char *test_values_cmd_parser_string_values_def_argopt_values[] ;	/**< @brief Possible values for string-values-def-argopt.  */
-extern char *test_values_cmd_parser_string_values_no_short_values[] ;	/**< @brief Possible values for string-values-no-short.  */
-extern char *test_values_cmd_parser_multistring_values_values[] ;	/**< @brief Possible values for multistring-values.  */
-extern char *test_values_cmd_parser_multistring_values_def_values[] ;	/**< @brief Possible values for multistring-values-def.  */
-extern char *test_values_cmd_parser_multistring_values_no_short_values[] ;	/**< @brief Possible values for multistring-values-no-short.  */
-extern char *test_values_cmd_parser_string_values_group_values[] ;	/**< @brief Possible values for string-values-group.  */
-extern char *test_values_cmd_parser_int_values_values[] ;	/**< @brief Possible values for int-values.  */
-extern char *test_values_cmd_parser_int_values_m_values[] ;	/**< @brief Possible values for int-values-m.  */
-extern char *test_values_cmd_parser_int_values_def_values[] ;	/**< @brief Possible values for int-values-def.  */
-extern char *test_values_cmd_parser_values_first_enums_values[] ;	/**< @brief Possible values for values-first-enums.  */
-extern char *test_values_cmd_parser_values_second_enums_values[] ;	/**< @brief Possible values for values-second-enums.  */
-extern char *test_values_cmd_parser_values_multiple_enums_values[] ;	/**< @brief Possible values for values-multiple-enums.  */
+extern const char *test_values_cmd_parser_string_values_values[];  /**< @brief Possible values for string-values. */
+extern const char *test_values_cmd_parser_string_values_def_values[];  /**< @brief Possible values for string-values-def. */
+extern const char *test_values_cmd_parser_string_values_def_argopt_values[];  /**< @brief Possible values for string-values-def-argopt. */
+extern const char *test_values_cmd_parser_string_values_no_short_values[];  /**< @brief Possible values for string-values-no-short. */
+extern const char *test_values_cmd_parser_multistring_values_values[];  /**< @brief Possible values for multistring-values. */
+extern const char *test_values_cmd_parser_multistring_values_def_values[];  /**< @brief Possible values for multistring-values-def. */
+extern const char *test_values_cmd_parser_multistring_values_no_short_values[];  /**< @brief Possible values for multistring-values-no-short. */
+extern const char *test_values_cmd_parser_string_values_group_values[];  /**< @brief Possible values for string-values-group. */
+extern const char *test_values_cmd_parser_int_values_values[];  /**< @brief Possible values for int-values. */
+extern const char *test_values_cmd_parser_int_values_m_values[];  /**< @brief Possible values for int-values-m. */
+extern const char *test_values_cmd_parser_int_values_def_values[];  /**< @brief Possible values for int-values-def. */
+extern const char *test_values_cmd_parser_values_first_enums_values[];  /**< @brief Possible values for values-first-enums. */
+extern const char *test_values_cmd_parser_values_second_enums_values[];  /**< @brief Possible values for values-second-enums. */
+extern const char *test_values_cmd_parser_values_multiple_enums_values[];  /**< @brief Possible values for values-multiple-enums. */
 
 
 #ifdef __cplusplus

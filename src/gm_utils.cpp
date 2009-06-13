@@ -10,13 +10,17 @@
 //
 //
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <string.h>
+
 #include "gm_utils.h"
 #include "my_sstream.h"
 #include "ggo_options.h"
 #include "argsdef.h"
 #include "groups.h"
-
-#include "strdup.h"
 
 extern groups_collection_t gengetopt_groups;
 
@@ -325,6 +329,7 @@ wrap_cstr( string& wrapped, unsigned int from_column, unsigned int second_indent
     {
       // check for a new line
       if (*out_buf)
+        {
         if ((newline_chars = char_is_newline(out_buf, num_of_newlines)))
           {
             for (int i = 1; i <= num_of_newlines; ++i)
@@ -346,7 +351,7 @@ wrap_cstr( string& wrapped, unsigned int from_column, unsigned int second_indent
            stream << *out_buf++;
            next_space++;
          }
-
+        }
       // search next whitespace, i.e., next word
       while ((*out_buf) && (*out_buf != ' ') &&
              ! char_is_newline(out_buf, num_of_newlines))

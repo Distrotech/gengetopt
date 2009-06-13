@@ -36,7 +36,7 @@ yyerror.cc gm_utils.cpp fileutils.cpp acceptedvalues.cpp ggos.cpp
 # these are for gnulib
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl
 
-LDADD = $(top_builddir)/gl/libgnu.la @LEXLIB@ skels/libgen.la
+LDADD = $(top_builddir)/gl/libgnu.la @LTLIBOBJS@ skels/libgen.la
 
 EXTRA_DIST = parser.h argsdef.h gengetopt.h ggos.h gm.h gnugetopt.h \
 cmdline.c cmdline.h my_sstream.h my_string.h my_map.h \
@@ -93,6 +93,6 @@ pkgdata_DATA = gnugetopt.h getopt.c getopt1.c
 # so we explicitely declare them
 MAINTAINERCLEANFILES = scanner.cc parser.h parser.cc 
 
-noinst_HEADERS = gm_utils.h fileutils.h acceptedvalues.h \
-errorcodes.h yyerror.h 
+noinst_HEADERS = acceptedvalues.h errorcodes.h fileutils.h \
+	gm_utils.h yyerror.h
 

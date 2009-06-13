@@ -1,4 +1,4 @@
-# Copyright (C) 1999-2008  Free Software Foundation, Inc.
+# Copyright (C) 1999-2009  Free Software Foundation, Inc.
 #
 # This file is part of GNU gengetopt
 #
@@ -16,11 +16,11 @@
 # with gengetopt; see the file COPYING.
 
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(autogen.sh)
+AC_INIT(GNU gengetopt,2.22.2)
 
 AM_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE(gengetopt,2.22.1)
+AM_INIT_AUTOMAKE()
 
 dnl directory for docs (html)
 AC_SUBST(gengetoptdocdir)
@@ -51,9 +51,10 @@ AC_CANONICAL_HOST
 
 dnl under IRIX64, the non GNU compiler seems to require this flag
 dnl in order to use standard namespace std
-if test "$GCC" != "yes"; then \
+
+if test "$GCC" != "yes"; then 
 case "$host_os" in
-  irix6*) CXXFLAGS="-LANG:std $CXXFLAGS";; \
+  irix6*) CXXFLAGS="-LANG:std $CXXFLAGS";; 
 esac;
 fi
 
@@ -83,19 +84,9 @@ YFLAGS="$YFLAGS -d -v"
 dnl for lex or flex
 AM_PROG_LEX
 
-dnl Checks for libraries.
-dnl Replace `main' with a function in -lfl:
-AC_CHECK_LIB(fl, main)
-
 dnl check for Electric Fence library, but do not link it automatically
 dnl don't use it anymore: use valgrind
 dnl AC_HAVE_LIBRARY(libefence.a, [LIBS="$LIBS"])
-
-dnl if (f)lex library is not present (yywrap won't be found) we provide
-dnl a simple implementation (see yywrap.cc) which will be included in
-dnl libobjs and linked against the program (see src/Makefile.am)
-dnl this works with flex generated files (I don't know about others)
-AC_REPLACE_FUNCS(yywrap)
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -146,71 +137,56 @@ AM_CONDITIONAL(NO_GENGEN, test -z "$ac_cv_path_GENGEN" )
 dnl AM_CONDITIONAL(NO_SSTREAM, test -z "$ac_cv_cxx_have_sstream" )
 
 dnl we want to avoid tests in case we're crosscompiling
-dnl since we wouldn't be able to run the gengetopt executable in that case
+dnl since we would not be able to run the gengetopt executable in that case
 AM_CONDITIONAL(NO_CROSSCOMPILING, test "$cross_compiling" = no )
 
 dnl some scripts (e.g., valgrind_test.sh) need bash extensions
 AC_PATH_PROGS(BASH_SHELL, bash sh)
 
+AM_PROG_CC_C_O
+
 AH_TEMPLATE(HAVE_LONG_LONG)
 
-AC_OUTPUT([Makefile
-           src/Makefile src/includes/Makefile src/skels/Makefile
-           doc/Makefile gl/Makefile
-           tests/Makefile tests/no_optgiven.sh
-           tests/valgrind_tests.sh
-           tests/valgrind_suppressions.sh
-           tests/more_than_once.sh
-           tests/test_all_opts.sh
-           tests/test_all_opts_file_save.sh
-           tests/test_groups.sh
-           tests/test_modes.sh
+AC_CONFIG_FILES([Makefile
+           src/Makefile 
+           src/includes/Makefile 
+           src/skels/Makefile
+           doc/Makefile 
+           gl/Makefile
+           tests/Makefile
            tests/test_conf.conf
            tests/test_conf_inc.conf
-           tests/test_conf_parser.sh
-           tests/test_conf_parser_save.sh
-           tests/test_conf_parser_grp.sh
-           tests/test_conf_parser_ov.sh
-           tests/test_conf_parser_ov2.sh
-           tests/test_conf_parser_ov3.sh
-           tests/test_conf_parser_ov4.sh
            tests/test_conf_parser_ov2.c
            tests/test_conf_parser_ov3.c
-           tests/test_conf_parser_ov4.c
-           tests/test_conf_parser_err.sh
-           tests/test_conf_parser_err_string.sh
-           tests/test_multiple.sh
-           tests/test_multiple_err.sh
-           tests/test_sections.sh tests/test_default_values.sh
-           tests/test_values.sh tests/test_values_err.sh
-           tests/test_show_help.sh tests/test_err.sh tests/test_dep.sh
-           tests/test_manual_help.sh
-           tests/test_multiple_parsers.sh],
-          [chmod +x tests/valgrind_tests.sh
-           chmod +x tests/valgrind_suppressions.sh
-           chmod +x tests/no_optgiven.sh
-           chmod +x tests/more_than_once.sh
-           chmod +x tests/test_all_opts.sh
-           chmod +x tests/test_all_opts_file_save.sh
-           chmod +x tests/test_groups.sh
-           chmod +x tests/test_modes.sh
-           chmod +x tests/test_conf_parser.sh
-           chmod +x tests/test_conf_parser_save.sh
-           chmod +x tests/test_conf_parser_grp.sh
-           chmod +x tests/test_conf_parser_ov.sh
-           chmod +x tests/test_conf_parser_ov2.sh
-           chmod +x tests/test_conf_parser_ov3.sh
-           chmod +x tests/test_conf_parser_ov4.sh
-           chmod +x tests/test_conf_parser_err.sh
-           chmod +x tests/test_conf_parser_err_string.sh
-           chmod +x tests/test_multiple.sh
-           chmod +x tests/test_multiple_err.sh
-           chmod +x tests/test_sections.sh
-           chmod +x tests/test_default_values.sh
-           chmod +x tests/test_values.sh
-           chmod +x tests/test_values_err.sh
-           chmod +x tests/test_err.sh
-           chmod +x tests/test_dep.sh
-           chmod +x tests/test_manual_help.sh
-           chmod +x tests/test_show_help.sh
-           chmod +x tests/test_multiple_parsers.sh])
+           tests/test_conf_parser_ov4.c])
+            
+AC_CONFIG_FILES([tests/no_optgiven.sh], [chmod +x tests/no_optgiven.sh])
+AC_CONFIG_FILES([tests/valgrind_tests.sh], [chmod +x tests/valgrind_tests.sh])
+AC_CONFIG_FILES([tests/valgrind_suppressions.sh], [chmod +x tests/valgrind_suppressions.sh])
+AC_CONFIG_FILES([tests/more_than_once.sh], [chmod +x tests/more_than_once.sh])
+AC_CONFIG_FILES([tests/test_all_opts.sh], [chmod +x tests/test_all_opts.sh])
+AC_CONFIG_FILES([tests/test_all_opts_file_save.sh], [chmod +x tests/test_all_opts_file_save.sh])
+AC_CONFIG_FILES([tests/test_groups.sh], [chmod +x tests/test_groups.sh])
+AC_CONFIG_FILES([tests/test_modes.sh], [chmod +x tests/test_modes.sh])
+AC_CONFIG_FILES([tests/test_conf_parser.sh], [chmod +x tests/test_conf_parser.sh])
+AC_CONFIG_FILES([tests/test_conf_parser_save.sh], [chmod +x tests/test_conf_parser_save.sh])
+AC_CONFIG_FILES([tests/test_conf_parser_grp.sh], [chmod +x tests/test_conf_parser_grp.sh])
+AC_CONFIG_FILES([tests/test_conf_parser_ov.sh], [chmod +x tests/test_conf_parser_ov.sh])
+AC_CONFIG_FILES([tests/test_conf_parser_ov2.sh], [chmod +x tests/test_conf_parser_ov2.sh])
+AC_CONFIG_FILES([tests/test_conf_parser_ov3.sh], [chmod +x tests/test_conf_parser_ov3.sh])
+AC_CONFIG_FILES([tests/test_conf_parser_ov4.sh], [chmod +x tests/test_conf_parser_ov4.sh])
+AC_CONFIG_FILES([tests/test_conf_parser_err.sh], [chmod +x tests/test_conf_parser_err.sh])
+AC_CONFIG_FILES([tests/test_conf_parser_err_string.sh], [chmod +x tests/test_conf_parser_err_string.sh])
+AC_CONFIG_FILES([tests/test_multiple.sh], [chmod +x tests/test_multiple.sh])
+AC_CONFIG_FILES([tests/test_multiple_err.sh], [chmod +x tests/test_multiple_err.sh])
+AC_CONFIG_FILES([tests/test_sections.sh], [chmod +x tests/test_sections.sh])
+AC_CONFIG_FILES([tests/test_default_values.sh], [chmod +x tests/test_default_values.sh])
+AC_CONFIG_FILES([tests/test_values.sh], [chmod +x tests/test_values.sh])
+AC_CONFIG_FILES([tests/test_values_err.sh], [chmod +x tests/test_values_err.sh])
+AC_CONFIG_FILES([tests/test_show_help.sh], [chmod +x tests/test_show_help.sh])
+AC_CONFIG_FILES([tests/test_err.sh], [chmod +x tests/test_err.sh])
+AC_CONFIG_FILES([tests/test_dep.sh], [chmod +x tests/test_dep.sh])
+AC_CONFIG_FILES([tests/test_manual_help.sh], [chmod +x tests/test_manual_help.sh])
+AC_CONFIG_FILES([tests/test_multiple_parsers.sh], [chmod +x tests/test_multiple_parsers.sh])
+
+AC_OUTPUT

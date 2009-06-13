@@ -20,8 +20,13 @@ extern "C" {
 #endif /* __cplusplus */
 
 #ifndef TEST_CONF_PARSER_CMD_PARSER_PACKAGE
-/** @brief the program name */
+/** @brief the program name (used for printing errors) */
 #define TEST_CONF_PARSER_CMD_PARSER_PACKAGE "test_conf_parser"
+#endif
+
+#ifndef TEST_CONF_PARSER_CMD_PARSER_PACKAGE_NAME
+/** @brief the complete program name (used for help and version) */
+#define TEST_CONF_PARSER_CMD_PARSER_PACKAGE_NAME "test_conf_parser"
 #endif
 
 #ifndef TEST_CONF_PARSER_CMD_PARSER_VERSION
@@ -254,7 +259,7 @@ void test_conf_parser_cmd_parser_free (struct my_args_info *args_info);
  * @return 0 if everything went fine, NON 0 if an error took place
  * @deprecated use test_conf_parser_cmd_parser_config_file() instead
  */
-int test_conf_parser_cmd_parser_configfile (char * const filename,
+int test_conf_parser_cmd_parser_configfile (const char *filename,
   struct my_args_info *args_info,
   int override, int initialize, int check_required);
 
@@ -265,7 +270,7 @@ int test_conf_parser_cmd_parser_configfile (char * const filename,
  * @param params additional parameters for the parser
  * @return 0 if everything went fine, NON 0 if an error took place
  */
-int test_conf_parser_cmd_parser_config_file (char * const filename,
+int test_conf_parser_cmd_parser_config_file (const char *filename,
   struct my_args_info *args_info,
   struct test_conf_parser_cmd_parser_params *params);
 

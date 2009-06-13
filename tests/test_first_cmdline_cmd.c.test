@@ -17,6 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef FIX_UNUSED
+#define FIX_UNUSED(X) (void) (X) /* avoid warnings for unused params */
+#endif
+
 
 #include "test_first_cmdline_cmd.h"
 
@@ -90,6 +94,7 @@ void clear_given (struct test_first_cmdline_cmd_struct *args_info)
 static
 void clear_args (struct test_first_cmdline_cmd_struct *args_info)
 {
+  FIX_UNUSED (args_info);
   args_info->option_a_orig = NULL;
   args_info->multi_arg = NULL;
   args_info->multi_orig = NULL;
@@ -113,7 +118,9 @@ void init_args_info(struct test_first_cmdline_cmd_struct *args_info)
 void
 test_first_cmdline_cmd_parser_print_version (void)
 {
-  printf ("%s %s\n", TEST_FIRST_CMDLINE_CMD_PARSER_PACKAGE, TEST_FIRST_CMDLINE_CMD_PARSER_VERSION);
+  printf ("%s %s\n",
+     (strlen(TEST_FIRST_CMDLINE_CMD_PARSER_PACKAGE_NAME) ? TEST_FIRST_CMDLINE_CMD_PARSER_PACKAGE_NAME : TEST_FIRST_CMDLINE_CMD_PARSER_PACKAGE),
+     TEST_FIRST_CMDLINE_CMD_PARSER_VERSION);
 }
 
 static void print_help_common(void) {
@@ -147,7 +154,7 @@ test_first_cmdline_cmd_parser_init (struct test_first_cmdline_cmd_struct *args_i
   clear_args (args_info);
   init_args_info (args_info);
 
-  args_info->inputs = NULL;
+  args_info->inputs = 0;
   args_info->inputs_num = 0;
 }
 
@@ -187,6 +194,7 @@ free_string_field (char **s)
 union generic_value {
     int int_arg;
     char *string_arg;
+    const char *default_string_arg;
 };
 
 /** @brief holds temporary values for multiple options */
@@ -204,8 +212,8 @@ static void add_node(struct generic_list **list) {
   struct generic_list *new_node = (struct generic_list *) malloc (sizeof (struct generic_list));
   new_node->next = *list;
   *list = new_node;
-  new_node->arg.string_arg = NULL;
-  new_node->orig = NULL;
+  new_node->arg.string_arg = 0;
+  new_node->orig = 0;
 }
 
 
@@ -247,8 +255,9 @@ test_first_cmdline_cmd_parser_release (struct test_first_cmdline_cmd_struct *arg
 
 
 static void
-write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
+write_into_file(FILE *outfile, const char *opt, const char *arg, const char *values[])
 {
+  FIX_UNUSED (values);
   if (arg) {
     fprintf(outfile, "%s=\"%s\"\n", opt, arg);
   } else {
@@ -257,7 +266,7 @@ write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
 }
 
 static void
-write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg, char *values[])
+write_multiple_into_file(FILE *outfile, int len, const char *opt, char **arg, const char *values[])
 {
   int i;
   
@@ -319,7 +328,7 @@ test_first_cmdline_cmd_parser_free (struct test_first_cmdline_cmd_struct *args_i
 char *
 gengetopt_strdup (const char *s)
 {
-  char *result = NULL;
+  char *result = 0;
   if (!s)
     return result;
 
@@ -337,7 +346,7 @@ get_multiple_arg_token(const char *arg)
   size_t len, num_of_escape, i, j;
 
   if (!arg)
-    return NULL;
+    return 0;
 
   tok = strchr (arg, ',');
   num_of_escape = 0;
@@ -387,7 +396,7 @@ get_multiple_arg_token_next(const char *arg)
   char *tok;
 
   if (!arg)
-    return NULL;
+    return 0;
 
   tok = strchr (arg, ',');
 
@@ -424,15 +433,15 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
           if (min == max)
             {
               /* specific occurrences */
-              if (option_given != min)
+              if (option_given != (unsigned int) min)
                 {
                   fprintf (stderr, "%s: %s option occurrences must be %d\n",
                     prog_name, option_desc, min);
                   error = 1;
                 }
             }
-          else if (option_given < min
-              || option_given > max)
+          else if (option_given < (unsigned int) min
+                || option_given > (unsigned int) max)
             {
               /* range occurrences */
               fprintf (stderr, "%s: %s option occurrences must be between %d and %d\n",
@@ -475,7 +484,7 @@ test_first_cmdline_cmd_parser_ext (int argc, char * const *argv, struct test_fir
                    struct test_first_cmdline_cmd_parser_params *params)
 {
   int result;
-  result = test_first_cmdline_cmd_parser_internal (argc, argv, args_info, params, NULL);
+  result = test_first_cmdline_cmd_parser_internal (argc, argv, args_info, params, 0);
 
   if (result == EXIT_FAILURE)
     {
@@ -498,7 +507,7 @@ test_first_cmdline_cmd_parser2 (int argc, char * const *argv, struct test_first_
   params.check_ambiguity = 0;
   params.print_errors = 1;
 
-  result = test_first_cmdline_cmd_parser_internal (argc, argv, args_info, &params, NULL);
+  result = test_first_cmdline_cmd_parser_internal (argc, argv, args_info, &params, 0);
 
   if (result == EXIT_FAILURE)
     {
@@ -514,7 +523,7 @@ test_first_cmdline_cmd_parser_required (struct test_first_cmdline_cmd_struct *ar
 {
   int result = EXIT_SUCCESS;
 
-  if (test_first_cmdline_cmd_parser_required2(args_info, prog_name, NULL) > 0)
+  if (test_first_cmdline_cmd_parser_required2(args_info, prog_name, 0) > 0)
     result = EXIT_FAILURE;
 
   if (result == EXIT_FAILURE)
@@ -529,6 +538,7 @@ test_first_cmdline_cmd_parser_required (struct test_first_cmdline_cmd_struct *ar
 int
 test_first_cmdline_cmd_parser_required2 (struct test_first_cmdline_cmd_struct *args_info, const char *prog_name, const char *additional_error)
 {
+  FIX_UNUSED (additional_error);
   int error = 0;
 
   /* checks for required options */
@@ -570,37 +580,6 @@ struct option
   int *flag;
   int val;
 };
-
-/* For communication from `getopt' to the caller.
-   When `getopt' finds an option that takes an argument,
-   the argument value is returned here.
-   Also, when `ordering' is RETURN_IN_ORDER,
-   each non-option ARGV-element is returned here.  */
-
-static char *optarg;
-
-/* Index in ARGV of the next element to be scanned.
-   This is used for communication to and from the caller
-   and for communication between successive calls to `getopt'.
-
-   On entry to `getopt', zero means this is the first call; initialize.
-
-   When `getopt' returns -1, this is the index of the first of the
-   non-option elements that the caller should itself scan.
-
-   Otherwise, `optind' communicates from one call to the next
-   how much of ARGV has been scanned so far.  */
-
-static int optind;
-
-/* Callers store zero here to inhibit the error message `getopt' prints
-   for unrecognized options.  */
-
-static int opterr;
-
-/* Set to an option character which was unrecognized.  */
-
-static int optopt;
 
 /* This version of `getopt' appears to the caller like standard Unix `getopt'
    but it behaves differently for the user, since it allows the user
@@ -1188,13 +1167,15 @@ static char *package_name = 0;
 static
 int update_arg(void *field, char **orig_field,
                unsigned int *field_given, unsigned int *prev_given, 
-               char *value, char *possible_values[], const char *default_value,
+               char *value, const char *possible_values[],
+               const char *default_value,
                test_first_cmdline_cmd_parser_arg_type arg_type,
                int check_ambiguity, int override,
                int no_free, int multiple_option,
                const char *long_opt, char short_opt,
                const char *additional_error)
 {
+  FIX_UNUSED (field);
   char *stop_char = 0;
   const char *val = value;
   int found;
@@ -1216,6 +1197,7 @@ int update_arg(void *field, char **orig_field,
       return 1; /* failure */
     }
 
+  FIX_UNUSED (default_value);
     
   if (field_given && *field_given && ! override)
     return 0;
@@ -1280,7 +1262,7 @@ int update_arg(void *field, char **orig_field,
 static
 int update_multiple_arg_temp(struct generic_list **list,
                unsigned int *prev_given, const char *val,
-               char *possible_values[], const char *default_value,
+               const char *possible_values[], const char *default_value,
                test_first_cmdline_cmd_parser_arg_type arg_type,
                const char *long_opt, char short_opt,
                const char *additional_error)
@@ -1397,14 +1379,15 @@ void update_multiple_arg(void *field, char ***orig_field,
       }
       if (!(*orig_field)) {
         *orig_field = (char **) malloc (sizeof (char *));
-        (*orig_field)[0] = NULL;
+        (*orig_field)[0] = 0;
       }
     }
   }
 }
 
 int
-test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct test_first_cmdline_cmd_struct *args_info,
+test_first_cmdline_cmd_parser_internal (
+  int argc, char * const *argv, struct test_first_cmdline_cmd_struct *args_info,
                         struct test_first_cmdline_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
@@ -1417,6 +1400,11 @@ test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct tes
   int initialize;
   int check_required;
   int check_ambiguity;
+
+  char *optarg;
+  int optind;
+  int opterr;
+  int optopt;
   
   package_name = argv[0];
   
@@ -1444,7 +1432,7 @@ test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct tes
         { "version",	0, NULL, 'V' },
         { "option-a",	1, NULL, 'a' },
         { "multi",	1, NULL, 'M' },
-        { NULL,	0, NULL, 0 }
+        { 0,  0, 0, 0 }
       };
 
       custom_optarg = optarg;
@@ -1509,7 +1497,7 @@ test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct tes
 
   update_multiple_arg((void *)&(args_info->multi_arg),
     &(args_info->multi_orig), args_info->multi_given,
-    local_args_info.multi_given, 0 , 
+    local_args_info.multi_given, 0,
     ARG_STRING, multi_list);
 
   args_info->multi_given += local_args_info.multi_given;
@@ -1604,7 +1592,7 @@ test_first_cmdline_cmd_parser_create_argv(const char *cmdline_, char ***argv_ptr
       cmd_line_list_tmp = cmd_line_list_tmp->next;
     }
 
-  (*argv_ptr)[n] = NULL;
+  (*argv_ptr)[n] = 0;
 
   free(cmdline);
   return n;

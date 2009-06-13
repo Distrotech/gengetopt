@@ -17,6 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef FIX_UNUSED
+#define FIX_UNUSED(X) (void) (X) /* avoid warnings for unused params */
+#endif
+
 #include "getopt.h"
 
 #include "test_all_opts_cmd.h"
@@ -188,6 +192,7 @@ void clear_given (struct gengetopt_args_info *args_info)
 static
 void clear_args (struct gengetopt_args_info *args_info)
 {
+  FIX_UNUSED (args_info);
   args_info->string_arg = NULL;
   args_info->string_orig = NULL;
   args_info->int_orig = NULL;
@@ -248,7 +253,9 @@ void init_args_info(struct gengetopt_args_info *args_info)
 void
 test_all_opts_cmd_parser_print_version (void)
 {
-  printf ("%s %s\n", TEST_ALL_OPTS_CMD_PARSER_PACKAGE, TEST_ALL_OPTS_CMD_PARSER_VERSION);
+  printf ("%s %s\n",
+     (strlen(TEST_ALL_OPTS_CMD_PARSER_PACKAGE_NAME) ? TEST_ALL_OPTS_CMD_PARSER_PACKAGE_NAME : TEST_ALL_OPTS_CMD_PARSER_PACKAGE),
+     TEST_ALL_OPTS_CMD_PARSER_VERSION);
 }
 
 static void print_help_common(void) {
@@ -300,7 +307,7 @@ test_all_opts_cmd_parser_init (struct gengetopt_args_info *args_info)
   clear_args (args_info);
   init_args_info (args_info);
 
-  args_info->inputs = NULL;
+  args_info->inputs = 0;
   args_info->inputs_num = 0;
 }
 
@@ -376,8 +383,9 @@ test_all_opts_cmd_parser_release (struct gengetopt_args_info *args_info)
 
 
 static void
-write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
+write_into_file(FILE *outfile, const char *opt, const char *arg, const char *values[])
 {
+  FIX_UNUSED (values);
   if (arg) {
     fprintf(outfile, "%s=\"%s\"\n", opt, arg);
   } else {
@@ -479,7 +487,7 @@ test_all_opts_cmd_parser_free (struct gengetopt_args_info *args_info)
 char *
 gengetopt_strdup (const char *s)
 {
-  char *result = NULL;
+  char *result = 0;
   if (!s)
     return result;
 
@@ -501,7 +509,7 @@ test_all_opts_cmd_parser_ext (int argc, char * const *argv, struct gengetopt_arg
                    struct test_all_opts_cmd_parser_params *params)
 {
   int result;
-  result = test_all_opts_cmd_parser_internal (argc, argv, args_info, params, NULL);
+  result = test_all_opts_cmd_parser_internal (argc, argv, args_info, params, 0);
 
   if (result == EXIT_FAILURE)
     {
@@ -524,7 +532,7 @@ test_all_opts_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_i
   params.check_ambiguity = 0;
   params.print_errors = 1;
 
-  result = test_all_opts_cmd_parser_internal (argc, argv, args_info, &params, NULL);
+  result = test_all_opts_cmd_parser_internal (argc, argv, args_info, &params, 0);
 
   if (result == EXIT_FAILURE)
     {
@@ -540,7 +548,7 @@ test_all_opts_cmd_parser_required (struct gengetopt_args_info *args_info, const 
 {
   int result = EXIT_SUCCESS;
 
-  if (test_all_opts_cmd_parser_required2(args_info, prog_name, NULL) > 0)
+  if (test_all_opts_cmd_parser_required2(args_info, prog_name, 0) > 0)
     result = EXIT_FAILURE;
 
   if (result == EXIT_FAILURE)
@@ -555,6 +563,7 @@ test_all_opts_cmd_parser_required (struct gengetopt_args_info *args_info, const 
 int
 test_all_opts_cmd_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error)
 {
+  FIX_UNUSED (additional_error);
   int error = 0;
 
   /* checks for required options */
@@ -599,13 +608,15 @@ static char *package_name = 0;
 static
 int update_arg(void *field, char **orig_field,
                unsigned int *field_given, unsigned int *prev_given, 
-               char *value, char *possible_values[], const char *default_value,
+               char *value, const char *possible_values[],
+               const char *default_value,
                test_all_opts_cmd_parser_arg_type arg_type,
                int check_ambiguity, int override,
                int no_free, int multiple_option,
                const char *long_opt, char short_opt,
                const char *additional_error)
 {
+  FIX_UNUSED (field);
   char *stop_char = 0;
   const char *val = value;
   int found;
@@ -627,6 +638,7 @@ int update_arg(void *field, char **orig_field,
       return 1; /* failure */
     }
 
+  FIX_UNUSED (default_value);
     
   if (field_given && *field_given && ! override)
     return 0;
@@ -718,7 +730,8 @@ int update_arg(void *field, char **orig_field,
 
 
 int
-test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+test_all_opts_cmd_parser_internal (
+  int argc, char * const *argv, struct gengetopt_args_info *args_info,
                         struct test_all_opts_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
@@ -776,7 +789,7 @@ test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetop
         { "very-very-long-option",	1, NULL, 0 },
         { "assume-multimeth-virtual",	0, NULL, 'y' },
         { "file-save",	1, NULL, 0 },
-        { NULL,	0, NULL, 0 }
+        { 0,  0, 0, 0 }
       };
 
       c = getopt_long (argc, argv, "hVs:i:S:l:f:d:D:L:Fuo::r:H:A:y", long_options, &option_index);

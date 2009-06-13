@@ -1,3 +1,39 @@
+2009-06-13  bettini  <bettini@bettini-desktop>
+
+	* configure.ac: some cleanup
+	* gl/getopt_.h: Removed.
+	* gl/m4/onceonly_2_57.m4: Removed.
+	* gl/strdup.h: Removed.
+	* gl/getopt.in.h: New file.
+	* gl/m4/00gnulib.m4: New file.
+	* gl/m4/extensions.m4: New file.
+	* gl/m4/include_next.m4: New file.
+	* gl/m4/onceonly.m4: New file.
+	* gl/m4/string_h.m4: New file.
+	* gl/string.h: New file.
+	* gl/string.in.h: New file.
+	* gl/unistd.h: New file.
+	* gl/unistd.in.h: New file.
+	* src/gengetopt.cc: include gnulib string.h
+	* src/gm.cc: Ditto
+	* src/gm_utils.cpp: Ditto 
+	* src/parser.yy: Ditto
+	* src/scanner.ll: Ditto
+
+2009-05-31  bettini  <bettini@bettini-laptop>
+
+	* src/skels/c_source.h_skel: use PACKAGE_NAME if defined for
+	printing help and version
+
+2009-05-09  bettini  <bettini@bettini-desktop>
+
+	* configure.ac: does not depend on flex library
+
+2009-01-25  bettini  <bettini@dellbettini>
+
+	* src\skels\custom_getopt_gen.h_skel: #undef of static variables
+	to avoid compilation problems for some versions of stdlib.h
+
 2008-01-18  Lorenzo Bettini  <bettini@laptop>
 
 	* src/skels/c_source.h_skel: _min and _max fields of multiple options
@@ -1126,7 +1162,7 @@
         * src/gm.c (generate_cmdline_parser): print_version and print_help
         are public
 
-2001-01-30  Berthold Höllmann <hoel@germanlloyd.org>
+2001-01-30  Berthold Hï¿½llmann <hoel@germanlloyd.org>
 
         * src/gm.c (generate_cmdline_parser): purpose is generated in
         print_help

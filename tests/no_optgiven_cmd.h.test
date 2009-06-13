@@ -20,8 +20,13 @@ extern "C" {
 #endif /* __cplusplus */
 
 #ifndef NO_OPTGIVEN_CMD_PARSER_PACKAGE
-/** @brief the program name */
+/** @brief the program name (used for printing errors) */
 #define NO_OPTGIVEN_CMD_PARSER_PACKAGE "no_optgiven"
+#endif
+
+#ifndef NO_OPTGIVEN_CMD_PARSER_PACKAGE_NAME
+/** @brief the complete program name (used for help and version) */
+#define NO_OPTGIVEN_CMD_PARSER_PACKAGE_NAME "no_optgiven"
 #endif
 
 #ifndef NO_OPTGIVEN_CMD_PARSER_VERSION

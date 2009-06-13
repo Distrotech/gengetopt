@@ -132,7 +132,7 @@ value of int: 100
 value of float: 3.140000
 ./test_conf_parser_ov4: `--required' (`-r') option given more than once
 *** test_conf_parser_err.sh
-test_conf_parser: option `--string' requires an argument
+test_conf_parser: option '--string' requires an argument
 *** test_conf_parser_err_string.sh
 test_conf_parser:./test_conf_err_string.conf:3: malformed string in configuration file
 test_conf_parser:./test_conf_err_string2.conf:3: unterminated string in configuration file
@@ -206,7 +206,7 @@ optarg_noshort_given 2 times
 optarg_noshort argument: second arg for optarg
 optarg_noshort argument: no arg given
 *** test_multiple_err.sh
-./test_multiple: option requires an argument -- s
+./test_multiple: option requires an argument -- 's'
 ./test_multiple: '--int' ('-i') option required
 ./test_multiple: '--limited' ('-L') option occurrences must be 3
 ./test_multiple: '--limited-interval' option occurrences must be between 1 and 3
@@ -567,10 +567,10 @@ Usage: test_values [OPTIONS]...
 diff wrong_default.err.out ./wrong_default.err
 diff wrong_dep.err.out ./wrong_dep.err
 diff wrong_enum_use.err.out ./wrong_enum_use.err
-diff wrong_flag.err.out ./wrong_flag.err
 diff wrong_flag2.err.out ./wrong_flag2.err
-diff wrong_group.err.out ./wrong_group.err
+diff wrong_flag.err.out ./wrong_flag.err
 diff wrong_group2.err.out ./wrong_group2.err
+diff wrong_group.err.out ./wrong_group.err
 diff wrong_help_redef.err.out ./wrong_help_redef.err
 diff wrong_multiple_occurrence.err.out ./wrong_multiple_occurrence.err
 diff wrong_numeric_value.err.out ./wrong_numeric_value.err
@@ -668,7 +668,7 @@ Usage: default_values [OPTIONS]... [FILES]...
                                 if no progress is shown at all.  
                                 (default=`120')
 *** default_cmdline -h
-gengetopt 1.0
+GNU gengetopt 1.0
 
 Usage: gengetopt [OPTIONS]...
 
@@ -1152,7 +1152,7 @@ Usage: test_no_handle_help [OPTIONS]... [FILES]...
 # FOOTER
 ####################
 *** test_multiple_parsers -h
-gengetopt 1.0
+GNU gengetopt 1.0
 
 Usage: gengetopt [OPTIONS]... [FILES]...
 

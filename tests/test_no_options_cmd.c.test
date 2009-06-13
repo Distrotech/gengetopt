@@ -17,6 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef FIX_UNUSED
+#define FIX_UNUSED(X) (void) (X) /* avoid warnings for unused params */
+#endif
+
 #include "getopt.h"
 
 #include "test_no_options_cmd.h"
@@ -59,6 +63,7 @@ void clear_given (struct gengetopt_args_info *args_info)
 static
 void clear_args (struct gengetopt_args_info *args_info)
 {
+  FIX_UNUSED (args_info);
   
 }
 
@@ -75,7 +80,9 @@ void init_args_info(struct gengetopt_args_info *args_info)
 void
 test_no_options_cmd_parser_print_version (void)
 {
-  printf ("%s %s\n", TEST_NO_OPTIONS_CMD_PARSER_PACKAGE, TEST_NO_OPTIONS_CMD_PARSER_VERSION);
+  printf ("%s %s\n",
+     (strlen(TEST_NO_OPTIONS_CMD_PARSER_PACKAGE_NAME) ? TEST_NO_OPTIONS_CMD_PARSER_PACKAGE_NAME : TEST_NO_OPTIONS_CMD_PARSER_PACKAGE),
+     TEST_NO_OPTIONS_CMD_PARSER_VERSION);
 }
 
 static void print_help_common(void) {
@@ -109,7 +116,7 @@ test_no_options_cmd_parser_init (struct gengetopt_args_info *args_info)
   clear_args (args_info);
   init_args_info (args_info);
 
-  args_info->inputs = NULL;
+  args_info->inputs = 0;
   args_info->inputs_num = 0;
 }
 
@@ -154,8 +161,9 @@ test_no_options_cmd_parser_release (struct gengetopt_args_info *args_info)
 
 
 static void
-write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
+write_into_file(FILE *outfile, const char *opt, const char *arg, const char *values[])
 {
+  FIX_UNUSED (values);
   if (arg) {
     fprintf(outfile, "%s=\"%s\"\n", opt, arg);
   } else {
@@ -215,7 +223,7 @@ test_no_options_cmd_parser_free (struct gengetopt_args_info *args_info)
 char *
 gengetopt_strdup (const char *s)
 {
-  char *result = NULL;
+  char *result = 0;
   if (!s)
     return result;
 
@@ -237,7 +245,7 @@ test_no_options_cmd_parser_ext (int argc, char * const *argv, struct gengetopt_a
                    struct test_no_options_cmd_parser_params *params)
 {
   int result;
-  result = test_no_options_cmd_parser_internal (argc, argv, args_info, params, NULL);
+  result = test_no_options_cmd_parser_internal (argc, argv, args_info, params, 0);
 
   if (result == EXIT_FAILURE)
     {
@@ -260,7 +268,7 @@ test_no_options_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args
   params.check_ambiguity = 0;
   params.print_errors = 1;
 
-  result = test_no_options_cmd_parser_internal (argc, argv, args_info, &params, NULL);
+  result = test_no_options_cmd_parser_internal (argc, argv, args_info, &params, 0);
 
   if (result == EXIT_FAILURE)
     {
@@ -274,6 +282,8 @@ test_no_options_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args
 int
 test_no_options_cmd_parser_required (struct gengetopt_args_info *args_info, const char *prog_name)
 {
+  FIX_UNUSED (args_info);
+  FIX_UNUSED (prog_name);
   return EXIT_SUCCESS;
 }
 
@@ -283,7 +293,8 @@ static char *package_name = 0;
 
 
 int
-test_no_options_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+test_no_options_cmd_parser_internal (
+  int argc, char * const *argv, struct gengetopt_args_info *args_info,
                         struct test_no_options_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
@@ -320,7 +331,7 @@ test_no_options_cmd_parser_internal (int argc, char * const *argv, struct genget
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
         { "version",	0, NULL, 'V' },
-        { NULL,	0, NULL, 0 }
+        { 0,  0, 0, 0 }
       };
 
       c = getopt_long (argc, argv, "hV", long_options, &option_index);

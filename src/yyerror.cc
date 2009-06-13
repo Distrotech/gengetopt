@@ -31,7 +31,7 @@ yyerror (const char *s)
 
   fprintf (stderr, "%s:%d: %s %s\n", source, gengetopt_count_line, s, yytext);
 
-  if (!linebuf || !strlen(linebuf))
+  if (/*!linebuf || */!strlen(linebuf))
     return;
 
   fprintf (stderr, "%s:%d: %s\n", source, gengetopt_count_line, linebuf);

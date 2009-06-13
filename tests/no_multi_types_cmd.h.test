@@ -20,8 +20,13 @@ extern "C" {
 #endif /* __cplusplus */
 
 #ifndef NO_MULTI_TYPES_CMD_PARSER_PACKAGE
-/** @brief the program name */
+/** @brief the program name (used for printing errors) */
 #define NO_MULTI_TYPES_CMD_PARSER_PACKAGE "no multi types"
+#endif
+
+#ifndef NO_MULTI_TYPES_CMD_PARSER_PACKAGE_NAME
+/** @brief the complete program name (used for help and version) */
+#define NO_MULTI_TYPES_CMD_PARSER_PACKAGE_NAME "no multi types"
 #endif
 
 #ifndef NO_MULTI_TYPES_CMD_PARSER_VERSION

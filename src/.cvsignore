@@ -11,3 +11,5 @@ y.output
 parser.output
 temp.*
 *.temp
+*.exe
+*.lo

@@ -7,6 +7,15 @@ Please send gengetopt bug reports to bug-gengetopt at gnu.org
 For details about the new features, you can take a look at:
 http://tronprog.blogspot.com/search/label/gengetopt
 
+Version 2.22.2
+
+   * removed further compilation warnings for generated files
+   * fixed a compilation problems for files generated with --include-getopt
+     with some versions of stdlib.h
+   * removed dependency from flex library (that generated problems in
+     compilation in open solaris)
+   * uses PACKAGE_NAME, if defined, for printing help and version
+
 Version 2.22.1
 
    * removed compilation warnings for generated files

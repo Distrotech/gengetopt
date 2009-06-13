@@ -17,7 +17,7 @@ main (int argc, char **argv)
 {  
   /* let's call our cmdline parser a first time */
   if (more_than_once_cmd_parser (argc, argv, &args_info) != 0)
-    exit(1) ;
+    exit (1);
 
   print_args ();
 
@@ -25,7 +25,7 @@ main (int argc, char **argv)
 
   /* OK, let's call it again! */
   if (more_than_once_cmd_parser (argc, argv, &args_info) != 0)
-    exit(1) ;
+    exit (1);
 
   print_args ();
 

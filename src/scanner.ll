@@ -20,9 +20,11 @@
 
 
 %{
-#include <string.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-#include "strdup.h"
+#include <string.h>
 
 #include "argsdef.h"
 #include "parser.h"

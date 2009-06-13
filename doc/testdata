@@ -53,9 +53,9 @@ last option section:
 
 An ending text.
 Here is the version
-sample2 2.0
+GNU gengetopt 2.0
 This is a simple test for gengetopt
-sample2 2.0
+GNU gengetopt 2.0
 
 this is just a test program for gengetopt
 

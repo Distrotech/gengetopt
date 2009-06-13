@@ -20,8 +20,13 @@ extern "C" {
 #endif /* __cplusplus */
 
 #ifndef CANONIZE_NAMES_CMD_PARSER_PACKAGE
-/** @brief the program name */
+/** @brief the program name (used for printing errors) */
 #define CANONIZE_NAMES_CMD_PARSER_PACKAGE "canonize_names"
+#endif
+
+#ifndef CANONIZE_NAMES_CMD_PARSER_PACKAGE_NAME
+/** @brief the complete program name (used for help and version) */
+#define CANONIZE_NAMES_CMD_PARSER_PACKAGE_NAME "canonize_names"
 #endif
 
 #ifndef CANONIZE_NAMES_CMD_PARSER_VERSION

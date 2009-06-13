@@ -31,3 +31,6 @@ libtool
 ltmain.sh
 config.status.lineno
 configure.lineno
+*.lnk
+compile
+link-warning.h

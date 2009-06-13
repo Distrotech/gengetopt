@@ -8,6 +8,14 @@ doctemplate
 @end smallexample"
 end
 
+nodoctemplate
+"@c Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+@smallexample
+"
+"
+@end smallexample"
+end
+
 bold "@b{$text}"
 italics "@i{$text}"
 fixed "@t{$text}"

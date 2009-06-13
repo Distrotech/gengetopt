@@ -68,7 +68,7 @@ BUILT_SOURCES = $(GENERATEDINFOS)
 
 RUNSOURCEHIGHLIGHT=$(SOURCEHIGHLIGHT) -f texinfo --style-file=texinfo.style --output-dir=$(top_builddir)/doc/
 
-gengetopt.texinfo: $(GENERATEDINFOS)
+$(srcdir)/gengetopt.texinfo: $(GENERATEDINFOS)
 
 SUFFIXES = .h.texinfo .cc.texinfo .c.texinfo .ggo.texinfo .ggo
 
@@ -82,7 +82,7 @@ if NO_SOURCEHIGHLIGHT
 test_conf_parser.c.texinfo: $(top_srcdir)/tests/test_conf_parser.c
 	touch $@
 
-test_conf_parser_ov2.c.texinfo: $(top_srcdir)/tests/test_conf_parser_ov2.c
+test_conf_parser_ov2.c.texinfo: $(top_builddir)/tests/test_conf_parser_ov2.c
 	touch $@
 
 test_multiple_parsers.c.texinfo: $(top_srcdir)/tests/test_multiple_parsers.c
@@ -107,8 +107,8 @@ else
 test_conf_parser.c.texinfo: $(top_srcdir)/tests/test_conf_parser.c
 	$(RUNSOURCEHIGHLIGHT) $(top_srcdir)/tests/test_conf_parser.c 
 
-test_conf_parser_ov2.c.texinfo: $(top_srcdir)/tests/test_conf_parser_ov2.c
-	$(RUNSOURCEHIGHLIGHT) $(top_srcdir)/tests/test_conf_parser_ov2.c
+test_conf_parser_ov2.c.texinfo: $(top_builddir)/tests/test_conf_parser_ov2.c
+	$(RUNSOURCEHIGHLIGHT) $(top_builddir)/tests/test_conf_parser_ov2.c
 
 test_multiple_parsers.c.texinfo: $(top_srcdir)/tests/test_multiple_parsers.c
 	$(RUNSOURCEHIGHLIGHT) $(top_srcdir)/tests/test_multiple_parsers.c

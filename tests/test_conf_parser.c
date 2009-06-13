@@ -51,7 +51,7 @@ main (int argc, char **argv)
   printf ("value of float: %f\n", args_info.float_arg);
 
   printf ("value of multi-string_given: %d\n", args_info.multi_string_given);
-  for (i = 0; i < args_info.multi_string_given; ++i)
+  for (i = 0; i < args_info.multi_string_given; i++)
     printf ("  value of multi-string: %s\n", args_info.multi_string_arg [i]);
 
   printf ("value of multi-string-def_given: %d\n",

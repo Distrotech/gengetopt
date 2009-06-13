@@ -20,8 +20,13 @@ extern "C" {
 #endif /* __cplusplus */
 
 #ifndef MORE_THAN_ONCE_CMD_PARSER_PACKAGE
-/** @brief the program name */
+/** @brief the program name (used for printing errors) */
 #define MORE_THAN_ONCE_CMD_PARSER_PACKAGE "more_than_once"
+#endif
+
+#ifndef MORE_THAN_ONCE_CMD_PARSER_PACKAGE_NAME
+/** @brief the complete program name (used for help and version) */
+#define MORE_THAN_ONCE_CMD_PARSER_PACKAGE_NAME "more_than_once"
 #endif
 
 #ifndef MORE_THAN_ONCE_CMD_PARSER_VERSION

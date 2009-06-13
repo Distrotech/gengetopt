@@ -17,6 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef FIX_UNUSED
+#define FIX_UNUSED(X) (void) (X) /* avoid warnings for unused params */
+#endif
+
 #include "getopt.h"
 
 #include "no_strings_cmd.h"
@@ -62,6 +66,7 @@ void clear_given (struct gengetopt_args_info *args_info)
 static
 void clear_args (struct gengetopt_args_info *args_info)
 {
+  FIX_UNUSED (args_info);
   args_info->foo_orig = NULL;
   
 }
@@ -80,7 +85,9 @@ void init_args_info(struct gengetopt_args_info *args_info)
 void
 no_strings_cmd_parser_print_version (void)
 {
-  printf ("%s %s\n", NO_STRINGS_CMD_PARSER_PACKAGE, NO_STRINGS_CMD_PARSER_VERSION);
+  printf ("%s %s\n",
+     (strlen(NO_STRINGS_CMD_PARSER_PACKAGE_NAME) ? NO_STRINGS_CMD_PARSER_PACKAGE_NAME : NO_STRINGS_CMD_PARSER_PACKAGE),
+     NO_STRINGS_CMD_PARSER_VERSION);
 }
 
 static void print_help_common(void) {
@@ -114,7 +121,7 @@ no_strings_cmd_parser_init (struct gengetopt_args_info *args_info)
   clear_args (args_info);
   init_args_info (args_info);
 
-  args_info->inputs = NULL;
+  args_info->inputs = 0;
   args_info->inputs_num = 0;
 }
 
@@ -169,8 +176,9 @@ no_strings_cmd_parser_release (struct gengetopt_args_info *args_info)
 
 
 static void
-write_into_file(FILE *outfile, const char *opt, const char *arg, char *values[])
+write_into_file(FILE *outfile, const char *opt, const char *arg, const char *values[])
 {
+  FIX_UNUSED (values);
   if (arg) {
     fprintf(outfile, "%s=\"%s\"\n", opt, arg);
   } else {
@@ -232,7 +240,7 @@ no_strings_cmd_parser_free (struct gengetopt_args_info *args_info)
 char *
 gengetopt_strdup (const char *s)
 {
-  char *result = NULL;
+  char *result = 0;
   if (!s)
     return result;
 
@@ -254,7 +262,7 @@ no_strings_cmd_parser_ext (int argc, char * const *argv, struct gengetopt_args_i
                    struct no_strings_cmd_parser_params *params)
 {
   int result;
-  result = no_strings_cmd_parser_internal (argc, argv, args_info, params, NULL);
+  result = no_strings_cmd_parser_internal (argc, argv, args_info, params, 0);
 
   if (result == EXIT_FAILURE)
     {
@@ -277,7 +285,7 @@ no_strings_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_info
   params.check_ambiguity = 0;
   params.print_errors = 1;
 
-  result = no_strings_cmd_parser_internal (argc, argv, args_info, &params, NULL);
+  result = no_strings_cmd_parser_internal (argc, argv, args_info, &params, 0);
 
   if (result == EXIT_FAILURE)
     {
@@ -291,6 +299,8 @@ no_strings_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_info
 int
 no_strings_cmd_parser_required (struct gengetopt_args_info *args_info, const char *prog_name)
 {
+  FIX_UNUSED (args_info);
+  FIX_UNUSED (prog_name);
   return EXIT_SUCCESS;
 }
 
@@ -318,13 +328,15 @@ static char *package_name = 0;
 static
 int update_arg(void *field, char **orig_field,
                unsigned int *field_given, unsigned int *prev_given, 
-               char *value, char *possible_values[], const char *default_value,
+               char *value, const char *possible_values[],
+               const char *default_value,
                no_strings_cmd_parser_arg_type arg_type,
                int check_ambiguity, int override,
                int no_free, int multiple_option,
                const char *long_opt, char short_opt,
                const char *additional_error)
 {
+  FIX_UNUSED (field);
   char *stop_char = 0;
   const char *val = value;
   int found;
@@ -345,6 +357,7 @@ int update_arg(void *field, char **orig_field,
       return 1; /* failure */
     }
 
+  FIX_UNUSED (default_value);
     
   if (field_given && *field_given && ! override)
     return 0;
@@ -396,7 +409,8 @@ int update_arg(void *field, char **orig_field,
 
 
 int
-no_strings_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+no_strings_cmd_parser_internal (
+  int argc, char * const *argv, struct gengetopt_args_info *args_info,
                         struct no_strings_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */
@@ -434,7 +448,7 @@ no_strings_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_a
         { "help",	0, NULL, 'h' },
         { "version",	0, NULL, 'V' },
         { "foo",	1, NULL, 'i' },
-        { NULL,	0, NULL, 0 }
+        { 0,  0, 0, 0 }
       };
 
       c = getopt_long (argc, argv, "hVi:", long_options, &option_index);

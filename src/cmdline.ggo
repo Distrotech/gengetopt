@@ -50,7 +50,7 @@
 
 
 # Name of our program
-package "gengetopt"       # can be omitted if using automake
+#package "gengetopt"       # we don't use it: we're using automake
 # Version of our program
 #version "1.0.1"           # we don't use it: we're using automake
 

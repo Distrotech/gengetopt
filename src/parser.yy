@@ -20,11 +20,14 @@
 
 
 %{
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
-#include "strdup.h"
 
 #include "my_sstream.h"
 
@@ -46,16 +49,18 @@ static int gengetopt_purpose_given = 0;
 static int gengetopt_usage_given = 0;
 static int gengetopt_description_given = 0;
 
-extern int yylex () ;
+extern int yylex (void) ;
 
 //#define YYERROR_VERBOSE 1
 
 void check_result(int o, gengetopt_option *opt)
 {
-    if (o) {
+  if (o)
+    {
         ostringstream err;
 
-	switch (o) {
+    switch (o)
+    {
     case NOT_ENOUGH_MEMORY:
         yyerror (opt, "not enough memory");
     	break;
@@ -318,7 +323,7 @@ usage
           }
       }
   }
-;
+        ;
 
 
 sectiondef
@@ -330,22 +335,23 @@ sectiondef
 
 text
   : TOK_TEXT quoted_string
-{
+            {
   gengetopt_set_text($2);
-}
-;
+            }
+        ;
 
 args
   : TOK_ARGS TOK_STRING
-{
+            {
   gengetopt_set_args($2);
-}
-;
+            }
+        ;
 
 groupdef
 	: TOK_DEFGROUP TOK_STRING opt_groupdesc optional_yesno
 	    {
-	      if (gengetopt_add_group ($2, $3, $4)) {
+              if (gengetopt_add_group ($2, $3, $4))
+                {
 		  	yyerror ("group redefined");
 		  	YYERROR;
 		  }
@@ -355,7 +361,8 @@ groupdef
 modedef
 	: TOK_DEFMODE TOK_STRING opt_modedesc
 	    {
-	      if (gengetopt_add_mode ($2, $3)) {
+              if (gengetopt_add_mode ($2, $3))
+                {
 		  	yyerror ("mode redefined");
 		  	YYERROR;
 		  }
