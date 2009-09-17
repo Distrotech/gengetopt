@@ -3,11 +3,6 @@ configure
 config.h.in
 stamp-h.in
 Makefile.in
-config.log
-autoscan.log
-config.h
-config.cache
-config.status
 configure.scan
 stamp-h
 Makefile
@@ -16,11 +11,6 @@ config.guess
 config.sub
 depcomp
 gengetopt-*.tar.gz
-install-sh
-missing
-mkinstalldirs
-stamp-h1
-ylwrap
 *.asc
 Doxyfile
 debug
@@ -28,10 +18,7 @@ gengetopt.kdevelop.pcs
 gengetopt.kdevses
 config.rpath
 libtool
-ltmain.sh
 config.status.lineno
 configure.lineno
-*.lnk
-compile
-link-warning.h
 build_mingw
+build

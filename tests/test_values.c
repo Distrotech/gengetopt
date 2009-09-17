@@ -32,35 +32,35 @@ main (int argc, char **argv)
 
   if (!args_info.string_values_def_argopt_given)
     printf ("(un)");
-  printf ("specified --string-values-def-argopt with argument %s\n", 
+  printf ("specified --string-values-def-argopt with argument %s\n",
           args_info.string_values_def_argopt_arg);
 
   if (args_info.string_values_no_short_given)
     {
-      printf ("specified --string-values-no-short with argument %s\n", 
+      printf ("specified --string-values-no-short with argument %s\n",
               args_info.string_values_no_short_arg);
     }
 
-  for (i = 0; i < args_info.multistring_values_given; ++i) 
+  for (i = 0; i < args_info.multistring_values_given; ++i)
     {
-      printf ("specified --multistring-values with argument %s\n", 
+      printf ("specified --multistring-values with argument %s\n",
               args_info.multistring_values_arg[i]);
-      printf ("specified --multistring-values with (original) argument %s\n", 
+      printf ("specified --multistring-values with (original) argument %s\n",
               args_info.multistring_values_orig[i]);
     }
 
-  for (i = 0; i < args_info.multistring_values_def_given; ++i) 
+  for (i = 0; i < args_info.multistring_values_def_given; ++i)
     {
-      printf ("specified --multistring-values-def with argument %s\n", 
+      printf ("specified --multistring-values-def with argument %s\n",
               args_info.multistring_values_def_arg[i]);
-      printf 
-        ("specified --multistring-values-def with (original) argument %s\n", 
+      printf
+        ("specified --multistring-values-def with (original) argument %s\n",
          (args_info.multistring_values_def_orig[i] ?
           args_info.multistring_values_def_orig[i] : "(null)"));
     }
 
   for (i = 0; i < args_info.multistring_values_no_short_given; ++i)
-    printf ("specified --multistring-values-no-short with argument %s\n", 
+    printf ("specified --multistring-values-no-short with argument %s\n",
             args_info.multistring_values_no_short_arg[i]);
 
   if (args_info.int_values_given)
@@ -89,6 +89,12 @@ main (int argc, char **argv)
            test_values_cmd_parser_values_first_enums_values
            [args_info.values_first_enums_arg]);
 
+  if (args_info.values_first_enums_plus_given)
+      printf("specified --values-first-enums-plus with argument %d (%s)\n",
+             args_info.values_first_enums_plus_arg,
+             test_values_cmd_parser_values_first_enums_plus_values
+             [args_info.values_first_enums_plus_arg]);
+
   if (!args_info.values_second_enums_given)
     printf ("(un)");
   printf("specified --values-second-enums with argument %d (%s)\n",
@@ -96,12 +102,12 @@ main (int argc, char **argv)
          test_values_cmd_parser_values_second_enums_values
          [args_info.values_second_enums_arg]);
 
-  for (i = 0; i < args_info.values_multiple_enums_given; ++i) 
+  for (i = 0; i < args_info.values_multiple_enums_given; ++i)
     {
-      printf ("specified --values-multiple-enums with argument %d\n", 
+      printf ("specified --values-multiple-enums with argument %d\n",
               args_info.values_multiple_enums_arg[i]);
-      printf 
-        ("specified --values-multiple-enums with (original) argument %s\n", 
+      printf
+        ("specified --values-multiple-enums with (original) argument %s\n",
          (args_info.values_multiple_enums_orig[i] ?
           args_info.values_multiple_enums_orig[i] : "(null)"));
     }

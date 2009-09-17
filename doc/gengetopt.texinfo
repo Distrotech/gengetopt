@@ -1313,8 +1313,9 @@ An option with enumerated values can also be given the type @code{enum};
 in that case, a C @code{enum} type is also generated with name
 @code{enum_<option>}; the values of such C enum will be generated
 according this pattern: @code{<option>_arg_<value>}, where @code{value}
-is the value specified in the input file.  For instance, if we specify
-in the input file the following option
+is the value specified in the input file, and the starting value is
+always 0.  For instance, if we specify in the input file the following
+option
 
 @example
 option "myopt" ... ... values="FOO","180","BAR" enum ...
@@ -1324,8 +1325,27 @@ option "myopt" ... ... values="FOO","180","BAR" enum ...
 then the following C enum will be generated:
 
 @example
-enum enum_myopt @{ myopt_arg_FOO, myopt_arg_180, myopt_arg_BAR @};
+enum enum_myopt @{ myopt_arg_FOO = 0, myopt_arg_180, myopt_arg_BAR @};
 @end example
+
+If you use the symbols @code{+} and @code{-}, these will be translated
+into @code{PLUS_} and @code{MINUS_}, respectively, in the the C enum.
+Thus, if we specify in the input file the following option
+
+@example
+option "myopt" ... ... values="+foo","-all","-foo" enum ...
+@end example
+
+@noindent
+then the following C enum will be generated:
+
+@example
+enum enum_myopt @{ myopt_arg_PLUS_foo = 0, 
+                  myopt_arg_MINUS_all, myopt_arg_MINUS_foo @};
+@end example
+
+An example using options with values (and enum options) is
+@file{tests/test_values_cmd.ggo} and @file{tests/test_values.c}.
 
 @node Group options, Mode options, Options with enumerated values, Top
 @chapter Group options

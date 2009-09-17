@@ -397,15 +397,15 @@ CmdlineParserCreator::generate_header_file ()
  * @return the enum value string
  */
 static const string from_value_to_enum(const string &name, const string &val) {
-    return name + "_arg_" + val;
+    return name + "_arg_" + canonize_enum(val);
 }
 
 void
 CmdlineParserCreator::generate_enum_types(ostream &stream,
                                           unsigned int indent)
 {
-  FIX_UNUSED (indent);
   struct gengetopt_option * opt;
+  FIX_UNUSED (indent);
 
   if (has_arg_enum)
       stream << endl;
@@ -553,9 +553,9 @@ void
 CmdlineParserCreator::generate_option_values_decl(ostream &stream,
                                                   unsigned int indent)
 {
-  FIX_UNUSED (indent);
   struct gengetopt_option * opt;
   bool first = true;
+  FIX_UNUSED (indent);
 
   foropt
     {
@@ -577,9 +577,9 @@ void
 CmdlineParserCreator::generate_option_values(ostream &stream,
                                              unsigned int indent)
 {
-  FIX_UNUSED (indent);
   struct gengetopt_option * opt;
   bool first = true;
+  FIX_UNUSED (indent);
 
   foropt
     {

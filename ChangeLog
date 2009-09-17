@@ -1,3 +1,21 @@
+2009-08-09  bettini  <bettini@bettini-laptop>
+
+	* src/skels/c_source.h_skel: put FIX_UNUSED in the right
+	place
+	* src/gm.cc (from_value_to_enum): translate '+' to "PLUS_" and
+	'-' to "MINUS_"
+	(canonize_enum): Ditto
+	(CmdlineParserCreator::generate_enum_types): put FIX_UNUSED in the right
+	place
+	(CmdlineParserCreator::generate_option_values): Ditto
+	(CmdlineParserCreator::generate_option_values_decl): Ditto
+	* tests/test_values.c (main): use enum with + and -
+	* tests/test_values.sh.in: Ditto
+	* tests/test_values_cmd.ggo: Ditto 
+	* configure.ac: modified to build in a different directory 
+	* Makefile.am: modified to build in a different directory
+	* tests/Makefile.am: modified to build in a different directory
+
 2009-06-13  bettini  <bettini@bettini-desktop>
 
 	* doc/gengetopt.texinfo: specified that package and version

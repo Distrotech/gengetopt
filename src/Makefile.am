@@ -67,7 +67,7 @@ AM_LFLAGS = -i
 
 .ggo.c:
 	if test -f $(PROGNAME); then \
-	$(PROGNAME) --input=$< ; \
+	$(PROGNAME) --input=$< --output-dir=$(srcdir) ; \
 	else touch $@ ; fi
 
 cmdline.h: cmdline.c

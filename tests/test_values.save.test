@@ -16,6 +16,7 @@ multistring-values-no-short="foo" # foo
 int-values="1" # 180
 int-values-m="1" # 1800
 int-values-m="27" # 2700
+values-first-enums-plus="-foo" # -foo
 values-multiple-enums="FI" # FIRST
 values-multiple-enums="S" # SECOND
 values-multiple-enums="T" # THIRD

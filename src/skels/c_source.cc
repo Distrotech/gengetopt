@@ -2192,10 +2192,10 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "{";
       stream << "\n";
       stream << indent_str;
-      stream << "  FIX_UNUSED (additional_error);";
+      stream << "  int error = 0;";
       stream << "\n";
       stream << indent_str;
-      stream << "  int error = 0;";
+      stream << "  FIX_UNUSED (additional_error);";
       stream << "\n";
       stream << indent_str;
       stream << "\n";
@@ -2382,9 +2382,6 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "{";
       stream << "\n";
       stream << indent_str;
-      stream << "  FIX_UNUSED (field);";
-      stream << "\n";
-      stream << indent_str;
       stream << "  char *stop_char = 0;";
       stream << "\n";
       stream << indent_str;
@@ -2400,6 +2397,9 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
           stream << "\n";
           stream << indent_str;
         }
+      stream << "  FIX_UNUSED (field);";
+      stream << "\n";
+      stream << indent_str;
       stream << "\n";
       stream << indent_str;
       stream << "  stop_char = 0;";

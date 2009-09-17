@@ -31,3 +31,5 @@ TESTS
 
 generate in the code also a test main with a string containing the test
 arguments and then in the main, check that the results are as expected.
+
+avoid to touch sample1.ggo and sample2.ggo for make check in doc.

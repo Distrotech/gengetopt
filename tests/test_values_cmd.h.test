@@ -35,6 +35,7 @@ extern "C" {
 #endif
 
 enum enum_values_first_enums { values_first_enums_arg_FOO = 0 , values_first_enums_arg_BAR, values_first_enums_arg_ANOTHER, values_first_enums_arg_SOMETHING };
+enum enum_values_first_enums_plus { values_first_enums_plus_arg_PLUS_foo = 0 , values_first_enums_plus_arg_PLUS_bar, values_first_enums_plus_arg_MINUS_foo, values_first_enums_plus_arg_MINUS_bar, values_first_enums_plus_arg_all };
 enum enum_values_second_enums { values_second_enums_arg_90 = 0 , values_second_enums_arg_180, values_second_enums_arg_270, values_second_enums_arg_360 };
 enum enum_values_multiple_enums { values_multiple_enums_arg_FIRST = 0 , values_multiple_enums_arg_SECOND, values_multiple_enums_arg_THIRD, values_multiple_enums_arg_FOURTH };
 
@@ -46,6 +47,9 @@ struct gengetopt_args_info
   char * string_values_arg;	/**< @brief string option with values.  */
   char * string_values_orig;	/**< @brief string option with values original value given at command line.  */
   const char *string_values_help; /**< @brief string option with values help description.  */
+  char * string_values_plus_arg;	/**< @brief string option with values containing + and -.  */
+  char * string_values_plus_orig;	/**< @brief string option with values containing + and - original value given at command line.  */
+  const char *string_values_plus_help; /**< @brief string option with values containing + and - help description.  */
   char * string_values_def_arg;	/**< @brief string option with values and default (default='bar').  */
   char * string_values_def_orig;	/**< @brief string option with values and default original value given at command line.  */
   const char *string_values_def_help; /**< @brief string option with values and default help description.  */
@@ -87,6 +91,9 @@ struct gengetopt_args_info
   enum enum_values_first_enums values_first_enums_arg;	/**< @brief option with values and enums 1.  */
   char * values_first_enums_orig;	/**< @brief option with values and enums 1 original value given at command line.  */
   const char *values_first_enums_help; /**< @brief option with values and enums 1 help description.  */
+  enum enum_values_first_enums_plus values_first_enums_plus_arg;	/**< @brief option with values and enums with plus and minus 1.  */
+  char * values_first_enums_plus_orig;	/**< @brief option with values and enums with plus and minus 1 original value given at command line.  */
+  const char *values_first_enums_plus_help; /**< @brief option with values and enums with plus and minus 1 help description.  */
   enum enum_values_second_enums values_second_enums_arg;	/**< @brief option with values and enums 2 with default (default='180').  */
   char * values_second_enums_orig;	/**< @brief option with values and enums 2 with default original value given at command line.  */
   const char *values_second_enums_help; /**< @brief option with values and enums 2 with default help description.  */
@@ -102,6 +109,7 @@ struct gengetopt_args_info
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
   unsigned int string_values_given ;	/**< @brief Whether string-values was given.  */
+  unsigned int string_values_plus_given ;	/**< @brief Whether string-values-plus was given.  */
   unsigned int string_values_def_given ;	/**< @brief Whether string-values-def was given.  */
   unsigned int string_values_def_argopt_given ;	/**< @brief Whether string-values-def-argopt was given.  */
   unsigned int string_values_no_short_given ;	/**< @brief Whether string-values-no-short was given.  */
@@ -113,6 +121,7 @@ struct gengetopt_args_info
   unsigned int int_values_m_given ;	/**< @brief Whether int-values-m was given.  */
   unsigned int int_values_def_given ;	/**< @brief Whether int-values-def was given.  */
   unsigned int values_first_enums_given ;	/**< @brief Whether values-first-enums was given.  */
+  unsigned int values_first_enums_plus_given ;	/**< @brief Whether values-first-enums-plus was given.  */
   unsigned int values_second_enums_given ;	/**< @brief Whether values-second-enums was given.  */
   unsigned int values_multiple_enums_given ;	/**< @brief Whether values-multiple-enums was given.  */
   unsigned int file_save_given ;	/**< @brief Whether file-save was given.  */
@@ -242,6 +251,7 @@ int test_values_cmd_parser_required (struct gengetopt_args_info *args_info,
   const char *prog_name);
 
 extern const char *test_values_cmd_parser_string_values_values[];  /**< @brief Possible values for string-values. */
+extern const char *test_values_cmd_parser_string_values_plus_values[];  /**< @brief Possible values for string-values-plus. */
 extern const char *test_values_cmd_parser_string_values_def_values[];  /**< @brief Possible values for string-values-def. */
 extern const char *test_values_cmd_parser_string_values_def_argopt_values[];  /**< @brief Possible values for string-values-def-argopt. */
 extern const char *test_values_cmd_parser_string_values_no_short_values[];  /**< @brief Possible values for string-values-no-short. */
@@ -253,6 +263,7 @@ extern const char *test_values_cmd_parser_int_values_values[];  /**< @brief Poss
 extern const char *test_values_cmd_parser_int_values_m_values[];  /**< @brief Possible values for int-values-m. */
 extern const char *test_values_cmd_parser_int_values_def_values[];  /**< @brief Possible values for int-values-def. */
 extern const char *test_values_cmd_parser_values_first_enums_values[];  /**< @brief Possible values for values-first-enums. */
+extern const char *test_values_cmd_parser_values_first_enums_plus_values[];  /**< @brief Possible values for values-first-enums-plus. */
 extern const char *test_values_cmd_parser_values_second_enums_values[];  /**< @brief Possible values for values-second-enums. */
 extern const char *test_values_cmd_parser_values_multiple_enums_values[];  /**< @brief Possible values for values-multiple-enums. */
 

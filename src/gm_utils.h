@@ -20,8 +20,27 @@
 
 using std::string;
 
+/**
+ * @param name
+ * @return a copy of the string passed after canonizing it (i.e. '-' and
+ * '.' are transformed in '_').
+ */
 char *canonize_names(const char * name);
+
+/**
+ * @param name
+ * @return a copy of the string passed after canonizing it (i.e. '-' and
+ * '.' are transformed in '_').
+ */
 const string canonize_name(const string &name);
+
+/**
+ * @param s the string representing an enum value
+ * @return a copy of the string passed after canonizing it (i.e. '-' and
+ * becomes _MINUS_, '+' becomes _PLUS_)
+ */
+const string canonize_enum(const string &s);
+
 const string strip_path(const string &);
 const string to_upper(const string &);
 
@@ -92,7 +111,7 @@ struct print_f : public std::unary_function<T, void>
 template<class T>
 struct pair_print_f : public std::unary_function<T, void>
 {
-    pair_print_f(std::ostream& out1, std::ostream& out2, const string &s = ", ") : 
+    pair_print_f(std::ostream& out1, std::ostream& out2, const string &s = ", ") :
         os1(out1), os2(out2), sep(s) {}
     void operator() (T x) { os1 << x.first << sep; os2 << x.second << sep;}
     std::ostream &os1, &os2;

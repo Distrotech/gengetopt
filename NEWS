@@ -7,6 +7,12 @@ Please send gengetopt bug reports to bug-gengetopt at gnu.org
 For details about the new features, you can take a look at:
 http://tronprog.blogspot.com/search/label/gengetopt
 
+Version 2.22.3 (yet unreleased)
+
+   * enum option values can contain + and - (thanks to Papp Gyozo).
+   * fixed compilation problems due to macro FIX_UNUSED which was not
+   in the right place (thanks to Matthew Junker)
+
 Version 2.22.2
 
    * removed further compilation warnings for generated files

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License along
 # with gengetopt; see the file COPYING. If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = -I gl/m4
+ACLOCAL_AMFLAGS = -I m4 -I gl/m4
 
 EXTRA_DIST = autogen.sh configure TODO LICENSE gl/m4/gnulib-cache.m4
 SUBDIRS = gl src doc tests

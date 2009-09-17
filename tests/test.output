@@ -134,8 +134,8 @@ value of float: 3.140000
 *** test_conf_parser_err.sh
 test_conf_parser: option '--string' requires an argument
 *** test_conf_parser_err_string.sh
-test_conf_parser:./test_conf_err_string.conf:3: malformed string in configuration file
-test_conf_parser:./test_conf_err_string2.conf:3: unterminated string in configuration file
+test_conf_parser:../../tests/test_conf_err_string.conf:3: malformed string in configuration file
+test_conf_parser:../../tests/test_conf_err_string2.conf:3: unterminated string in configuration file
 *** test_conf_parser_grp.sh
 value of required: this is a test
 value of string: another
@@ -321,6 +321,7 @@ specified --int-values-m with (original) argument 1
 specified --int-values-m with argument 2700
 specified --int-values-m with (original) argument 27
 (un)specified --int-values-def with argument 180
+specified --values-first-enums-plus with argument 2 (-foo)
 (un)specified --values-second-enums with argument 1 (180)
 specified --values-multiple-enums with argument 0
 specified --values-multiple-enums with (original) argument FI
@@ -516,6 +517,11 @@ Usage: test_values [OPTIONS]...
   -s, --string-values=STRING    string option with values  (possible 
                                   values="foo", "foa", "bar", "foobar", 
                                   "barfoo")
+      --string-values-plus=STRING
+                                string option with values containing + and -  
+                                  (possible values="+foo", "-foo", "bar", 
+                                  "foobar", "barfoo", "+foobar", 
+                                  "-barfoo")
       --string-values-def=STRING
                                 string option with values and default  
                                   (possible values="foo", "bar", 
@@ -554,6 +560,10 @@ Usage: test_values [OPTIONS]...
   -e, --values-first-enums=ENUM option with values and enums 1  (possible 
                                   values="FOO", "BAR", "ANOTHER", 
                                   "SOMETHING")
+  -E, --values-first-enums-plus=ENUM
+                                option with values and enums with plus and 
+                                  minus 1  (possible values="+foo", "+bar", 
+                                  "-foo", "-bar", "all")
       --values-second-enums=ENUM
                                 option with values and enums 2 with default  
                                   (possible values="90", "180", "270", 
@@ -564,17 +574,17 @@ Usage: test_values [OPTIONS]...
                                   "THIRD", "FOURTH" default=`FOURTH')
       --file-save=STRING        save the passed options into a file
 *** test_err.sh
-diff wrong_default.err.out ./wrong_default.err
-diff wrong_dep.err.out ./wrong_dep.err
-diff wrong_enum_use.err.out ./wrong_enum_use.err
-diff wrong_flag2.err.out ./wrong_flag2.err
-diff wrong_flag.err.out ./wrong_flag.err
-diff wrong_group2.err.out ./wrong_group2.err
-diff wrong_group.err.out ./wrong_group.err
-diff wrong_help_redef.err.out ./wrong_help_redef.err
-diff wrong_multiple_occurrence.err.out ./wrong_multiple_occurrence.err
-diff wrong_numeric_value.err.out ./wrong_numeric_value.err
-diff wrong_version_redef.err.out ./wrong_version_redef.err
+diff wrong_default.err.out ../../tests/wrong_default.err
+diff wrong_dep.err.out ../../tests/wrong_dep.err
+diff wrong_enum_use.err.out ../../tests/wrong_enum_use.err
+diff wrong_flag2.err.out ../../tests/wrong_flag2.err
+diff wrong_flag.err.out ../../tests/wrong_flag.err
+diff wrong_group2.err.out ../../tests/wrong_group2.err
+diff wrong_group.err.out ../../tests/wrong_group.err
+diff wrong_help_redef.err.out ../../tests/wrong_help_redef.err
+diff wrong_multiple_occurrence.err.out ../../tests/wrong_multiple_occurrence.err
+diff wrong_numeric_value.err.out ../../tests/wrong_numeric_value.err
+diff wrong_version_redef.err.out ../../tests/wrong_version_redef.err
 *** no_strings -h
 no_strings 1.0
 
@@ -1075,6 +1085,11 @@ Usage: test_values [OPTIONS]... [FILES]...
   -s, --string-values=STRING    string option with values  (possible 
                                   values="foo", "foa", "bar", "foobar", 
                                   "barfoo")
+      --string-values-plus=STRING
+                                string option with values containing + and -  
+                                  (possible values="+foo", "-foo", "bar", 
+                                  "foobar", "barfoo", "+foobar", 
+                                  "-barfoo")
       --string-values-def=STRING
                                 string option with values and default  
                                   (possible values="foo", "bar", 
@@ -1113,6 +1128,10 @@ Usage: test_values [OPTIONS]... [FILES]...
   -e, --values-first-enums=ENUM option with values and enums 1  (possible 
                                   values="FOO", "BAR", "ANOTHER", 
                                   "SOMETHING")
+  -E, --values-first-enums-plus=ENUM
+                                option with values and enums with plus and 
+                                  minus 1  (possible values="+foo", "+bar", 
+                                  "-foo", "-bar", "all")
       --values-second-enums=ENUM
                                 option with values and enums 2 with default  
                                   (possible values="90", "180", "270", 

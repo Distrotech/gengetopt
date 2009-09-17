@@ -22,7 +22,7 @@ if NO_CROSSCOMPILING
 # .ggonu is used in this test suite for command line parsers that have
 # to be created without --unamed-opt
 
-SUFFIXES = .ggo .ggonu .ggoconf .ggostr .err
+SUFFIXES = .ggo .ggonu .ggoconf .ggostr
 
 # we do not generate the gengetopt version number in the output
 # file so that the number does not disturb in diffing when changing
@@ -49,8 +49,8 @@ GGO_COMPILE = $(PROGNAME) --input=$< --func-name=$*_parser --file-name=$*
 .ggostr.c:
 	$(GGO_COMPILE) --unamed-opt="OTHER NAMES" --string-parser --arg-struct-name=$*_struct --include-getopt
 
-.ggo.err:
-	$(PROGNAME) --unamed-opt -i $< --file-name null 2> $@ || true
+#.ggo.err:
+#	$(PROGNAME) --unamed-opt -i $< --file-name null 2> $@ || true
 
 test_manual_help_cmd.c: $(srcdir)/test_manual_help_cmd.ggo
 	$(GGO_COMPILE) --unamed-opt --show-required --no-help --no-version
@@ -218,7 +218,7 @@ test_second_cmdline_cmd.c test_second_cmdline_cmd.h \
 test_no_options_cmd.h test_no_options_cmd.c \
 test_align_cmd.h test_align_cmd.c
 
-BUILT_SOURCES = $(CHECKDIFFFILES) $(ERRFILES)
+BUILT_SOURCES = $(CHECKDIFFFILES)
 
 GENERATED_TESTS	= no_strings_cmd.c.test no_strings_cmd.h.test \
 no_multi_strings_cmd.c.test no_multi_strings_cmd.h.test \
@@ -346,7 +346,7 @@ store-backup: $(BUILT_SOURCES) $(TESTSOUTPUT)
 	  echo "saving $$back_output"; \
 	  cp $$source $(srcdir)/$$back_output; \
 	done; \
-	for source in `ls $(srcdir)/*.save`; do \
+	for source in `ls *.save`; do \
 	  test_output="`echo $$source|sed s/save/save\.test/`"; \
 	  cp $$source $(srcdir)/$$test_output; \
         done; \
@@ -363,39 +363,39 @@ check-diff:
 	echo "creating output of tests..."; \
 	rm -f $(TESTSOUT); \
         for tests in $(TESTS); do \
-	  echo "*** $$tests" >> $(srcdir)/$(TESTSOUT); \
-	  $(top_builddir)/tests/$$tests >> $(srcdir)/$(TESTSOUT) 2>&1 ; \
+	  echo "*** $$tests" >> $(TESTSOUT); \
+	  $(top_builddir)/tests/$$tests >> $(TESTSOUT) 2>&1 ; \
 	done && \
 	for tests in $(check_PROGRAMS); do \
-	  echo "*** $$tests -h" >> $(srcdir)/$(TESTSOUT); \
-	  $(top_builddir)/tests/$$tests -h >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	  echo "*** $$tests -h" >> $(TESTSOUT); \
+	  $(top_builddir)/tests/$$tests -h >> $(TESTSOUT) 2>&1; \
 	done && \
 	for tests in $(hidden_options_programs); do \
-	  echo "*** $$tests --full-help" >> $(srcdir)/$(TESTSOUT); \
-	  $(top_builddir)/tests/$$tests --full-help >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	  echo "*** $$tests --full-help" >> $(TESTSOUT); \
+	  $(top_builddir)/tests/$$tests --full-help >> $(TESTSOUT) 2>&1; \
 	done && \
 	for tests in $(details_options_programs); do \
-	  echo "*** $$tests --detailed-help" >> $(srcdir)/$(TESTSOUT); \
-	  $(top_builddir)/tests/$$tests --detailed-help >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	  echo "*** $$tests --detailed-help" >> $(TESTSOUT); \
+	  $(top_builddir)/tests/$$tests --detailed-help >> $(TESTSOUT) 2>&1; \
 	done && \
-	$(PROGNAMESHOWHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
-	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
-	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_modes_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
-	$(PROGNAMESHOWDETAILEDHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
-	$(PROGNAMESHOWHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
-	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
-	$(PROGNAME) --show-help < $(srcdir)/test_align_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
-	$(PROGNAME) --show-full-help < $(srcdir)/test_align_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
-	$(PROGNAMESHOWHELPREQUIRED) < $(srcdir)/test_required_optional_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
-	$(PROGNAMESHOWHELPREQUIRED) --default-optional < $(srcdir)/test_required_optional_cmd.ggo >> $(srcdir)/$(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_modes_cmd.ggo >> $(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWDETAILEDHELP) < $(srcdir)/test_all_opts_cmd.ggo >> $(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_section_with_all_hidden.ggo >> $(TESTSOUT) 2>&1; \
+	$(PROGNAME) --show-help < $(srcdir)/test_align_cmd.ggo >> $(TESTSOUT) 2>&1; \
+	$(PROGNAME) --show-full-help < $(srcdir)/test_align_cmd.ggo >> $(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWHELPREQUIRED) < $(srcdir)/test_required_optional_cmd.ggo >> $(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWHELPREQUIRED) --default-optional < $(srcdir)/test_required_optional_cmd.ggo >> $(TESTSOUT) 2>&1; \
 	sed -i -e "s/\.exe//g" $(TESTSOUT) ; \
         echo "diff $(TESTSOUTPUT) $(TESTSOUT)"; \
-        if ! diff $(TESTSOUTPUT) $(srcdir)/$(TESTSOUT); \
+        if ! diff $(srcdir)/$(TESTSOUTPUT) $(TESTSOUT); \
         then errors=1; fi; \
-	for source in `ls $(srcdir)/*.save`; do \
+	for source in `ls *.save`; do \
 	  test_output="`echo $$source|sed s/save/save\.test/`"; \
-	  echo "diff $(srcdir)/$$source $$test_output"; \
-	  if ! diff $(srcdir)/$$source $$test_output; \
+	  echo "diff $$source $(srcdir)/$$test_output"; \
+	  if ! diff $$source $(srcdir)/$$test_output; \
 	  then errors=1; fi; \
         done; \
         test -z $$errors

@@ -52,6 +52,8 @@ gengetoptexamples_DATA = sample1.ggo sample2.ggo main1.cc main2.c \
 README.example
 
 AM_MAKEINFOHTMLFLAGS=--no-split
+# for including generated texinfo files
+AM_MAKEINFOFLAGS=-I$(srcdir)
 
 info_TEXINFOS = gengetopt.texinfo
 
