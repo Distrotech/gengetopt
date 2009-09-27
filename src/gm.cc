@@ -167,10 +167,14 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
                                             bool no_options_,
                                             const string &comment_,
                                             const string &outdir,
+                                            const string &header_outdir,
+                                            const string &src_outdir,
                                             const string &show_required) :
   filename (filename_),
   args_info_name (struct_name),
   output_dir (outdir),
+  header_output_dir (header_outdir),
+  src_output_dir (src_outdir),
   comment (comment_),
   unamed_options (unamed_options_),
   show_required_string (show_required),
@@ -378,7 +382,9 @@ CmdlineParserCreator::generate_header_file ()
   /* ****************************************************** */
 
     string header_file = header_filename;
-    if (output_dir.size())
+    if (header_output_dir.size())
+        header_file = header_output_dir + "/" + header_file;
+    else if (output_dir.size())
         header_file = output_dir + "/" + header_file;
 
     ofstream *output_file = open_fstream
@@ -1947,7 +1953,10 @@ CmdlineParserCreator::generate_source ()
   set_getopt_string (generate_getopt_string ());
 
   string output_source = c_filename;
-  if (output_dir.size())
+
+  if (src_output_dir.size())
+      output_source = src_output_dir + "/" + output_source;
+  else if (output_dir.size())
       output_source = output_dir + "/" + output_source;
 
   ofstream *output_file = open_fstream (output_source.c_str());

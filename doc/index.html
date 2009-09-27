@@ -107,19 +107,16 @@ command.</p>
 
 <p>NOTICE: This convention holds since release 2.14.</p>
 
-<p>When you compile the sources that you get through the cvs
+<p>When you compile the sources that you get from the cvs
 repository,
 before running the <tt>configure</tt> and <tt>make</tt>
-commands, you
-should, at least the first time, run the command:</p>
-
-<pre> sh autogen.sh<br></pre>
-
+commands, you must run the command:</p>
+<pre>autoreconf -i<br></pre>
 <p>This will run the autotools commands in the correct order, and
 also copy
 possibly missing files. You should have installed recent versions of
-<tt>automake</tt>, <tt>autoconf</tt> and <tt>libtool</tt>  in
-order for this to succeed. You will also need <tt>flex</tt>
+<tt>automake</tt>, <tt>autoconf</tt> and <tt>libtool</tt>
+in order for this to succeed. You will also need <tt>flex</tt>
 and <tt>bison</tt>.</p>
 
 <h2>Changes in this

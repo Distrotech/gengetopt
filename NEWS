@@ -12,6 +12,8 @@ Version 2.22.3 (yet unreleased)
    * enum option values can contain + and - (thanks to Papp Gyozo).
    * fixed compilation problems due to macro FIX_UNUSED which was not
    in the right place (thanks to Matthew Junker)
+   * --header-output-dir and --src_output-dir to store cmdline.h 
+   separately from cmdline.c (thanks to Yegor Yefremov)
 
 Version 2.22.2
 

@@ -108,7 +108,7 @@ main (int argc, char **argv)
   char *cmdline_filename ; /* name of generated file */
   char *c_ext ; /* extenstion of c file */
   char *header_ext  ; /* extenstion of header file */
-  string output_dir; /* output directory (default empty -> current dir)*/
+  string output_dir, header_output_dir, src_output_dir; /* output directory (default empty -> current dir)*/
 
   int i, has_help, has_version;
   FILE *input_file ;
@@ -252,6 +252,10 @@ main (int argc, char **argv)
 
   if (args_info.output_dir_given)
       output_dir = args_info.output_dir_arg;
+  if (args_info.header_output_dir_given)
+      header_output_dir = args_info.header_output_dir_arg;
+  if (args_info.src_output_dir_given)
+      src_output_dir = args_info.src_output_dir_arg;
 
   CmdlineParserCreator cmdline_parser_creator
     (cmdline_parser_name,
@@ -273,6 +277,8 @@ main (int argc, char **argv)
      no_options,
      command_line.str (),
      output_dir,
+     header_output_dir,
+     src_output_dir,
      (args_info.show_required_given ? args_info.show_required_arg : ""));
 
   if (! gengetopt_package && (args_info.show_version_given || args_info.show_help_given))

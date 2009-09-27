@@ -1,4 +1,4 @@
-# Copyright (C) 1999, 2000, 2001  Free Software Foundation, Inc.
+# Copyright (C) 1999-2009  Free Software Foundation, Inc.
 #  
 # This file is part of GNU gengetopt 
 #
@@ -56,6 +56,8 @@ AM_MAKEINFOHTMLFLAGS=--no-split
 AM_MAKEINFOFLAGS=-I$(srcdir)
 
 info_TEXINFOS = gengetopt.texinfo
+gengetopt.texinfo: $(GENERATEDINFOS)
+#gengetopt_TEXINFOS = $(GENERATEDINFOS)
 
 GENERATEDINFOS = cmdline1.h.texinfo main1.cc.texinfo \
 test_conf_parser.c.texinfo \
@@ -69,8 +71,6 @@ help_modes.output.texinfo
 BUILT_SOURCES = $(GENERATEDINFOS)
 
 RUNSOURCEHIGHLIGHT=$(SOURCEHIGHLIGHT) -f texinfo --style-file=texinfo.style --output-dir=$(top_builddir)/doc/
-
-$(srcdir)/gengetopt.texinfo: $(GENERATEDINFOS)
 
 SUFFIXES = .h.texinfo .cc.texinfo .c.texinfo .ggo.texinfo .ggo
 

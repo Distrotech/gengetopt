@@ -260,9 +260,9 @@ command.
 
 NOTICE: This convention holds since release 2.14.
 
-When you compile the sources that you get through the cvs repository,
+When you compile the sources that you get from the cvs repository,
 before running the @code{configure} and @code{make} commands, you
-should, at least the first time, run the command:
+must run the command:
 
 @cindex autogen.sh
 @example
@@ -270,13 +270,22 @@ sh autogen.sh
 @end example
 
 @noindent
-This will bootstrap the autotools in the correct order, and also copy
+This will run the autotools commands in the correct order, and also copy
 possibly missing files.  You should have installed recent versions of
 @cindex automake
 @cindex autoconf
 @cindex libtool
 @code{automake}, @code{autoconf} and @code{libtool} in order for this to
-succeed.  You will also need @code{flex} and @code{bison}.
+succeed.  
+@cindex flex
+@cindex bison
+You will also need @code{flex} and @code{bison}.
+
+Instead of running @code{autogen.sh} another option is to run
+
+@example
+autoreconf -i
+@end example
 
 @section What you need to build gengetopt
 @cindex requirements
@@ -974,6 +983,14 @@ if no @code{--func-name} is given, @code{cmdline_parser} is taken by default;
 @cindex @code{--output-dir}
 if no @code{--output-dir}@footnote{Since version 2.17.} is given, the
 files are generated in the current directory;
+
+@item --src-output-dir
+@item --header-output-dir
+@cindex @code{--src-output-dir}
+@cindex @code{--header-output-dir}
+With these options@footnote{Since version 2.22.3.} the generated C
+file and the corresponding generated header files can be generated
+in different directories;
  
 @item --arg-struct-name
 @cindex @code{--arg-struct-name}

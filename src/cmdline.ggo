@@ -73,6 +73,8 @@ option  "file-name"     F "name of generated file"  string typestr="name"  defau
 option  "output-dir"     - "output directory"  string typestr="path"  optional
 	details="\nif this option is not specified, the \
 files are generated in the current directory.\n"
+option  "header-output-dir"     - "header output directory"  string typestr="path" optional
+option  "src-output-dir"     - "source output directory"  string typestr="path" optional
 option  "c-extension"   c "extension of c file" string typestr="ext" default="c" optional
 option  "header-extension"   H "extension of header file" string typestr="ext" default="h" optional
 option  "long-help"     l "long usage line in help" optional

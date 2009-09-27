@@ -157,6 +157,8 @@ AC_CONFIG_FILES([Makefile
            doc/Makefile 
            gl/Makefile
            tests/Makefile
+           tests/output_dir/Makefile
+           tests/output_header_dir/Makefile
            tests/test_conf.conf
            tests/test_conf_inc.conf
            tests/test_conf_parser_ov2.c

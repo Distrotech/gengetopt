@@ -42,6 +42,8 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   char *header_filename;
   char *c_filename;
   string output_dir;
+  string header_output_dir;
+  string src_output_dir;
   string comment;
   char *unamed_options;
   string show_required_string;
@@ -138,6 +140,8 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
                         bool gen_version, bool gen_getopt, bool no_options,
                         const string &comment,
                         const string &outdir,
+                        const string &header_outdir,
+                        const string &src_outdir,
                         const string &show_required);
 
   int generate();

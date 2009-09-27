@@ -1,3 +1,23 @@
+2009-09-27  bettini  <bettini@bettini-laptop>
+
+	* tests/output_dir/Makefile.am: New file.
+	* tests/output_header_dir/Makefile.am: New file.
+	* tests/Makefile.am: test for --output-dir, --src-output-dir,
+	--header-output-dir 
+
+2009-09-27  Yegor Yefremov
+
+	* src/cmdline.ggo: --header-output-dir and 
+	--src_output-dir to store cmdline.h separately from cmdline.c 
+	* src/gengetopt.cc (main): Ditto 
+	* src/gm.cc: Ditto 
+	* src/gm.h: Ditto 
+
+2009-09-27  Lorenzo Bettini
+
+	* doc/gengetopt.texinfo: documented autoreconf
+	* doc/index.html: Ditto
+
 2009-08-09  bettini  <bettini@bettini-laptop>
 
 	* src/skels/c_source.h_skel: put FIX_UNUSED in the right

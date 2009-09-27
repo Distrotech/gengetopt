@@ -1,4 +1,4 @@
-# Copyright (C) 1999-2007  Free Software Foundation, Inc.
+# Copyright (C) 1999-2009  Free Software Foundation, Inc.
 #  
 # This file is part of GNU gengetopt 
 #
@@ -18,6 +18,8 @@
 
 
 if NO_CROSSCOMPILING
+
+SUBDIRS = output_dir output_header_dir
 
 # .ggonu is used in this test suite for command line parsers that have
 # to be created without --unamed-opt
@@ -68,6 +70,12 @@ AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl
 #AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl -Wall -Wunused -W -Wcast-align -Wfloat-equal -Wpointer-arith -Wwrite-strings
 
 LDADD = $(top_builddir)/gl/libgnu.la
+
+OUTPUTDIR=$(top_builddir)/tests/output_dir
+OUTPUT_SRC_DIR=$(top_builddir)/tests/output_dir
+OUTPUT_HEADER_DIR=$(top_builddir)/tests/output_header_dir
+OUTPUTDIR_OPTION= --output-dir=$(OUTPUTDIR)
+OUTPUTDIRS_OPTION= --src-output-dir=$(OUTPUT_SRC_DIR) --header-output-dir=$(OUTPUT_HEADER_DIR)
 
 EXPECT = 1
 
@@ -298,6 +306,21 @@ test_section_with_all_hidden.ggo \
 test_required_optional_cmd.ggo \
 test_align_cmd.ggo \
 $(ERRFILES) $(ERRGGOFILES) 
+
+check-am: check-output-dir check-output-dirs
+
+check-output-dir:
+	rm -f $(OUTPUTDIR)/cmdline.c $(OUTPUTDIR)/cmdline.h
+	$(PROGNAME) --unamed-opt --show-required $(OUTPUTDIR_OPTION) -i $(srcdir)/cmdline.ggo
+	test -f $(OUTPUTDIR)/cmdline.c
+	test -f $(OUTPUTDIR)/cmdline.h
+
+check-output-dirs:
+	rm -f $(OUTPUTDIR)/cmdline.c $(OUTPUTDIR)/cmdline.h
+	rm -f $(OUTPUT_SRC_DIR)/cmdline.c $(OUTPUT_HEADER_DIR)/cmdline.h
+	$(PROGNAME) --unamed-opt --show-required $(OUTPUTDIRS_OPTION) -i $(srcdir)/cmdline.ggo
+	test -f $(OUTPUT_SRC_DIR)/cmdline.c
+	test -f $(OUTPUT_HEADER_DIR)/cmdline.h
 
 check-err: $(ERRFILES)
 	for source in $(ERRFILES); do \
