@@ -21,7 +21,7 @@
 #define FIX_UNUSED(X) (void) (X) /* avoid warnings for unused params */
 #endif
 
-#include "getopt.h"
+#include <getopt.h>
 
 #include "test_conf_parser_cmd.h"
 
@@ -80,7 +80,7 @@ static
 void clear_args (struct my_args_info *args_info);
 
 static int
-test_conf_parser_cmd_parser_internal (int argc, char * const *argv, struct my_args_info *args_info,
+test_conf_parser_cmd_parser_internal (int argc, char **argv, struct my_args_info *args_info,
                         struct test_conf_parser_cmd_parser_params *params, const char *additional_error);
 
 static int
@@ -676,13 +676,13 @@ reset_group_my_grp2(struct my_args_info *args_info)
 }
 
 int
-test_conf_parser_cmd_parser (int argc, char * const *argv, struct my_args_info *args_info)
+test_conf_parser_cmd_parser (int argc, char **argv, struct my_args_info *args_info)
 {
   return test_conf_parser_cmd_parser2 (argc, argv, args_info, 0, 1, 1);
 }
 
 int
-test_conf_parser_cmd_parser_ext (int argc, char * const *argv, struct my_args_info *args_info,
+test_conf_parser_cmd_parser_ext (int argc, char **argv, struct my_args_info *args_info,
                    struct test_conf_parser_cmd_parser_params *params)
 {
   int result;
@@ -692,7 +692,7 @@ test_conf_parser_cmd_parser_ext (int argc, char * const *argv, struct my_args_in
 }
 
 int
-test_conf_parser_cmd_parser2 (int argc, char * const *argv, struct my_args_info *args_info, int override, int initialize, int check_required)
+test_conf_parser_cmd_parser2 (int argc, char **argv, struct my_args_info *args_info, int override, int initialize, int check_required)
 {
   int result;
   struct test_conf_parser_cmd_parser_params params;
@@ -1107,7 +1107,7 @@ void update_multiple_arg(void *field, char ***orig_field,
 
 int
 test_conf_parser_cmd_parser_internal (
-  int argc, char * const *argv, struct my_args_info *args_info,
+  int argc, char **argv, struct my_args_info *args_info,
                         struct test_conf_parser_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */

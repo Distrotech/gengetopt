@@ -1,3 +1,12 @@
+2009-09-30  bettini  <bettini@bettini-laptop>
+
+	* src/skels/header.h_skel: use prototypes with char ** instead of
+	char *const *.
+	* src/skels/c_source.h_skel: use prototypes with char ** instead of
+	char *const *. 
+	#include <getopt.h> not "getopt.h"
+	
+
 2009-09-27  bettini  <bettini@bettini-laptop>
 
 	* tests/output_dir/Makefile.am: New file.

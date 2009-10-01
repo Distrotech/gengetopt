@@ -49,7 +49,7 @@ static
 void clear_args (struct test_first_cmdline_cmd_struct *args_info);
 
 static int
-test_first_cmdline_cmd_parser_internal (int argc, char * const *argv, struct test_first_cmdline_cmd_struct *args_info,
+test_first_cmdline_cmd_parser_internal (int argc, char **argv, struct test_first_cmdline_cmd_struct *args_info,
                         struct test_first_cmdline_cmd_parser_params *params, const char *additional_error);
 
 static int
@@ -474,13 +474,13 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
   return error;
 }
 int
-test_first_cmdline_cmd_parser (int argc, char * const *argv, struct test_first_cmdline_cmd_struct *args_info)
+test_first_cmdline_cmd_parser (int argc, char **argv, struct test_first_cmdline_cmd_struct *args_info)
 {
   return test_first_cmdline_cmd_parser2 (argc, argv, args_info, 0, 1, 1);
 }
 
 int
-test_first_cmdline_cmd_parser_ext (int argc, char * const *argv, struct test_first_cmdline_cmd_struct *args_info,
+test_first_cmdline_cmd_parser_ext (int argc, char **argv, struct test_first_cmdline_cmd_struct *args_info,
                    struct test_first_cmdline_cmd_parser_params *params)
 {
   int result;
@@ -496,7 +496,7 @@ test_first_cmdline_cmd_parser_ext (int argc, char * const *argv, struct test_fir
 }
 
 int
-test_first_cmdline_cmd_parser2 (int argc, char * const *argv, struct test_first_cmdline_cmd_struct *args_info, int override, int initialize, int check_required)
+test_first_cmdline_cmd_parser2 (int argc, char **argv, struct test_first_cmdline_cmd_struct *args_info, int override, int initialize, int check_required)
 {
   int result;
   struct test_first_cmdline_cmd_parser_params params;
@@ -1387,7 +1387,7 @@ void update_multiple_arg(void *field, char ***orig_field,
 
 int
 test_first_cmdline_cmd_parser_internal (
-  int argc, char * const *argv, struct test_first_cmdline_cmd_struct *args_info,
+  int argc, char **argv, struct test_first_cmdline_cmd_struct *args_info,
                         struct test_first_cmdline_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */

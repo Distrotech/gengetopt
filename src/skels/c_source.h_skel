@@ -22,7 +22,7 @@
 #endif
 
 @IF@ not include_getopt @THEN@
-#include "getopt.h"
+#include <getopt.h>
 @ENDIF@
 
 #include "@source_name@.@header_file_ext@"
@@ -104,7 +104,7 @@ static
 void clear_args (struct @args_info@ *args_info);
 
 static int
-@parser_name@_internal (int argc, char * const *argv, struct @args_info@ *args_info,
+@parser_name@_internal (int argc, char **argv, struct @args_info@ *args_info,
                         struct @parser_name@_params *params, const char *additional_error);
 
 @IF@ check_required_options @THEN@
@@ -653,13 +653,13 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
 @ENDIF@
 @reset_groups:method{iteration=true}@
 int
-@parser_name@ (int argc, char * const *argv, struct @args_info@ *args_info)
+@parser_name@ (int argc, char **argv, struct @args_info@ *args_info)
 {
   return @parser_name@2 (argc, argv, args_info, 0, 1, 1);
 }
 
 int
-@parser_name@_ext (int argc, char * const *argv, struct @args_info@ *args_info,
+@parser_name@_ext (int argc, char **argv, struct @args_info@ *args_info,
                    struct @parser_name@_params *params)
 {
   int result;
@@ -669,7 +669,7 @@ int
 }
 
 int
-@parser_name@2 (int argc, char * const *argv, struct @args_info@ *args_info, int override, int initialize, int check_required)
+@parser_name@2 (int argc, char **argv, struct @args_info@ *args_info, int override, int initialize, int check_required)
 {
   int result;
   struct @parser_name@_params params;
@@ -1223,7 +1223,7 @@ static int check_modes(
 
 int
 @parser_name@_internal (
-  int argc, char * const *argv, struct @args_info@ *args_info,
+  int argc, char **argv, struct @args_info@ *args_info,
                         struct @parser_name@_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */

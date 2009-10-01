@@ -56,7 +56,8 @@ AM_MAKEINFOHTMLFLAGS=--no-split
 AM_MAKEINFOFLAGS=-I$(srcdir)
 
 info_TEXINFOS = gengetopt.texinfo
-gengetopt.texinfo: $(GENERATEDINFOS)
+
+$(srcdir)/gengetopt.texinfo: $(GENERATEDINFOS)
 #gengetopt_TEXINFOS = $(GENERATEDINFOS)
 
 GENERATEDINFOS = cmdline1.h.texinfo main1.cc.texinfo \

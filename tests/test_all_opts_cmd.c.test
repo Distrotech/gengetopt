@@ -21,7 +21,7 @@
 #define FIX_UNUSED(X) (void) (X) /* avoid warnings for unused params */
 #endif
 
-#include "getopt.h"
+#include <getopt.h>
 
 #include "test_all_opts_cmd.h"
 
@@ -152,7 +152,7 @@ static
 void clear_args (struct gengetopt_args_info *args_info);
 
 static int
-test_all_opts_cmd_parser_internal (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+test_all_opts_cmd_parser_internal (int argc, char **argv, struct gengetopt_args_info *args_info,
                         struct test_all_opts_cmd_parser_params *params, const char *additional_error);
 
 static int
@@ -499,13 +499,13 @@ gengetopt_strdup (const char *s)
 }
 
 int
-test_all_opts_cmd_parser (int argc, char * const *argv, struct gengetopt_args_info *args_info)
+test_all_opts_cmd_parser (int argc, char **argv, struct gengetopt_args_info *args_info)
 {
   return test_all_opts_cmd_parser2 (argc, argv, args_info, 0, 1, 1);
 }
 
 int
-test_all_opts_cmd_parser_ext (int argc, char * const *argv, struct gengetopt_args_info *args_info,
+test_all_opts_cmd_parser_ext (int argc, char **argv, struct gengetopt_args_info *args_info,
                    struct test_all_opts_cmd_parser_params *params)
 {
   int result;
@@ -521,7 +521,7 @@ test_all_opts_cmd_parser_ext (int argc, char * const *argv, struct gengetopt_arg
 }
 
 int
-test_all_opts_cmd_parser2 (int argc, char * const *argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required)
+test_all_opts_cmd_parser2 (int argc, char **argv, struct gengetopt_args_info *args_info, int override, int initialize, int check_required)
 {
   int result;
   struct test_all_opts_cmd_parser_params params;
@@ -731,7 +731,7 @@ int update_arg(void *field, char **orig_field,
 
 int
 test_all_opts_cmd_parser_internal (
-  int argc, char * const *argv, struct gengetopt_args_info *args_info,
+  int argc, char **argv, struct gengetopt_args_info *args_info,
                         struct test_all_opts_cmd_parser_params *params, const char *additional_error)
 {
   int c;	/* Character of the parsed option.  */

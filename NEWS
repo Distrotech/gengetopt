@@ -7,13 +7,16 @@ Please send gengetopt bug reports to bug-gengetopt at gnu.org
 For details about the new features, you can take a look at:
 http://tronprog.blogspot.com/search/label/gengetopt
 
-Version 2.22.3 (yet unreleased)
+Version 2.22.3
 
    * enum option values can contain + and - (thanks to Papp Gyozo).
    * fixed compilation problems due to macro FIX_UNUSED which was not
    in the right place (thanks to Matthew Junker)
    * --header-output-dir and --src_output-dir to store cmdline.h 
    separately from cmdline.c (thanks to Yegor Yefremov)
+   * #include <getopt.h> in the generated files, instead of "getopt.h"
+   * generated functions use prototypes with char ** instead of
+	char *const *
 
 Version 2.22.2
 

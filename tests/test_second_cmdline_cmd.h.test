@@ -89,7 +89,7 @@ extern const char *test_second_cmdline_cmd_struct_help[];
  * @param args_info the structure where option information will be stored
  * @return 0 if everything went fine, NON 0 if an error took place
  */
-int test_second_cmdline_cmd_parser (int argc, char * const *argv,
+int test_second_cmdline_cmd_parser (int argc, char **argv,
   struct test_second_cmdline_cmd_struct *args_info);
 
 /**
@@ -103,7 +103,7 @@ int test_second_cmdline_cmd_parser (int argc, char * const *argv,
  * @return 0 if everything went fine, NON 0 if an error took place
  * @deprecated use test_second_cmdline_cmd_parser_ext() instead
  */
-int test_second_cmdline_cmd_parser2 (int argc, char * const *argv,
+int test_second_cmdline_cmd_parser2 (int argc, char **argv,
   struct test_second_cmdline_cmd_struct *args_info,
   int override, int initialize, int check_required);
 
@@ -115,7 +115,7 @@ int test_second_cmdline_cmd_parser2 (int argc, char * const *argv,
  * @param params additional parameters for the parser
  * @return 0 if everything went fine, NON 0 if an error took place
  */
-int test_second_cmdline_cmd_parser_ext (int argc, char * const *argv,
+int test_second_cmdline_cmd_parser_ext (int argc, char **argv,
   struct test_second_cmdline_cmd_struct *args_info,
   struct test_second_cmdline_cmd_parser_params *params);
 

@@ -734,6 +734,18 @@ In @file{cmdline1.h} you'll find the generated C struct:
 
 @include cmdline1.h.texinfo
 
+@cindex argv
+First of all, notice that the @code{argv} parameter (typically
+corresponding to the homonimous argument of your program's @code{main}
+function) is declared as @code{char **} and not as @code{char *const
+*}@footnote{as it was up to version 2.22.2 of gengetopt.}.  Actually,
+the version of @code{getopt_long} in libc uses prototypes with
+@code{char *const *argv} that are incorrect because getopt_long and
+getopt_long_only can permute argv; this is required for backward
+compatibility (e.g., for LSB 2.0.1)@footnote{This is taken from the
+comments in @file{getopt.in.h} of gnulib.}.  So, it is better to declare
+@code{argv} as @code{char **} in the generated parser functions.
+
 The @code{<option>_given} field is set to 1 when an argument for
 @code{<option>} has been specified (otherwise it is 0)@footnote{Since
 version 2.22 this field is of type @code{unsigned int} instead of
@@ -1631,7 +1643,7 @@ releases.}:
 @example
 int
 <cmd_parser_name>_ext (int argc,
-                       char * const *argv,
+                       char **argv,
                        struct gengetopt_args_info *args_info,
                        struct <cmd_parser_name>_params *params);
 @end example
