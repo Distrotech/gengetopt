@@ -1,0 +1,10 @@
+texinfo.tex
+ylwrap
+missing
+config.guess
+compile
+depcomp
+ltmain.sh
+install-sh
+config.sub
+mdate-sh
