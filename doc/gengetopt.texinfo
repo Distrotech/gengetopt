@@ -505,7 +505,10 @@ can be found in @ref{Options with enumerated values}.
 @item default 
 
 an optional default value for the option.  The value must always be
-specified as a double quoted string.
+specified as a double quoted string.  It is possible to combine this
+with the @code{multiple} flag (@ref{Multiple Options}) but only by
+giving a single default value. It is not possible to specify a list of
+default values.
 
 @cindex dependon
 @item dependon
