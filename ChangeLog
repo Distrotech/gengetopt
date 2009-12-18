@@ -1,5 +1,7 @@
 2009-12-18  Lorenzo Bettini  <bettini@bettini-laptop-karmic>
 
+	* src/skels/c_source.h_skel: removed other gcc warnings
+
 	* tests/test_simple_multiple_cmd.ggo: added a simpler test
 	for multiple options
 

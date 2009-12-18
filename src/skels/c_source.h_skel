@@ -517,7 +517,8 @@ gengetopt_strdup (const char *s)
 static char *
 get_multiple_arg_token(const char *arg)
 {
-  char *tok, *ret;
+  const char *tok;
+  char *ret;
   size_t len, num_of_escape, i, j;
 
   if (!arg)
@@ -565,10 +566,10 @@ get_multiple_arg_token(const char *arg)
   return ret;
 }
 
-static char *
+static const char *
 get_multiple_arg_token_next(const char *arg)
 {
-  char *tok;
+  const char *tok;
 
   if (!arg)
     return 0;
@@ -940,7 +941,9 @@ int update_multiple_arg_temp(struct generic_list **list,
                const char *long_opt, char short_opt,
                const char *additional_error)
 {
-  char *multi_token, *multi_next; /* store single arguments */
+  /* store single arguments */
+  char *multi_token;
+  const char *multi_next;
 
   if (arg_type == ARG_NO) {
     (*prev_given)++;
