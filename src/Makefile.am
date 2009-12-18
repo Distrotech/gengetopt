@@ -31,6 +31,15 @@ gengetopt_SOURCES = parser.yy scanner.ll \
 argsdef.c cmdline.ggo gengetopt.cc gm.cc \
 yyerror.cc gm_utils.cpp fileutils.cpp acceptedvalues.cpp ggos.cpp
 
+scanner.cc: $(srcdir)/scanner.ll
+	$(LEX) $(LFLAGS) -o $(srcdir)/scanner.cc $(srcdir)/scanner.ll
+
+parser.cc: $(srcdir)/parser.yy
+	$(YACC) -o $(srcdir)/parser.cc $(srcdir)/parser.yy --defines=$(srcdir)/parser.h
+
+langdefparser.h: langdefparser.cc
+
+
 #gengetopt_LDADD = @LIBOBJS@ @LEXLIB@ skels/libgen.a
 
 # these are for gnulib
