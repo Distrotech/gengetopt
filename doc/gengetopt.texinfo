@@ -1787,17 +1787,27 @@ command line option of @code{gcc}.
 @chapter Multiple Options
 @cindex multiple options
 
-If an option is specified as @code{multiple}, then it can be specified multiple
-times at command line.  In this case, say the option is called @code{foo}, the
-generated @code{foo_given} field in the args structure contains the number of
-times it was specified and the generated field @code{foo_arg} is an array
-containing all the values that were specified for this option.
+If an option is specified as @code{multiple}, then it can be specified
+multiple times at command line.  In this case, say the option is
+called @code{foo}, the generated @code{foo_given} field in the args
+structure contains the number of times it was specified and the
+generated field @code{foo_arg} is an array containing all the values
+that were specified for this option.
  
-Notice that if a default value is specified for a multiple option, that
-value is assigned to the option only if no other value is specified on
-the command line (and the corresponding @code{_given} field will be set to 1),
-i.e., a default value IS NOT always part of the values of a multiple
-option.
+Notice that if a default value is specified for a multiple option,
+that value is assigned to the option only if no other value is
+specified on the command line, i.e., a default value IS NOT always
+part of the values of a multiple option.
+
+As in the case for standard options, if a multiple option has a
+default value, and this is set because no value was specified on the
+command line, then the corresponding @code{<option>_given} will still be
+initialized to 0.  Thus, @code{<option>_given} will effectively inform
+you if the user has specified that command line option.
+
+If it is known that a multiple option has a default value, then it can
+be safely assumed that the first element of generated array
+@code{<option>_arg} is always set.
  
 For instance, if the gengetopt file is as follows
 
