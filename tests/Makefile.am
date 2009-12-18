@@ -94,6 +94,8 @@ test_conf_parser_err.sh test_conf_parser_err_string.sh \
 test_conf_parser_grp.sh \
 test_conf_parser_save.sh \
 test_multiple.sh \
+test_simple_multiple_default.sh \
+test_simple_multiple.sh \
 test_multiple_err.sh \
 test_sections.sh \
 test_default_values.sh \
@@ -123,7 +125,9 @@ test_conf_parser_ov2 \
 test_conf_parser_ov3 \
 test_conf_parser_ov4 \
 test_conf_parser_file_save \
-test_multiple test_sections test_values \
+test_multiple \
+test_simple_multiple \
+test_sections test_values \
 test_redef_help \
 test_manual_help \
 test_no_handle_help \
@@ -155,6 +159,7 @@ test_groups_cmd.h: test_groups_cmd.c
 test_modes_cmd.h: test_modes_cmd.c
 test_conf_parser_cmd.h: test_conf_parser_cmd.c
 test_multiple_cmd.h: test_multiple_cmd.c
+test_simple_multiple_cmd.h: test_simple_multiple_cmd.c
 test_sections_cmd.h: test_sections_cmd.c
 test_values_cmd.h: test_values_cmd.c
 test_redef_help_cmd.h: test_redef_help_cmd.c
@@ -189,6 +194,7 @@ test_conf_parser_ov3_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_ov3
 test_conf_parser_ov4_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_ov4.c
 test_conf_parser_file_save_SOURCES = test_conf_parser_cmd.ggoconf test_conf_parser_file_save.c
 test_multiple_SOURCES = test_multiple_cmd.ggo test_multiple.cc
+test_simple_multiple_SOURCES = test_simple_multiple_cmd.ggo test_simple_multiple.cc
 test_sections_SOURCES = test_sections_cmd.ggo test_sections.c
 test_values_SOURCES = test_values_cmd.ggo test_values.c
 test_redef_help_SOURCES = test_redef_help_cmd.ggo test_redef_help.c
@@ -215,6 +221,7 @@ test_groups_cmd.c test_groups_cmd.h \
 test_modes_cmd.c test_modes_cmd.h \
 test_conf_parser_cmd.c test_conf_parser_cmd.h \
 test_multiple_cmd.c test_multiple_cmd.h \
+test_simple_multiple_cmd.c test_simple_multiple_cmd.h \
 test_sections_cmd.c \
 test_values_cmd.c test_values_cmd.h \
 test_redef_help_cmd.c test_redef_help_cmd.h \
@@ -241,6 +248,7 @@ test_groups_cmd.c.test test_groups_cmd.h.test \
 test_modes_cmd.c.test test_modes_cmd.h.test \
 test_conf_parser_cmd.c.test test_conf_parser_cmd.h.test \
 test_multiple_cmd.c.test test_multiple_cmd.h.test \
+test_simple_multiple_cmd.c.test test_simple_multiple_cmd.h.test \
 test_sections_cmd.c.test \
 test_values_cmd.c.test test_values_cmd.h.test \
 test_all_opts.save.test test_multiple.save.test \
@@ -289,6 +297,8 @@ test_conf_parser_ov3.sh.in \
 test_conf_parser_ov4.sh.in \
 test_conf_parser_err.sh.in test_conf_parser_err_string.sh.in \
 test_multiple.sh.in test_multiple_err.sh.in test_sections.sh.in test_default_values.sh.in \
+test_simple_multiple_default.sh.in \
+test_simple_multiple.sh.in \
 test_conf_parser_ov2.c.in test_conf_parser_ov3.c.in \
 test_conf_parser_ov4.c.in \
 test_values.sh.in test_values_err.sh.in test_show_help.sh.in \

@@ -205,6 +205,12 @@ longlong argument: 34567890
 optarg_noshort_given 2 times
 optarg_noshort argument: second arg for optarg
 optarg_noshort argument: no arg given
+*** test_simple_multiple_default.sh
+default value: foo
+*** test_simple_multiple.sh
+passed string: first
+passed string: second
+passed string: third
 *** test_multiple_err.sh
 ./test_multiple: option requires an argument -- 's'
 ./test_multiple: '--int' ('-i') option required
@@ -1041,6 +1047,14 @@ Usage: test_multiple [OPTIONS]... [FILES]...
   -M, --optarg[=ID]             multi with optional args
       --optarg-noshort[=ID]     multi with optional args and no short
       --file-save=STRING        save the passed options into a file
+*** test_simple_multiple -h
+test_simple_multiple 1.0
+
+Usage: test_simple_multiple [OPTIONS]... [FILES]...
+
+  -h, --help           Print help and exit
+  -V, --version        Print version and exit
+  -s, --string=STRING  string option  (default=`foo')
 *** test_sections -h
 test_sections 1.0
 

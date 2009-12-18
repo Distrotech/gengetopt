@@ -184,6 +184,8 @@ AC_CONFIG_FILES([tests/test_conf_parser_err.sh], [chmod +x tests/test_conf_parse
 AC_CONFIG_FILES([tests/test_conf_parser_err_string.sh], [chmod +x tests/test_conf_parser_err_string.sh])
 AC_CONFIG_FILES([tests/test_multiple.sh], [chmod +x tests/test_multiple.sh])
 AC_CONFIG_FILES([tests/test_multiple_err.sh], [chmod +x tests/test_multiple_err.sh])
+AC_CONFIG_FILES([tests/test_simple_multiple_default.sh], [chmod +x tests/test_simple_multiple_default.sh])
+AC_CONFIG_FILES([tests/test_simple_multiple.sh], [chmod +x tests/test_simple_multiple.sh])
 AC_CONFIG_FILES([tests/test_sections.sh], [chmod +x tests/test_sections.sh])
 AC_CONFIG_FILES([tests/test_default_values.sh], [chmod +x tests/test_default_values.sh])
 AC_CONFIG_FILES([tests/test_values.sh], [chmod +x tests/test_values.sh])
