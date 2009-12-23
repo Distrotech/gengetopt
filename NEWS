@@ -7,6 +7,11 @@ Please send gengetopt bug reports to bug-gengetopt at gnu.org
 For details about the new features, you can take a look at:
 http://tronprog.blogspot.com/search/label/gengetopt
 
+Version 2.22.4
+
+   * switched to git repository
+   * removed other gcc compilation warnings on generated files
+
 Version 2.22.3
 
    * enum option values can contain + and - (thanks to Papp Gyozo).
@@ -17,7 +22,6 @@ Version 2.22.3
    * #include <getopt.h> in the generated files, instead of "getopt.h"
    * generated functions use prototypes with char ** instead of
 	char *const *
-   * removed other gcc compilation warnings on generated files
 
 Version 2.22.2
 

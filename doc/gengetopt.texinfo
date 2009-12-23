@@ -234,39 +234,41 @@ page (@value{myhomepage}).
 You can also get the patches, if they are available for a particular
 release (see below for patching from a previous version).
 
-@section Anonymous CVS Access
-@cindex CVS
+@section Anonymous Git Checkout
 
-This project's CVS repository can be checked out through anonymous
-(pserver) CVS with the following instruction:
+@cindex Git
+This project's git repository can be checked out through the following
+clone instruction@footnote{Since version 2.22.4 of Gengetopt the
+CVS repository was dismissed in favor of Git
+(@uref{http://git-scm.com/}).}:
 
 @example
-cvs -z3 -d:pserver:anonymous@@cvs.savannah.gnu.org:/sources/gengetopt co gengetopt
+git clone git://git.savannah.gnu.org/gengetopt.git
 @end example
 
 Further instructions can be found at the address:
 
 @uref{http://savannah.gnu.org/projects/gengetopt}.
 
-Please notice that this way you will get the latest development sources
+And the git repository can also browsed on-line at
+
+@uref{http://git.savannah.gnu.org/cgit/gengetopt.git}.
+
+Please note that this way you will get the latest development sources
 of Gengetopt, which may also be unstable.  This solution is the
 best if you intend to correct/extend this program: you should send me
-patches against the latest cvs repository sources.
+patches against the latest git repository sources.
 
 If, on the contrary, you want to get the sources of a given release,
-through cvs, say, e.g., version X.Y.Z, you must specify the tag
-@code{rel_X_Y_Z} when you run the cvs command or the @code{cvs update}
-command.
+through git, say, e.g., version X.Y.Z, you must specify the tag
+@code{rel_X_Y_Z}.
 
-NOTICE: This convention holds since release 2.14.
+When you compile the sources that you get from the git repository,
+before running the @code{configure} and @code{make} commands, for the
+first time, you must run the command:
 
-When you compile the sources that you get from the cvs repository,
-before running the @code{configure} and @code{make} commands, you
-must run the command:
-
-@cindex autogen.sh
 @example
-sh autogen.sh
+autoreconf -i
 @end example
 
 @noindent
@@ -276,16 +278,7 @@ possibly missing files.  You should have installed recent versions of
 @cindex autoconf
 @cindex libtool
 @code{automake}, @code{autoconf} and @code{libtool} in order for this to
-succeed.  
-@cindex flex
-@cindex bison
-You will also need @code{flex} and @code{bison}.
-
-Instead of running @code{autogen.sh} another option is to run
-
-@example
-autoreconf -i
-@end example
+succeed.
 
 @section What you need to build gengetopt
 @cindex requirements
@@ -2122,7 +2115,7 @@ library (that you will need to link your program to, as illustrated in
 the following).
 
 Once you retrieved gnulib (for the moment it is available
-only through CVS, see the home page), you can invoke
+only through git, see the home page), you can invoke
 @samp{gnulib-tool --import} that will copy source files, create a
 @file{Makefile.am} to build them, generate a file @file{gnulib-comp.m4} with
 Autoconf M4 macro declarations used by @file{configure.ac}, and generate

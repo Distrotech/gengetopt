@@ -1,7 +1,7 @@
 This is ../../doc/gengetopt.info, produced by makeinfo version 4.13
 from ../../doc/gengetopt.texinfo.
 
-This manual is for GNU Gengetopt (version 2.22.3, 21 December 2009), a
+This manual is for GNU Gengetopt (version 2.22.4, 23 December 2009), a
 tool to write command line option parsers for C programs.
 
    Copyright (C) 2001 - 2009 Free Software Foundation, Inc.
@@ -32,11 +32,11 @@ Gengetopt
 Gengetopt is a tool to write command line option parsing code for C
 programs.
 
-   This is Edition 2.22.3 of the Gengetopt manual.
+   This is Edition 2.22.4 of the Gengetopt manual.
 
-   This file documents GNU Gengetopt version 2.22.3.
+   This file documents GNU Gengetopt version 2.22.4.
 
-   This manual is for GNU Gengetopt (version 2.22.3, 21 December 2009),
+   This manual is for GNU Gengetopt (version 2.22.4, 23 December 2009),
 a tool to write command line option parsers for C programs.
 
    Copyright (C) 2001 - 2009 Free Software Foundation, Inc.
@@ -69,7 +69,7 @@ a tool to write command line option parsers for C programs.
 * Multiple Options::            Multiple options
 * String Parsers and Multiple Parsers::  Using multiple parsers in the same program
 * No getopt_long::              What if getopt_long is not available?
-* Bugs::                        What is lame and/or buggy in Gengetopt 2.22.3
+* Bugs::                        What is lame and/or buggy in Gengetopt 2.22.4
 * Mailing Lists::               For discussions and announces
 * Index::                       Index.
 
@@ -191,43 +191,40 @@ page (`http://www.lorenzobettini.it').
    You can also get the patches, if they are available for a particular
 release (see below for patching from a previous version).
 
-1.2 Anonymous CVS Access
-========================
+1.2 Anonymous Git Checkout
+==========================
 
-This project's CVS repository can be checked out through anonymous
-(pserver) CVS with the following instruction:
+This project's git repository can be checked out through the following
+clone instruction(1):
 
-     cvs -z3 -d:pserver:anonymous@cvs.savannah.gnu.org:/sources/gengetopt co gengetopt
+     git clone git://git.savannah.gnu.org/gengetopt.git
 
    Further instructions can be found at the address:
 
    `http://savannah.gnu.org/projects/gengetopt'.
 
-   Please notice that this way you will get the latest development
-sources of Gengetopt, which may also be unstable.  This solution is the
-best if you intend to correct/extend this program: you should send me
-patches against the latest cvs repository sources.
+   And the git repository can also browsed on-line at
+
+   `http://git.savannah.gnu.org/cgit/gengetopt.git'.
+
+   Please note that this way you will get the latest development sources
+of Gengetopt, which may also be unstable.  This solution is the best if
+you intend to correct/extend this program: you should send me patches
+against the latest git repository sources.
 
    If, on the contrary, you want to get the sources of a given release,
-through cvs, say, e.g., version X.Y.Z, you must specify the tag
-`rel_X_Y_Z' when you run the cvs command or the `cvs update' command.
+through git, say, e.g., version X.Y.Z, you must specify the tag
+`rel_X_Y_Z'.
 
-   NOTICE: This convention holds since release 2.14.
+   When you compile the sources that you get from the git repository,
+before running the `configure' and `make' commands, for the first time,
+you must run the command:
 
-   When you compile the sources that you get from the cvs repository,
-before running the `configure' and `make' commands, you must run the
-command:
-
-     sh autogen.sh
+     autoreconf -i
 
 This will run the autotools commands in the correct order, and also copy
 possibly missing files.  You should have installed recent versions of `automake',
-`autoconf' and `libtool' in order for this to succeed.  You will also
-need `flex' and `bison'.
-
-   Instead of running `autogen.sh' another option is to run
-
-     autoreconf -i
+`autoconf' and `libtool' in order for this to succeed.
 
 1.3 What you need to build gengetopt
 ====================================
@@ -236,9 +233,9 @@ Gengetopt has been developed under GNU/Linux, using gcc (C++), and bison
 (yacc) and flex (lex), and ported under Win32 with Cygnus C/C++compiler,
 available at `http://www.cygwin.com'.
 
-   For developing gengetopt, I use the excellent GNU Autoconf(1), GNU
-Automake(2) and GNU Libtool(3).  Since version 2.19 I also started to
-use Gnulib - The GNU Portability Library(4), "a central location for
+   For developing gengetopt, I use the excellent GNU Autoconf(2), GNU
+Automake(3) and GNU Libtool(4).  Since version 2.19 I also started to
+use Gnulib - The GNU Portability Library(5), "a central location for
 common GNU code, intended to be shared among GNU packages" (for
 instance, I rely on Gnulib for checking for the presence and
 correctness of `getopt_long' function, *note Use Gnulib::).
@@ -272,13 +269,16 @@ configure a simple make should do).
 
    ---------- Footnotes ----------
 
-   (1) `http://www.gnu.org/software/autoconf'
+   (1) Since version 2.22.4 of Gengetopt the CVS repository was
+dismissed in favor of Git (`http://git-scm.com/').
 
-   (2) `http://www.gnu.org/software/automake'
+   (2) `http://www.gnu.org/software/autoconf'
 
-   (3) `http://www.gnu.org/software/libtool'
+   (3) `http://www.gnu.org/software/automake'
 
-   (4) `http://www.gnu.org/software/gnulib'
+   (4) `http://www.gnu.org/software/libtool'
+
+   (5) `http://www.gnu.org/software/gnulib'
 
 
 File: gengetopt.info,  Node: Basic Usage,  Next: Invoking gengetopt,  Prev: Installation,  Up: Top
@@ -554,36 +554,44 @@ the value `"foobar"' will be selected; instead, passing the value
 
    Here's an example of such a file (the file is called `sample1.ggo')
 
-   # Name of your program package "sample1" # don't use package if
-you're using automake # Version of your program version "2.0"   # don't
-use version if you're using automake
+     # Name of your program
+     package "sample1" # don't use package if you're using automake
+     # Version of your program
+     version "2.0"   # don't use version if you're using automake
 
-   # Options option  "str-opt"         s "A string option, for a
-filename"         string typestr="filename"     optional text "\nA
-brief text description" text " before the other options.\n" option
-"my-opt"          m "Another integer option, \ this time the
-description of the option should be \"quite\" long to \ require
-wrapping... possibly more than one wrapping :-) \ especially if
-I\nrequire a line break"      int     optional option  "int-opt"
-i "A int option"         int        yes section "more involved options"
-       sectiondesc="the following options\nare more complex" text ""
-option  "flag-opt"        - "A flag option"        flag       off
-option  "funct-opt"       F "A function option"    optional
-details="\nA function option is basically an option with no argument.\
-It can be used, e.g., to specify a specific behavior for a program.
+     # Options
+     option  "str-opt"         s "A string option, for a filename"
+             string typestr="filename"     optional
+     text "\nA brief text description"
+     text " before the other options.\n"
+     option  "my-opt"          m "Another integer option, \
+     this time the description of the option should be \"quite\" long to \
+     require wrapping... possibly more than one wrapping :-) \
+     especially if I\nrequire a line break"      int     optional
+     option  "int-opt"         i "A int option"         int        yes
+     section "more involved options"
+             sectiondesc="the following options\nare more complex"
+     text ""
+     option  "flag-opt"        - "A flag option"        flag       off
+     option  "funct-opt"       F "A function option"    optional
+         details="\nA function option is basically an option with no argument.\
+       It can be used, e.g., to specify a specific behavior for a program.
 
-   Well, this further explanation is quite useless, but it's only to \
-show an example of an option with details, \ which will be printed only
-when -detailed-help is given \ at the command line."  section "last
-option section" option  "long-opt"        - "A long option"        long
-     optional option  "def-opt"         - "A string option with default"
-       string default="Hello" optional option  "enum-opt"         - "A
-string option with list of values"
-values="foo","bar","hello","bye" default="hello" optional option
-"secret"         S "hidden option will not appear in -help"         int
-optional hidden option  "dependant"         D         "option that
-depends on str-opt" int optional dependon="str-opt" text "\nAn ending
-text."
+     Well, this further explanation is quite useless, but it's only to \
+     show an example of an option with details, \
+     which will be printed only when --detailed-help is given \
+     at the command line."
+     section "last option section"
+     option  "long-opt"        - "A long option"        long       optional
+     option  "def-opt"         - "A string option with default"
+             string default="Hello" optional
+     option  "enum-opt"         - "A string option with list of values"
+             values="foo","bar","hello","bye" default="hello" optional
+     option  "secret"         S "hidden option will not appear in --help"
+             int optional hidden
+     option  "dependant"         D
+             "option that depends on str-opt" int optional dependon="str-opt"
+     text "\nAn ending text."
 
    The simplest way to use gengetopt is to pass this file as the
 standard input, i.e.:
@@ -603,6 +611,235 @@ as `*.c', `foo*.?' and so on).   These are also called _parameters_
 these additional names (default is `FILES').
 
    In `cmdline1.h' you'll find the generated C struct:
+
+     /** @file cmdline1.h
+      *  @brief The header file for the command line option parser
+      *  generated by GNU Gengetopt version 2.22.4
+      *  http://www.gnu.org/software/gengetopt.
+      *  DO NOT modify this file, since it can be overwritten
+      *  @author GNU Gengetopt by Lorenzo Bettini */
+
+     #ifndef CMDLINE1_H
+     #define CMDLINE1_H
+
+     /* If we use autoconf.  */
+     #ifdef HAVE_CONFIG_H
+     #include "config.h"
+     #endif
+
+     #include <stdio.h> /* for FILE */
+
+     #ifdef __cplusplus
+     extern "C" {
+     #endif /* __cplusplus */
+
+     #ifndef CMDLINE_PARSER_PACKAGE
+     /** @brief the program name (used for printing errors) */
+     #define CMDLINE_PARSER_PACKAGE "sample1"
+     #endif
+
+     #ifndef CMDLINE_PARSER_PACKAGE_NAME
+     /** @brief the complete program name (used for help and version) */
+     #define CMDLINE_PARSER_PACKAGE_NAME "sample1"
+     #endif
+
+     #ifndef CMDLINE_PARSER_VERSION
+     /** @brief the program version */
+     #define CMDLINE_PARSER_VERSION "2.0"
+     #endif
+
+     /** @brief Where the command line options are stored */
+     struct gengetopt_args_info
+     {
+       const char *help_help; /**< @brief Print help and exit help description.  */
+       const char *detailed_help_help; /**< @brief Print help, including all details and hidden options, and exit help description.  */
+       const char *full_help_help; /**< @brief Print help, including hidden options, and exit help description.  */
+       const char *version_help; /**< @brief Print version and exit help description.  */
+       char * str_opt_arg;       /**< @brief A string option, for a filename.  */
+       char * str_opt_orig;       /**< @brief A string option, for a filename original value given at command line.  */
+       const char *str_opt_help; /**< @brief A string option, for a filename help description.  */
+       int my_opt_arg;       /**< @brief Another integer option, this time the description of the option should be \"quite\" long to require wrapping... possibly more than one wrapping :-) especially if I\nrequire a line break.  */
+       char * my_opt_orig;       /**< @brief Another integer option, this time the description of the option should be \"quite\" long to require wrapping... possibly more than one wrapping :-) especially if I\nrequire a line break original value given at command line.  */
+       const char *my_opt_help; /**< @brief Another integer option, this time the description of the option should be \"quite\" long to require wrapping... possibly more than one wrapping :-) especially if I\nrequire a line break help description.  */
+       int int_opt_arg;       /**< @brief A int option.  */
+       char * int_opt_orig;       /**< @brief A int option original value given at command line.  */
+       const char *int_opt_help; /**< @brief A int option help description.  */
+       int flag_opt_flag;       /**< @brief A flag option (default=off).  */
+       const char *flag_opt_help; /**< @brief A flag option help description.  */
+       const char *funct_opt_help; /**< @brief A function option help description.  */
+       long long_opt_arg;       /**< @brief A long option.  */
+       char * long_opt_orig;       /**< @brief A long option original value given at command line.  */
+       const char *long_opt_help; /**< @brief A long option help description.  */
+       char * def_opt_arg;       /**< @brief A string option with default (default='Hello').  */
+       char * def_opt_orig;       /**< @brief A string option with default original value given at command line.  */
+       const char *def_opt_help; /**< @brief A string option with default help description.  */
+       char * enum_opt_arg;       /**< @brief A string option with list of values (default='hello').  */
+       char * enum_opt_orig;       /**< @brief A string option with list of values original value given at command line.  */
+       const char *enum_opt_help; /**< @brief A string option with list of values help description.  */
+       int secret_arg;       /**< @brief hidden option will not appear in -help.  */
+       char * secret_orig;       /**< @brief hidden option will not appear in -help original value given at command line.  */
+       const char *secret_help; /**< @brief hidden option will not appear in -help help description.  */
+       int dependant_arg;       /**< @brief option that depends on str-opt.  */
+       char * dependant_orig;       /**< @brief option that depends on str-opt original value given at command line.  */
+       const char *dependant_help; /**< @brief option that depends on str-opt help description.  */
+
+       unsigned int help_given ;       /**< @brief Whether help was given.  */
+       unsigned int detailed_help_given ;       /**< @brief Whether detailed-help was given.  */
+       unsigned int full_help_given ;       /**< @brief Whether full-help was given.  */
+       unsigned int version_given ;       /**< @brief Whether version was given.  */
+       unsigned int str_opt_given ;       /**< @brief Whether str-opt was given.  */
+       unsigned int my_opt_given ;       /**< @brief Whether my-opt was given.  */
+       unsigned int int_opt_given ;       /**< @brief Whether int-opt was given.  */
+       unsigned int flag_opt_given ;       /**< @brief Whether flag-opt was given.  */
+       unsigned int funct_opt_given ;       /**< @brief Whether funct-opt was given.  */
+       unsigned int long_opt_given ;       /**< @brief Whether long-opt was given.  */
+       unsigned int def_opt_given ;       /**< @brief Whether def-opt was given.  */
+       unsigned int enum_opt_given ;       /**< @brief Whether enum-opt was given.  */
+       unsigned int secret_given ;       /**< @brief Whether secret was given.  */
+       unsigned int dependant_given ;       /**< @brief Whether dependant was given.  */
+
+       char **inputs ; /**< @brief unamed options (options without names) */
+       unsigned inputs_num ; /**< @brief unamed options number */
+     } ;
+
+     /** @brief The additional parameters to pass to parser functions */
+     struct cmdline_parser_params
+     {
+       int override; /**< @brief whether to override possibly already present options (default 0) */
+       int initialize; /**< @brief whether to initialize the option structure gengetopt_args_info (default 1) */
+       int check_required; /**< @brief whether to check that all required options were provided (default 1) */
+       int check_ambiguity; /**< @brief whether to check for options already specified in the option structure gengetopt_args_info (default 0) */
+       int print_errors; /**< @brief whether getopt_long should print an error message for a bad option (default 1) */
+     } ;
+
+     /** @brief the purpose string of the program */
+     extern const char *gengetopt_args_info_purpose;
+     /** @brief the usage string of the program */
+     extern const char *gengetopt_args_info_usage;
+     /** @brief all the lines making the help output */
+     extern const char *gengetopt_args_info_help[];
+     /** @brief all the lines making the full help output (including hidden options) */
+     extern const char *gengetopt_args_info_full_help[];
+     /** @brief all the lines making the detailed help output (including hidden options and details) */
+     extern const char *gengetopt_args_info_detailed_help[];
+
+     /**
+      * The command line parser
+      * @param argc the number of command line options
+      * @param argv the command line options
+      * @param args_info the structure where option information will be stored
+      * @return 0 if everything went fine, NON 0 if an error took place
+      */
+     int cmdline_parser (int argc, char **argv,
+       struct gengetopt_args_info *args_info);
+
+     /**
+      * The command line parser (version with additional parameters - deprecated)
+      * @param argc the number of command line options
+      * @param argv the command line options
+      * @param args_info the structure where option information will be stored
+      * @param override whether to override possibly already present options
+      * @param initialize whether to initialize the option structure my_args_info
+      * @param check_required whether to check that all required options were provided
+      * @return 0 if everything went fine, NON 0 if an error took place
+      * @deprecated use cmdline_parser_ext() instead
+      */
+     int cmdline_parser2 (int argc, char **argv,
+       struct gengetopt_args_info *args_info,
+       int override, int initialize, int check_required);
+
+     /**
+      * The command line parser (version with additional parameters)
+      * @param argc the number of command line options
+      * @param argv the command line options
+      * @param args_info the structure where option information will be stored
+      * @param params additional parameters for the parser
+      * @return 0 if everything went fine, NON 0 if an error took place
+      */
+     int cmdline_parser_ext (int argc, char **argv,
+       struct gengetopt_args_info *args_info,
+       struct cmdline_parser_params *params);
+
+     /**
+      * Save the contents of the option struct into an already open FILE stream.
+      * @param outfile the stream where to dump options
+      * @param args_info the option struct to dump
+      * @return 0 if everything went fine, NON 0 if an error took place
+      */
+     int cmdline_parser_dump(FILE *outfile,
+       struct gengetopt_args_info *args_info);
+
+     /**
+      * Save the contents of the option struct into a (text) file.
+      * This file can be read by the config file parser (if generated by gengetopt)
+      * @param filename the file where to save
+      * @param args_info the option struct to save
+      * @return 0 if everything went fine, NON 0 if an error took place
+      */
+     int cmdline_parser_file_save(const char *filename,
+       struct gengetopt_args_info *args_info);
+
+     /**
+      * Print the help
+      */
+     void cmdline_parser_print_help(void);
+     /**
+      * Print the full help (including hidden options)
+      */
+     void cmdline_parser_print_full_help(void);
+     /**
+      * Print the detailed help (including hidden options and details)
+      */
+     void cmdline_parser_print_detailed_help(void);
+     /**
+      * Print the version
+      */
+     void cmdline_parser_print_version(void);
+
+     /**
+      * Initializes all the fields a cmdline_parser_params structure
+      * to their default values
+      * @param params the structure to initialize
+      */
+     void cmdline_parser_params_init(struct cmdline_parser_params *params);
+
+     /**
+      * Allocates dynamically a cmdline_parser_params structure and initializes
+      * all its fields to their default values
+      * @return the created and initialized cmdline_parser_params structure
+      */
+     struct cmdline_parser_params *cmdline_parser_params_create(void);
+
+     /**
+      * Initializes the passed gengetopt_args_info structure's fields
+      * (also set default values for options that have a default)
+      * @param args_info the structure to initialize
+      */
+     void cmdline_parser_init (struct gengetopt_args_info *args_info);
+     /**
+      * Deallocates the string fields of the gengetopt_args_info structure
+      * (but does not deallocate the structure itself)
+      * @param args_info the structure to deallocate
+      */
+     void cmdline_parser_free (struct gengetopt_args_info *args_info);
+
+     /**
+      * Checks that all the required options were specified
+      * @param args_info the structure to check
+      * @param prog_name the name of the program that will be used to print
+      *   possible errors
+      * @return
+      */
+     int cmdline_parser_required (struct gengetopt_args_info *args_info,
+       const char *prog_name);
+
+     extern const char *cmdline_parser_enum_opt_values[];  /**< @brief Possible values for enum-opt. */
+
+
+     #ifdef __cplusplus
+     }
+     #endif /* __cplusplus */
+     #endif /* CMDLINE1_H */
 
    First of all, notice that the `argv' parameter (typically
 corresponding to the homonimous argument of your program's `main'
@@ -1699,6 +1936,63 @@ parser: first call the configuration file parser and then the command
 line parser (the command line options will override the configuration
 file options):
 
+     /* test_conf_parser_ov2.c test */
+
+     /* test all kinds of options and the conf file parser */
+     /* differently from test_conf_parser_ov.c, first scan the conf file and
+        then the command line */
+
+     #include <stdlib.h>
+     #include <stdio.h>
+
+     #include "test_conf_parser_cmd.h"
+
+     static struct my_args_info args_info;
+
+     int
+     main (int argc, char **argv)
+     {
+       struct test_conf_parser_cmd_parser_params *params;
+
+       /* initialize the parameters structure */
+       params = test_conf_parser_cmd_parser_params_create();
+
+       /*
+          initialize args_info, but don't check for required options
+          NOTICE: the other fields are initialized to their default values
+       */
+       params->check_required = 0;
+
+       /* call the config file parser */
+       if (test_conf_parser_cmd_parser_config_file
+           ("../../tests/test_conf2.conf", &args_info, params) != 0)
+         exit(1);
+
+       /*
+          override config file options,
+          do not initialize args_info, check for required options.
+       */
+       params->initialize = 0;
+       params->override = 1;
+       params->check_required = 1;
+
+       /* call the command line parser */
+       if (test_conf_parser_cmd_parser_ext (argc, argv, &args_info, params) != 0)
+         exit(1) ;
+
+       printf ("value of required: %s\n", args_info.required_arg);
+       printf ("value of string: %s\n", args_info.string_arg);
+       printf ("value of no-short_given: %d\n", args_info.no_short_given);
+       printf ("value of int: %d\n", args_info.int_arg);
+       printf ("value of float: %f\n", args_info.float_arg);
+
+       /* release memory */
+       test_conf_parser_cmd_parser_free (&args_info);
+       free (params);
+
+       return 0;
+     }
+
 This is an invocation and its results:
 
      ./test_conf_parser_ov2 -r "bar" --float 2.14 -i 100
@@ -2045,7 +2339,7 @@ their sources into a library (that you will need to link your program
 to, as illustrated in the following).
 
    Once you retrieved gnulib (for the moment it is available only
-through CVS, see the home page), you can invoke `gnulib-tool --import'
+through git, see the home page), you can invoke `gnulib-tool --import'
 that will copy source files, create a `Makefile.am' to build them,
 generate a file `gnulib-comp.m4' with Autoconf M4 macro declarations
 used by `configure.ac', and generate a file `gnulib-cache.m4'
@@ -2319,7 +2613,7 @@ Index
 * --string-parser:                       Invoking gengetopt.  (line 169)
 * --unamed-opts:                         Invoking gengetopt.  (line 107)
 * -C,--conf-parser:                      Configuration files. (line   6)
-* -h,--detailed-help:                    Basic Usage.         (line 550)
+* -h,--detailed-help:                    Basic Usage.         (line 787)
 * -h,--help:                             Basic Usage.         (line 221)
 * -S,--string-parser:                    String Parsers and Multiple Parsers.
                                                               (line  21)
@@ -2331,20 +2625,18 @@ Index
 * args:                                  Basic Usage.         (line  67)
 * argtype:                               Basic Usage.         (line 104)
 * argument, defined:                     Terminology.         (line   6)
-* argv:                                  Basic Usage.         (line 324)
+* argv:                                  Basic Usage.         (line 561)
 * Audience:                              Audience.            (line   6)
 * autoconf <1>:                          Use getopt_long sources.
                                                               (line  11)
 * autoconf <2>:                          Use automake/autoconf.
                                                               (line   6)
-* autoconf:                              Installation.        (line  87)
-* autogen.sh:                            Installation.        (line  84)
+* autoconf:                              Installation.        (line  89)
 * automake <1>:                          Use getopt_long sources.
                                                               (line  11)
 * automake <2>:                          Use automake/autoconf.
                                                               (line   6)
-* automake:                              Installation.        (line  87)
-* bison:                                 Installation.        (line  88)
+* automake:                              Installation.        (line  89)
 * check_ambiguity:                       Parser function additional parameters.
                                                               (line  33)
 * check_required:                        Parser function additional parameters.
@@ -2352,7 +2644,6 @@ Index
 * Conditions for copying Gengetopt:      Copying.             (line   6)
 * configuration files:                   Configuration files. (line   6)
 * Copying conditions:                    Copying.             (line   6)
-* CVS:                                   Installation.        (line  60)
 * default:                               Basic Usage.         (line 123)
 * dependon:                              Basic Usage.         (line 130)
 * desc:                                  Basic Usage.         (line  93)
@@ -2363,12 +2654,12 @@ Index
                                                               (line  31)
 * enumerated options:                    Options with enumerated values.
                                                               (line   6)
-* flex:                                  Installation.        (line  88)
 * gengetopt options:                     Invoking gengetopt.  (line   6)
 * getopt_long:                           No getopt_long.      (line   6)
 * getting started with Gengetopt:        Basic Usage.         (line   6)
+* Git:                                   Installation.        (line  60)
 * gnulib <1>:                            Use Gnulib.          (line   6)
-* gnulib:                                Installation.        (line 103)
+* gnulib:                                Installation.        (line 100)
 * group options:                         Group options.       (line   6)
 * hidden:                                Basic Usage.         (line 169)
 * how to use Gengetopt:                  Basic Usage.         (line   6)
@@ -2378,7 +2669,7 @@ Index
 * installation:                          Installation.        (line   6)
 * invoking:                              Invoking gengetopt.  (line   6)
 * Known Bugs:                            Bugs.                (line   6)
-* libtool:                               Installation.        (line  87)
+* libtool:                               Installation.        (line  89)
 * Limits:                                Bugs.                (line   6)
 * long:                                  Basic Usage.         (line  79)
 * long option, defined:                  Terminology.         (line   6)
@@ -2391,7 +2682,7 @@ Index
 * multiple parsers:                      String Parsers and Multiple Parsers.
                                                               (line   6)
 * on/off:                                Basic Usage.         (line 179)
-* option without name:                   Basic Usage.         (line 315)
+* option without name:                   Basic Usage.         (line 323)
 * option, defined:                       Terminology.         (line   6)
 * optional:                              Basic Usage.         (line 135)
 * override:                              Parser function additional parameters.
@@ -2401,19 +2692,19 @@ Index
 * PACKAGE:                               Audience.            (line  36)
 * PACKAGE_NAME <1>:                      Basic Usage.         (line  39)
 * PACKAGE_NAME:                          Audience.            (line  36)
-* parameter:                             Basic Usage.         (line 315)
+* parameter:                             Basic Usage.         (line 323)
 * parameter, defined:                    Terminology.         (line   6)
 * parameters:                            Parser function additional parameters.
                                                               (line   6)
 * parser parameters:                     Parser function additional parameters.
                                                               (line   6)
-* patching:                              Installation.        (line 127)
+* patching:                              Installation.        (line 124)
 * print_errors:                          Parser function additional parameters.
                                                               (line  38)
 * purpose:                               Basic Usage.         (line  55)
 * required:                              Basic Usage.         (line 135)
 * required option, defined:              Terminology.         (line   6)
-* requirements:                          Installation.        (line  98)
+* requirements:                          Installation.        (line  95)
 * section:                               Basic Usage.         (line 234)
 * short:                                 Basic Usage.         (line  86)
 * short option, defined:                 Terminology.         (line   6)
@@ -2441,67 +2732,68 @@ Node: Top1105
 Node: Audience3337
 Node: Copying5108
 Node: Installation5917
-Ref: Installation-Footnote-110896
-Ref: Installation-Footnote-210943
-Ref: Installation-Footnote-310990
-Ref: Installation-Footnote-411036
-Node: Basic Usage11081
-Ref: hidden17926
-Ref: fullhelp17926
-Ref: addedoptions19831
-Ref: showrequired32294
-Ref: helpoutput32544
-Ref: Basic Usage-Footnote-138200
-Ref: Basic Usage-Footnote-238228
-Ref: Basic Usage-Footnote-338256
-Ref: Basic Usage-Footnote-438283
-Ref: Basic Usage-Footnote-538311
-Ref: Basic Usage-Footnote-638364
-Ref: Basic Usage-Footnote-738392
-Ref: Basic Usage-Footnote-838420
-Ref: Basic Usage-Footnote-938448
-Ref: Basic Usage-Footnote-1038476
-Ref: Basic Usage-Footnote-1138593
-Ref: Basic Usage-Footnote-1238622
-Ref: Basic Usage-Footnote-1338743
-Ref: Basic Usage-Footnote-1438846
-Ref: Basic Usage-Footnote-1538875
-Ref: Basic Usage-Footnote-1638904
-Ref: Basic Usage-Footnote-1738933
-Ref: Basic Usage-Footnote-1838987
-Ref: Basic Usage-Footnote-1939056
-Ref: Basic Usage-Footnote-2039176
-Ref: Basic Usage-Footnote-2139241
-Ref: Basic Usage-Footnote-2239325
-Ref: Basic Usage-Footnote-2339384
-Node: Invoking gengetopt39443
-Ref: Invoking gengetopt-Footnote-149370
-Ref: Invoking gengetopt-Footnote-249398
-Ref: Invoking gengetopt-Footnote-349428
-Node: Terminology49456
-Node: Options with enumerated values54346
-Node: Group options56948
-Node: Mode options59002
-Node: Parser function additional parameters63261
-Ref: Parser function additional parameters-Footnote-166376
-Ref: Parser function additional parameters-Footnote-266404
-Ref: Parser function additional parameters-Footnote-366439
-Node: Configuration files67196
-Ref: Configuration files-Footnote-172696
-Ref: Configuration files-Footnote-272887
-Node: Multiple Options73053
-Node: String Parsers and Multiple Parsers76054
-Ref: String Parsers and Multiple Parsers-Footnote-181723
-Node: No getopt_long81896
-Node: Include the getopt_long code into the parser82630
-Node: Use automake/autoconf83899
-Node: Use Gnulib84771
-Ref: Use Gnulib-Footnote-188902
-Node: Use getopt_long sources88947
-Node: Bugs91132
-Node: Getopt and subsequent calls91906
-Ref: Getopt and subsequent calls-Footnote-193833
-Node: Mailing Lists94079
-Node: Index94879
+Ref: Installation-Footnote-110744
+Ref: Installation-Footnote-210860
+Ref: Installation-Footnote-310907
+Ref: Installation-Footnote-410954
+Ref: Installation-Footnote-511000
+Node: Basic Usage11045
+Ref: hidden17890
+Ref: fullhelp17890
+Ref: addedoptions19795
+Ref: showrequired44404
+Ref: helpoutput44654
+Ref: Basic Usage-Footnote-150310
+Ref: Basic Usage-Footnote-250338
+Ref: Basic Usage-Footnote-350366
+Ref: Basic Usage-Footnote-450393
+Ref: Basic Usage-Footnote-550421
+Ref: Basic Usage-Footnote-650474
+Ref: Basic Usage-Footnote-750502
+Ref: Basic Usage-Footnote-850530
+Ref: Basic Usage-Footnote-950558
+Ref: Basic Usage-Footnote-1050586
+Ref: Basic Usage-Footnote-1150703
+Ref: Basic Usage-Footnote-1250732
+Ref: Basic Usage-Footnote-1350853
+Ref: Basic Usage-Footnote-1450956
+Ref: Basic Usage-Footnote-1550985
+Ref: Basic Usage-Footnote-1651014
+Ref: Basic Usage-Footnote-1751043
+Ref: Basic Usage-Footnote-1851097
+Ref: Basic Usage-Footnote-1951166
+Ref: Basic Usage-Footnote-2051286
+Ref: Basic Usage-Footnote-2151351
+Ref: Basic Usage-Footnote-2251435
+Ref: Basic Usage-Footnote-2351494
+Node: Invoking gengetopt51553
+Ref: Invoking gengetopt-Footnote-161480
+Ref: Invoking gengetopt-Footnote-261508
+Ref: Invoking gengetopt-Footnote-361538
+Node: Terminology61566
+Node: Options with enumerated values66456
+Node: Group options69058
+Node: Mode options71112
+Node: Parser function additional parameters75371
+Ref: Parser function additional parameters-Footnote-178486
+Ref: Parser function additional parameters-Footnote-278514
+Ref: Parser function additional parameters-Footnote-378549
+Node: Configuration files79306
+Ref: Configuration files-Footnote-186574
+Ref: Configuration files-Footnote-286765
+Node: Multiple Options86931
+Node: String Parsers and Multiple Parsers89932
+Ref: String Parsers and Multiple Parsers-Footnote-195601
+Node: No getopt_long95774
+Node: Include the getopt_long code into the parser96508
+Node: Use automake/autoconf97777
+Node: Use Gnulib98649
+Ref: Use Gnulib-Footnote-1102780
+Node: Use getopt_long sources102825
+Node: Bugs105010
+Node: Getopt and subsequent calls105784
+Ref: Getopt and subsequent calls-Footnote-1107711
+Node: Mailing Lists107957
+Node: Index108757
 
 End Tag Table

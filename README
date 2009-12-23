@@ -42,16 +42,23 @@ You can download it from GNU's ftp site:
 ftp://ftp.gnu.org/gnu/gengetopt/ or from one of its mirrors (see
 http://www.gnu.org/prep/ftp.html ).
 
-      Anonymous CVS Access
+    Anonymous Git Checkout
 
-This project's CVS repository can be checked out through anonymous
-(pserver) CVS with the following instruction:
+This project's git repository can be checked out through 
+the following clone instruction:
 
-cvs -z3 -d:pserver:anonymous@cvs.savannah.gnu.org:/sources/gengetopt co gengetopt
+     git clone git://git.savannah.gnu.org/gengetopt.git
 
 Further instructions can be found at the address:
-http://savannah.gnu.org/projects/gengetopt .
 
+http://savannah.gnu.org/projects/gengetopt.
+
+And the git repository can also browsed on-line at
+
+http://git.savannah.gnu.org/cgit/gengetopt.git.
+
+Since version 2.22.4 of Gengetopt the CVS repository was 
+dismissed in favor of Git (http://git-scm.com/). 
 
 
 
