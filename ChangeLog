@@ -1,3 +1,8 @@
+2009-12-23  Lorenzo Bettini  <bettini@bettini-prog-karmic>
+
+	* src/Makefile.am (gengetopt_SOURCES): put
+	generated bison and flex files in sources
+
 2009-12-18  Lorenzo Bettini  <bettini@bettini-laptop-karmic>
 
 	* src/skels/c_source.h_skel: removed other gcc warnings

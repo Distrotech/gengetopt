@@ -17,6 +17,7 @@ Version 2.22.3
    * #include <getopt.h> in the generated files, instead of "getopt.h"
    * generated functions use prototypes with char ** instead of
 	char *const *
+   * removed other gcc compilation warnings on generated files
 
 Version 2.22.2
 

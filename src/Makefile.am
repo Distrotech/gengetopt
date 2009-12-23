@@ -27,7 +27,7 @@ SUFFIXES = .text .c .ggo
 
 bin_PROGRAMS = gengetopt
 
-gengetopt_SOURCES = parser.yy scanner.ll \
+gengetopt_SOURCES = parser.cc scanner.cc \
 argsdef.c cmdline.ggo gengetopt.cc gm.cc \
 yyerror.cc gm_utils.cpp fileutils.cpp acceptedvalues.cpp ggos.cpp
 
@@ -52,6 +52,7 @@ cmdline.c cmdline.h my_sstream.h my_string.h my_map.h \
 global_opts.h \
 ggo_options.h \
 groups.h \
+parser.yy scanner.ll \
 $(pkgdata_DATA)
 
 # version of gengetopt linked to the ElectricFence library
@@ -81,7 +82,7 @@ AM_LFLAGS = -i
 
 cmdline.h: cmdline.c
 
-BUILT_SOURCES = cmdline.h cmdline.c
+BUILT_SOURCES = cmdline.h cmdline.c parser.cc scanner.cc
 
 # automatically generate gengetopt_strdup() from the replacement function
 # strdup().
