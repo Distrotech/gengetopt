@@ -16,7 +16,7 @@
 # with gengetopt; see the file COPYING. If not, write to the Free Software 
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. 
 
-SUBDIRS = includes skels
+SUBDIRS = includes skels tests
 
 #INCLUDES = -I@top_srcdir@/src/skels
 
@@ -27,9 +27,14 @@ SUFFIXES = .text .c .ggo
 
 bin_PROGRAMS = gengetopt
 
-gengetopt_SOURCES = parser.cc scanner.cc \
-argsdef.c cmdline.ggo gengetopt.cc gm.cc \
+noinst_LTLIBRARIES = libgengetopt.la
+
+libgengetopt_la_SOURCES = parser.cc scanner.cc \
+globals.cc \
+argsdef.c cmdline.ggo gm.cc \
 yyerror.cc gm_utils.cpp fileutils.cpp acceptedvalues.cpp ggos.cpp
+
+gengetopt_SOURCES = gengetopt.cc
 
 scanner.cc: $(srcdir)/scanner.ll
 	$(LEX) $(LFLAGS) -o $(srcdir)/scanner.cc $(srcdir)/scanner.ll
@@ -45,7 +50,11 @@ langdefparser.h: langdefparser.cc
 # these are for gnulib
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl
 
-LDADD = $(top_builddir)/gl/libgnu.la @LTLIBOBJS@ skels/libgen.la
+libgengetopt_la_LIBADD = $(top_builddir)/gl/libgnu.la \
+	@LTLIBOBJS@ \
+	skels/libgen.la
+
+LDADD = $(top_builddir)/src/libgengetopt.la
 
 EXTRA_DIST = parser.h argsdef.h gengetopt.h ggos.h gm.h gnugetopt.h \
 cmdline.c cmdline.h my_sstream.h my_string.h my_map.h \
@@ -53,6 +62,7 @@ global_opts.h \
 ggo_options.h \
 groups.h \
 parser.yy scanner.ll \
+globals.h \
 $(pkgdata_DATA)
 
 # version of gengetopt linked to the ElectricFence library

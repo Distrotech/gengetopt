@@ -50,15 +50,14 @@ extern int yyparse () ;
 #include "skels/copyright.h"
 
 #include "yyerror.h"
+#include "globals.h"
 
-gengetopt_option_list gengetopt_options;
 char * gengetopt_package = NULL;
 char * gengetopt_version = NULL;
 char * gengetopt_purpose = NULL;
 char * gengetopt_description = NULL;
 char * gengetopt_usage = NULL;
 
-groups_collection_t gengetopt_groups;
 modes_collection_t gengetopt_modes;
 
 int gengetopt_count_line = 1;

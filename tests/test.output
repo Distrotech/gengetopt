@@ -450,6 +450,7 @@ optc_help:       --optc              string c
 optd_help:   -d, --optd              string d (mandatory)
 mopt_help:   -m, --mopt=INT          option of my mode
 *** test_no_options
+*** test_newlines
 *** test_show_help.sh
 test_all_opts 1.0
 
@@ -1265,6 +1266,14 @@ Usage: test_no_options [OPTIONS]... [FILES]...
 
   -h, --help     Print help and exit
   -V, --version  Print version and exit
+*** test_newlines -h
+GNU gengetopt 2.22.4
+
+Usage: gengetopt [OPTIONS]... [FILES]...
+
+  -h, --help        Print help and exit
+  -V, --version     Print version and exit
+  -F, --format=fmt  this is the format used for find -printf  (default=`%p	%s\n                      ')
 *** test_all_opts --full-help
 test_all_opts 1.0
 

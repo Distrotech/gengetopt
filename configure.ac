@@ -154,6 +154,7 @@ AC_CONFIG_FILES([Makefile
            src/Makefile 
            src/includes/Makefile 
            src/skels/Makefile
+           src/tests/Makefile
            doc/Makefile 
            gl/Makefile
            tests/Makefile
