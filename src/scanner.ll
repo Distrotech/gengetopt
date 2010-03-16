@@ -124,6 +124,7 @@ tabs [\t]+
 <INITIAL>[[:alnum:]-]|\?	 updateTokenInfo (-1); yylval.chr = yytext[0]; return TOK_CHAR;
 
 <INITIAL>\" { updateTokenInfo (-1); DEB("start string"); PUSH(STRING_STATE) ; }
+<STRING_STATE>\\\\n { updateTokenInfo (2); buffer("\\\\n"); }
 <STRING_STATE>\n+ {  update_count_line (yytext); buffer( yytext ) ; }
 <STRING_STATE>\\{ws}*\n { update_count_line (yytext); /* a line break */ }
 <STRING_STATE>\\\" { updateTokenInfo (-1); buffer(yytext); }
