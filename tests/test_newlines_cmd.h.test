@@ -43,7 +43,7 @@ struct gengetopt_args_info
 {
   const char *help_help; /**< @brief Print help and exit help description.  */
   const char *version_help; /**< @brief Print version and exit help description.  */
-  char * format_arg;	/**< @brief this is the \\nformat used for find -printf (default='%p\t%s\\n').  */
+  char * format_arg;	/**< @brief this is the \\nformat used for find -printf (default='%p\\t%s\\n').  */
   char * format_orig;	/**< @brief this is the \\nformat used for find -printf original value given at command line.  */
   const char *format_help; /**< @brief this is the \\nformat used for find -printf help description.  */
   

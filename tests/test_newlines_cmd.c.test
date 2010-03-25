@@ -34,7 +34,7 @@ const char *gengetopt_args_info_description = "";
 const char *gengetopt_args_info_help[] = {
   "  -h, --help        Print help and exit",
   "  -V, --version     Print version and exit",
-  "  -F, --format=fmt  this is the \\nformat used for find -printf  \n                      (default=`%p\t%s\\n')",
+  "  -F, --format=fmt  this is the \\nformat used for find -printf  \n                      (default=`%p\\t%s\\n')",
     0
 };
 
@@ -67,7 +67,7 @@ static
 void clear_args (struct gengetopt_args_info *args_info)
 {
   FIX_UNUSED (args_info);
-  args_info->format_arg = gengetopt_strdup ("%p\t%s\\n");
+  args_info->format_arg = gengetopt_strdup ("%p\\t%s\\n");
   args_info->format_orig = NULL;
   
 }
@@ -469,7 +469,7 @@ test_newlines_cmd_parser_internal (
         
           if (update_arg( (void *)&(args_info->format_arg), 
                &(args_info->format_orig), &(args_info->format_given),
-              &(local_args_info.format_given), optarg, 0, "%p\t%s\\n", ARG_STRING,
+              &(local_args_info.format_given), optarg, 0, "%p\\t%s\\n", ARG_STRING,
               check_ambiguity, override, 0, 0,
               "format", 'F',
               additional_error))

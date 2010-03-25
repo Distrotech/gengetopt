@@ -1274,7 +1274,7 @@ Usage: gengetopt [OPTIONS]... [FILES]...
   -h, --help        Print help and exit
   -V, --version     Print version and exit
   -F, --format=fmt  this is the \nformat used for find -printf  
-                      (default=`%p	%s\n')
+                      (default=`%p\t%s\n')
 *** test_all_opts --full-help
 test_all_opts 1.0
 
