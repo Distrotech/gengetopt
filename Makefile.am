@@ -17,7 +17,7 @@
 
 ACLOCAL_AMFLAGS = -I m4 -I gl/m4
 
-EXTRA_DIST = autogen.sh configure TODO LICENSE gl/m4/gnulib-cache.m4
+EXTRA_DIST = configure TODO LICENSE gl/m4/gnulib-cache.m4
 SUBDIRS = gl src doc tests
 
 gengetoptdoc_DATA = ChangeLog COPYING NEWS THANKS INSTALL README LICENSE

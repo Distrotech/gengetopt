@@ -1,4 +1,4 @@
-# Copyright (C) 1999-2007  Free Software Foundation, Inc.
+# Copyright (C) 1999-2009  Free Software Foundation, Inc.
 #  
 # This file is part of GNU gengetopt 
 #
@@ -30,7 +30,7 @@ bin_PROGRAMS = gengetopt
 noinst_LTLIBRARIES = libgengetopt.la
 
 libgengetopt_la_SOURCES = parser.cc scanner.cc \
-globals.cc \
+globals.cpp \
 argsdef.c cmdline.ggo gm.cc \
 yyerror.cc gm_utils.cpp fileutils.cpp acceptedvalues.cpp ggos.cpp
 
