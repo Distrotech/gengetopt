@@ -1,3 +1,9 @@
+2010-03-25  bettini  <bettini@bettini-laptop>
+
+	* src/gm_utils.cpp (not_newlines): removed code that
+	generated a bug for escaped newlines
+	* src/scanner.ll: handle case for \n different from \\n
+
 2009-12-23  Lorenzo Bettini  <bettini@bettini-prog-karmic>
 
 	* src/Makefile.am (gengetopt_SOURCES): put

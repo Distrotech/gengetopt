@@ -7,6 +7,10 @@ Please send gengetopt bug reports to bug-gengetopt at gnu.org
 For details about the new features, you can take a look at:
 http://tronprog.blogspot.com/search/label/gengetopt
 
+Version 2.22.5
+
+   * handle escaped newline chars in the .ggo file correctly
+
 Version 2.22.4
 
    * switched to git repository

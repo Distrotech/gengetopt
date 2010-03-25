@@ -265,11 +265,6 @@ int not_newlines(const string &buf, int &num_of_newlines) {
         return notnewline;
     }
 
-    if (buf.size() > 1 && buf[0] == '\\' && buf[1] == 'n') {
-        num_of_newlines = 1;
-        return 2;
-    }
-
     return 0;
 }
 

@@ -34,7 +34,7 @@ const char *gengetopt_args_info_description = "";
 const char *gengetopt_args_info_help[] = {
   "  -h, --help        Print help and exit",
   "  -V, --version     Print version and exit",
-  "  -F, --format=fmt  this is the format used for find -printf  (default=`%p\t%s\\n                      ')",
+  "  -F, --format=fmt  this is the \\nformat used for find -printf  \n                      (default=`%p\t%s\\n')",
     0
 };
 
@@ -464,7 +464,7 @@ test_newlines_cmd_parser_internal (
           test_newlines_cmd_parser_free (&local_args_info);
           exit (EXIT_SUCCESS);
 
-        case 'F':	/* this is the format used for find -printf.  */
+        case 'F':	/* this is the \\nformat used for find -printf.  */
         
         
           if (update_arg( (void *)&(args_info->format_arg), 
