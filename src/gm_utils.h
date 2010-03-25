@@ -94,19 +94,14 @@ bool is_numeric(const gengetopt_option *opt);
 void wrap_cstr (string &wrapped, unsigned int from_column, unsigned int second_indent, const string &orig);
 
 /**
- * Searches for newline characters.
+ * Searches for characters which are not newlines.
  *
  * @param buf where to search for new characters
- * @param num_of_newlines where the number of newlines will be stored
- * @return the position in the string after the new line char
+ * @param num_of_newlines where the number of newlines
+ * before the first non newline char will be stored
+ * @return the position in the string after the (possible) new line char
  */
-int newlines(const string &buf, int &num_of_newlines);
-
-/**
- * @return whether the first character(s) of the passed string is a newline
- * character \n
- */
-bool char_is_newline(const string &buf);
+int not_newlines(const string &buf, int &num_of_newlines);
 
 /**
  * Function object to print something into a stream (to be used with for_each)

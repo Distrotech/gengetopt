@@ -248,8 +248,9 @@ bool has_values() {
     return false;
 }
 
-int newlines(const string &buf, int &num_of_newlines) {
+int not_newlines(const string &buf, int &num_of_newlines) {
     num_of_newlines = 0;
+    // searches for the first non newline char
     string::size_type notnewline = buf.find_first_not_of("\r\n");
 
     if (notnewline == string::npos) {
@@ -272,14 +273,6 @@ int newlines(const string &buf, int &num_of_newlines) {
     return 0;
 }
 
-bool char_is_newline(const string &buf) {
-    if (buf.size() > 0 && buf[0] == '\n') {
-        return true;
-    }
-
-    return false;
-}
-
 void wrap_cstr(string& wrapped, unsigned int from_column,
         unsigned int second_indent, const string &orig) {
     int next_space = from_column;
@@ -294,7 +287,7 @@ void wrap_cstr(string& wrapped, unsigned int from_column,
     while (*out_buf) {
         // check for a new line
         if (*out_buf) {
-            if ((newline_chars = newlines(out_buf, num_of_newlines))) {
+            if ((newline_chars = not_newlines(out_buf, num_of_newlines))) {
                 for (int i = 1; i <= num_of_newlines; ++i)
                     stream << "\\n";
 
@@ -312,7 +305,8 @@ void wrap_cstr(string& wrapped, unsigned int from_column,
             }
         }
         // search next whitespace, i.e., next word
-        while ((*out_buf) && (*out_buf != ' ') && !newlines(out_buf, num_of_newlines)) {
+        while ((*out_buf) && (*out_buf != ' ') &&
+                !not_newlines(out_buf, num_of_newlines)) {
             next_word += *out_buf++;
             next_space++;
         }
