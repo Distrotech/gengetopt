@@ -451,6 +451,7 @@ optd_help:   -d, --optd              string d (mandatory)
 mopt_help:   -m, --mopt=INT          option of my mode
 *** test_no_options
 *** test_newlines
+*** test_text
 *** test_show_help.sh
 test_all_opts 1.0
 
@@ -1275,6 +1276,20 @@ Usage: gengetopt [OPTIONS]... [FILES]...
   -V, --version     Print version and exit
   -F, --format=fmt  this is the \nformat used for find -printf  
                       (default=`%p\t%s\n')
+*** test_text -h
+GNU gengetopt 2.22.4
+
+Usage: gengetopt [OPTIONS]... [FILES]...
+
+  -h, --help              Print help and exit
+  -V, --version           Print version and exit
+
+Section 1:
+  -s, --str-opt=filename  A string option, for a filename
+
+Section 2:
+      explain more about the string option
+  -i, --int-opt=INT       A int option
 *** test_all_opts --full-help
 test_all_opts 1.0
 
