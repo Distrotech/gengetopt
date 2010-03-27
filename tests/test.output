@@ -1286,10 +1286,11 @@ Usage: gengetopt [OPTIONS]... [FILES]...
 
 Section 1:
   -s, --str-opt=filename  A string option, for a filename
+      explain more about the string option      some text after section 2
 
 Section 2:
-      explain more about the string option
   -i, --int-opt=INT       A int option
+      some final text
 *** test_all_opts --full-help
 test_all_opts 1.0
 

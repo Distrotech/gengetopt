@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <string>
 
 #include "my_sstream.h"
 
@@ -48,6 +49,9 @@ static int gengetopt_version_given = 0;
 static int gengetopt_purpose_given = 0;
 static int gengetopt_usage_given = 0;
 static int gengetopt_description_given = 0;
+
+/// the last option parsed
+static gengetopt_option *current_option = 0;
 
 extern int yylex (void) ;
 
@@ -336,7 +340,17 @@ sectiondef
 text
   : TOK_TEXT quoted_string
             {
-  gengetopt_set_text($2);
+            	if (current_option) {
+            		std::string current_option_text;
+            		if (current_option->text_after) {
+            			current_option_text = std::string(current_option->text_after) + $2;
+            			current_option->text_after = strdup(current_option_text.c_str()); 
+            		} else {
+	            		current_option->text_after = strdup($2);
+	            	}
+            	} else {
+					gengetopt_set_text($2);
+  				}
             }
         ;
 
@@ -385,6 +399,7 @@ option
 	      o = gengetopt_add_option ($5);
 	      check_result(o, $5);
 	      check_error;
+	      current_option = $5;
 	    }
 	;
 

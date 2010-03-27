@@ -10,4 +10,8 @@ text            "      explain more about the string option"
 
 section         "Section 2" 
 
+text            "      some text after section 2"
+
 option          "int-opt"   i "A int option"  int optional 
+
+text            "      some final text"

@@ -62,3 +62,14 @@ Probably it's better to have "option parts" and distinguishing
 between standard options, sections, text, modes, etc.
 This requires some refactoring!
 But would this work for sections with only hidden options? No I guess.
+
+Possible fix found by setting the text in the parser
+- apply the current_option solution to other options (mode and group)
+- deal with text coming after a section (check current_section), but this would not
+  work in case there more text occurrences?  It should, test it.
+  and reset to 0 parsed_a_section after having parsed an option.
+- but do this also for modes and groups?
+
+Probably we should avoid to check whether the option after a section is hidden:
+does a section with only hidden options make sense?
+Yes probably it's better to keep this feature.
