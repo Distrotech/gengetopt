@@ -36,10 +36,10 @@ A brief text description before the other options.
                             require a line break
   -i, --int-opt=INT       A int option (mandatory)
 
+
 more involved options:
   the following options
   are more complex
-
       --flag-opt          A flag option  (default=off)
   -F, --funct-opt         A function option
 

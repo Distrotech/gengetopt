@@ -1,8 +1,8 @@
 This is ../../doc/gengetopt.info, produced by makeinfo version 4.13
 from ../../doc/gengetopt.texinfo.
 
-This manual is for GNU Gengetopt (version 2.22.4, 23 December 2009), a
-tool to write command line option parsers for C programs.
+This manual is for GNU Gengetopt (version 2.22.4, 6 May 2010), a tool
+to write command line option parsers for C programs.
 
    Copyright (C) 2001 - 2009 Free Software Foundation, Inc.
 
@@ -36,8 +36,8 @@ programs.
 
    This file documents GNU Gengetopt version 2.22.4.
 
-   This manual is for GNU Gengetopt (version 2.22.4, 23 December 2009),
-a tool to write command line option parsers for C programs.
+   This manual is for GNU Gengetopt (version 2.22.4, 6 May 2010), a
+tool to write command line option parsers for C programs.
 
    Copyright (C) 2001 - 2009 Free Software Foundation, Inc.
 
@@ -658,9 +658,12 @@ these additional names (default is `FILES').
        char * str_opt_arg;       /**< @brief A string option, for a filename.  */
        char * str_opt_orig;       /**< @brief A string option, for a filename original value given at command line.  */
        const char *str_opt_help; /**< @brief A string option, for a filename help description.  */
-       int my_opt_arg;       /**< @brief Another integer option, this time the description of the option should be \"quite\" long to require wrapping... possibly more than one wrapping :-) especially if I\nrequire a line break.  */
-       char * my_opt_orig;       /**< @brief Another integer option, this time the description of the option should be \"quite\" long to require wrapping... possibly more than one wrapping :-) especially if I\nrequire a line break original value given at command line.  */
-       const char *my_opt_help; /**< @brief Another integer option, this time the description of the option should be \"quite\" long to require wrapping... possibly more than one wrapping :-) especially if I\nrequire a line break help description.  */
+       int my_opt_arg;       /**< @brief Another integer option, this time the description of the option should be \"quite\" long to require wrapping... possibly more than one wrapping :-) especially if I
+       require a line break.  */
+       char * my_opt_orig;       /**< @brief Another integer option, this time the description of the option should be \"quite\" long to require wrapping... possibly more than one wrapping :-) especially if I
+       require a line break original value given at command line.  */
+       const char *my_opt_help; /**< @brief Another integer option, this time the description of the option should be \"quite\" long to require wrapping... possibly more than one wrapping :-) especially if I
+       require a line break help description.  */
        int int_opt_arg;       /**< @brief A int option.  */
        char * int_opt_orig;       /**< @brief A int option original value given at command line.  */
        const char *int_opt_help; /**< @brief A int option help description.  */
@@ -938,6 +941,73 @@ file name.
 
    And here's how these functions can be used inside the main program:
 
+     /* main1.cc */
+     /* we try to use gengetopt generated file in a C++ program */
+     /* we don't use autoconf and automake vars */
+
+     #include <iostream>
+     #include "stdlib.h"
+
+     #include "cmdline1.h"
+
+     using std::cout;
+     using std::endl;
+
+     int
+     main (int argc, char **argv)
+     {
+       gengetopt_args_info args_info;
+
+       cout << "This one is from a C++ program" << endl ;
+       cout << "Try to launch me with some options" << endl ;
+       cout << "(type sample1 --help for the complete list)" << endl ;
+       cout << "For example: ./sample1 *.* --funct-opt" << endl ;
+
+       /* let's call our cmdline parser */
+       if (cmdline_parser (argc, argv, &args_info) != 0)
+         exit(1) ;
+
+       cout << "Here are the options you passed..." << endl;
+
+       for ( unsigned i = 0 ; i < args_info.inputs_num ; ++i )
+         cout << "file: " << args_info.inputs[i] << endl ;
+
+       if ( args_info.funct_opt_given )
+         cout << "You chose --funct-opt or -F." << endl ;
+
+       if ( args_info.str_opt_given )
+         cout << "You inserted " << args_info.str_opt_arg << " for " <<
+           "--str-opt option." << endl ;
+
+       if ( args_info.int_opt_given )
+         cout << "This is the integer you input: " <<
+           args_info.int_opt_arg << "." << endl;
+
+       if (args_info.flag_opt_given)
+         cout << "The flag option was given!" << endl;
+
+       cout << "The flag is " << ( args_info.flag_opt_flag ? "on" : "off" ) <<
+         "." << endl ;
+
+       if (args_info.enum_opt_given) {
+         cout << "enum-opt value: " << args_info.enum_opt_arg << endl;
+         cout << "enum-opt (original specified) value: "
+             << args_info.enum_opt_orig << endl;
+       }
+
+       if (args_info.secret_given)
+         cout << "Secret option was specified: " << args_info.secret_arg
+             << endl;
+
+       cout << args_info.def_opt_arg << "! ";
+
+       cout << "Have a nice day! :-)" << endl ;
+
+       cmdline_parser_free (&args_info); /* release allocated memory */
+
+       return 0;
+     }
+
    Now you can compile `main1.cc' and the `cmdline1.c' generated by
 gengetopt and link all together to obtain `sample1' executable:
 
@@ -1037,10 +1107,10 @@ further explanation for these command line options).
                                  require a line break
        -i, --int-opt=INT       A int option (mandatory)
 
+
      more involved options:
        the following options
        are more complex
-
            --flag-opt          A flag option  (default=off)
        -F, --funct-opt         A function option
 
@@ -1100,10 +1170,10 @@ actually printed and the details of `--func-opt' are printed too:
                                  require a line break
        -i, --int-opt=INT       A int option (mandatory)
 
+
      more involved options:
        the following options
        are more complex
-
            --flag-opt          A flag option  (default=off)
        -F, --funct-opt         A function option
 
@@ -1231,8 +1301,8 @@ This is the output of `gengetopt --help':
        -S, --string-parser           generate a string parser (the string contains
                                        the command line)
 
-     Additional options:
 
+     Additional options:
        -G, --include-getopt          adds the code for getopt_long in the generated
                                        C file
        -n, --no-handle-help          do not handle --help|-h automatically
@@ -1671,6 +1741,34 @@ options.
 
    For instance, let us consider the file `test_modes_cmd.ggo':
 
+     package "test_modes"
+     version "1.0"
+
+     section "some non mode options"
+
+     option "no-mode" N "a generic option not beloging to any mode" optional
+     option "no-mode2" - "another generic option not beloging to any mode" string optional
+
+     section "some modes just for testing"
+
+     defmode "mode 2"
+     defmode "my mode"
+     defmode "mode1" modedesc="any option of this mode is in contrast with any \
+     option of the other mode\nNotice that this description is quite long so \
+     it may spawn many lines...              \
+     fortunately gengetopt will wrap it for you :-)"
+
+     modeoption "opta" a "string a" multiple mode="mode1" optional
+     modeoption "optA" A "string A" string argoptional mode="mode1" required
+     modeoption "optAmul" M "string M"
+             argoptional string mode="mode1" multiple optional
+     modeoption "optb" b "string b" mode="mode1" optional
+
+     modeoption "optc" - "string c" mode="mode 2" optional
+     modeoption "optd" d "string d" mode="mode 2" required
+
+     modeoption "mopt" m "option of my mode" int optional mode="my mode" optional
+
 Now, we use the program `test_modes' (that uses the generated parser
 for the input file above) to demonstrate how the parser generated by
 gengetopt perform checks on mode options.
@@ -1905,6 +2003,94 @@ other configuration files) in a configuration file, by using the
    For instance here's a program that uses this feature (this is the
 test `test_conf_parser'):
 
+     /* test_conf_parser.c test */
+
+     /* test all kinds of options and the conf file parser */
+
+     #include <stdlib.h>
+     #include <stdio.h>
+
+     #include "test_conf_parser_cmd.h"
+
+     static struct my_args_info args_info;
+
+     int
+     main (int argc, char **argv)
+     {
+       unsigned int i;
+       int result = 0;
+
+       struct test_conf_parser_cmd_parser_params *params;
+
+       /* initialize the parameters structure */
+       params = test_conf_parser_cmd_parser_params_create();
+
+       /* call the command line parser */
+       if (test_conf_parser_cmd_parser (argc, argv, &args_info) != 0) {
+         result = 1;
+         goto stop;
+       }
+
+       /*
+          override command line options,
+          but do not initialize args_info, check for required options.
+          NOTICE: we must NOT skip the 0 assignment to initialize,
+          since its default value is 1 and override defaults to 0
+          while check_required is already set to its default value, 1
+       */
+       params->initialize = 0;
+       params->override = 1;
+
+       /* call the config file parser */
+       if (test_conf_parser_cmd_parser_config_file
+           (args_info.conf_file_arg, &args_info, params) != 0)
+         {
+           result = 1;
+           goto stop;
+         }
+
+       printf ("value of required: %s\n", args_info.required_arg);
+       printf ("value of string: %s\n", args_info.string_arg);
+       printf ("value of no-short_given: %d\n", args_info.no_short_given);
+       printf ("value of int: %d\n", args_info.int_arg);
+       printf ("value of float: %f\n", args_info.float_arg);
+
+       printf ("value of multi-string_given: %d\n", args_info.multi_string_given);
+       for (i = 0; i < args_info.multi_string_given; i++)
+         printf ("  value of multi-string: %s\n", args_info.multi_string_arg [i]);
+
+       printf ("value of multi-string-def_given: %d\n",
+               args_info.multi_string_def_given);
+       for (i = 0; i < args_info.multi_string_def_given; ++i)
+         printf ("  value of multi-string-def: %s\n",
+                 args_info.multi_string_def_arg [i]);
+       if (!args_info.multi_string_def_given && args_info.multi_string_def_arg [0])
+         printf ("default value of multi-string-def: %s\n",
+                 args_info.multi_string_def_arg [0]);
+
+       printf ("value of opta: %s\n", args_info.opta_arg);
+
+       printf ("noarg given %d times\n", args_info.noarg_given);
+       printf ("noarg_noshort given %d times\n", args_info.noarg_noshort_given);
+
+       printf ("opt-arg given: %d\n", args_info.opt_arg_given);
+       printf ("opt-arg value: %s\n", (args_info.opt_arg_arg ? args_info.opt_arg_arg : "not given"));
+
+       if (args_info.file_save_given) {
+         if (test_conf_parser_cmd_parser_file_save (args_info.file_save_arg, &args_info) == EXIT_FAILURE)
+           result = 1;
+         else
+           printf ("saved configuration file %s\n", args_info.file_save_arg);
+       }
+
+      stop:
+       /* deallocate structures */
+       test_conf_parser_cmd_parser_free (&args_info);
+       free (params);
+
+       return result;
+     }
+
    So if we use the following config file
 
      # required option
@@ -2073,6 +2259,32 @@ Then the command line options can be collected like that
 
 Then if this program is called with the following command line options
 
+     /* test options that can be given more than once */
+
+     #include <stdlib.h>
+     #include <stdio.h>
+
+     #include "test_multiple_cmd.h"
+
+     static struct gengetopt_args_info args_info;
+
+     int
+     main (int argc, char **argv)
+     {
+       int i = 0;
+
+       if (test_multiple_cmd_parser (argc, argv, &args_info) != 0)
+         exit(1) ;
+
+       for (i = 0; i < args_info.string_given; ++i)
+         printf ("passed string: %s\n", args_info.string_arg[i]);
+
+       for (i = 0; i < args_info.int_given; ++i)
+         printf ("passed int: %d\n", args_info.int_arg[i]);
+
+       return 0;
+     }
+
 The output of the program will be
 
      passed string: world
@@ -2212,6 +2424,60 @@ and the second one is:
 
    These last two files are processed with gengetopt using the
 `--string-parser'.  Let's put everything together in this main file:
+
+     #include <stdio.h>
+     #include <stdlib.h>
+
+     #include "test_main_cmdline_cmd.h"
+     #include "test_first_cmdline_cmd.h"
+     #include "test_second_cmdline_cmd.h"
+
+     int
+     main(int argc, char **argv)
+     {
+       struct gengetopt_args_info main_args_info;
+       struct test_first_cmdline_cmd_struct first_args_info;
+       struct test_second_cmdline_cmd_struct second_args_info;
+       int exit_code = 0;
+       unsigned int i, j;
+
+       if (test_main_cmdline_cmd_parser (argc, argv, &main_args_info) != 0) {
+         exit_code = 1;
+         return exit_code;
+       }
+
+       for (j = 0; j < main_args_info.second_cmd_given; ++j) {
+         printf("second cmdline: %s\n", main_args_info.second_cmd_arg[j]);
+         if (test_second_cmdline_cmd_parser_string
+            (main_args_info.second_cmd_arg[j], &second_args_info, argv[0]) == 0) {
+           if (second_args_info.option_a_given)
+            printf("  --option-a: %s\n", second_args_info.option_a_arg);
+           if (second_args_info.option_b_given)
+            printf("  --option-b: %s\n", second_args_info.option_b_arg);
+           for (i = 0; i < second_args_info.my_multi_given; ++i)
+            printf("  --my-multi: %s\n", second_args_info.my_multi_arg[i]);
+
+           test_second_cmdline_cmd_parser_free (&second_args_info);
+         }
+       }
+
+       for (j = 0; j < main_args_info.first_cmd_given; ++j) {
+         printf("first cmdline: %s\n", main_args_info.first_cmd_arg[j]);
+         if (test_first_cmdline_cmd_parser_string
+            (main_args_info.first_cmd_arg[j], &first_args_info, argv[0]) == 0) {
+           if (first_args_info.option_a_given)
+            printf("  --option-a: %d\n", first_args_info.option_a_arg);
+           for (i = 0; i < first_args_info.multi_given; ++i)
+            printf("  --multi: %s\n", first_args_info.multi_arg[i]);
+
+           test_first_cmdline_cmd_parser_free (&first_args_info);
+         }
+       }
+
+       test_main_cmdline_cmd_parser_free (&main_args_info);
+
+       return exit_code;
+     }
 
    Notice that in the `for' loops we always free the elements of the
 argument structures in order to avoid memory leaks.
@@ -2613,7 +2879,7 @@ Index
 * --string-parser:                       Invoking gengetopt.  (line 169)
 * --unamed-opts:                         Invoking gengetopt.  (line 107)
 * -C,--conf-parser:                      Configuration files. (line   6)
-* -h,--detailed-help:                    Basic Usage.         (line 787)
+* -h,--detailed-help:                    Basic Usage.         (line 857)
 * -h,--help:                             Basic Usage.         (line 221)
 * -S,--string-parser:                    String Parsers and Multiple Parsers.
                                                               (line  21)
@@ -2625,7 +2891,7 @@ Index
 * args:                                  Basic Usage.         (line  67)
 * argtype:                               Basic Usage.         (line 104)
 * argument, defined:                     Terminology.         (line   6)
-* argv:                                  Basic Usage.         (line 561)
+* argv:                                  Basic Usage.         (line 564)
 * Audience:                              Audience.            (line   6)
 * autoconf <1>:                          Use getopt_long sources.
                                                               (line  11)
@@ -2728,72 +2994,72 @@ Index
 
 
 Tag Table:
-Node: Top1105
-Node: Audience3337
-Node: Copying5108
-Node: Installation5917
-Ref: Installation-Footnote-110744
-Ref: Installation-Footnote-210860
-Ref: Installation-Footnote-310907
-Ref: Installation-Footnote-410954
-Ref: Installation-Footnote-511000
-Node: Basic Usage11045
-Ref: hidden17890
-Ref: fullhelp17890
-Ref: addedoptions19795
-Ref: showrequired44404
-Ref: helpoutput44654
-Ref: Basic Usage-Footnote-150310
-Ref: Basic Usage-Footnote-250338
-Ref: Basic Usage-Footnote-350366
-Ref: Basic Usage-Footnote-450393
-Ref: Basic Usage-Footnote-550421
-Ref: Basic Usage-Footnote-650474
-Ref: Basic Usage-Footnote-750502
-Ref: Basic Usage-Footnote-850530
-Ref: Basic Usage-Footnote-950558
-Ref: Basic Usage-Footnote-1050586
-Ref: Basic Usage-Footnote-1150703
-Ref: Basic Usage-Footnote-1250732
-Ref: Basic Usage-Footnote-1350853
-Ref: Basic Usage-Footnote-1450956
-Ref: Basic Usage-Footnote-1550985
-Ref: Basic Usage-Footnote-1651014
-Ref: Basic Usage-Footnote-1751043
-Ref: Basic Usage-Footnote-1851097
-Ref: Basic Usage-Footnote-1951166
-Ref: Basic Usage-Footnote-2051286
-Ref: Basic Usage-Footnote-2151351
-Ref: Basic Usage-Footnote-2251435
-Ref: Basic Usage-Footnote-2351494
-Node: Invoking gengetopt51553
-Ref: Invoking gengetopt-Footnote-161480
-Ref: Invoking gengetopt-Footnote-261508
-Ref: Invoking gengetopt-Footnote-361538
-Node: Terminology61566
-Node: Options with enumerated values66456
-Node: Group options69058
-Node: Mode options71112
-Node: Parser function additional parameters75371
-Ref: Parser function additional parameters-Footnote-178486
-Ref: Parser function additional parameters-Footnote-278514
-Ref: Parser function additional parameters-Footnote-378549
-Node: Configuration files79306
-Ref: Configuration files-Footnote-186574
-Ref: Configuration files-Footnote-286765
-Node: Multiple Options86931
-Node: String Parsers and Multiple Parsers89932
-Ref: String Parsers and Multiple Parsers-Footnote-195601
-Node: No getopt_long95774
-Node: Include the getopt_long code into the parser96508
-Node: Use automake/autoconf97777
-Node: Use Gnulib98649
-Ref: Use Gnulib-Footnote-1102780
-Node: Use getopt_long sources102825
-Node: Bugs105010
-Node: Getopt and subsequent calls105784
-Ref: Getopt and subsequent calls-Footnote-1107711
-Node: Mailing Lists107957
-Node: Index108757
+Node: Top1099
+Node: Audience3325
+Node: Copying5096
+Node: Installation5905
+Ref: Installation-Footnote-110732
+Ref: Installation-Footnote-210848
+Ref: Installation-Footnote-310895
+Ref: Installation-Footnote-410942
+Ref: Installation-Footnote-510988
+Node: Basic Usage11033
+Ref: hidden17878
+Ref: fullhelp17878
+Ref: addedoptions19783
+Ref: showrequired46465
+Ref: helpoutput46715
+Ref: Basic Usage-Footnote-152371
+Ref: Basic Usage-Footnote-252399
+Ref: Basic Usage-Footnote-352427
+Ref: Basic Usage-Footnote-452454
+Ref: Basic Usage-Footnote-552482
+Ref: Basic Usage-Footnote-652535
+Ref: Basic Usage-Footnote-752563
+Ref: Basic Usage-Footnote-852591
+Ref: Basic Usage-Footnote-952619
+Ref: Basic Usage-Footnote-1052647
+Ref: Basic Usage-Footnote-1152764
+Ref: Basic Usage-Footnote-1252793
+Ref: Basic Usage-Footnote-1352914
+Ref: Basic Usage-Footnote-1453017
+Ref: Basic Usage-Footnote-1553046
+Ref: Basic Usage-Footnote-1653075
+Ref: Basic Usage-Footnote-1753104
+Ref: Basic Usage-Footnote-1853158
+Ref: Basic Usage-Footnote-1953227
+Ref: Basic Usage-Footnote-2053347
+Ref: Basic Usage-Footnote-2153412
+Ref: Basic Usage-Footnote-2253496
+Ref: Basic Usage-Footnote-2353555
+Node: Invoking gengetopt53614
+Ref: Invoking gengetopt-Footnote-163541
+Ref: Invoking gengetopt-Footnote-263569
+Ref: Invoking gengetopt-Footnote-363599
+Node: Terminology63627
+Node: Options with enumerated values68517
+Node: Group options71119
+Node: Mode options73173
+Node: Parser function additional parameters78542
+Ref: Parser function additional parameters-Footnote-181657
+Ref: Parser function additional parameters-Footnote-281685
+Ref: Parser function additional parameters-Footnote-381720
+Node: Configuration files82477
+Ref: Configuration files-Footnote-192852
+Ref: Configuration files-Footnote-293043
+Node: Multiple Options93209
+Node: String Parsers and Multiple Parsers96816
+Ref: String Parsers and Multiple Parsers-Footnote-1104516
+Node: No getopt_long104689
+Node: Include the getopt_long code into the parser105423
+Node: Use automake/autoconf106692
+Node: Use Gnulib107564
+Ref: Use Gnulib-Footnote-1111695
+Node: Use getopt_long sources111740
+Node: Bugs113925
+Node: Getopt and subsequent calls114699
+Ref: Getopt and subsequent calls-Footnote-1116626
+Node: Mailing Lists116872
+Node: Index117672
 
 End Tag Table
