@@ -59,7 +59,8 @@ file_save.cc file_save.h \
 file_save_multiple.cc file_save_multiple.h \
 init_args_info.cc init_args_info.h \
 custom_getopt_gen.cc custom_getopt_gen.h \
-check_modes.cc check_modes.h
+check_modes.cc check_modes.h \
+enum_decl.cc enum_decl.h
 
 EXTRA_DIST = header.h_skel c_source.h_skel handle_help.h_skel \
 handle_version.h_skel generic_option.h_skel \
@@ -83,6 +84,7 @@ file_save_multiple.h_skel \
 init_args_info.h_skel \
 custom_getopt_gen.h_skel \
 check_modes.h_skel \
+enum_decl.h_skel \
 $(BUILT_SOURCES)
 
 built-clean:

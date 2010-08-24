@@ -1,3 +1,11 @@
+2010-08-24  Lorenzo Bettini  <bettini@bettini-laptop>
+
+	* src/gm.cc: initialize enum variables with generated null enum
+	value instead of -1
+
+	* src/skels/enum_decl.h_skel: added for generating enum declaration
+	with default null enum value
+
 2010-03-25  bettini  <bettini@bettini-laptop>
 
 	* src/gm_utils.cpp (not_newlines): removed code that

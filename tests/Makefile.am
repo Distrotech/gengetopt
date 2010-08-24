@@ -128,7 +128,8 @@ test_conf_parser_ov4 \
 test_conf_parser_file_save \
 test_multiple \
 test_simple_multiple \
-test_sections test_values \
+test_sections \
+test_values test_values_cc \
 test_redef_help \
 test_manual_help \
 test_no_handle_help \
@@ -164,6 +165,7 @@ test_multiple_cmd.h: test_multiple_cmd.c
 test_simple_multiple_cmd.h: test_simple_multiple_cmd.c
 test_sections_cmd.h: test_sections_cmd.c
 test_values_cmd.h: test_values_cmd.c
+test_values_cmd_cc.cc: test_values_cmd.c
 test_redef_help_cmd.h: test_redef_help_cmd.c
 test_manual_help_cmd.h: test_manual_help_cmd.c
 test_no_handle_help_cmd.h: test_no_handle_help_cmd.c
@@ -200,6 +202,7 @@ test_multiple_SOURCES = test_multiple_cmd.ggo test_multiple.cc
 test_simple_multiple_SOURCES = test_simple_multiple_cmd.ggo test_simple_multiple.cc
 test_sections_SOURCES = test_sections_cmd.ggo test_sections.c
 test_values_SOURCES = test_values_cmd.ggo test_values.c
+test_values_cc_SOURCES = test_values_cmd_cc.cc test_values_cc.cc
 test_redef_help_SOURCES = test_redef_help_cmd.ggo test_redef_help.c
 test_manual_help_SOURCES = test_manual_help_cmd.ggo test_manual_help.c
 test_no_handle_help_SOURCES = test_no_handle_help_cmd.ggo test_no_handle_help.c

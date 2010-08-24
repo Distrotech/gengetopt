@@ -145,9 +145,9 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->int_values_m_orig = NULL;
   args_info->int_values_def_arg = 180;
   args_info->int_values_def_orig = NULL;
-  args_info->values_first_enums_arg = -1;
+  args_info->values_first_enums_arg = values_first_enums__NULL;
   args_info->values_first_enums_orig = NULL;
-  args_info->values_first_enums_plus_arg = -1;
+  args_info->values_first_enums_plus_arg = values_first_enums_plus__NULL;
   args_info->values_first_enums_plus_orig = NULL;
   args_info->values_second_enums_arg = values_second_enums_arg_180;
   args_info->values_second_enums_orig = NULL;
