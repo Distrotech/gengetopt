@@ -25,8 +25,7 @@ GENERATE = $(GENGEN)
 .h_skel.cc:
 	name="`echo $* | sed 's/^.*\///g'`"; \
 	echo "$$name"; \
-	$(GENERATE) -i $< -F $*.h -f $$name --separate-files --expand-tabs
-	touch $@
+	$(GENERATE) -i $< -F $*.h -f $$name --separate-files --expand-tabs --output-dir=$(srcdir) --force
 endif
 
 INCLUDES = -I@top_srcdir@/src
