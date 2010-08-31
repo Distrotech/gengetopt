@@ -21,4 +21,4 @@ for source in $srcdir/*.err; do
   if ! diff $output.out $source;
   then errors=1; fi;
 done ;
-test -z $errors
+test -z "$errors"
