@@ -337,6 +337,7 @@ specified --values-multiple-enums with argument 2
 specified --values-multiple-enums with (original) argument T
 specified --values-multiple-enums with argument 3
 specified --values-multiple-enums with (original) argument FOURTH
+--values-unspecified-enums: -1
 saved configuration file test_values.save
 *** test_values_err.sh
 ./test_values: ambiguous argument, "fo", for option `--string-values' (`-s')
@@ -579,6 +580,11 @@ Usage: test_values [OPTIONS]...
                                 multiple option with values and enums  
                                   (possible values="FIRST", "SECOND", 
                                   "THIRD", "FOURTH" default=`FOURTH')
+  -N, --values-unspecified-enums=ENUM
+                                option with values that will not be specified 
+                                  on the command line  (possible 
+                                  values="FOO", "BAR", "ANOTHER", 
+                                  "SOMETHING")
       --file-save=STRING        save the passed options into a file
 *** test_err.sh
 diff wrong_default.err.out ../../tests/wrong_default.err
@@ -1155,6 +1161,11 @@ Usage: test_values [OPTIONS]... [FILES]...
                                 multiple option with values and enums  
                                   (possible values="FIRST", "SECOND", 
                                   "THIRD", "FOURTH" default=`FOURTH')
+  -N, --values-unspecified-enums=ENUM
+                                option with values that will not be specified 
+                                  on the command line  (possible 
+                                  values="FOO", "BAR", "ANOTHER", 
+                                  "SOMETHING")
       --file-save=STRING        save the passed options into a file
 *** test_values_cc -h
 test_values 1.0
@@ -1225,6 +1236,11 @@ Usage: test_values [OPTIONS]... [FILES]...
                                 multiple option with values and enums  
                                   (possible values="FIRST", "SECOND", 
                                   "THIRD", "FOURTH" default=`FOURTH')
+  -N, --values-unspecified-enums=ENUM
+                                option with values that will not be specified 
+                                  on the command line  (possible 
+                                  values="FOO", "BAR", "ANOTHER", 
+                                  "SOMETHING")
       --file-save=STRING        save the passed options into a file
 *** test_redef_help -h
 specified --height

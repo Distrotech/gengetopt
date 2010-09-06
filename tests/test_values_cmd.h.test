@@ -38,6 +38,7 @@ enum enum_values_first_enums { values_first_enums__NULL = -1, values_first_enums
 enum enum_values_first_enums_plus { values_first_enums_plus__NULL = -1, values_first_enums_plus_arg_PLUS_foo = 0, values_first_enums_plus_arg_PLUS_bar, values_first_enums_plus_arg_MINUS_foo, values_first_enums_plus_arg_MINUS_bar, values_first_enums_plus_arg_all };
 enum enum_values_second_enums { values_second_enums__NULL = -1, values_second_enums_arg_90 = 0, values_second_enums_arg_180, values_second_enums_arg_270, values_second_enums_arg_360 };
 enum enum_values_multiple_enums { values_multiple_enums__NULL = -1, values_multiple_enums_arg_FIRST = 0, values_multiple_enums_arg_SECOND, values_multiple_enums_arg_THIRD, values_multiple_enums_arg_FOURTH };
+enum enum_values_unspecified_enums { values_unspecified_enums__NULL = -1, values_unspecified_enums_arg_FOO = 0, values_unspecified_enums_arg_BAR, values_unspecified_enums_arg_ANOTHER, values_unspecified_enums_arg_SOMETHING };
 
 /** @brief Where the command line options are stored */
 struct gengetopt_args_info
@@ -102,6 +103,9 @@ struct gengetopt_args_info
   unsigned int values_multiple_enums_min; /**< @brief multiple option with values and enums's minimum occurreces */
   unsigned int values_multiple_enums_max; /**< @brief multiple option with values and enums's maximum occurreces */
   const char *values_multiple_enums_help; /**< @brief multiple option with values and enums help description.  */
+  enum enum_values_unspecified_enums values_unspecified_enums_arg;	/**< @brief option with values that will not be specified on the command line.  */
+  char * values_unspecified_enums_orig;	/**< @brief option with values that will not be specified on the command line original value given at command line.  */
+  const char *values_unspecified_enums_help; /**< @brief option with values that will not be specified on the command line help description.  */
   char * file_save_arg;	/**< @brief save the passed options into a file.  */
   char * file_save_orig;	/**< @brief save the passed options into a file original value given at command line.  */
   const char *file_save_help; /**< @brief save the passed options into a file help description.  */
@@ -124,6 +128,7 @@ struct gengetopt_args_info
   unsigned int values_first_enums_plus_given ;	/**< @brief Whether values-first-enums-plus was given.  */
   unsigned int values_second_enums_given ;	/**< @brief Whether values-second-enums was given.  */
   unsigned int values_multiple_enums_given ;	/**< @brief Whether values-multiple-enums was given.  */
+  unsigned int values_unspecified_enums_given ;	/**< @brief Whether values-unspecified-enums was given.  */
   unsigned int file_save_given ;	/**< @brief Whether file-save was given.  */
 
   char **inputs ; /**< @brief unamed options (options without names) */
@@ -266,6 +271,7 @@ extern const char *test_values_cmd_parser_values_first_enums_values[];  /**< @br
 extern const char *test_values_cmd_parser_values_first_enums_plus_values[];  /**< @brief Possible values for values-first-enums-plus. */
 extern const char *test_values_cmd_parser_values_second_enums_values[];  /**< @brief Possible values for values-second-enums. */
 extern const char *test_values_cmd_parser_values_multiple_enums_values[];  /**< @brief Possible values for values-multiple-enums. */
+extern const char *test_values_cmd_parser_values_unspecified_enums_values[];  /**< @brief Possible values for values-unspecified-enums. */
 
 
 #ifdef __cplusplus

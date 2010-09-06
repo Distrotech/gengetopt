@@ -112,6 +112,9 @@ main (int argc, char **argv)
           args_info.values_multiple_enums_orig[i] : "(null)"));
     }
 
+  if (args_info.values_unspecified_enums_arg == values_unspecified_enums__NULL)
+    printf("--values-unspecified-enums: %d\n", args_info.values_unspecified_enums_arg);
+
   if (args_info.file_save_given) {
     if (test_values_cmd_parser_file_save (args_info.file_save_arg, &args_info) == EXIT_FAILURE)
       result = 1;

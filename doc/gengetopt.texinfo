@@ -1,6 +1,6 @@
 \input texinfo.tex      @c -*-texinfo-*-*
 
-@c Copyright (C) 2001-2007  Free Software Foundation, Inc.
+@c Copyright (C) 2001-2010  Free Software Foundation, Inc.
 @c
 @c This file is part of GNU gengetopt 
 @c
@@ -33,7 +33,7 @@ This manual is for GNU Gengetopt
 (version @value{VERSION}, @value{UPDATED}),
 a tool to write command line option parsers for C programs.
 
-Copyright @copyright{} 2001 - 2009 Free Software Foundation, Inc.
+Copyright @copyright{} 2001 - 2010 Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -1339,7 +1339,11 @@ in that case, a C @code{enum} type is also generated with name
 @code{enum_<option>}; the values of such C enum will be generated
 according this pattern: @code{<option>_arg_<value>}, where @code{value}
 is the value specified in the input file, and the starting value is
-always 0.  For instance, if we specify in the input file the following
+always 0.  
+An additional value is generated to represent the null/empty value, with
+the pattern @code{<option>__NULL} (note the double underscore) with
+integer value -1.
+For instance, if we specify in the input file the following
 option
 
 @example
@@ -1350,7 +1354,8 @@ option "myopt" ... ... values="FOO","180","BAR" enum ...
 then the following C enum will be generated:
 
 @example
-enum enum_myopt @{ myopt_arg_FOO = 0, myopt_arg_180, myopt_arg_BAR @};
+enum enum_myopt @{ 
+myopt__NULL = -1, myopt_arg_FOO = 0, myopt_arg_180, myopt_arg_BAR @};
 @end example
 
 If you use the symbols @code{+} and @code{-}, these will be translated
@@ -1365,7 +1370,8 @@ option "myopt" ... ... values="+foo","-all","-foo" enum ...
 then the following C enum will be generated:
 
 @example
-enum enum_myopt @{ myopt_arg_PLUS_foo = 0, 
+enum enum_myopt @{ myopt__NULL = -1,
+                  myopt_arg_PLUS_foo = 0, 
                   myopt_arg_MINUS_all, myopt_arg_MINUS_foo @};
 @end example
 
