@@ -51,6 +51,7 @@ const char *gengetopt_args_info_help[] = {
   "  -E, --values-first-enums-plus=ENUM\n                                option with values and enums with plus and \n                                  minus 1  (possible values=\"+foo\", \"+bar\", \n                                  \"-foo\", \"-bar\", \"all\")",
   "      --values-second-enums=ENUM\n                                option with values and enums 2 with default  \n                                  (possible values=\"90\", \"180\", \"270\", \n                                  \"360\" default=`180')",
   "  -W, --values-multiple-enums=ENUM\n                                multiple option with values and enums  \n                                  (possible values=\"FIRST\", \"SECOND\", \n                                  \"THIRD\", \"FOURTH\" default=`FOURTH')",
+  "  -N, --values-unspecified-enums=ENUM\n                                option with values that will not be specified \n                                  on the command line  (possible \n                                  values=\"FOO\", \"BAR\", \"ANOTHER\", \n                                  \"SOMETHING\")",
   "      --file-save=STRING        save the passed options into a file",
     0
 };
@@ -89,6 +90,7 @@ const char *test_values_cmd_parser_values_first_enums_values[] = {"FOO", "BAR", 
 const char *test_values_cmd_parser_values_first_enums_plus_values[] = {"+foo", "+bar", "-foo", "-bar", "all", 0}; /*< Possible values for values-first-enums-plus. */
 const char *test_values_cmd_parser_values_second_enums_values[] = {"90", "180", "270", "360", 0}; /*< Possible values for values-second-enums. */
 const char *test_values_cmd_parser_values_multiple_enums_values[] = {"FIRST", "SECOND", "THIRD", "FOURTH", 0}; /*< Possible values for values-multiple-enums. */
+const char *test_values_cmd_parser_values_unspecified_enums_values[] = {"FOO", "BAR", "ANOTHER", "SOMETHING", 0}; /*< Possible values for values-unspecified-enums. */
 
 static char *
 gengetopt_strdup (const char *s);
@@ -114,6 +116,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->values_first_enums_plus_given = 0 ;
   args_info->values_second_enums_given = 0 ;
   args_info->values_multiple_enums_given = 0 ;
+  args_info->values_unspecified_enums_given = 0 ;
   args_info->file_save_given = 0 ;
   args_info->group1_group_counter = 0 ;
 }
@@ -145,14 +148,16 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->int_values_m_orig = NULL;
   args_info->int_values_def_arg = 180;
   args_info->int_values_def_orig = NULL;
-  args_info->values_first_enums_arg = -1;
+  args_info->values_first_enums_arg = values_first_enums__NULL;
   args_info->values_first_enums_orig = NULL;
-  args_info->values_first_enums_plus_arg = -1;
+  args_info->values_first_enums_plus_arg = values_first_enums_plus__NULL;
   args_info->values_first_enums_plus_orig = NULL;
   args_info->values_second_enums_arg = values_second_enums_arg_180;
   args_info->values_second_enums_orig = NULL;
   args_info->values_multiple_enums_arg = NULL;
   args_info->values_multiple_enums_orig = NULL;
+  args_info->values_unspecified_enums_arg = values_unspecified_enums__NULL;
+  args_info->values_unspecified_enums_orig = NULL;
   args_info->file_save_arg = NULL;
   args_info->file_save_orig = NULL;
   
@@ -191,7 +196,8 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->values_multiple_enums_help = gengetopt_args_info_help[18] ;
   args_info->values_multiple_enums_min = 0;
   args_info->values_multiple_enums_max = 0;
-  args_info->file_save_help = gengetopt_args_info_help[19] ;
+  args_info->values_unspecified_enums_help = gengetopt_args_info_help[19] ;
+  args_info->file_save_help = gengetopt_args_info_help[20] ;
   
 }
 
@@ -362,6 +368,7 @@ test_values_cmd_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->values_second_enums_orig));
   free_multiple_field (args_info->values_multiple_enums_given, (void *)(args_info->values_multiple_enums_arg), &(args_info->values_multiple_enums_orig));
   args_info->values_multiple_enums_arg = 0;
+  free_string_field (&(args_info->values_unspecified_enums_orig));
   free_string_field (&(args_info->file_save_arg));
   free_string_field (&(args_info->file_save_orig));
   
@@ -479,6 +486,8 @@ test_values_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info
   if (args_info->values_second_enums_given)
     write_into_file(outfile, "values-second-enums", args_info->values_second_enums_orig, test_values_cmd_parser_values_second_enums_values);
   write_multiple_into_file(outfile, args_info->values_multiple_enums_given, "values-multiple-enums", args_info->values_multiple_enums_orig, test_values_cmd_parser_values_multiple_enums_values);
+  if (args_info->values_unspecified_enums_given)
+    write_into_file(outfile, "values-unspecified-enums", args_info->values_unspecified_enums_orig, test_values_cmd_parser_values_unspecified_enums_values);
   if (args_info->file_save_given)
     write_into_file(outfile, "file-save", args_info->file_save_orig, 0);
   
@@ -1089,11 +1098,12 @@ test_values_cmd_parser_internal (
         { "values-first-enums-plus",	1, NULL, 'E' },
         { "values-second-enums",	1, NULL, 0 },
         { "values-multiple-enums",	1, NULL, 'W' },
+        { "values-unspecified-enums",	1, NULL, 'N' },
         { "file-save",	1, NULL, 0 },
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVs:S:i:I:e:E:W:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVs:S:i:I:e:E:W:N:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -1180,6 +1190,18 @@ test_values_cmd_parser_internal (
           if (update_multiple_arg_temp(&values_multiple_enums_list, 
               &(local_args_info.values_multiple_enums_given), optarg, test_values_cmd_parser_values_multiple_enums_values, "FOURTH", ARG_ENUM,
               "values-multiple-enums", 'W',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'N':	/* option with values that will not be specified on the command line.  */
+        
+        
+          if (update_arg( (void *)&(args_info->values_unspecified_enums_arg), 
+               &(args_info->values_unspecified_enums_orig), &(args_info->values_unspecified_enums_given),
+              &(local_args_info.values_unspecified_enums_given), optarg, test_values_cmd_parser_values_unspecified_enums_values, 0, ARG_ENUM,
+              check_ambiguity, override, 0, 0,
+              "values-unspecified-enums", 'N',
               additional_error))
             goto failure;
         

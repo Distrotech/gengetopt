@@ -68,6 +68,7 @@ extern "C"
 #include "skels/init_args_info.h"
 #include "skels/custom_getopt_gen.h"
 #include "skels/check_modes.h"
+#include "skels/enum_decl.h"
 #include "gm_utils.h"
 #include "fileutils.h"
 
@@ -425,18 +426,20 @@ CmdlineParserCreator::generate_enum_types(ostream &stream,
                             __FILE__, __LINE__);
             abort ();
         }
-        stream << "enum enum_" << opt->var_arg << " { ";
+        ostringstream enum_values;
+        enum_decl_gen_class enum_gen;
+        enum_gen.set_var_arg(opt->var_arg);
         for (AcceptedValues::const_iterator it = opt->acceptedvalues->begin();
             it != opt->acceptedvalues->end(); ++it) {
+            enum_values << ", ";
             // the first enum element is set to 0
-            if (it != opt->acceptedvalues->begin())
-                stream << ", ";
-            stream << from_value_to_enum(opt->var_arg, *it);
+            enum_values << from_value_to_enum(opt->var_arg, *it);
             if (it == opt->acceptedvalues->begin())
-                stream << " = 0 ";
+                enum_values << " = 0";
 
         }
-        stream << " };" << endl;
+        enum_gen.set_enum_values(enum_values.str());
+        enum_gen.generate_enum_decl(stream);
     }
   }
 }
@@ -1549,7 +1552,7 @@ CmdlineParserCreator::generate_clear_arg(ostream &stream, unsigned int indent)
         if (opt->default_given)
             clear_arg.set_value(from_value_to_enum(opt->var_arg, opt->default_string));
         else
-            clear_arg.set_value("-1");
+            clear_arg.set_value(string(opt->var_arg) + "__NULL");
       }
       else if (opt->default_given)
         {

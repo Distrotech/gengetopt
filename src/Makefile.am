@@ -42,9 +42,6 @@ scanner.cc: $(srcdir)/scanner.ll
 parser.cc: $(srcdir)/parser.yy
 	$(YACC) -o $(srcdir)/parser.cc $(srcdir)/parser.yy --defines=$(srcdir)/parser.h
 
-langdefparser.h: langdefparser.cc
-
-
 #gengetopt_LDADD = @LIBOBJS@ @LEXLIB@ skels/libgen.a
 
 # these are for gnulib

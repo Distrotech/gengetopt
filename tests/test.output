@@ -337,6 +337,7 @@ specified --values-multiple-enums with argument 2
 specified --values-multiple-enums with (original) argument T
 specified --values-multiple-enums with argument 3
 specified --values-multiple-enums with (original) argument FOURTH
+--values-unspecified-enums: -1
 saved configuration file test_values.save
 *** test_values_err.sh
 ./test_values: ambiguous argument, "fo", for option `--string-values' (`-s')
@@ -580,6 +581,11 @@ Usage: test_values [OPTIONS]...
                                 multiple option with values and enums  
                                   (possible values="FIRST", "SECOND", 
                                   "THIRD", "FOURTH" default=`FOURTH')
+  -N, --values-unspecified-enums=ENUM
+                                option with values that will not be specified 
+                                  on the command line  (possible 
+                                  values="FOO", "BAR", "ANOTHER", 
+                                  "SOMETHING")
       --file-save=STRING        save the passed options into a file
 *** test_err.sh
 diff wrong_default.err.out ../../tests/wrong_default.err
@@ -1156,6 +1162,86 @@ Usage: test_values [OPTIONS]... [FILES]...
                                 multiple option with values and enums  
                                   (possible values="FIRST", "SECOND", 
                                   "THIRD", "FOURTH" default=`FOURTH')
+  -N, --values-unspecified-enums=ENUM
+                                option with values that will not be specified 
+                                  on the command line  (possible 
+                                  values="FOO", "BAR", "ANOTHER", 
+                                  "SOMETHING")
+      --file-save=STRING        save the passed options into a file
+*** test_values_cc -h
+test_values 1.0
+
+This is just a test file
+to test options
+with the list of acceptable values
+
+Usage: test_values [OPTIONS]... [FILES]...
+
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+  -s, --string-values=STRING    string option with values  (possible 
+                                  values="foo", "foa", "bar", "foobar", 
+                                  "barfoo")
+      --string-values-plus=STRING
+                                string option with values containing + and -  
+                                  (possible values="+foo", "-foo", "bar", 
+                                  "foobar", "barfoo", "+foobar", 
+                                  "-barfoo")
+      --string-values-def=STRING
+                                string option with values and default  
+                                  (possible values="foo", "bar", 
+                                  "foobar", "barfoo" default=`bar')
+      --string-values-def-argopt[=STRING]
+                                string option with values and default and 
+                                  optional argument  (possible values="foo", 
+                                  "bar", "foobar", "barfoo" 
+                                  default=`foobar')
+      --string-values-no-short=STRING
+                                string option with values no short  (possible 
+                                  values="foo", "bar", "foobar", 
+                                  "barfoo")
+  -S, --multistring-values=STRING
+                                multiple string option with values  (possible 
+                                  values="foo", "bar")
+      --multistring-values-def[=STRING]
+                                multiple string option with values and default  
+                                  (possible values="foo", "bar" 
+                                  default=`foo')
+      --multistring-values-no-short=BAR
+                                multiple string option with values no-short  
+                                  (possible values="foo", "bar")
+
+ Group: group1
+      --string-values-group=FOO group string option with values and default  
+                                  (possible values="foo", "bar", 
+                                  "foobar", "barfoo" default=`bar')
+  -i, --int-values=INT          int option with values  (possible 
+                                  values="90", "180", "270", "360")
+  -I, --int-values-m=INT        multiple int option with values  (possible 
+                                  values="900", "1800", "2700", "3600")
+      --int-values-def=INT      int option with values and default  (possible 
+                                  values="90", "180", "270", "360" 
+                                  default=`180')
+  -e, --values-first-enums=ENUM option with values and enums 1  (possible 
+                                  values="FOO", "BAR", "ANOTHER", 
+                                  "SOMETHING")
+  -E, --values-first-enums-plus=ENUM
+                                option with values and enums with plus and 
+                                  minus 1  (possible values="+foo", "+bar", 
+                                  "-foo", "-bar", "all")
+      --values-second-enums=ENUM
+                                option with values and enums 2 with default  
+                                  (possible values="90", "180", "270", 
+                                  "360" default=`180')
+  -W, --values-multiple-enums=ENUM
+                                multiple option with values and enums  
+                                  (possible values="FIRST", "SECOND", 
+                                  "THIRD", "FOURTH" default=`FOURTH')
+  -N, --values-unspecified-enums=ENUM
+                                option with values that will not be specified 
+                                  on the command line  (possible 
+                                  values="FOO", "BAR", "ANOTHER", 
+                                  "SOMETHING")
       --file-save=STRING        save the passed options into a file
 *** test_redef_help -h
 specified --height

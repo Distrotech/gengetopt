@@ -30,4 +30,6 @@ option "values-first-enums-plus"   E "option with values and enums with plus and
 option "values-second-enums"   - "option with values and enums 2 with default" values="90","180","270","360" enum optional default="180"
 option "values-multiple-enums"   W "multiple option with values and enums" values="FIRST","SECOND","THIRD","FOURTH" enum optional multiple default="FOURTH"
 
+option "values-unspecified-enums"   N "option with values that will not be specified on the command line" values="FOO","BAR","ANOTHER","SOMETHING" enum optional
+
 option "file-save"   - "save the passed options into a file" string no
