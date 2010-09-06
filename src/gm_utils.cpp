@@ -162,7 +162,7 @@ bool has_options_with_type() {
 
     for (gengetopt_option_list::iterator it = gengetopt_options.begin(); it
             != gengetopt_options.end() && (opt = *it); ++it)
-        if (opt->type)
+        if (opt->type && opt->type != ARG_FLAG)
             return true;
 
     return false;

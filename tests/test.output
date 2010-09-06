@@ -453,6 +453,7 @@ mopt_help:   -m, --mopt=INT          option of my mode
 *** test_no_options
 *** test_newlines
 *** test_text
+*** test_only_flags
 *** test_show_help.sh
 test_all_opts 1.0
 
@@ -1377,6 +1378,14 @@ Section 1:
 Section 2:
   -i, --int-opt=INT       A int option
       some final text
+*** test_only_flags -h
+test_only_flags 1.0
+
+Usage: test_only_flags [OPTIONS]... [FILES]...
+
+  -h, --help     Print help and exit
+  -V, --version  Print version and exit
+  -f, --foo      foo option  (default=on)
 *** test_all_opts --full-help
 test_all_opts 1.0
 

@@ -1,3 +1,7 @@
+2010-09-06  Lorenzo Bettini  <bettini@bettini-laptop>
+
+	* src/gm_utils.cpp: do not consider a flag option as a typed one
+
 2010-08-31  Lorenzo Bettini  <bettini@bettini-laptop>
 
 	* tests/test_err.sh.in: double quote the variable to test

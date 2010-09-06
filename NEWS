@@ -1,6 +1,6 @@
 gengetopt -- History of visible changes.
 
-Copyright (C) 1999-2009  Free Software Foundation
+Copyright (C) 1999-2010  Free Software Foundation
 
 Please send gengetopt bug reports to bug-gengetopt at gnu.org
 
@@ -12,6 +12,7 @@ Version 2.22.5
    * handle escaped newline chars in the .ggo file correctly
    * initialize enum variables with a generated null value (makes
      the parser compilable in C++)
+   * removed warnings in generated parser when only flags are used
 
 Version 2.22.4
 
