@@ -1107,10 +1107,10 @@ further explanation for these command line options).
                                  require a line break
        -i, --int-opt=INT       A int option (mandatory)
 
+
      more involved options:
        the following options
        are more complex
-
            --flag-opt          A flag option  (default=off)
        -F, --funct-opt         A function option
 
@@ -1170,10 +1170,10 @@ actually printed and the details of `--func-opt' are printed too:
                                  require a line break
        -i, --int-opt=INT       A int option (mandatory)
 
+
      more involved options:
        the following options
        are more complex
-
            --flag-opt          A flag option  (default=off)
        -F, --funct-opt         A function option
 
@@ -1301,8 +1301,8 @@ This is the output of `gengetopt --help':
        -S, --string-parser           generate a string parser (the string contains
                                        the command line)
 
-     Additional options:
 
+     Additional options:
        -G, --include-getopt          adds the code for getopt_long in the generated
                                        C file
        -n, --no-handle-help          do not handle --help|-h automatically
