@@ -73,3 +73,21 @@ Possible fix found by setting the text in the parser
 Probably we should avoid to check whether the option after a section is hidden:
 does a section with only hidden options make sense?
 Yes probably it's better to keep this feature.
+
+BUGS
+
+it now generates usage string without inserting \n creating
+a file with error, e.g.,
+
+-const char *gengetopt_args_info_usage = "Usage: " CMDLINE_PARSER_PACKAGE " [OPTIONS]... < input_file > output_file\n       sour
++const char *gengetopt_args_info_usage = "Usage: " CMDLINE_PARSER_PACKAGE " [OPTIONS]... < input_file > output_file
++       source-highlight [OPTIONS]... -i input_file -o output_file
++       source-highlight [OPTIONS]... [FILES]...";
+
+and it does not add the \ for separating string constants:
+
+const char *gengetopt_args_info_usage = "Usage: " CMDLINE_PARSER_PACKAGE " [OPTIONS]... < input_file > output_file \
+       source-highlight [OPTIONS]... -i input_file -o output_file \
+       source-highlight [OPTIONS]... [FILES]...";
+
+probably usage string is not customizable anymore?
