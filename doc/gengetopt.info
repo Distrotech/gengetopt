@@ -1,7 +1,7 @@
 This is ../../doc/gengetopt.info, produced by makeinfo version 4.13
 from ../../doc/gengetopt.texinfo.
 
-This manual is for GNU Gengetopt (version 2.22.4, 23 November 2010), a
+This manual is for GNU Gengetopt (version 2.22.4, 2 September 2011), a
 tool to write command line option parsers for C programs.
 
    Copyright (C) 2001 - 2010 Free Software Foundation, Inc.
@@ -36,7 +36,7 @@ programs.
 
    This file documents GNU Gengetopt version 2.22.4.
 
-   This manual is for GNU Gengetopt (version 2.22.4, 23 November 2010),
+   This manual is for GNU Gengetopt (version 2.22.4, 2 September 2011),
 a tool to write command line option parsers for C programs.
 
    Copyright (C) 2001 - 2010 Free Software Foundation, Inc.
@@ -554,36 +554,44 @@ the value `"foobar"' will be selected; instead, passing the value
 
    Here's an example of such a file (the file is called `sample1.ggo')
 
-   # Name of your program package "sample1" # don't use package if
-you're using automake # Version of your program version "2.0"   # don't
-use version if you're using automake
+     # Name of your program
+     package "sample1" # don't use package if you're using automake
+     # Version of your program
+     version "2.0"   # don't use version if you're using automake
 
-   # Options option  "str-opt"         s "A string option, for a
-filename"         string typestr="filename"     optional text "\nA
-brief text description" text " before the other options.\n" option
-"my-opt"          m "Another integer option, \ this time the
-description of the option should be \"quite\" long to \ require
-wrapping... possibly more than one wrapping :-) \ especially if
-I\nrequire a line break"      int     optional option  "int-opt"
-i "A int option"         int        yes section "more involved options"
-       sectiondesc="the following options\nare more complex" text ""
-option  "flag-opt"        - "A flag option"        flag       off
-option  "funct-opt"       F "A function option"    optional
-details="\nA function option is basically an option with no argument.\
-It can be used, e.g., to specify a specific behavior for a program.
+     # Options
+     option  "str-opt"         s "A string option, for a filename"
+             string typestr="filename"     optional
+     text "\nA brief text description"
+     text " before the other options.\n"
+     option  "my-opt"          m "Another integer option, \
+     this time the description of the option should be \"quite\" long to \
+     require wrapping... possibly more than one wrapping :-) \
+     especially if I\nrequire a line break"      int     optional
+     option  "int-opt"         i "A int option"         int        yes
+     section "more involved options"
+             sectiondesc="the following options\nare more complex"
+     text ""
+     option  "flag-opt"        - "A flag option"        flag       off
+     option  "funct-opt"       F "A function option"    optional
+         details="\nA function option is basically an option with no argument.\
+       It can be used, e.g., to specify a specific behavior for a program.
 
-   Well, this further explanation is quite useless, but it's only to \
-show an example of an option with details, \ which will be printed only
-when -detailed-help is given \ at the command line."  section "last
-option section" option  "long-opt"        - "A long option"        long
-     optional option  "def-opt"         - "A string option with default"
-       string default="Hello" optional option  "enum-opt"         - "A
-string option with list of values"
-values="foo","bar","hello","bye" default="hello" optional option
-"secret"         S "hidden option will not appear in -help"         int
-optional hidden option  "dependant"         D         "option that
-depends on str-opt" int optional dependon="str-opt" text "\nAn ending
-text."
+     Well, this further explanation is quite useless, but it's only to \
+     show an example of an option with details, \
+     which will be printed only when --detailed-help is given \
+     at the command line."
+     section "last option section"
+     option  "long-opt"        - "A long option"        long       optional
+     option  "def-opt"         - "A string option with default"
+             string default="Hello" optional
+     option  "enum-opt"         - "A string option with list of values"
+             values="foo","bar","hello","bye" default="hello" optional
+     option  "secret"         S "hidden option will not appear in --help"
+             int optional hidden
+     option  "dependant"         D
+             "option that depends on str-opt" int optional dependon="str-opt"
+     text "\nAn ending text."
 
    The simplest way to use gengetopt is to pass this file as the
 standard input, i.e.:
@@ -2613,7 +2621,7 @@ Index
 * --string-parser:                       Invoking gengetopt.  (line 169)
 * --unamed-opts:                         Invoking gengetopt.  (line 107)
 * -C,--conf-parser:                      Configuration files. (line   6)
-* -h,--detailed-help:                    Basic Usage.         (line 782)
+* -h,--detailed-help:                    Basic Usage.         (line 790)
 * -h,--help:                             Basic Usage.         (line 221)
 * -S,--string-parser:                    String Parsers and Multiple Parsers.
                                                               (line  21)
@@ -2625,7 +2633,7 @@ Index
 * args:                                  Basic Usage.         (line  67)
 * argtype:                               Basic Usage.         (line 104)
 * argument, defined:                     Terminology.         (line   6)
-* argv:                                  Basic Usage.         (line 556)
+* argv:                                  Basic Usage.         (line 564)
 * Audience:                              Audience.            (line   6)
 * autoconf <1>:                          Use getopt_long sources.
                                                               (line  11)
@@ -2682,7 +2690,7 @@ Index
 * multiple parsers:                      String Parsers and Multiple Parsers.
                                                               (line   6)
 * on/off:                                Basic Usage.         (line 179)
-* option without name:                   Basic Usage.         (line 315)
+* option without name:                   Basic Usage.         (line 323)
 * option, defined:                       Terminology.         (line   6)
 * optional:                              Basic Usage.         (line 135)
 * override:                              Parser function additional parameters.
@@ -2692,7 +2700,7 @@ Index
 * PACKAGE:                               Audience.            (line  36)
 * PACKAGE_NAME <1>:                      Basic Usage.         (line  39)
 * PACKAGE_NAME:                          Audience.            (line  36)
-* parameter:                             Basic Usage.         (line 315)
+* parameter:                             Basic Usage.         (line 323)
 * parameter, defined:                    Terminology.         (line   6)
 * parameters:                            Parser function additional parameters.
                                                               (line   6)
@@ -2741,59 +2749,59 @@ Node: Basic Usage11045
 Ref: hidden17890
 Ref: fullhelp17890
 Ref: addedoptions19795
-Ref: showrequired44223
-Ref: helpoutput44473
-Ref: Basic Usage-Footnote-150129
-Ref: Basic Usage-Footnote-250157
-Ref: Basic Usage-Footnote-350185
-Ref: Basic Usage-Footnote-450212
-Ref: Basic Usage-Footnote-550240
-Ref: Basic Usage-Footnote-650293
-Ref: Basic Usage-Footnote-750321
-Ref: Basic Usage-Footnote-850349
-Ref: Basic Usage-Footnote-950377
-Ref: Basic Usage-Footnote-1050405
-Ref: Basic Usage-Footnote-1150522
-Ref: Basic Usage-Footnote-1250551
-Ref: Basic Usage-Footnote-1350672
-Ref: Basic Usage-Footnote-1450775
-Ref: Basic Usage-Footnote-1550804
-Ref: Basic Usage-Footnote-1650833
-Ref: Basic Usage-Footnote-1750862
-Ref: Basic Usage-Footnote-1850916
-Ref: Basic Usage-Footnote-1950985
-Ref: Basic Usage-Footnote-2051105
-Ref: Basic Usage-Footnote-2151170
-Ref: Basic Usage-Footnote-2251254
-Ref: Basic Usage-Footnote-2351313
-Node: Invoking gengetopt51372
-Ref: Invoking gengetopt-Footnote-161299
-Ref: Invoking gengetopt-Footnote-261327
-Ref: Invoking gengetopt-Footnote-361357
-Node: Terminology61385
-Node: Options with enumerated values66275
-Node: Group options69096
-Node: Mode options71150
-Node: Parser function additional parameters75409
-Ref: Parser function additional parameters-Footnote-178524
-Ref: Parser function additional parameters-Footnote-278552
-Ref: Parser function additional parameters-Footnote-378587
-Node: Configuration files79344
-Ref: Configuration files-Footnote-186612
-Ref: Configuration files-Footnote-286803
-Node: Multiple Options86969
-Node: String Parsers and Multiple Parsers89970
-Ref: String Parsers and Multiple Parsers-Footnote-195639
-Node: No getopt_long95812
-Node: Include the getopt_long code into the parser96546
-Node: Use automake/autoconf97815
-Node: Use Gnulib98687
-Ref: Use Gnulib-Footnote-1102818
-Node: Use getopt_long sources102863
-Node: Bugs105048
-Node: Getopt and subsequent calls105822
-Ref: Getopt and subsequent calls-Footnote-1107749
-Node: Mailing Lists107995
-Node: Index108795
+Ref: showrequired44422
+Ref: helpoutput44672
+Ref: Basic Usage-Footnote-150328
+Ref: Basic Usage-Footnote-250356
+Ref: Basic Usage-Footnote-350384
+Ref: Basic Usage-Footnote-450411
+Ref: Basic Usage-Footnote-550439
+Ref: Basic Usage-Footnote-650492
+Ref: Basic Usage-Footnote-750520
+Ref: Basic Usage-Footnote-850548
+Ref: Basic Usage-Footnote-950576
+Ref: Basic Usage-Footnote-1050604
+Ref: Basic Usage-Footnote-1150721
+Ref: Basic Usage-Footnote-1250750
+Ref: Basic Usage-Footnote-1350871
+Ref: Basic Usage-Footnote-1450974
+Ref: Basic Usage-Footnote-1551003
+Ref: Basic Usage-Footnote-1651032
+Ref: Basic Usage-Footnote-1751061
+Ref: Basic Usage-Footnote-1851115
+Ref: Basic Usage-Footnote-1951184
+Ref: Basic Usage-Footnote-2051304
+Ref: Basic Usage-Footnote-2151369
+Ref: Basic Usage-Footnote-2251453
+Ref: Basic Usage-Footnote-2351512
+Node: Invoking gengetopt51571
+Ref: Invoking gengetopt-Footnote-161498
+Ref: Invoking gengetopt-Footnote-261526
+Ref: Invoking gengetopt-Footnote-361556
+Node: Terminology61584
+Node: Options with enumerated values66474
+Node: Group options69295
+Node: Mode options71349
+Node: Parser function additional parameters75608
+Ref: Parser function additional parameters-Footnote-178723
+Ref: Parser function additional parameters-Footnote-278751
+Ref: Parser function additional parameters-Footnote-378786
+Node: Configuration files79543
+Ref: Configuration files-Footnote-186811
+Ref: Configuration files-Footnote-287002
+Node: Multiple Options87168
+Node: String Parsers and Multiple Parsers90169
+Ref: String Parsers and Multiple Parsers-Footnote-195838
+Node: No getopt_long96011
+Node: Include the getopt_long code into the parser96745
+Node: Use automake/autoconf98014
+Node: Use Gnulib98886
+Ref: Use Gnulib-Footnote-1103017
+Node: Use getopt_long sources103062
+Node: Bugs105247
+Node: Getopt and subsequent calls106021
+Ref: Getopt and subsequent calls-Footnote-1107948
+Node: Mailing Lists108194
+Node: Index108994
 
 End Tag Table
