@@ -110,7 +110,8 @@ test_modes_option_help \
 test_no_options \
 test_newlines \
 test_text \
-test_only_flags
+test_only_flags \
+test_usage
 
 TESTS = $(VALGRINDTESTS) \
 test_show_help.sh \
@@ -143,7 +144,8 @@ test_modes_option_help \
 test_no_options \
 test_newlines \
 test_text \
-test_only_flags
+test_only_flags \
+test_usage
 
 hidden_options_programs = test_all_opts
 details_options_programs = test_all_opts test_no_handle_help
@@ -181,6 +183,7 @@ test_align_cmd.h: test_align_cmd.c
 test_newlines_cmd.h: test_newlines_cmd.c
 test_text_cmd.h: test_text_cmd.c
 test_only_flags_cmd.h: test_only_flags_cmd.c
+test_usage_cmd.h: test_usage_cmd.c
 
 no_strings_SOURCES = no_strings_cmd.ggo no_strings.c
 no_multi_strings_SOURCES = no_multi_strings_cmd.ggo no_multi_strings.c
@@ -221,6 +224,7 @@ test_no_options_SOURCES = test_no_options_cmd.ggo test_no_options.c
 test_newlines_SOURCES = test_newlines_cmd.ggo test_newlines.c
 test_text_SOURCES = test_text_cmd.ggo test_text.c
 test_only_flags_SOURCES = test_only_flags_cmd.ggo test_only_flags.c
+test_usage_SOURCES = test_usage_cmd.ggo test_usage.c
 
 CHECKDIFFFILES = no_strings_cmd.c no_strings_cmd.h \
 no_multi_strings_cmd.c no_multi_strings_cmd.h \
@@ -249,8 +253,8 @@ test_no_options_cmd.h test_no_options_cmd.c \
 test_newlines_cmd.h test_newlines_cmd.c \
 test_align_cmd.h test_align_cmd.c \
 test_text_cmd.h test_text_cmd.c \
-test_only_flags_cmd.h test_only_flags_cmd.c
-
+test_only_flags_cmd.h test_only_flags_cmd.c \
+test_usage_cmd.h test_usage_cmd.c
 
 BUILT_SOURCES = $(CHECKDIFFFILES)
 
