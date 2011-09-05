@@ -11,7 +11,7 @@
 <option id="host" value=""/>
 <option id="build" value=""/>
 <option id="target" value=""/>
-<option id="prefix" value=""/>
+<option id="prefix" value="/home/bettini/usr/local"/>
 <option id="exec-prefix" value=""/>
 <option id="libdir" value=""/>
 <option id="bindir" value=""/>
@@ -29,8 +29,8 @@
 <option id="program-prefix" value=""/>
 <option id="program-suffix" value=""/>
 <option id="program-transform-name" value=""/>
-<option id="enable-maintainer-mode" value="false"/>
-<option id="user" value=""/>
+<option id="enable-maintainer-mode" value="true"/>
+<option id="user" value="CXX=/usr/lib/ccache/g++ CC=/usr/lib/ccache/gcc CXXFLAGS=-g CFLAGS=-g --enable-warnings"/>
 <option id="autogen" value="autogen.sh"/>
 <option id="autogenOpts" value=""/>
 </configuration>
