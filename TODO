@@ -74,26 +74,3 @@ Probably we should avoid to check whether the option after a section is hidden:
 does a section with only hidden options make sense?
 Yes probably it's better to keep this feature.
 
-BUGS
-
-Problems with usage string:
-
-# ~/work/gengetopt/gengetopt/build/src/gengetopt -i cmdline.ggo && make cmdline.o
-
-package "foo"
-version "1.0"
-
-purpose "Highlight the syntax of a source file (e.g. Java) into a specific format (e.g. HTML)"
-usage 
-" 1. [OPTIONS]... < input_file > output_file
-       2. source-highlight [OPTIONS]... -i input_file -o output_file \n
-       3. source-highlight [OPTIONS]... [FILES]..."
-
-# Options
-option "input"          i  "input file. default std input"      string  typestr="filename"   no
-option "output"         o  "output file. default 
-std output (when the third invocation form is used). 
-If STDOUT\n is specified, the output is directed to standard output"      string  typestr="filename"   no
-
-newlines and \n are not handled correctly in the usage string
-but they are in option descriptions?

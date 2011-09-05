@@ -454,6 +454,7 @@ mopt_help:   -m, --mopt=INT          option of my mode
 *** test_newlines
 *** test_text
 *** test_only_flags
+*** test_usage
 *** test_show_help.sh
 test_all_opts 1.0
 
@@ -1386,6 +1387,25 @@ Usage: test_only_flags [OPTIONS]... [FILES]...
   -h, --help     Print help and exit
   -V, --version  Print version and exit
   -f, --foo      foo option  (default=on)
+*** test_usage -h
+foo 1.0
+
+Highlight the syntax of a source file (e.g. Java) into a specific format (e.g. 
+HTML)
+
+Usage: 1. source-highlight [OPTIONS]... < input_file > output_file
+       2. source-highlight [OPTIONS]... -i input_file -o output_file
+       3. source-highlight [OPTIONS]... [FILES]...
+
+  -h, --help             Print help and exit
+  -V, --version          Print version and exit
+  -i, --input=filename   input file. default std input
+  -o, --output=filename  output file. default 
+                           std output (when the third invocation form is used). 
+                           
+                           If STDOUT
+                            is specified, the output is directed to standard 
+                           output
 *** test_all_opts --full-help
 test_all_opts 1.0
 

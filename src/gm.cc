@@ -656,7 +656,9 @@ CmdlineParserCreator::generate_usage_string(bool use_config_package)
   FIX_UNUSED (use_config_package);
   // if specified by the programmer, the usage string has the precedence
   if (gengetopt_usage) {
-    return gengetopt_usage;
+      string wrapped_usage;
+      wrap_cstr(wrapped_usage, 0, 0, gengetopt_usage);
+      return wrapped_usage;
   }
 
   struct gengetopt_option * opt;

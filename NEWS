@@ -9,6 +9,7 @@ http://tronprog.blogspot.com/search/label/gengetopt
 
 Version 2.22.5
 
+   * correctly wraps and preprocess the specified usage string
    * handle escaped newline chars in the .ggo file correctly
    * initialize enum variables with a generated null value (makes
      the parser compilable in C++)

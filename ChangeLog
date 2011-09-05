@@ -1,3 +1,9 @@
+2011-09-05  bettini  <bettini@bettini-N150>
+
+	* src/gm.cc (CmdlineParserCreator::generate_usage_string): 
+	wraps and preprocess the usage string if specified in the input
+	file.
+
 2010-09-06  Lorenzo Bettini  <bettini@bettini-laptop>
 
 	* src/gm_utils.cpp: do not consider a flag option as a typed one
