@@ -152,7 +152,6 @@ AH_TEMPLATE(HAVE_LONG_LONG)
 
 AC_CONFIG_FILES([Makefile
            src/Makefile 
-           src/includes/Makefile 
            src/skels/Makefile
            src/tests/Makefile
            doc/Makefile 
