@@ -15,12 +15,14 @@
 #endif
 
 #include <string.h>
+#include <sstream>
 
 #include "gm_utils.h"
-#include "my_sstream.h"
 #include "ggo_options.h"
 #include "argsdef.h"
 #include "groups.h"
+
+using namespace std;
 
 extern groups_collection_t gengetopt_groups;
 

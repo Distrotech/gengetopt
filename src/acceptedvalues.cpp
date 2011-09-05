@@ -10,8 +10,9 @@
 //
 //
 
+#include <sstream>
+
 #include "acceptedvalues.h"
-#include "my_sstream.h"
 
 using namespace std;
 

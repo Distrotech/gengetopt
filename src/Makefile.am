@@ -54,7 +54,7 @@ libgengetopt_la_LIBADD = $(top_builddir)/gl/libgnu.la \
 LDADD = $(top_builddir)/src/libgengetopt.la
 
 EXTRA_DIST = parser.h argsdef.h gengetopt.h ggos.h gm.h gnugetopt.h \
-cmdline.c cmdline.h my_sstream.h my_string.h my_map.h \
+cmdline.c cmdline.h \
 global_opts.h \
 ggo_options.h \
 groups.h \

@@ -1,5 +1,9 @@
 2011-09-05  bettini  <bettini@bettini-N150>
 
+	* src/my_map.h: removed
+	* src/my_string.h: removed
+	* src/my_sstream.h: removed
+
 	* src/gm.cc (CmdlineParserCreator::generate_usage_string): 
 	wraps and preprocess the usage string if specified in the input
 	file.

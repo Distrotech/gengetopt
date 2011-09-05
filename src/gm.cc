@@ -30,6 +30,7 @@
 #include <algorithm> // for pair
 
 #include <fstream>
+#include <sstream>
 
 extern "C"
 {
@@ -40,7 +41,6 @@ extern "C"
 #include "ggo_options.h"
 
 #include "gm.h"
-#include "my_sstream.h"
 
 #include "groups.h"
 #include "skels/option_arg.h"
@@ -83,8 +83,7 @@ extern "C"
 #define PARSER_NAME_PREFIX (c_source_gen_class::parser_name + "_")
 #define OPTION_VALUES_NAME(n) (PARSER_NAME_PREFIX + n + "_values")
 
-using std::endl;
-using std::set;
+using namespace std;
 
 extern char * gengetopt_package;
 extern char * gengetopt_version;

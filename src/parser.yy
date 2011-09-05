@@ -29,8 +29,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <string>
-
-#include "my_sstream.h"
+#include <sstream>
 
 #include "acceptedvalues.h"
 
@@ -56,6 +55,8 @@ static gengetopt_option *current_option = 0;
 extern int yylex (void) ;
 
 //#define YYERROR_VERBOSE 1
+
+using namespace std;
 
 void check_result(int o, gengetopt_option *opt)
 {

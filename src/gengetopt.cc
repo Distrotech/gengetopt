@@ -26,6 +26,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
+#include <string>
+#include <sstream>
 
 void gengetopt_free (void);
 
@@ -39,9 +41,6 @@ extern int yyparse () ;
 
 #include "argsdef.h"
 #include "global_opts.h"
-
-#include "my_sstream.h"
-#include "my_string.h"
 
 #include "gm.h"
 #include "groups.h"

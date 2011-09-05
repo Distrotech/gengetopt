@@ -21,8 +21,11 @@
 #ifndef GGO_GROUPS_H
 #define GGO_GROUPS_H
 
-#include "my_string.h"
-#include "my_map.h"
+#include <string>
+#include <map>
+
+using std::string;
+using std::map;
 
 /**
  * Represents a group of options

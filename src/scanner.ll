@@ -25,12 +25,11 @@
 #endif
 
 #include <string.h>
+#include <sstream>
 
 #include "argsdef.h"
 #include "parser.h"
 extern int gengetopt_count_line;
-
-#include "my_sstream.h"
 
 static void update_count_line (char *str);
 static void updateTokenInfo (int pos);
