@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 1999-2007  Free Software Foundation, Inc.
+ * Copyright (C) 1999-2011  Free Software Foundation, Inc.
  *
  * This file is part of GNU gengetopt
  *
@@ -936,7 +936,7 @@ print_copyright()
 {
   copyright_gen_class copyright_g;
 
-  copyright_g.set_year ("1999-2009");
+  copyright_g.set_year ("1999-2011");
   copyright_g.generate_copyright (cout);
 }
 
@@ -945,5 +945,5 @@ print_reportbugs()
 {
   cout << endl;
   cout << "Maintained by Lorenzo Bettini <http://www.lorenzobettini.it>" << endl;
-  cout << "Report bugs to <bug-gengetopt at gnu.org>" << endl;
+  //cout << "Report bugs to <bug-gengetopt at gnu.org>" << endl;
 }
