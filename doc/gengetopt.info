@@ -1,7 +1,7 @@
 This is ../../doc/gengetopt.info, produced by makeinfo version 4.13
 from ../../doc/gengetopt.texinfo.
 
-This manual is for GNU Gengetopt (version 2.22.5, 5 September 2011), a
+This manual is for GNU Gengetopt (version 2.22.5, 12 September 2011), a
 tool to write command line option parsers for C programs.
 
    Copyright (C) 2001 - 2011 Free Software Foundation, Inc.
@@ -36,7 +36,7 @@ programs.
 
    This file documents GNU Gengetopt version 2.22.5.
 
-   This manual is for GNU Gengetopt (version 2.22.5, 5 September 2011),
+   This manual is for GNU Gengetopt (version 2.22.5, 12 September 2011),
 a tool to write command line option parsers for C programs.
 
    Copyright (C) 2001 - 2011 Free Software Foundation, Inc.
@@ -2999,72 +2999,72 @@ Index
 
 
 Tag Table:
-Node: Top1105
-Node: Audience3337
-Node: Copying5108
-Node: Installation5917
-Ref: Installation-Footnote-110744
-Ref: Installation-Footnote-210860
-Ref: Installation-Footnote-310907
-Ref: Installation-Footnote-410954
-Ref: Installation-Footnote-511000
-Node: Basic Usage11045
-Ref: hidden17890
-Ref: fullhelp17890
-Ref: addedoptions19795
-Ref: showrequired46477
-Ref: helpoutput46727
-Ref: Basic Usage-Footnote-152383
-Ref: Basic Usage-Footnote-252411
-Ref: Basic Usage-Footnote-352439
-Ref: Basic Usage-Footnote-452466
-Ref: Basic Usage-Footnote-552494
-Ref: Basic Usage-Footnote-652547
-Ref: Basic Usage-Footnote-752575
-Ref: Basic Usage-Footnote-852603
-Ref: Basic Usage-Footnote-952631
-Ref: Basic Usage-Footnote-1052659
-Ref: Basic Usage-Footnote-1152776
-Ref: Basic Usage-Footnote-1252805
-Ref: Basic Usage-Footnote-1352926
-Ref: Basic Usage-Footnote-1453029
-Ref: Basic Usage-Footnote-1553058
-Ref: Basic Usage-Footnote-1653087
-Ref: Basic Usage-Footnote-1753116
-Ref: Basic Usage-Footnote-1853170
-Ref: Basic Usage-Footnote-1953239
-Ref: Basic Usage-Footnote-2053359
-Ref: Basic Usage-Footnote-2153424
-Ref: Basic Usage-Footnote-2253508
-Ref: Basic Usage-Footnote-2353567
-Node: Invoking gengetopt53626
-Ref: Invoking gengetopt-Footnote-163553
-Ref: Invoking gengetopt-Footnote-263581
-Ref: Invoking gengetopt-Footnote-363611
-Node: Terminology63639
-Node: Options with enumerated values68529
-Node: Group options71350
-Node: Mode options73404
-Node: Parser function additional parameters78773
-Ref: Parser function additional parameters-Footnote-181888
-Ref: Parser function additional parameters-Footnote-281916
-Ref: Parser function additional parameters-Footnote-381951
-Node: Configuration files82708
-Ref: Configuration files-Footnote-193083
-Ref: Configuration files-Footnote-293274
-Node: Multiple Options93440
-Node: String Parsers and Multiple Parsers97047
-Ref: String Parsers and Multiple Parsers-Footnote-1104747
-Node: No getopt_long104920
-Node: Include the getopt_long code into the parser105654
-Node: Use automake/autoconf106923
-Node: Use Gnulib107795
-Ref: Use Gnulib-Footnote-1111926
-Node: Use getopt_long sources111971
-Node: Bugs114156
-Node: Getopt and subsequent calls114930
-Ref: Getopt and subsequent calls-Footnote-1116857
-Node: Mailing Lists117103
-Node: Index117903
+Node: Top1106
+Node: Audience3339
+Node: Copying5110
+Node: Installation5919
+Ref: Installation-Footnote-110746
+Ref: Installation-Footnote-210862
+Ref: Installation-Footnote-310909
+Ref: Installation-Footnote-410956
+Ref: Installation-Footnote-511002
+Node: Basic Usage11047
+Ref: hidden17892
+Ref: fullhelp17892
+Ref: addedoptions19797
+Ref: showrequired46479
+Ref: helpoutput46729
+Ref: Basic Usage-Footnote-152385
+Ref: Basic Usage-Footnote-252413
+Ref: Basic Usage-Footnote-352441
+Ref: Basic Usage-Footnote-452468
+Ref: Basic Usage-Footnote-552496
+Ref: Basic Usage-Footnote-652549
+Ref: Basic Usage-Footnote-752577
+Ref: Basic Usage-Footnote-852605
+Ref: Basic Usage-Footnote-952633
+Ref: Basic Usage-Footnote-1052661
+Ref: Basic Usage-Footnote-1152778
+Ref: Basic Usage-Footnote-1252807
+Ref: Basic Usage-Footnote-1352928
+Ref: Basic Usage-Footnote-1453031
+Ref: Basic Usage-Footnote-1553060
+Ref: Basic Usage-Footnote-1653089
+Ref: Basic Usage-Footnote-1753118
+Ref: Basic Usage-Footnote-1853172
+Ref: Basic Usage-Footnote-1953241
+Ref: Basic Usage-Footnote-2053361
+Ref: Basic Usage-Footnote-2153426
+Ref: Basic Usage-Footnote-2253510
+Ref: Basic Usage-Footnote-2353569
+Node: Invoking gengetopt53628
+Ref: Invoking gengetopt-Footnote-163555
+Ref: Invoking gengetopt-Footnote-263583
+Ref: Invoking gengetopt-Footnote-363613
+Node: Terminology63641
+Node: Options with enumerated values68531
+Node: Group options71352
+Node: Mode options73406
+Node: Parser function additional parameters78775
+Ref: Parser function additional parameters-Footnote-181890
+Ref: Parser function additional parameters-Footnote-281918
+Ref: Parser function additional parameters-Footnote-381953
+Node: Configuration files82710
+Ref: Configuration files-Footnote-193085
+Ref: Configuration files-Footnote-293276
+Node: Multiple Options93442
+Node: String Parsers and Multiple Parsers97049
+Ref: String Parsers and Multiple Parsers-Footnote-1104749
+Node: No getopt_long104922
+Node: Include the getopt_long code into the parser105656
+Node: Use automake/autoconf106925
+Node: Use Gnulib107797
+Ref: Use Gnulib-Footnote-1111928
+Node: Use getopt_long sources111973
+Node: Bugs114158
+Node: Getopt and subsequent calls114932
+Ref: Getopt and subsequent calls-Footnote-1116859
+Node: Mailing Lists117105
+Node: Index117905
 
 End Tag Table
