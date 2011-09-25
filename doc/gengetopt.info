@@ -2759,9 +2759,9 @@ File: gengetopt.info,  Node: Bugs,  Next: Mailing Lists,  Prev: No getopt_long, 
 13 Known Bugs and Limitations
 *****************************
 
-If you find a bug in `gengetopt', please send electronic mail to
+If you find a bug in `gengetopt', please use the Savannah web interface
 
-   `bug-gengetopt at gnu dot org'
+   `http://savannah.gnu.org/bugs/?group=gengetopt'
 
    Include the version number, which you can find by running
 `gengetopt --version'.  Also include in your message the output that
@@ -3062,9 +3062,9 @@ Node: Use Gnulib107797
 Ref: Use Gnulib-Footnote-1111928
 Node: Use getopt_long sources111973
 Node: Bugs114158
-Node: Getopt and subsequent calls114932
-Ref: Getopt and subsequent calls-Footnote-1116859
-Node: Mailing Lists117105
-Node: Index117905
+Node: Getopt and subsequent calls114956
+Ref: Getopt and subsequent calls-Footnote-1116883
+Node: Mailing Lists117129
+Node: Index117929
 
 End Tag Table

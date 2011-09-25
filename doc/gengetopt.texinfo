@@ -2288,10 +2288,10 @@ You may want to take a look at gengetopt's @file{configure.in} and
 @cindex Limits
 @cindex Misfeatures
 
-If you find a bug in @command{gengetopt}, please send electronic
-mail to 
+If you find a bug in @command{gengetopt}, please use the Savannah web
+interface
 
-@code{bug-gengetopt at gnu dot org}
+@url{http://savannah.gnu.org/bugs/?group=gengetopt}
 
 Include the version
 number, which you can find by running @w{@samp{gengetopt
