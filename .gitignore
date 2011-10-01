@@ -24,3 +24,4 @@ configure.lineno
 build_mingw
 build
 *.orig
+/build-eclipse
