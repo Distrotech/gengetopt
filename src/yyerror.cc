@@ -8,6 +8,10 @@ This file is licensed to you under the license specified in the included file
   Called by yyparse on error.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "yyerror.h"
 
 #include <stdio.h>
