@@ -13,6 +13,9 @@
 					</tool>
 					<tool id="org.eclipse.linuxtools.cdt.autotools.core.toolchain.tool.autogen.1780534987" name="autogen.sh" superClass="org.eclipse.linuxtools.cdt.autotools.core.toolchain.tool.autogen"/>
 					<tool id="org.eclipse.linuxtools.cdt.autotools.core.toolchain.tool.gcc.859015749" name="GCC C Compiler" superClass="org.eclipse.linuxtools.cdt.autotools.core.toolchain.tool.gcc">
+						<option id="gnu.c.compiler.option.include.paths.1721927370" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+							<listOptionValue builtIn="false" value="&quot;${workspace_loc:/gengetopt/src/skels}&quot;"/>
+						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.798936937" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 					</tool>
 					<tool id="org.eclipse.linuxtools.cdt.autotools.core.toolchain.tool.gpp.873799649" name="GCC C++ Compiler" superClass="org.eclipse.linuxtools.cdt.autotools.core.toolchain.tool.gpp">
