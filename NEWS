@@ -1,11 +1,15 @@
 gengetopt -- History of visible changes.
 
-Copyright (C) 1999-2010  Free Software Foundation
+Copyright (C) 1999-2011  Free Software Foundation
 
 Please send gengetopt bug reports to bug-gengetopt at gnu.org
 
 For details about the new features, you can take a look at:
 http://tronprog.blogspot.com/search/label/gengetopt
+
+Version 2.22.6
+
+   * Fixed a compilation problem in Mac OS X
 
 Version 2.22.5
 

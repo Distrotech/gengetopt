@@ -1,7 +1,7 @@
 This is ../../doc/gengetopt.info, produced by makeinfo version 4.13
 from ../../doc/gengetopt.texinfo.
 
-This manual is for GNU Gengetopt (version 2.22.5, 25 September 2011), a
+This manual is for GNU Gengetopt (version 2.22.6, 25 September 2011), a
 tool to write command line option parsers for C programs.
 
    Copyright (C) 2001 - 2011 Free Software Foundation, Inc.
@@ -32,11 +32,11 @@ Gengetopt
 Gengetopt is a tool to write command line option parsing code for C
 programs.
 
-   This is Edition 2.22.5 of the Gengetopt manual.
+   This is Edition 2.22.6 of the Gengetopt manual.
 
-   This file documents GNU Gengetopt version 2.22.5.
+   This file documents GNU Gengetopt version 2.22.6.
 
-   This manual is for GNU Gengetopt (version 2.22.5, 25 September 2011),
+   This manual is for GNU Gengetopt (version 2.22.6, 25 September 2011),
 a tool to write command line option parsers for C programs.
 
    Copyright (C) 2001 - 2011 Free Software Foundation, Inc.
@@ -69,7 +69,7 @@ a tool to write command line option parsers for C programs.
 * Multiple Options::            Multiple options
 * String Parsers and Multiple Parsers::  Using multiple parsers in the same program
 * No getopt_long::              What if getopt_long is not available?
-* Bugs::                        What is lame and/or buggy in Gengetopt 2.22.5
+* Bugs::                        What is lame and/or buggy in Gengetopt 2.22.6
 * Mailing Lists::               For discussions and announces
 * Index::                       Index.
 
