@@ -293,6 +293,16 @@ header_gen_class::generate_header(ostream &stream, unsigned int indent)
   stream << indent_str;
   stream << "/** ";
   stream << "@";
+  stream << "brief the description string of the program */";
+  stream << "\n";
+  stream << indent_str;
+  stream << "extern const char *";
+  generate_string (args_info, stream, indent + indent_str.length ());
+  stream << "_description;";
+  stream << "\n";
+  stream << indent_str;
+  stream << "/** ";
+  stream << "@";
   stream << "brief all the lines making the help output */";
   stream << "\n";
   stream << indent_str;

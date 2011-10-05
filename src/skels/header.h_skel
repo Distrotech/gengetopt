@@ -66,6 +66,8 @@ struct @parser_name@_params
 extern const char *@args_info@_purpose;
 /** @@brief the usage string of the program */
 extern const char *@args_info@_usage;
+/** @@brief the description string of the program */
+extern const char *@args_info@_description;
 /** @@brief all the lines making the help output */
 extern const char *@args_info@_help[];
 @IF@ has_hidden @THEN@
