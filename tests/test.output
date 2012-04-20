@@ -1356,7 +1356,7 @@ Usage: test_no_options [OPTIONS]... [FILES]...
   -h, --help     Print help and exit
   -V, --version  Print version and exit
 *** test_newlines -h
-GNU gengetopt 2.22.5
+GNU gengetopt 2.22.6
 
 Usage: gengetopt [OPTIONS]... [FILES]...
 
@@ -1365,7 +1365,7 @@ Usage: gengetopt [OPTIONS]... [FILES]...
   -F, --format=fmt  this is the \nformat used for find -printf  
                       (default=`%p\t%s\n')
 *** test_text -h
-GNU gengetopt 2.22.5
+GNU gengetopt 2.22.6
 
 Usage: gengetopt [OPTIONS]... [FILES]...
 
