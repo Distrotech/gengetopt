@@ -35,6 +35,7 @@ build
 .libs
 .deps
 src/gengetopt
+src/tests/test_specialchars
 tests/*_cmd.c
 tests/*_cmd.h
 tests/*-cmd.c
@@ -60,6 +61,8 @@ doc/test_conf_parser_ov2.c.texinfo
 doc/test_modes_cmd.ggo.texinfo
 doc/test_multiple_parsers.c.texinfo
 doc/samples.stamp
+doc/sample2
+doc/test.out
 gl/arg-nonnull.h
 gl/c++defs.h
 gl/string.h
