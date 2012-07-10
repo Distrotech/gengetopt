@@ -91,7 +91,6 @@ text "that contain the arguments to parse, by using the following two options.\n
 option  "conf-parser" C "generate a config file parser" optional
 option  "string-parser" S "generate a string parser (the string contains the command line)" optional
 
-text ""
 
 section "Additional options"
 
