@@ -152,6 +152,7 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   virtual void generate_check_modes(ostream &stream, unsigned int indent);
 
   const string generate_purpose();
+  const string generate_versiontext();
   const string generate_description();
   const string generate_usage_string(bool use_config_package = true);
 

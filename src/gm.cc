@@ -88,6 +88,7 @@ using namespace std;
 extern char * gengetopt_package;
 extern char * gengetopt_version;
 extern char * gengetopt_purpose;
+extern char * gengetopt_versiontext;
 extern char * gengetopt_description;
 extern char * gengetopt_usage;
 extern char * gengetopt_input_filename;
@@ -280,6 +281,7 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   set_check_required_options(has_required() || has_dependencies() || has_multiple_options());
   set_purpose(generate_purpose());
   set_description(generate_description());
+  set_versiontext(generate_versiontext());
   set_no_package((gengetopt_package == 0));
   c_source_gen_class::set_has_hidden(has_hidden_options());
   header_gen_class::set_has_hidden(c_source_gen_class::has_hidden);
@@ -1010,6 +1012,19 @@ CmdlineParserCreator::generate_purpose()
     }
 
   return wrapped_purpose;
+}
+
+const string
+CmdlineParserCreator::generate_versiontext()
+{
+  string wrapped_versiontext;
+
+  if (gengetopt_versiontext != NULL)
+    {
+	  wrap_cstr(wrapped_versiontext, 0, 0, gengetopt_versiontext);
+	}
+
+  return wrapped_versiontext;
 }
 
 const string

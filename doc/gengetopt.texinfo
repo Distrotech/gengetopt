@@ -350,6 +350,7 @@ version "<version>"
 purpose "<purpose>"
 usage "<usage>"
 description "<description>"
+versiontext "<versiontext>"
 
 args "<command line options>"
 
@@ -414,6 +415,13 @@ Optional.
 
 The ``Description'' string that will be printed with the
 help@footnote{Since version 2.19.}, after the usage string.  Optional.
+
+@item versiontext
+@cindex versiontext
+
+Additional information that will be printed after the program name and
+version in the output of @code{--version}. This would be used, for
+example, to display copyright and licensing information.
 
 @item args
 @cindex args

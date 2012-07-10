@@ -1,10 +1,8 @@
+/* A Bison parser, made by GNU Bison 2.5.  */
 
-/* A Bison parser, made by GNU Bison 2.4.1.  */
-
-/* Skeleton interface for Bison's Yacc-like parsers in C
+/* Bison interface for Yacc-like parsers in C
    
-      Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
-   Free Software Foundation, Inc.
+      Copyright (C) 1984, 1989-1990, 2000-2011 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -66,14 +64,15 @@
      TOK_DETAILS = 282,
      TOK_SECTIONDESC = 283,
      TOK_TEXT = 284,
-     TOK_ARGS = 285,
-     TOK_VALUES = 286,
-     TOK_HIDDEN = 287,
-     TOK_DEPENDON = 288,
-     TOK_STRING = 289,
-     TOK_CHAR = 290,
-     TOK_ARGTYPE = 291,
-     TOK_SIZE = 292
+     TOK_VERSIONTEXT = 285,
+     TOK_ARGS = 286,
+     TOK_VALUES = 287,
+     TOK_HIDDEN = 288,
+     TOK_DEPENDON = 289,
+     TOK_STRING = 290,
+     TOK_CHAR = 291,
+     TOK_ARGTYPE = 292,
+     TOK_SIZE = 293
    };
 #endif
 /* Tokens.  */
@@ -104,14 +103,15 @@
 #define TOK_DETAILS 282
 #define TOK_SECTIONDESC 283
 #define TOK_TEXT 284
-#define TOK_ARGS 285
-#define TOK_VALUES 286
-#define TOK_HIDDEN 287
-#define TOK_DEPENDON 288
-#define TOK_STRING 289
-#define TOK_CHAR 290
-#define TOK_ARGTYPE 291
-#define TOK_SIZE 292
+#define TOK_VERSIONTEXT 285
+#define TOK_ARGS 286
+#define TOK_VALUES 287
+#define TOK_HIDDEN 288
+#define TOK_DEPENDON 289
+#define TOK_STRING 290
+#define TOK_CHAR 291
+#define TOK_ARGTYPE 292
+#define TOK_SIZE 293
 
 
 
@@ -120,8 +120,8 @@
 typedef union YYSTYPE
 {
 
-/* Line 1676 of yacc.c  */
-#line 149 "../../src/parser.yy"
+/* Line 2068 of yacc.c  */
+#line 150 "./parser.yy"
 
     char   *str;
     char    chr;
@@ -133,8 +133,8 @@ typedef union YYSTYPE
 
 
 
-/* Line 1676 of yacc.c  */
-#line 138 "../../src/parser.h"
+/* Line 2068 of yacc.c  */
+#line 138 "./parser.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

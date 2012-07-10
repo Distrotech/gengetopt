@@ -54,6 +54,7 @@ extern int yyparse () ;
 char * gengetopt_package = NULL;
 char * gengetopt_version = NULL;
 char * gengetopt_purpose = NULL;
+char * gengetopt_versiontext = NULL;
 char * gengetopt_description = NULL;
 char * gengetopt_usage = NULL;
 
@@ -374,6 +375,15 @@ gengetopt_define_purpose (char * s)
 {
   gengetopt_purpose = strdup (s);
   if (gengetopt_purpose == NULL)
+    return 1;
+  return 0;
+}
+
+int
+gengetopt_define_versiontext (char * s)
+{
+  gengetopt_versiontext = strdup (s);
+  if (gengetopt_versiontext == NULL)
     return 1;
   return 0;
 }

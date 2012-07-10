@@ -31,6 +31,8 @@ const char *@args_info@_purpose = "@purpose@";
 
 const char *@args_info@_usage = "Usage: @if@ no_package @then@" @package_var_name@ "@endif@@usage_string@";
 
+const char *@args_info@_versiontext = "@versiontext@";
+
 const char *@args_info@_description = "@description@";
 
 @IF@ has_hidden or has_details @THEN@
@@ -171,6 +173,9 @@ void
   printf ("%s %s\n",
      (strlen(@package_var_name@_NAME) ? @package_var_name@_NAME : @package_var_name@),
      @version_var_name@);
+
+  if (strlen(@args_info@_versiontext) > 0)
+    printf("\n%s\n", @args_info@_versiontext);
 }
 
 static void print_help_common(void) {

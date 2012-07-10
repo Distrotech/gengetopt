@@ -46,6 +46,7 @@ extern char * gengetopt_input_filename;
 static int gengetopt_package_given = 0;
 static int gengetopt_version_given = 0;
 static int gengetopt_purpose_given = 0;
+static int gengetopt_versiontext_given = 0;
 static int gengetopt_usage_given = 0;
 static int gengetopt_description_given = 0;
 
@@ -183,6 +184,7 @@ struct multiple_size
 %token              TOK_DETAILS		"details"
 %token              TOK_SECTIONDESC	"sectiondesc"
 %token              TOK_TEXT    	"text"
+%token              TOK_VERSIONTEXT	"versiontext"
 %token              TOK_ARGS    	"args"
 %token              TOK_VALUES          "values"
 %token              TOK_HIDDEN      "hidden"
@@ -223,6 +225,7 @@ statement
 	| sectiondef
 	| option
 	| text
+	| versiontext
 	| groupoption
 	| groupdef
 	| modeoption
@@ -354,6 +357,26 @@ text
   				}
             }
         ;
+
+versiontext
+	: TOK_VERSIONTEXT quoted_string
+	    {
+	    	if (gengetopt_versiontext_given)
+	        {
+		    yyerror ("versiontext redefined");
+		    YYERROR;
+		}
+		else
+		{
+		    gengetopt_versiontext_given = 1;
+		    if (gengetopt_define_versiontext ($2))
+		    {
+			yyerror ("not enough memory");
+			YYERROR;
+		    }
+		}
+	    }
+	;
 
 args
   : TOK_ARGS TOK_STRING

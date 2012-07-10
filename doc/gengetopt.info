@@ -1,8 +1,8 @@
-This is ../../doc/gengetopt.info, produced by makeinfo version 4.13
-from ../../doc/gengetopt.texinfo.
+This is gengetopt.info, produced by makeinfo version 4.13 from
+gengetopt.texinfo.
 
-This manual is for GNU Gengetopt (version 2.22.6, 16 December 2011), a
-tool to write command line option parsers for C programs.
+This manual is for GNU Gengetopt (version 2.22.6, 9 July 2012), a tool
+to write command line option parsers for C programs.
 
    Copyright (C) 2001 - 2011 Free Software Foundation, Inc.
 
@@ -36,8 +36,8 @@ programs.
 
    This file documents GNU Gengetopt version 2.22.6.
 
-   This manual is for GNU Gengetopt (version 2.22.6, 16 December 2011),
-a tool to write command line option parsers for C programs.
+   This manual is for GNU Gengetopt (version 2.22.6, 9 July 2012), a
+tool to write command line option parsers for C programs.
 
    Copyright (C) 2001 - 2011 Free Software Foundation, Inc.
 
@@ -298,6 +298,7 @@ separate lines):
      purpose "<purpose>"
      usage "<usage>"
      description "<description>"
+     versiontext "<versiontext>"
 
      args "<command line options>"
 
@@ -345,6 +346,11 @@ Where:
 `description'
      The "Description" string that will be printed with the help(2),
      after the usage string.  Optional.
+
+`versiontext'
+     Additional information that will be printed after the program name
+     and version in the output of `--version'. This would be used, for
+     example, to display copyright and licensing information.
 
 `args'
      With `args'(3) you can specify options that will be added to the
@@ -2300,9 +2306,9 @@ Index
 * --arg-struct-name:                     Invoking gengetopt.  (line  93)
 * --conf-parser:                         Invoking gengetopt.  (line 166)
 * --default-optional <1>:                Invoking gengetopt.  (line 101)
-* --default-optional:                    Basic Usage.         (line 135)
-* --detailed-help:                       Basic Usage.         (line  98)
-* --full-help:                           Basic Usage.         (line 169)
+* --default-optional:                    Basic Usage.         (line 141)
+* --detailed-help:                       Basic Usage.         (line 104)
+* --full-help:                           Basic Usage.         (line 175)
 * --func-name:                           Invoking gengetopt.  (line  80)
 * --gen-version:                         Invoking gengetopt.  (line 161)
 * --header-output-dir:                   Invoking gengetopt.  (line  89)
@@ -2324,19 +2330,19 @@ Index
 * --string-parser:                       Invoking gengetopt.  (line 169)
 * --unamed-opts:                         Invoking gengetopt.  (line 107)
 * -C,--conf-parser:                      Configuration files. (line   6)
-* -h,--detailed-help:                    Basic Usage.         (line 550)
-* -h,--help:                             Basic Usage.         (line 221)
+* -h,--detailed-help:                    Basic Usage.         (line 556)
+* -h,--help:                             Basic Usage.         (line 227)
 * -S,--string-parser:                    String Parsers and Multiple Parsers.
                                                               (line  21)
-* -V,--version:                          Basic Usage.         (line 221)
+* -V,--version:                          Basic Usage.         (line 227)
 * <cmd_parser_name>_config_file:         Configuration files. (line  13)
 * <cmd_parser_name>_ext:                 Configuration files. (line  33)
 * <cmd_parser_name>_required:            Configuration files. (line  49)
-* argoptional:                           Basic Usage.         (line 147)
-* args:                                  Basic Usage.         (line  67)
-* argtype:                               Basic Usage.         (line 104)
+* argoptional:                           Basic Usage.         (line 153)
+* args:                                  Basic Usage.         (line  73)
+* argtype:                               Basic Usage.         (line 110)
 * argument, defined:                     Terminology.         (line   6)
-* argv:                                  Basic Usage.         (line 324)
+* argv:                                  Basic Usage.         (line 330)
 * Audience:                              Audience.            (line   6)
 * autoconf <1>:                          Use getopt_long sources.
                                                               (line  11)
@@ -2355,11 +2361,11 @@ Index
 * Conditions for copying Gengetopt:      Copying.             (line   6)
 * configuration files:                   Configuration files. (line   6)
 * Copying conditions:                    Copying.             (line   6)
-* default:                               Basic Usage.         (line 123)
-* dependon:                              Basic Usage.         (line 130)
-* desc:                                  Basic Usage.         (line  93)
-* description:                           Basic Usage.         (line  63)
-* details:                               Basic Usage.         (line  98)
+* default:                               Basic Usage.         (line 129)
+* dependon:                              Basic Usage.         (line 136)
+* desc:                                  Basic Usage.         (line  99)
+* description:                           Basic Usage.         (line  64)
+* details:                               Basic Usage.         (line 104)
 * download:                              Installation.        (line   6)
 * enum:                                  Options with enumerated values.
                                                               (line  31)
@@ -2372,7 +2378,7 @@ Index
 * gnulib <1>:                            Use Gnulib.          (line   6)
 * gnulib:                                Installation.        (line 100)
 * group options:                         Group options.       (line   6)
-* hidden:                                Basic Usage.         (line 169)
+* hidden:                                Basic Usage.         (line 175)
 * how to use Gengetopt:                  Basic Usage.         (line   6)
 * include:                               Configuration files. (line  71)
 * initialize:                            Parser function additional parameters.
@@ -2382,28 +2388,28 @@ Index
 * Known Bugs:                            Bugs.                (line   6)
 * libtool:                               Installation.        (line  89)
 * Limits:                                Bugs.                (line   6)
-* long:                                  Basic Usage.         (line  79)
+* long:                                  Basic Usage.         (line  85)
 * long option, defined:                  Terminology.         (line   6)
 * mailing list:                          Mailing Lists.       (line   6)
 * Misfeatures:                           Bugs.                (line   6)
 * mode options:                          Mode options.        (line   6)
-* multiple:                              Basic Usage.         (line 161)
+* multiple:                              Basic Usage.         (line 167)
 * multiple option, defined:              Terminology.         (line   6)
 * multiple options:                      Multiple Options.    (line   6)
 * multiple parsers:                      String Parsers and Multiple Parsers.
                                                               (line   6)
-* on/off:                                Basic Usage.         (line 179)
-* option without name:                   Basic Usage.         (line 315)
+* on/off:                                Basic Usage.         (line 185)
+* option without name:                   Basic Usage.         (line 321)
 * option, defined:                       Terminology.         (line   6)
-* optional:                              Basic Usage.         (line 135)
+* optional:                              Basic Usage.         (line 141)
 * override:                              Parser function additional parameters.
                                                               (line  21)
-* PACKAGE:                               Basic Usage.         (line  39)
-* package:                               Basic Usage.         (line  39)
+* PACKAGE:                               Basic Usage.         (line  40)
+* package:                               Basic Usage.         (line  40)
 * PACKAGE:                               Audience.            (line  36)
-* PACKAGE_NAME <1>:                      Basic Usage.         (line  39)
+* PACKAGE_NAME <1>:                      Basic Usage.         (line  40)
 * PACKAGE_NAME:                          Audience.            (line  36)
-* parameter:                             Basic Usage.         (line 315)
+* parameter:                             Basic Usage.         (line 321)
 * parameter, defined:                    Terminology.         (line   6)
 * parameters:                            Parser function additional parameters.
                                                               (line   6)
@@ -2412,99 +2418,100 @@ Index
 * patching:                              Installation.        (line 124)
 * print_errors:                          Parser function additional parameters.
                                                               (line  38)
-* purpose:                               Basic Usage.         (line  55)
-* required:                              Basic Usage.         (line 135)
+* purpose:                               Basic Usage.         (line  56)
+* required:                              Basic Usage.         (line 141)
 * required option, defined:              Terminology.         (line   6)
 * requirements:                          Installation.        (line  95)
-* section:                               Basic Usage.         (line 234)
-* short:                                 Basic Usage.         (line  86)
+* section:                               Basic Usage.         (line 240)
+* short:                                 Basic Usage.         (line  92)
 * short option, defined:                 Terminology.         (line   6)
 * string parsers:                        String Parsers and Multiple Parsers.
                                                               (line   6)
 * Terminology:                           Terminology.         (line   6)
-* text:                                  Basic Usage.         (line 250)
+* text:                                  Basic Usage.         (line 256)
 * tutorial:                              Basic Usage.         (line   6)
-* typestr:                               Basic Usage.         (line 110)
-* usage:                                 Basic Usage.         (line  59)
+* typestr:                               Basic Usage.         (line 116)
+* usage:                                 Basic Usage.         (line  60)
 * value, defined:                        Terminology.         (line   6)
 * values <1>:                            Options with enumerated values.
                                                               (line   6)
-* values:                                Basic Usage.         (line 116)
-* VERSION:                               Basic Usage.         (line  51)
-* version:                               Basic Usage.         (line  51)
+* values:                                Basic Usage.         (line 122)
+* VERSION:                               Basic Usage.         (line  52)
+* version:                               Basic Usage.         (line  52)
 * VERSION:                               Audience.            (line  37)
+* versiontext:                           Basic Usage.         (line  68)
 * Who should use Gengetopt:              Audience.            (line   6)
-* wrapping:                              Basic Usage.         (line  94)
+* wrapping:                              Basic Usage.         (line 100)
 
 
 
 Tag Table:
-Node: Top1105
-Node: Audience3337
-Node: Copying5108
-Node: Installation5917
-Ref: Installation-Footnote-110744
-Ref: Installation-Footnote-210860
-Ref: Installation-Footnote-310907
-Ref: Installation-Footnote-410954
-Ref: Installation-Footnote-511000
-Node: Basic Usage11045
-Ref: hidden17890
-Ref: fullhelp17890
-Ref: addedoptions19795
-Ref: showrequired32258
-Ref: helpoutput32508
-Ref: Basic Usage-Footnote-138164
-Ref: Basic Usage-Footnote-238192
-Ref: Basic Usage-Footnote-338220
-Ref: Basic Usage-Footnote-438247
-Ref: Basic Usage-Footnote-538275
-Ref: Basic Usage-Footnote-638328
-Ref: Basic Usage-Footnote-738356
-Ref: Basic Usage-Footnote-838384
-Ref: Basic Usage-Footnote-938412
-Ref: Basic Usage-Footnote-1038440
-Ref: Basic Usage-Footnote-1138557
-Ref: Basic Usage-Footnote-1238586
-Ref: Basic Usage-Footnote-1338707
-Ref: Basic Usage-Footnote-1438810
-Ref: Basic Usage-Footnote-1538839
-Ref: Basic Usage-Footnote-1638868
-Ref: Basic Usage-Footnote-1738897
-Ref: Basic Usage-Footnote-1838951
-Ref: Basic Usage-Footnote-1939020
-Ref: Basic Usage-Footnote-2039140
-Ref: Basic Usage-Footnote-2139205
-Ref: Basic Usage-Footnote-2239289
-Ref: Basic Usage-Footnote-2339348
-Node: Invoking gengetopt39407
-Ref: Invoking gengetopt-Footnote-149334
-Ref: Invoking gengetopt-Footnote-249362
-Ref: Invoking gengetopt-Footnote-349392
-Node: Terminology49420
-Node: Options with enumerated values54310
-Node: Group options57131
-Node: Mode options59185
-Node: Parser function additional parameters63444
-Ref: Parser function additional parameters-Footnote-166559
-Ref: Parser function additional parameters-Footnote-266587
-Ref: Parser function additional parameters-Footnote-366622
-Node: Configuration files67379
-Ref: Configuration files-Footnote-172879
-Ref: Configuration files-Footnote-273070
-Node: Multiple Options73236
-Node: String Parsers and Multiple Parsers76237
-Ref: String Parsers and Multiple Parsers-Footnote-181906
-Node: No getopt_long82079
-Node: Include the getopt_long code into the parser82813
-Node: Use automake/autoconf84082
-Node: Use Gnulib84954
-Ref: Use Gnulib-Footnote-189085
-Node: Use getopt_long sources89130
-Node: Bugs91315
-Node: Getopt and subsequent calls92113
-Ref: Getopt and subsequent calls-Footnote-194040
-Node: Mailing Lists94286
-Node: Index95086
+Node: Top1080
+Node: Audience3307
+Node: Copying5078
+Node: Installation5887
+Ref: Installation-Footnote-110714
+Ref: Installation-Footnote-210830
+Ref: Installation-Footnote-310877
+Ref: Installation-Footnote-410924
+Ref: Installation-Footnote-510970
+Node: Basic Usage11015
+Ref: hidden18113
+Ref: fullhelp18113
+Ref: addedoptions20018
+Ref: showrequired32481
+Ref: helpoutput32731
+Ref: Basic Usage-Footnote-138387
+Ref: Basic Usage-Footnote-238415
+Ref: Basic Usage-Footnote-338443
+Ref: Basic Usage-Footnote-438470
+Ref: Basic Usage-Footnote-538498
+Ref: Basic Usage-Footnote-638551
+Ref: Basic Usage-Footnote-738579
+Ref: Basic Usage-Footnote-838607
+Ref: Basic Usage-Footnote-938635
+Ref: Basic Usage-Footnote-1038663
+Ref: Basic Usage-Footnote-1138780
+Ref: Basic Usage-Footnote-1238809
+Ref: Basic Usage-Footnote-1338930
+Ref: Basic Usage-Footnote-1439033
+Ref: Basic Usage-Footnote-1539062
+Ref: Basic Usage-Footnote-1639091
+Ref: Basic Usage-Footnote-1739120
+Ref: Basic Usage-Footnote-1839174
+Ref: Basic Usage-Footnote-1939243
+Ref: Basic Usage-Footnote-2039363
+Ref: Basic Usage-Footnote-2139428
+Ref: Basic Usage-Footnote-2239512
+Ref: Basic Usage-Footnote-2339571
+Node: Invoking gengetopt39630
+Ref: Invoking gengetopt-Footnote-149557
+Ref: Invoking gengetopt-Footnote-249585
+Ref: Invoking gengetopt-Footnote-349615
+Node: Terminology49643
+Node: Options with enumerated values54533
+Node: Group options57354
+Node: Mode options59408
+Node: Parser function additional parameters63667
+Ref: Parser function additional parameters-Footnote-166782
+Ref: Parser function additional parameters-Footnote-266810
+Ref: Parser function additional parameters-Footnote-366845
+Node: Configuration files67602
+Ref: Configuration files-Footnote-173102
+Ref: Configuration files-Footnote-273293
+Node: Multiple Options73459
+Node: String Parsers and Multiple Parsers76460
+Ref: String Parsers and Multiple Parsers-Footnote-182129
+Node: No getopt_long82302
+Node: Include the getopt_long code into the parser83036
+Node: Use automake/autoconf84305
+Node: Use Gnulib85177
+Ref: Use Gnulib-Footnote-189308
+Node: Use getopt_long sources89353
+Node: Bugs91538
+Node: Getopt and subsequent calls92336
+Ref: Getopt and subsequent calls-Footnote-194263
+Node: Mailing Lists94509
+Node: Index95309
 
 End Tag Table

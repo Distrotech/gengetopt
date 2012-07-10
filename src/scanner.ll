@@ -110,6 +110,7 @@ tabs [\t]+
 <INITIAL>dependon	updateTokenInfo (-1); return TOK_DEPENDON;
 <INITIAL>details	updateTokenInfo (-1); return TOK_DETAILS;
 <INITIAL>text    	updateTokenInfo (-1); return TOK_TEXT;
+<INITIAL>versiontext	updateTokenInfo (-1); return TOK_VERSIONTEXT;
 <INITIAL>args    	updateTokenInfo (-1); return TOK_ARGS;
 
 <INITIAL>"=" { updateTokenInfo (-1); return '='; }

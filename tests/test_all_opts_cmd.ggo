@@ -4,6 +4,8 @@
 
 package "test_all_opts"
 version "1.0"
+versiontext "This text is printed after the version during --version
+this is a test this is a test this is a test this is a test this is a test this is a test this is a test this is a test this is a test this is a test!"
 purpose "This is just a gengetopt's test file"
 description "This is just a test file
 
