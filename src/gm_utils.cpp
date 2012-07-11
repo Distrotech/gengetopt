@@ -283,33 +283,38 @@ void wrap_cstr(string& wrapped, unsigned int from_column,
 
     while (*out_buf) {
         // check for a new line
-        if (*out_buf) {
-            if ((newline_chars = not_newlines(out_buf, num_of_newlines))) {
-                for (int i = 1; i <= num_of_newlines; ++i)
-                    stream << "\\n";
+        if ((newline_chars = not_newlines(out_buf, num_of_newlines))) {
+            for (int i = 1; i <= num_of_newlines; ++i)
+                stream << "\\n";
 
-                out_buf += newline_chars;
+            out_buf += newline_chars;
 
-                if (*out_buf) {
-                    stream << indent;
-                    next_space = second_line_column;
-                    continue;
-                } else
-                    break;
-            } else {
-                stream << *out_buf++;
-                next_space++;
-            }
+            if (*out_buf) {
+                stream << indent;
+                next_space = second_line_column;
+                continue;
+            } else
+                break;
         }
-        // search next whitespace, i.e., next word
-        while ((*out_buf) && (*out_buf != ' ') &&
+
+        // find next word (including any preceeding spaces)
+        bool had_word = false;
+        while ((*out_buf) && (*out_buf != ' ' || !had_word) &&
                 !not_newlines(out_buf, num_of_newlines)) {
+            had_word = *out_buf != ' ';
             next_word += *out_buf++;
             next_space++;
         }
 
         // wrap line if it's too long
         if (next_space > 79) {
+            // trim leading spaces
+            std::size_t pos = next_word.find_first_not_of(' ');
+            if( pos == std::string::npos )
+                next_word.empty();
+            else if( pos )
+                next_word.erase( 0, pos );
+
             stream << "\\n" << indent << next_word;
             next_space = second_line_column + next_word.size();
         } else
