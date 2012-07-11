@@ -29,6 +29,8 @@ const char *gengetopt_args_info_purpose = "";
 
 const char *gengetopt_args_info_usage = "Usage: more_than_once [OPTIONS]... [FILES]...";
 
+const char *gengetopt_args_info_versiontext = "";
+
 const char *gengetopt_args_info_description = "";
 
 const char *gengetopt_args_info_help[] = {
@@ -94,6 +96,9 @@ more_than_once_cmd_parser_print_version (void)
   printf ("%s %s\n",
      (strlen(MORE_THAN_ONCE_CMD_PARSER_PACKAGE_NAME) ? MORE_THAN_ONCE_CMD_PARSER_PACKAGE_NAME : MORE_THAN_ONCE_CMD_PARSER_PACKAGE),
      MORE_THAN_ONCE_CMD_PARSER_VERSION);
+
+  if (strlen(gengetopt_args_info_versiontext) > 0)
+    printf("\n%s\n", gengetopt_args_info_versiontext);
 }
 
 static void print_help_common(void) {

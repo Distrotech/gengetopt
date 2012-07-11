@@ -705,6 +705,10 @@ Usage: gengetopt [OPTIONS]...
 *** test_all_opts -h
 test_all_opts 1.0
 
+This text is printed after the version during --version
+this is a test this is a test this is a test this is a test this is a test this 
+is a test this is a test this is a test this is a test this is a test!
+
 This is just a gengetopt's test file
 
 Usage: test_all_opts [OPTIONS]... [FILES]...
@@ -1409,6 +1413,10 @@ Usage: 1. source-highlight [OPTIONS]... < input_file > output_file
 *** test_all_opts --full-help
 test_all_opts 1.0
 
+This text is printed after the version during --version
+this is a test this is a test this is a test this is a test this is a test this 
+is a test this is a test this is a test this is a test this is a test!
+
 This is just a gengetopt's test file
 
 Usage: test_all_opts [OPTIONS]... [FILES]...
@@ -1468,6 +1476,10 @@ Moreover, text can be specified more than once in the input file.
 A text after all options.
 *** test_all_opts --detailed-help
 test_all_opts 1.0
+
+This text is printed after the version during --version
+this is a test this is a test this is a test this is a test this is a test this 
+is a test this is a test this is a test this is a test this is a test!
 
 This is just a gengetopt's test file
 

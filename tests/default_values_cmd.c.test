@@ -29,6 +29,8 @@ const char *gengetopt_args_info_purpose = "";
 
 const char *gengetopt_args_info_usage = "Usage: default_values [OPTIONS]... [FILES]...";
 
+const char *gengetopt_args_info_versiontext = "";
+
 const char *gengetopt_args_info_description = "";
 
 const char *gengetopt_args_info_help[] = {
@@ -127,6 +129,9 @@ default_values_cmd_parser_print_version (void)
   printf ("%s %s\n",
      (strlen(DEFAULT_VALUES_CMD_PARSER_PACKAGE_NAME) ? DEFAULT_VALUES_CMD_PARSER_PACKAGE_NAME : DEFAULT_VALUES_CMD_PARSER_PACKAGE),
      DEFAULT_VALUES_CMD_PARSER_VERSION);
+
+  if (strlen(gengetopt_args_info_versiontext) > 0)
+    printf("\n%s\n", gengetopt_args_info_versiontext);
 }
 
 static void print_help_common(void) {

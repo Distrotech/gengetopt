@@ -29,6 +29,8 @@ const char *gengetopt_args_info_purpose = "";
 
 const char *gengetopt_args_info_usage = "Usage: canonize_names [OPTIONS]...";
 
+const char *gengetopt_args_info_versiontext = "";
+
 const char *gengetopt_args_info_description = "";
 
 const char *gengetopt_args_info_help[] = {
@@ -88,6 +90,9 @@ canonize_names_cmd_parser_print_version (void)
   printf ("%s %s\n",
      (strlen(CANONIZE_NAMES_CMD_PARSER_PACKAGE_NAME) ? CANONIZE_NAMES_CMD_PARSER_PACKAGE_NAME : CANONIZE_NAMES_CMD_PARSER_PACKAGE),
      CANONIZE_NAMES_CMD_PARSER_VERSION);
+
+  if (strlen(gengetopt_args_info_versiontext) > 0)
+    printf("\n%s\n", gengetopt_args_info_versiontext);
 }
 
 static void print_help_common(void) {

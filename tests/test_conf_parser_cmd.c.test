@@ -29,6 +29,8 @@ const char *my_args_info_purpose = "";
 
 const char *my_args_info_usage = "Usage: test_conf_parser [OPTIONS]... [OTHER NAMES]...";
 
+const char *my_args_info_versiontext = "";
+
 const char *my_args_info_description = "";
 
 const char *my_args_info_help[] = {
@@ -225,6 +227,9 @@ test_conf_parser_cmd_parser_print_version (void)
   printf ("%s %s\n",
      (strlen(TEST_CONF_PARSER_CMD_PARSER_PACKAGE_NAME) ? TEST_CONF_PARSER_CMD_PARSER_PACKAGE_NAME : TEST_CONF_PARSER_CMD_PARSER_PACKAGE),
      TEST_CONF_PARSER_CMD_PARSER_VERSION);
+
+  if (strlen(my_args_info_versiontext) > 0)
+    printf("\n%s\n", my_args_info_versiontext);
 }
 
 static void print_help_common(void) {

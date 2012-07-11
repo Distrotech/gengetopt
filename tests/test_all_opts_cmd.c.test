@@ -29,6 +29,8 @@ const char *gengetopt_args_info_purpose = "This is just a gengetopt's test file"
 
 const char *gengetopt_args_info_usage = "Usage: test_all_opts [OPTIONS]... [FILES]...";
 
+const char *gengetopt_args_info_versiontext = "This text is printed after the version during --version\nthis is a test this is a test this is a test this is a test this is a test this \nis a test this is a test this is a test this is a test this is a test!";
+
 const char *gengetopt_args_info_description = "This is just a test file\n\nto test all possible\ncommand line type options.\n\nIn ggo files comments start with # and end at EOL";
 
 const char *gengetopt_args_info_detailed_help[] = {
@@ -256,6 +258,9 @@ test_all_opts_cmd_parser_print_version (void)
   printf ("%s %s\n",
      (strlen(TEST_ALL_OPTS_CMD_PARSER_PACKAGE_NAME) ? TEST_ALL_OPTS_CMD_PARSER_PACKAGE_NAME : TEST_ALL_OPTS_CMD_PARSER_PACKAGE),
      TEST_ALL_OPTS_CMD_PARSER_VERSION);
+
+  if (strlen(gengetopt_args_info_versiontext) > 0)
+    printf("\n%s\n", gengetopt_args_info_versiontext);
 }
 
 static void print_help_common(void) {

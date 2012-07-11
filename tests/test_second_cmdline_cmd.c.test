@@ -28,6 +28,8 @@ const char *test_second_cmdline_cmd_struct_purpose = "";
 
 const char *test_second_cmdline_cmd_struct_usage = "Usage: " TEST_SECOND_CMDLINE_CMD_PARSER_PACKAGE " [OPTIONS]... [OTHER NAMES]...";
 
+const char *test_second_cmdline_cmd_struct_versiontext = "";
+
 const char *test_second_cmdline_cmd_struct_description = "";
 
 const char *test_second_cmdline_cmd_struct_help[] = {
@@ -126,6 +128,9 @@ test_second_cmdline_cmd_parser_print_version (void)
   printf ("%s %s\n",
      (strlen(TEST_SECOND_CMDLINE_CMD_PARSER_PACKAGE_NAME) ? TEST_SECOND_CMDLINE_CMD_PARSER_PACKAGE_NAME : TEST_SECOND_CMDLINE_CMD_PARSER_PACKAGE),
      TEST_SECOND_CMDLINE_CMD_PARSER_VERSION);
+
+  if (strlen(test_second_cmdline_cmd_struct_versiontext) > 0)
+    printf("\n%s\n", test_second_cmdline_cmd_struct_versiontext);
 }
 
 static void print_help_common(void) {

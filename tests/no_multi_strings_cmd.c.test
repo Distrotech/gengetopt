@@ -29,6 +29,8 @@ const char *gengetopt_args_info_purpose = "Has multiple options none of which ar
 
 const char *gengetopt_args_info_usage = "Usage: no multi strings [OPTIONS]... [FILES]...";
 
+const char *gengetopt_args_info_versiontext = "";
+
 const char *gengetopt_args_info_description = "";
 
 const char *gengetopt_args_info_help[] = {
@@ -98,6 +100,9 @@ no_multi_strings_cmd_parser_print_version (void)
   printf ("%s %s\n",
      (strlen(NO_MULTI_STRINGS_CMD_PARSER_PACKAGE_NAME) ? NO_MULTI_STRINGS_CMD_PARSER_PACKAGE_NAME : NO_MULTI_STRINGS_CMD_PARSER_PACKAGE),
      NO_MULTI_STRINGS_CMD_PARSER_VERSION);
+
+  if (strlen(gengetopt_args_info_versiontext) > 0)
+    printf("\n%s\n", gengetopt_args_info_versiontext);
 }
 
 static void print_help_common(void) {
