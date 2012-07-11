@@ -40,7 +40,7 @@ const char *gengetopt_args_info_help[] = {
   "  -N, --no-mode           a generic option not beloging to any mode",
   "      --no-mode2=STRING   another generic option not beloging to any mode",
   "\nsome modes just for testing:",
-  "\n Mode: mode1\n  any option of this mode is in contrast with any option of the other mode\n  Notice that this description is quite long so it may spawn many lines...      \n          fortunately gengetopt will wrap it for you :-)",
+  "\n Mode: mode1\n  any option of this mode is in contrast with any option of the other mode\n  Notice that this description is quite long so it may spawn many lines...\n  fortunately gengetopt will wrap it for you :-)",
   "  -a, --opta              string a",
   "  -A, --optA[=STRING]     string A (mandatory)",
   "  -M, --optAmul[=STRING]  string M",

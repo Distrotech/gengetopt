@@ -37,7 +37,7 @@ const char *gengetopt_args_info_help[] = {
   "  -h, --help              Print help and exit",
   "  -V, --version           Print version and exit",
   "\nsome groups just for testing:",
-  "\n Group: grp1\n  an option of this group is required\n  Notice that this description is quite long so it may spawn many lines...      \n          fortunately gengetopt will wrap it for you :-)",
+  "\n Group: grp1\n  an option of this group is required\n  Notice that this description is quite long so it may spawn many lines...\n  fortunately gengetopt will wrap it for you :-)",
   "  -a, --opta              string a",
   "  -A, --optA[=STRING]     string A",
   "  -M, --optAmul[=STRING]  string M",

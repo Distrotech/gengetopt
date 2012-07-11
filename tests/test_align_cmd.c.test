@@ -25,7 +25,7 @@
 
 #include "test_align_cmd.h"
 
-const char *gengetopt_args_info_purpose = "this is just a test to check that the output of --help and --full-help are \naligned just the same";
+const char *gengetopt_args_info_purpose = "this is just a test to check that the output of --help and --full-help are\naligned just the same";
 
 const char *gengetopt_args_info_usage = "Usage: test align [OPTIONS]... [FILES]...";
 
@@ -37,7 +37,7 @@ const char *gengetopt_args_info_full_help[] = {
   "  -h, --help           Print help and exit",
   "      --full-help      Print help, including hidden options, and exit",
   "  -V, --version        Print version and exit",
-  "  -m, --hidden-option  This is the hidden option that is printed only with \n                         --full-help; thanks to its long description we force a \n                         possible different alignment for --full-help",
+  "  -m, --hidden-option  This is the hidden option that is printed only with\n                         --full-help; thanks to its long description we force a\n                         possible different alignment for --full-help",
   "\nOperation modes and settings:",
   "  \n  Non-absolute pathnames are relative to the executable's directory.\n",
   "\n Mode: standalone",

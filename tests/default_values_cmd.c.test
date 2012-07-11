@@ -39,11 +39,11 @@ const char *gengetopt_args_info_help[] = {
   "  -f, --foo=INT               foo option  (default=`15000')",
   "  -b, --bar=STRING            bar option  (default=`this is a default')",
   "  -F, --foo-opt[=INT]         foo option with optional arg  (default=`15000')",
-  "  -B, --bar-opt[=STRING]      bar option with optional arg  (default=`this is a \n                                default')",
+  "  -B, --bar-opt[=STRING]      bar option with optional arg  (default=`this is a\n                                default')",
   "      --foofloat=FLOAT        foo float option  (default=`15000')",
   "      --foodouble=DOUBLE      foo double option  (default=`15000')",
   "  -p, --pi=DOUBLE             PI option  (default=`3.1415926536')",
-  "  -s, --timeout=123456789012  number of seconds after the scanning is cancelled \n                                if no progress is shown at all.  \n                                (default=`120')",
+  "  -s, --timeout=123456789012  number of seconds after the scanning is cancelled\n                                if no progress is shown at all.\n                                (default=`120')",
     0
 };
 

@@ -25,7 +25,7 @@
 
 #include "test_usage_cmd.h"
 
-const char *gengetopt_args_info_purpose = "Highlight the syntax of a source file (e.g. Java) into a specific format (e.g. \nHTML)";
+const char *gengetopt_args_info_purpose = "Highlight the syntax of a source file (e.g. Java) into a specific format (e.g.\nHTML)";
 
 const char *gengetopt_args_info_usage = "Usage: 1. source-highlight [OPTIONS]... < input_file > output_file\n       2. source-highlight [OPTIONS]... -i input_file -o output_file\n       3. source-highlight [OPTIONS]... [FILES]...";
 
@@ -37,7 +37,7 @@ const char *gengetopt_args_info_help[] = {
   "  -h, --help             Print help and exit",
   "  -V, --version          Print version and exit",
   "  -i, --input=filename   input file. default std input",
-  "  -o, --output=filename  output file. default \n                           std output (when the third invocation form is used). \n                           \n                           If STDOUT\n                            is specified, the output is directed to standard \n                           output",
+  "  -o, --output=filename  output file. default \n                           std output (when the third invocation form is used).\n                            \n                           If STDOUT\n                            is specified, the output is directed to standard\n                           output",
     0
 };
 

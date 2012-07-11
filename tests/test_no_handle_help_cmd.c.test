@@ -35,7 +35,7 @@ const char *gengetopt_args_info_description = "";
 
 const char *gengetopt_args_info_detailed_help[] = {
   "  -h, --help           Print help and exit",
-  "      --detailed-help  Print help, including all details and hidden options, \n                         and exit",
+  "      --detailed-help  Print help, including all details and hidden options,\n                         and exit",
   "  -V, --version        Print version and exit",
   "      --height=INT     this is the description of height",
   "  These are the details of option height",

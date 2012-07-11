@@ -36,7 +36,7 @@ const char *gengetopt_args_info_description = "";
 const char *gengetopt_args_info_help[] = {
   "  -h, --help        Print help and exit",
   "  -V, --version     Print version and exit",
-  "  -F, --format=fmt  this is the \\nformat used for find -printf  \n                      (default=`%p\\t%s\\n')",
+  "  -F, --format=fmt  this is the \\nformat used for find -printf\n                      (default=`%p\\t%s\\n')",
     0
 };
 
