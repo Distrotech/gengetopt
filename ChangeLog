@@ -1,10 +1,27 @@
+2012-07-11  Tim Marston  <tim@ed.am>
+
+	* src/gm_utils.cpp: fixed line wrapping so that it handles
+	(removes) extra spaces at the end of the line
+
+2012-07-10  Tim Marston  <tim@ed.am>
+
+	* src/cmdline.ggo: removed unnecessary additional new-line
+
+2012-07-10  Tim Marston  <tim@ed.am>
+
+	* src/skels/c_source.h_skel: added args_info_versiontext variable
+	* src/scanner.ll, src/scanner.yy: added versiontext directive
+	* src/gengetopt.cc: added gengetopt_versiontext variable and
+	setter function
+	* src/gm.cc: added versiontext string generator function
+
 2011-09-05  bettini  <bettini@bettini-N150>
 
 	* src/my_map.h: removed
 	* src/my_string.h: removed
 	* src/my_sstream.h: removed
 
-	* src/gm.cc (CmdlineParserCreator::generate_usage_string): 
+	* src/gm.cc (CmdlineParserCreator::generate_usage_string):
 	wraps and preprocess the usage string if specified in the input
 	file.
 
@@ -50,24 +67,23 @@
 	* src/skels/header.h_skel: use prototypes with char ** instead of
 	char *const *.
 	* src/skels/c_source.h_skel: use prototypes with char ** instead of
-	char *const *. 
+	char *const *.
 	#include <getopt.h> not "getopt.h"
-	
 
 2009-09-27  bettini  <bettini@bettini-laptop>
 
 	* tests/output_dir/Makefile.am: New file.
 	* tests/output_header_dir/Makefile.am: New file.
 	* tests/Makefile.am: test for --output-dir, --src-output-dir,
-	--header-output-dir 
+	--header-output-dir
 
 2009-09-27  Yegor Yefremov
 
-	* src/cmdline.ggo: --header-output-dir and 
-	--src_output-dir to store cmdline.h separately from cmdline.c 
-	* src/gengetopt.cc (main): Ditto 
-	* src/gm.cc: Ditto 
-	* src/gm.h: Ditto 
+	* src/cmdline.ggo: --header-output-dir and
+	--src_output-dir to store cmdline.h separately from cmdline.c
+	* src/gengetopt.cc (main): Ditto
+	* src/gm.cc: Ditto
+	* src/gm.h: Ditto
 
 2009-09-27  Lorenzo Bettini
 
@@ -87,8 +103,8 @@
 	(CmdlineParserCreator::generate_option_values_decl): Ditto
 	* tests/test_values.c (main): use enum with + and -
 	* tests/test_values.sh.in: Ditto
-	* tests/test_values_cmd.ggo: Ditto 
-	* configure.ac: modified to build in a different directory 
+	* tests/test_values_cmd.ggo: Ditto
+	* configure.ac: modified to build in a different directory
 	* Makefile.am: modified to build in a different directory
 	* tests/Makefile.am: modified to build in a different directory
 
@@ -113,7 +129,7 @@
 	* gl/unistd.in.h: New file.
 	* src/gengetopt.cc: include gnulib string.h
 	* src/gm.cc: Ditto
-	* src/gm_utils.cpp: Ditto 
+	* src/gm_utils.cpp: Ditto
 	* src/parser.yy: Ditto
 	* src/scanner.ll: Ditto
 
@@ -193,7 +209,7 @@
 
 	* src/gengetopt.cc (main): generate --help handling if only -h
 	is redefined (and so for --version)
-	
+
 	* src/skels/header.h_skel: added field print_errors to suppress
 	getopt_long messages to stderr
 
