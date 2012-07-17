@@ -1108,11 +1108,12 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 
   foropt
     {
-      // if the option is hidden, avoid to print a section containing only
-      // hidden options
+      // if the option is hidden and has no text, avoid printing a section
+      // containing only hidden options
       if (opt->section &&
               (!curr_section || strcmp (curr_section, opt->section)) &&
-              (!opt->hidden || generate_hidden))
+              (!opt->hidden || generate_hidden ||
+                      opt->text_before || opt->text_after))
       {
           curr_section = opt->section;
 

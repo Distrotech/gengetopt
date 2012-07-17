@@ -1,6 +1,8 @@
 2012-07-17  Tim Marston  <tim@ed.am>
 
-	* src/gm.cc: fixed NULL pointer defreference
+	* src/gm.cc: fixed NULL pointer defreference; fixed option list
+	ordering inconsistency (which could lead to truncation of
+	displayed options)
 
 2012-07-11  Tim Marston  <tim@ed.am>
 
