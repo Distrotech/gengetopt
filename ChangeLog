@@ -1,3 +1,7 @@
+2012-07-17  Tim Marston  <tim@ed.am>
+
+	* src/gm.cc: fixed NULL pointer defreference
+
 2012-07-11  Tim Marston  <tim@ed.am>
 
 	* src/gm_utils.cpp: fixed line wrapping so that it handles

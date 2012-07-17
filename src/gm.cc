@@ -701,6 +701,10 @@ CmdlineParserCreator::generate_usage_string(bool use_config_package)
           gengetopt_option_list::const_iterator opt_it;
           usage.str(""); // reset the usage string buffer
 
+		  // otherwise the config.h package constant will be used
+		  if (gengetopt_package)
+			  usage << gengetopt_package;
+
           for (opt_it = map_it->second.begin(); opt_it != map_it->second.end(); ++opt_it) {
               if (((*opt_it)->required) && !((*opt_it)->hidden)) {
                   generate_option_usage_string(*opt_it, usage);
@@ -713,7 +717,7 @@ CmdlineParserCreator::generate_usage_string(bool use_config_package)
               }
           }
 
-          wrap_cstr ( mode_line, strlen("  or : "), 2, gengetopt_package + usage.str() );
+          wrap_cstr ( mode_line, strlen("  or : "), 2, usage.str() );
           wrapped += "\\n  or : ";
           wrapped += mode_line;
       }
