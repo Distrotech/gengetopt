@@ -476,6 +476,10 @@ automatically generated.  Thus, these further details will NOT be
 printed with @code{--help}.  Wrapping will be automatically performed.
 Optional.
 
+Note that if @code{--strict-hidden} is used, options that are hidden
+(@xref{hidden,,Hidden options}.) will not appear in the output of
+@code{--detailed-help}, even if those options have details.
+
 @cindex argtype 
 @item argtype 
 
@@ -567,15 +571,20 @@ option must be specified.  Notice that this is independent from the
 
 @anchor{hidden}
 @anchor{fullhelp}
-If an option is ``hidden'' it will not appear in the
-output of @code{--help} but it can still be specified at command
-line@footnote{Since version 2.15.}.  In case hidden options are used,
-the command line option @code{--full-help} will also be generated.  This
-will print also the hidden options@footnote{Since version 2.16.}.  If
-there's an option with @code{details}, then also
-@code{--detailed-help}@footnote{Since version 2.22.} will be
-automatically generated;  if one then specifies @code{--detailed-help}
-also hidden options will be printed (besides the details for options).
+
+If an option is ``hidden'' it will not appear in the output of
+@code{--help} but it can still be specified at command
+line@footnote{Since version 2.15.}.  When hidden options are used, the
+command line option @code{--full-help} will also be generated.  This
+will also print hidden options@footnote{Since version 2.16.}.  Hidden
+options are also displayed in the output of @code{--detailed-help}, if
+it is present, along with any details that those options have.
+
+Note that when @code{--strict-hidden} is used, hidden options do not
+appear as described above, although they can still be given on the
+comand line.  That is to say, the @code{--full-help} option is not
+generated, and hidden options do not appear in the output of
+@code{--detailed-help}, even if they have details.
 
 @cindex on/off 
 @item on/off 
@@ -652,11 +661,14 @@ In case hidden options are used, @xref{hidden,,Hidden options}, the
 command line option @code{--full-help} will also be generated.  This
 will print also the hidden options@footnote{Since version 2.16.}.
 
+Note, though, that when @code{--strict-hidden} is used, this is not
+the case and @code{--full-help} is not generated.
+
 @cindex @code{--detailed-help}
 If there's at least one option with @code{details}, the command line
 option @code{--detailed-help} will also be generated.  This will print
 also the details for options and hidden options@footnote{Since version
-2.22.}.
+2.22.} (except when @code{--strict-hidden} is used).
 
 @cindex section
 Options can be part of sections, that provide a more meaningful
@@ -1084,7 +1096,14 @@ help message, as gengetopt itself does in case of an error (try it!).
 if @code{--show-required} is given, possibly with
 a string, in the output of @code{--help} will be made explicit
 which options are actually required, @xref{showrequired,,Basic Usage}.
- 
+
+@item --strict-hidden
+when given, this causes hidden options to become @emph{really} hidden.
+That is to say, the @code{--full-help} option will not be added, and
+hidden options will not show-up in the output of
+@code{--detailed-help}, even if they have details.
+@xref{hidden,,Hidden options}.
+
 @item --gen-version
 @cindex @code{--gen-version}
 is a flag (default on) that when disabled does not put in the output

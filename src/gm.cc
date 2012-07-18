@@ -161,6 +161,7 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
                                             bool no_handle_version_,
                                             bool no_version_,
                                             bool no_handle_error_,
+                                            bool strict_hidden_,
                                             bool conf_parser_,
                                             bool string_parser_,
                                             bool gen_version,
@@ -184,6 +185,7 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   no_handle_version (no_handle_version_),
   no_version (no_version_),
   no_handle_error (no_handle_error_),
+  strict_hidden (strict_hidden_),
   conf_parser (conf_parser_), string_parser (string_parser_),
   gen_gengetopt_version (gen_version),
   tab_indentation (0)
@@ -283,9 +285,9 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   set_description(generate_description());
   set_versiontext(generate_versiontext());
   set_no_package((gengetopt_package == 0));
-  c_source_gen_class::set_has_hidden(has_hidden_options());
+  c_source_gen_class::set_has_hidden(!strict_hidden && has_hidden_options());
   header_gen_class::set_has_hidden(c_source_gen_class::has_hidden);
-  c_source_gen_class::set_has_details(has_options_with_details());
+  c_source_gen_class::set_has_details(has_options_with_details(strict_hidden));
   header_gen_class::set_has_details(c_source_gen_class::has_details);
 
   set_has_arg_types();
@@ -1058,7 +1060,9 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
   ostringstream stream;
 
   // if we want to generate details then we will also generate hidden options
-  if (generate_details)
+  if (strict_hidden)
+      generate_hidden = false;
+  else if (generate_details)
       generate_hidden = true;
 
   /* calculate columns */
@@ -1263,8 +1267,8 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
           stream.str("");
       }
 
-      // before the text after we generate details if we need to
-      if (opt->details && generate_details) {
+      // before the text, we generate details if we need to and the option isn't hidden
+      if (opt->details && generate_details && (!opt->hidden || generate_hidden)) {
           string wrapped_desc ( 2, ' ');
           // details are indented
           wrap_cstr ( wrapped_desc, 2, 0, opt->details);

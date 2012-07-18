@@ -68,6 +68,7 @@ const char *gengetopt_args_info_detailed_help[] = {
   "  -e, --no-handle-error         do not exit on errors",
   "  \n  With this option, if the generated parser encounters an error (e.g., an\n  unknown option) it does not make the main program exit; instead, the parser\n  function returns a value different 0, and the main program can print a help\n  message.\n",
   "      --show-required[=STRING]  in the output of help will specify which\n                                  options are mandatory, by using the optional\n                                  passed string  (default=`(mandatory)')",
+  "      --strict-hidden           really hide hidden options",
   "  -g, --gen-version             put gengetopt version in the generated file\n                                  (default=on)",
   "      --set-package=STRING      set the package name (override package defined\n                                  in the .ggo file)",
   "      --set-version=STRING      set the version number (override version\n                                  defined in the .ggo file)",
@@ -118,11 +119,12 @@ init_help_array(void)
   gengetopt_args_info_help[33] = gengetopt_args_info_detailed_help[39];
   gengetopt_args_info_help[34] = gengetopt_args_info_detailed_help[40];
   gengetopt_args_info_help[35] = gengetopt_args_info_detailed_help[41];
-  gengetopt_args_info_help[36] = 0; 
+  gengetopt_args_info_help[36] = gengetopt_args_info_detailed_help[42];
+  gengetopt_args_info_help[37] = 0; 
   
 }
 
-const char *gengetopt_args_info_help[37];
+const char *gengetopt_args_info_help[38];
 
 typedef enum {ARG_NO
   , ARG_FLAG
@@ -193,6 +195,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->no_version_given = 0 ;
   args_info->no_handle_error_given = 0 ;
   args_info->show_required_given = 0 ;
+  args_info->strict_hidden_given = 0 ;
   args_info->gen_version_given = 0 ;
   args_info->set_package_given = 0 ;
   args_info->set_version_given = 0 ;
@@ -265,13 +268,14 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->no_version_help = gengetopt_args_info_detailed_help[29] ;
   args_info->no_handle_error_help = gengetopt_args_info_detailed_help[31] ;
   args_info->show_required_help = gengetopt_args_info_detailed_help[33] ;
-  args_info->gen_version_help = gengetopt_args_info_detailed_help[34] ;
-  args_info->set_package_help = gengetopt_args_info_detailed_help[35] ;
-  args_info->set_version_help = gengetopt_args_info_detailed_help[36] ;
-  args_info->show_help_help = gengetopt_args_info_detailed_help[37] ;
-  args_info->show_full_help_help = gengetopt_args_info_detailed_help[38] ;
-  args_info->show_detailed_help_help = gengetopt_args_info_detailed_help[39] ;
-  args_info->show_version_help = gengetopt_args_info_detailed_help[40] ;
+  args_info->strict_hidden_help = gengetopt_args_info_detailed_help[34] ;
+  args_info->gen_version_help = gengetopt_args_info_detailed_help[35] ;
+  args_info->set_package_help = gengetopt_args_info_detailed_help[36] ;
+  args_info->set_version_help = gengetopt_args_info_detailed_help[37] ;
+  args_info->show_help_help = gengetopt_args_info_detailed_help[38] ;
+  args_info->show_full_help_help = gengetopt_args_info_detailed_help[39] ;
+  args_info->show_detailed_help_help = gengetopt_args_info_detailed_help[40] ;
+  args_info->show_version_help = gengetopt_args_info_detailed_help[41] ;
   
 }
 
@@ -468,6 +472,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "no-handle-error", 0, 0 );
   if (args_info->show_required_given)
     write_into_file(outfile, "show-required", args_info->show_required_orig, 0);
+  if (args_info->strict_hidden_given)
+    write_into_file(outfile, "strict-hidden", 0, 0 );
   if (args_info->gen_version_given)
     write_into_file(outfile, "gen-version", 0, 0 );
   if (args_info->set_package_given)
@@ -734,6 +740,7 @@ cmdline_parser_internal (
         { "no-version",	0, NULL, 0 },
         { "no-handle-error",	0, NULL, 'e' },
         { "show-required",	2, NULL, 0 },
+        { "strict-hidden",	0, NULL, 0 },
         { "gen-version",	0, NULL, 'g' },
         { "set-package",	1, NULL, 0 },
         { "set-version",	1, NULL, 0 },
@@ -1068,6 +1075,20 @@ cmdline_parser_internal (
                 &(local_args_info.show_required_given), optarg, 0, "(mandatory)", ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "show-required", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* really hide hidden options.  */
+          else if (strcmp (long_options[option_index].name, "strict-hidden") == 0)
+          {
+          
+          
+            if (update_arg( 0 , 
+                 0 , &(args_info->strict_hidden_given),
+                &(local_args_info.strict_hidden_given), optarg, 0, 0, ARG_NO,
+                check_ambiguity, override, 0, 0,
+                "strict-hidden", '-',
                 additional_error))
               goto failure;
           

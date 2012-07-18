@@ -197,15 +197,19 @@ main (int argc, char **argv)
     gengetopt_options.push_front(opt);
   }
 
-  if (!args_info.no_help_given && has_hidden_options() && gengetopt_has_option(FULL_HELP_LONG_OPT, 0) == 0) {
+  if (!args_info.no_help_given && !args_info.strict_hidden_given &&
+	  has_hidden_options() && gengetopt_has_option(FULL_HELP_LONG_OPT, 0) == 0)
+  {
       gengetopt_create_option (opt, FULL_HELP_LONG_OPT, '-',
                                FULL_HELP_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0, 0);
       gengetopt_options.push_front(opt);
   }
 
-  if (!args_info.no_help_given && has_options_with_details() && gengetopt_has_option(DETAILED_HELP_LONG_OPT, 0) == 0) {
+  if (!args_info.no_help_given && has_options_with_details(args_info.strict_hidden_given) && 
+      gengetopt_has_option(DETAILED_HELP_LONG_OPT, 0) == 0)
+  {
       gengetopt_create_option (opt, DETAILED_HELP_LONG_OPT, '-',
-              DETAILED_HELP_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0, 0);
+                               DETAILED_HELP_OPT_DESCR, ARG_NO, 0, 0, 0, 0, 0, 0, 0);
       gengetopt_options.push_front(opt);
   }
 
@@ -269,6 +273,7 @@ main (int argc, char **argv)
      args_info.no_handle_version_given,
      args_info.no_version_given,
      args_info.no_handle_error_given,
+     args_info.strict_hidden_given,
      args_info.conf_parser_given,
      args_info.string_parser_given,
      args_info.gen_version_flag,

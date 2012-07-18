@@ -70,7 +70,15 @@ bool has_options_with_type();
 bool has_options_with_mode();
 bool has_options();
 bool has_hidden_options();
-bool has_options_with_details();
+
+/**
+ * Has an option that has details and, where strict hiding is in effect, isn't
+ * hidden.
+ * @param strict_hidden whether strict hiding is in effect
+ * @return Has options that have details
+ */
+bool has_options_with_details(bool strict_hidden);
+
 bool has_values();
 
 /**

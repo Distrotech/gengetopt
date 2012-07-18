@@ -1,3 +1,18 @@
+2012-07-18  Tim Marston  <tim@ed.am>
+
+	* src/cmdline.ggo: added --strict-hidden option
+	* src/gengetopt.cc: check for --strict-hidden when automatically
+	adding full and detailed help options, and pass presence of
+	--strict-hidden to CmdlineParserCreeator
+	* src/gm.cc, src/gm.h: when strictly hiding options, don't
+	generate the full help string array and override generate_hidden
+	in generate_help_option_list(); also, don't add details to the
+	detailed help string array for options that are going to be hidden
+	* src/gm_utils.cpp, src/gm_utils.h: has_options_with_details() now
+	needs to know if strict option hiding is in effect so that it can
+	ignore options that have details but will be hidden
+	* doc/gengetopt.texinfo: updated for --strict-hidden feature
+
 2012-07-17  Tim Marston  <tim@ed.am>
 
 	* src/gm.cc: fixed NULL pointer defreference; fixed option list

@@ -148,12 +148,12 @@ bool has_multiple_options_with_default() {
     return false;
 }
 
-bool has_options_with_details() {
+bool has_options_with_details(bool strict_hidden) {
     gengetopt_option * opt = 0;
 
     for (gengetopt_option_list::iterator it = gengetopt_options.begin(); it
             != gengetopt_options.end() && (opt = *it); ++it)
-        if (opt->details)
+        if (opt->details && (!strict_hidden || !opt->hidden))
             return true;
 
     return false;

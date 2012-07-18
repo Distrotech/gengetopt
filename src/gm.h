@@ -54,6 +54,7 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   bool no_handle_version;
   bool no_version;
   bool no_handle_error;
+  bool strict_hidden;
   bool conf_parser;
   bool string_parser;
   bool gen_gengetopt_version;
@@ -136,7 +137,8 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
                         bool long_help,
                         bool no_handle_help, bool no_help,
                         bool no_handle_version, bool no_version,
-                        bool no_handle_error, bool conf_parser, bool string_parser,
+                        bool no_handle_error, bool strict_hidden,
+                        bool conf_parser, bool string_parser,
                         bool gen_version, bool gen_getopt, bool no_options,
                         const string &comment,
                         const string &outdir,
