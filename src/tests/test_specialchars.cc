@@ -60,7 +60,7 @@ int main() {
     wrap_cstr(wrapped, 0, 2, s);
     cout << "wrapped: " << wrapped << endl;
     assertEquals(
-            "this\\n contains escaped special chars near the end of this long long long long \\n  long long long string \\nso let's see",
+            "this\\n contains escaped special chars near the end of this long long long long\\n  long long long string \\nso let's see",
             wrapped);
 
     return 0;
