@@ -1,39 +1,75 @@
---enable-warnings option added to configure
-this way -Wall is added to compiler options.
+DEVELOPING GENGETOPT
+--------------------
 
-NOTE: developers should always issue the command
-./configure --enable-warnings
+* From a fresh checkout from version control you will likely need to run
+  autoreconf in the root of the project.
 
-parser.y and scanner.l create parser.c parser.h and scanner.c, this
-is the convention adopted by automake
+  $ autoreconf -i
 
-I added gengetopt.h to declare functions exported by gengetopt.c,
-this way some warnings are avoided.
+* Building should be done in a subdirectory (shadow-building).
 
-ChangeLog is used to keep track of changes
-if you use emacs you can position to the file you changed and use the
-command
+  $ mkdir build
+  $ cd build
+  $ ../configure --enable-warnings
+  $ make
 
-M-x add-change-log-entry-other-window
+* Compiler warnings should always be turned on.  Developers should always run
+  configure this way:
 
-if you're in a C function (typically after the closing }), the name
-of the function will be automatically added (in parenthesis).
-Emacs create ChangeLOg according to the standards.
+  $ ../configure --enable-warnings
+
+* ChangeLog is used to keep track of changes.  If you use emacs you can
+  position point in the file you changed and use the command:
+
+  M-x add-change-log-entry-other-window
+
+  If you're in a C function (typically after the closing '}'), the name of the
+  function will be automatically added (in parenthesis).  Emacs modifies
+  ChangeLog according to the standards.
+
+* The THANKS file (as per GNU standards) records all people who contributed to
+  the package in any way.  It should be an alphabetically ordered list.
+
+
+TESTING
+-------
+
+* Make sure all tests pass
+
+  $ make check
+
+* Make sure the outputs of all test programs are as expected
+
+  $ cd tests
+  $ make my-check
+
+  If there are differences, check over them carefully.  If you are happy that
+  the differences are all valid and expected, then you can save the current
+  test program outputs to compare against next time by running `make
+  save-backup'.
+
+* If you have valgrind installed, you should check that there are no memory
+  leaks (in the "tests" directory):
+
+  $ make check-valgrind
+
+* In the "doc" directory there are samples, to test these samples you can issue
+  `make check' (which is also a standard GNU target, to test a package).  If
+  the gengetopt executable has changed, you can run `make samples' to rebuild
+  them (so this is only for developers).
+
+
+OTHER NOTES
+-----------
+
+parser.yy and scanner.ll create parser.cc parser.h and scanner.cc, this is the
+convention adopted by automake
+
+I added gengetopt.h to declare functions exported by gengetopt.c, this way some
+warnings are avoided.
 
 I named files which include gengetopt directive, with suffix .ggo
 what do you think?
-
-in doc directory there are samples, to test these samples you can issue
-make check
-(which is also a standard GNU target, to test a package)
-or
-make samples
-this last make command builds samples only if gengetopt executable has
-changed so this is only for developers.
-
-in THANKS file (GNU standards) are recorder people who contributed to
-the package in many way: it should be a list alphabetically ordered
-with e-mail addresses (see THANKS I compiled).
 
 getopt.h getopt.c getopt1.c are distributed in sources.
 we distribute these files because who uses gengetopt might need them
