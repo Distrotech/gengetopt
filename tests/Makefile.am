@@ -396,6 +396,8 @@ $(TESTSOUTPUT):
 	$(PROGNAME) --show-full-help < $(srcdir)/test_align_cmd.ggo >> $@ 2>&1;
 	$(PROGNAMESHOWHELPREQUIRED) < $(srcdir)/test_required_optional_cmd.ggo >> $@ 2>&1;
 	$(PROGNAMESHOWHELPREQUIRED) --default-optional < $(srcdir)/test_required_optional_cmd.ggo >> $@ 2>&1;
+	$(PROGNAMESHOWFULLHELP) $(srcdir)/test_strict_hidden.ggo >> $@ 2>&1;
+	$(PROGNAMESHOWDETAILEDHELP) $(srcdir)/test_strict_hidden.ggo >> $@ 2>&1;
 
 store-backup: $(BUILT_SOURCES) $(TESTSOUTPUT)
 	rm -f *.test; \
@@ -446,6 +448,8 @@ check-diff:
 	$(PROGNAME) --show-full-help < $(srcdir)/test_align_cmd.ggo >> $(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWHELPREQUIRED) < $(srcdir)/test_required_optional_cmd.ggo >> $(TESTSOUT) 2>&1; \
 	$(PROGNAMESHOWHELPREQUIRED) --default-optional < $(srcdir)/test_required_optional_cmd.ggo >> $(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWFULLHELP) < $(srcdir)/test_strict_hidden.ggo >> $(TESTSOUT) 2>&1; \
+	$(PROGNAMESHOWDETAILEDHELP) < $(srcdir)/test_strict_hidden.ggo >> ${TESTSOUT} 2>&1; \
 	sed -i -e "s/\.exe//g" $(TESTSOUT) ; \
         echo "diff $(TESTSOUTPUT) $(TESTSOUT)"; \
         if ! diff $(srcdir)/$(TESTSOUTPUT) $(TESTSOUT); \

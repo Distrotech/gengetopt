@@ -1,0 +1,21 @@
+package "test strict hidden"
+version "1.0"
+
+args "--default-optional --strict-hidden"
+
+purpose "This gengetopt configuration fileis intended to check that \
+the --strct-hidden works as expected. If it doesnt work, you will see \
+output written in upper case that says you shouldn't \ be seeing that \
+output."
+
+option "option1" a "(test option 1)"
+option "option2" - "(test option 2)"
+option "hidden1" b "THIS OPTION SHOULD NOT SHOW (hidden option 1)" hidden
+option "hidden2" - "THIS OPTION SHOULD NOT SHOW (hidden option 2, with details)" details="...just some details" hidden
+option "option3" - "(test option 3, with details)" details="...just some details"
+option "option4" c "(test option 4)"
+
+section "THIS SECTION SHOULD NOT SHOW"
+
+option "hidden3" - "THIS OPTION SHOULD NOT SHOW (hidden option 3)" hidden
+option "hidden4" d "THIS OPTION SHOULD NOT SHOW (hidden option 4, with details)" details="...just some details" hidden

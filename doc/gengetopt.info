@@ -1022,9 +1022,7 @@ This is the output of `gengetopt --help':
            --show-required[=STRING]  in the output of help will specify which
                                        options are mandatory, by using the optional
                                        passed string  (default=`(mandatory)')
-           --strict-hidden           really hide hidden options, so no --full-help
-                                       will be added and they won't appear in
-                                       --detailed-help (if present)
+           --strict-hidden           really hide hidden options
        -g, --gen-version             put gengetopt version in the generated file
                                        (default=on)
            --set-package=STRING      set the package name (override package defined
@@ -1523,7 +1521,7 @@ of `--help' of the generated parser for the input file above:
       Mode: mode1
        any option of this mode is in contrast with any option of the other mode
        Notice that this description is quite long so it may spawn many lines...
-               fortunately gengetopt will wrap it for you :-)
+       fortunately gengetopt will wrap it for you :-)
        -a, --opta              string a
        -A, --optA[=STRING]     string A
        -M, --optAmul[=STRING]  string M
@@ -2323,32 +2321,32 @@ Index
  [index ]
 * Menu:
 
-* --arg-struct-name:                     Invoking gengetopt.  (line  95)
-* --conf-parser:                         Invoking gengetopt.  (line 175)
-* --default-optional <1>:                Invoking gengetopt.  (line 103)
+* --arg-struct-name:                     Invoking gengetopt.  (line  93)
+* --conf-parser:                         Invoking gengetopt.  (line 173)
+* --default-optional <1>:                Invoking gengetopt.  (line 101)
 * --default-optional:                    Basic Usage.         (line 145)
 * --detailed-help:                       Basic Usage.         (line 104)
 * --full-help:                           Basic Usage.         (line 179)
-* --func-name:                           Invoking gengetopt.  (line  82)
-* --gen-version:                         Invoking gengetopt.  (line 170)
-* --header-output-dir:                   Invoking gengetopt.  (line  91)
+* --func-name:                           Invoking gengetopt.  (line  80)
+* --gen-version:                         Invoking gengetopt.  (line 168)
+* --header-output-dir:                   Invoking gengetopt.  (line  89)
 * --include-getopt <1>:                  Include the getopt_long code into the parser.
                                                               (line  11)
-* --include-getopt:                      Invoking gengetopt.  (line 181)
-* --long-help:                           Invoking gengetopt.  (line  99)
-* --no-handle-error:                     Invoking gengetopt.  (line 151)
-* --no-handle-help:                      Invoking gengetopt.  (line 117)
-* --no-handle-version:                   Invoking gengetopt.  (line 117)
-* --no-help:                             Invoking gengetopt.  (line 137)
-* --no-version:                          Invoking gengetopt.  (line 137)
-* --output-dir:                          Invoking gengetopt.  (line  85)
-* --show-full-help:                      Invoking gengetopt.  (line 190)
-* --show-help:                           Invoking gengetopt.  (line 190)
-* --show-required:                       Invoking gengetopt.  (line 158)
-* --show-version:                        Invoking gengetopt.  (line 190)
-* --src-output-dir:                      Invoking gengetopt.  (line  91)
-* --string-parser:                       Invoking gengetopt.  (line 178)
-* --unamed-opts:                         Invoking gengetopt.  (line 109)
+* --include-getopt:                      Invoking gengetopt.  (line 179)
+* --long-help:                           Invoking gengetopt.  (line  97)
+* --no-handle-error:                     Invoking gengetopt.  (line 149)
+* --no-handle-help:                      Invoking gengetopt.  (line 115)
+* --no-handle-version:                   Invoking gengetopt.  (line 115)
+* --no-help:                             Invoking gengetopt.  (line 135)
+* --no-version:                          Invoking gengetopt.  (line 135)
+* --output-dir:                          Invoking gengetopt.  (line  83)
+* --show-full-help:                      Invoking gengetopt.  (line 188)
+* --show-help:                           Invoking gengetopt.  (line 188)
+* --show-required:                       Invoking gengetopt.  (line 156)
+* --show-version:                        Invoking gengetopt.  (line 188)
+* --src-output-dir:                      Invoking gengetopt.  (line  89)
+* --string-parser:                       Invoking gengetopt.  (line 176)
+* --unamed-opts:                         Invoking gengetopt.  (line 107)
 * -C,--conf-parser:                      Configuration files. (line   6)
 * -h,--detailed-help:                    Basic Usage.         (line 569)
 * -h,--help:                             Basic Usage.         (line 236)
@@ -2504,33 +2502,33 @@ Ref: Basic Usage-Footnote-2040008
 Ref: Basic Usage-Footnote-2140092
 Ref: Basic Usage-Footnote-2240151
 Node: Invoking gengetopt40210
-Ref: Invoking gengetopt-Footnote-150664
-Ref: Invoking gengetopt-Footnote-250692
-Ref: Invoking gengetopt-Footnote-350722
-Node: Terminology50750
-Node: Options with enumerated values55640
-Node: Group options58461
-Node: Mode options60515
-Node: Parser function additional parameters64774
-Ref: Parser function additional parameters-Footnote-167889
-Ref: Parser function additional parameters-Footnote-267917
-Ref: Parser function additional parameters-Footnote-367952
-Node: Configuration files68709
-Ref: Configuration files-Footnote-174209
-Ref: Configuration files-Footnote-274400
-Node: Multiple Options74566
-Node: String Parsers and Multiple Parsers77567
-Ref: String Parsers and Multiple Parsers-Footnote-183236
-Node: No getopt_long83409
-Node: Include the getopt_long code into the parser84143
-Node: Use automake/autoconf85412
-Node: Use Gnulib86284
-Ref: Use Gnulib-Footnote-190415
-Node: Use getopt_long sources90460
-Node: Bugs92645
-Node: Getopt and subsequent calls93443
-Ref: Getopt and subsequent calls-Footnote-195370
-Node: Mailing Lists95616
-Node: Index96416
+Ref: Invoking gengetopt-Footnote-150499
+Ref: Invoking gengetopt-Footnote-250527
+Ref: Invoking gengetopt-Footnote-350557
+Node: Terminology50585
+Node: Options with enumerated values55475
+Node: Group options58296
+Node: Mode options60350
+Node: Parser function additional parameters64601
+Ref: Parser function additional parameters-Footnote-167716
+Ref: Parser function additional parameters-Footnote-267744
+Ref: Parser function additional parameters-Footnote-367779
+Node: Configuration files68536
+Ref: Configuration files-Footnote-174036
+Ref: Configuration files-Footnote-274227
+Node: Multiple Options74393
+Node: String Parsers and Multiple Parsers77394
+Ref: String Parsers and Multiple Parsers-Footnote-183063
+Node: No getopt_long83236
+Node: Include the getopt_long code into the parser83970
+Node: Use automake/autoconf85239
+Node: Use Gnulib86111
+Ref: Use Gnulib-Footnote-190242
+Node: Use getopt_long sources90287
+Node: Bugs92472
+Node: Getopt and subsequent calls93270
+Ref: Getopt and subsequent calls-Footnote-195197
+Node: Mailing Lists95443
+Node: Index96243
 
 End Tag Table

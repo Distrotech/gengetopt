@@ -135,7 +135,7 @@ function returns a value different 0, and the main program can print a help mess
 option  "show-required"   - "in the output of help will specify which options are mandatory, \
 by using the optional passed string" string default="(mandatory)" optional argoptional
 
-option  "strict-hidden"   - "really hide hidden options" optional
+option  "strict-hidden"   - "completely hide hidden options" optional
 
 option  "gen-version" g "put gengetopt version in the generated file" flag on
 option  "set-package" - "set the package name (override package defined in the .ggo file)" string optional

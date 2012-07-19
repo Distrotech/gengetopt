@@ -1909,3 +1909,38 @@ This contains options with specified required/optional:
 This contains options with NON specified required/optional:
       --non-specified=STRING   non specified whether optional or required
       --non-specified2=STRING  non specified whether optional or required
+test strict hidden 1.0
+
+This gengetopt configuration fileis intended to check that the --strct-hidden
+works as expected. If it doesnt work, you will see output written in upper case
+that says you shouldn't \ be seeing that output.
+
+Usage: test strict hidden [-h|--help] [--detailed-help] [-V|--version]
+         [-a|--option1] [--option2] [--option3] [-c|--option4]
+
+  -h, --help           Print help and exit
+      --detailed-help  Print help, including all details and hidden options,
+                         and exit
+  -V, --version        Print version and exit
+  -a, --option1        (test option 1)
+      --option2        (test option 2)
+      --option3        (test option 3, with details)
+  -c, --option4        (test option 4)
+test strict hidden 1.0
+
+This gengetopt configuration fileis intended to check that the --strct-hidden
+works as expected. If it doesnt work, you will see output written in upper case
+that says you shouldn't \ be seeing that output.
+
+Usage: test strict hidden [-h|--help] [--detailed-help] [-V|--version]
+         [-a|--option1] [--option2] [--option3] [-c|--option4]
+
+  -h, --help           Print help and exit
+      --detailed-help  Print help, including all details and hidden options,
+                         and exit
+  -V, --version        Print version and exit
+  -a, --option1        (test option 1)
+      --option2        (test option 2)
+      --option3        (test option 3, with details)
+  ...just some details
+  -c, --option4        (test option 4)
