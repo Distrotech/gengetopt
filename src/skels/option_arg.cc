@@ -14,7 +14,7 @@ option_arg_gen_class::generate_option_arg(ostream &stream, unsigned int indent)
 
   if (long_long_arg)
     {
-      stream << "#ifdef HAVE_LONG_LONG";
+      stream << "#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)";
       stream << "\n";
       stream << indent_str;
       generate_string (type, stream, indent + indent_str.length ());

@@ -967,7 +967,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
         }
       if (has_arg_longlong)
         {
-          stream << "#ifdef HAVE_LONG_LONG";
+          stream << "#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)";
           stream << "\n";
           stream << indent_str;
           stream << "    long long int longlong_arg;";
@@ -2638,10 +2638,10 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
           stream << "  case ARG_LONGLONG:";
           stream << "\n";
           stream << indent_str;
-          stream << "#ifdef HAVE_LONG_LONG";
+          stream << "#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)";
           stream << "\n";
           stream << indent_str;
-          stream << "    if (val) *((long long int*)field) = (long long int) strtol (val, &stop_char, 0);";
+          stream << "    if (val) *((long long int*)field) = (long long int) strtoll (val, &stop_char, 0);";
           stream << "\n";
           stream << indent_str;
           stream << "#else";
@@ -3172,7 +3172,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
           stream << "    case ARG_LONGLONG:";
           stream << "\n";
           stream << indent_str;
-          stream << "#ifdef HAVE_LONG_LONG";
+          stream << "#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)";
           stream << "\n";
           stream << indent_str;
           stream << "      *((long long int **)field) = (long long int *)realloc (*((long long int **)field), (field_given + prev_given) * sizeof (long long int)); break;";
@@ -3287,7 +3287,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
           stream << "        case ARG_LONGLONG:";
           stream << "\n";
           stream << indent_str;
-          stream << "#ifdef HAVE_LONG_LONG";
+          stream << "#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)";
           stream << "\n";
           stream << indent_str;
           stream << "          (*((long long int **)field))[i + field_given] = tmp->arg.longlong_arg; break;";
@@ -3491,7 +3491,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
           stream << "      case ARG_LONGLONG:";
           stream << "\n";
           stream << indent_str;
-          stream << "#ifdef HAVE_LONG_LONG";
+          stream << "#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)";
           stream << "\n";
           stream << indent_str;
           stream << "        if (! *((long long int **)field)) {";

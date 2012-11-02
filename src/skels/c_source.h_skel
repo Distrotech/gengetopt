@@ -293,7 +293,7 @@ union generic_value {
     long double longdouble_arg;
 @ENDIF@
 @IF@ has_arg_longlong @THEN@
-#ifdef HAVE_LONG_LONG
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
     long long int longlong_arg;
 #else
     long longlong_arg;
@@ -848,8 +848,8 @@ int update_arg(void *field, char **orig_field,
 @ENDIF@
 @IF@ has_arg_longlong @THEN@
   case ARG_LONGLONG:
-#ifdef HAVE_LONG_LONG
-    if (val) *((long long int*)field) = (long long int) strtol (val, &stop_char, 0);
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
+    if (val) *((long long int*)field) = (long long int) strtoll (val, &stop_char, 0);
 #else
     if (val) *((long *)field) = (long)strtol (val, &stop_char, 0);
 #endif
@@ -1048,7 +1048,7 @@ void update_multiple_arg(void *field, char ***orig_field,
 @ENDIF@
 @IF@ has_arg_longlong @THEN@
     case ARG_LONGLONG:
-#ifdef HAVE_LONG_LONG
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
       *((long long int **)field) = (long long int *)realloc (*((long long int **)field), (field_given + prev_given) * sizeof (long long int)); break;
 #else
       *((long **)field) = (long *)realloc (*((long **)field), (field_given + prev_given) * sizeof (long)); break;
@@ -1093,7 +1093,7 @@ void update_multiple_arg(void *field, char ***orig_field,
 @ENDIF@
 @IF@ has_arg_longlong @THEN@
         case ARG_LONGLONG:
-#ifdef HAVE_LONG_LONG
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
           (*((long long int **)field))[i + field_given] = tmp->arg.longlong_arg; break;
 #else
           (*((long **)field))[i + field_given] = tmp->arg.longlong_arg; break;
@@ -1172,7 +1172,7 @@ void update_multiple_arg(void *field, char ***orig_field,
 @ENDIF@
 @IF@ has_arg_longlong @THEN@
       case ARG_LONGLONG:
-#ifdef HAVE_LONG_LONG
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
         if (! *((long long int **)field)) {
           *((long long int **)field) = (long long int *)malloc (sizeof (long long int));
           (*((long long int **)field))[0] = default_value->longlong_arg;

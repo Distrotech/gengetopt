@@ -677,8 +677,8 @@ int update_arg(void *field, char **orig_field,
     if (val) *((long double *)field) = (long double)strtod (val, &stop_char);
     break;
   case ARG_LONGLONG:
-#ifdef HAVE_LONG_LONG
-    if (val) *((long long int*)field) = (long long int) strtol (val, &stop_char, 0);
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
+    if (val) *((long long int*)field) = (long long int) strtoll (val, &stop_char, 0);
 #else
     if (val) *((long *)field) = (long)strtol (val, &stop_char, 0);
 #endif

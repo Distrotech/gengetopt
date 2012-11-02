@@ -1,5 +1,5 @@
 @IF@ long_long_arg @THEN@
-#ifdef HAVE_LONG_LONG
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
 @type@ @name@_arg;	/**< @@brief @desc@@if@ has_default @then@ (default=@default_value@)@endif@.  */
 #else
 @longtype@ @name@_arg;	/**< @@brief @desc@@if@ has_default @then@ (default=@default_value@)@endif@.  */
