@@ -13,7 +13,7 @@ if test -n "$CXX"
 then
   if test "$GXX" = "yes"
   then
-    ac_compile_warnings_opt='-Wall -W -Wno-unused-parameter -fstrict-aliasing'
+    ac_compile_warnings_opt='-Wall -W -Wno-unused-parameter -fstrict-aliasing -Wshadow'
   fi
   CXXFLAGS="$CXXFLAGS $ac_compile_warnings_opt"
   ac_compile_warnings_msg="$ac_compile_warnings_opt for C++"
@@ -23,7 +23,7 @@ if test -n "$CC"
 then
   if test "$GCC" = "yes"
   then
-    ac_compile_warnings_opt='-Wall -W -Wno-unused-parameter -fstrict-aliasing'
+    ac_compile_warnings_opt='-Wall -W -Wno-unused-parameter -fstrict-aliasing -Wshadow'
   fi
   CFLAGS="$CFLAGS $ac_compile_warnings_opt"
   ac_compile_warnings_msg="$ac_compile_warnings_msg $ac_compile_warnings_opt for C"
