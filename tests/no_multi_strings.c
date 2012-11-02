@@ -5,6 +5,10 @@
    inspired by Dave Swegen
 */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include "no_multi_strings_cmd.h"
 

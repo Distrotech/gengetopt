@@ -1,5 +1,9 @@
 /* no_strings.c test */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include "canonize-names-cmd.h"
 

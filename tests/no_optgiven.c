@@ -1,5 +1,9 @@
 /* no_optgiven.c test */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include "no_optgiven_cmd.h"
 

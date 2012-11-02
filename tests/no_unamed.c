@@ -1,5 +1,9 @@
 /* no_unamed.c test */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include "no_unamed_cmd.h"
 

@@ -1,5 +1,9 @@
 /* test_only_flags.c test */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include "test_only_flags_cmd.h"
 

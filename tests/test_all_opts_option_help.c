@@ -2,6 +2,10 @@
 
 /* test option help fields in the presence of text before and after */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 
