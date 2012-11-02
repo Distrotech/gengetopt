@@ -68,7 +68,7 @@ const char *gengetopt_args_info_detailed_help[] = {
   "  -e, --no-handle-error         do not exit on errors",
   "  \n  With this option, if the generated parser encounters an error (e.g., an\n  unknown option) it does not make the main program exit; instead, the parser\n  function returns a value different 0, and the main program can print a help\n  message.\n",
   "      --show-required[=STRING]  in the output of help will specify which\n                                  options are mandatory, by using the optional\n                                  passed string  (default=`(mandatory)')",
-  "      --strict-hidden           really hide hidden options",
+  "      --strict-hidden           completely hide hidden options",
   "  -g, --gen-version             put gengetopt version in the generated file\n                                  (default=on)",
   "      --set-package=STRING      set the package name (override package defined\n                                  in the .ggo file)",
   "      --set-version=STRING      set the version number (override version\n                                  defined in the .ggo file)",
@@ -686,7 +686,7 @@ cmdline_parser_internal (
 {
   int c;	/* Character of the parsed option.  */
 
-  int error = 0;
+  int error_occurred = 0;
   struct gengetopt_args_info local_args_info;
   
   int override;
@@ -1079,7 +1079,7 @@ cmdline_parser_internal (
               goto failure;
           
           }
-          /* really hide hidden options.  */
+          /* completely hide hidden options.  */
           else if (strcmp (long_options[option_index].name, "strict-hidden") == 0)
           {
           
@@ -1194,7 +1194,7 @@ cmdline_parser_internal (
 
   cmdline_parser_release (&local_args_info);
 
-  if ( error )
+  if ( error_occurred )
     return (EXIT_FAILURE);
 
   return 0;
