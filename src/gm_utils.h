@@ -111,6 +111,8 @@ void wrap_cstr (string &wrapped, unsigned int from_column, unsigned int second_i
  */
 int not_newlines(const string &buf, int &num_of_newlines);
 
+bool string_contains(const char *s, const char *tofind);
+
 /**
  * Function object to print something into a stream (to be used with for_each)
  */

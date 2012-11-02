@@ -340,3 +340,10 @@ bool is_numeric(const gengetopt_option *opt) {
         return false;
     }
 }
+
+bool string_contains(const char *s, const char *tofind) {
+    if (!s)
+        return false;
+
+    return (strstr(s, tofind) != 0);
+}
