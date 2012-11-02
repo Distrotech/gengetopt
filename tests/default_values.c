@@ -11,9 +11,6 @@
 
 #include "default_values_cmd.h"
 
-void
-print_args (void);
-
 int
 main (int argc, char **argv)
 {  

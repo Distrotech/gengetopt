@@ -11,9 +11,6 @@
 
 #include "cmdline.h"
 
-void
-print_args (void);
-
 static struct gengetopt_args_info args_info;
 
 int
