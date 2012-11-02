@@ -39,14 +39,21 @@ struct gengetopt_args_info
 {
   const char *help_help; /**< @brief Print help and exit help description.  */
   const char *version_help; /**< @brief Print version and exit help description.  */
-  int foo_arg;	/**< @brief foo option.  */
-  char * foo_orig;	/**< @brief foo option original value given at command line.  */
-  const char *foo_help; /**< @brief foo option help description.  */
+  int foo_bar_arg;	/**< @brief foo-bar option.  */
+  char * foo_bar_orig;	/**< @brief foo-bar option original value given at command line.  */
+  const char *foo_bar_help; /**< @brief foo-bar option help description.  */
+  int foo_foo_arg;	/**< @brief foo.foo option.  */
+  char * foo_foo_orig;	/**< @brief foo.foo option original value given at command line.  */
+  const char *foo_foo_help; /**< @brief foo.foo option help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
-  unsigned int foo_given ;	/**< @brief Whether foo was given.  */
+  unsigned int foo_bar_given ;	/**< @brief Whether foo-bar was given.  */
+  unsigned int foo_foo_given ;	/**< @brief Whether foo.foo was given.  */
 
+  int my_group_group_counter; /**< @brief Counter for group my_group */
+  int my_group2_group_counter; /**< @brief Counter for group my_group2 */
+  int my_group3_group_counter; /**< @brief Counter for group my_group3 */
 } ;
 
 /** @brief The additional parameters to pass to parser functions */

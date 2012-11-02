@@ -5,4 +5,13 @@
 package "canonize_names"
 version "1.0"
 
-option  "foo"        i "foo option" int no
+defgroup "my.group2"
+
+option  "foo-bar"        i "foo-bar option" int no
+
+defgroup "my/group3"
+
+option  "foo.foo"        j "foo.foo option" int no
+
+defgroup "my-group"
+

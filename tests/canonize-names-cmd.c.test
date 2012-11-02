@@ -34,9 +34,10 @@ const char *gengetopt_args_info_versiontext = "";
 const char *gengetopt_args_info_description = "";
 
 const char *gengetopt_args_info_help[] = {
-  "  -h, --help     Print help and exit",
-  "  -V, --version  Print version and exit",
-  "  -i, --foo=INT  foo option",
+  "  -h, --help         Print help and exit",
+  "  -V, --version      Print version and exit",
+  "  -i, --foo-bar=INT  foo-bar option",
+  "  -j, --foo.foo=INT  foo.foo option",
     0
 };
 
@@ -62,14 +63,19 @@ void clear_given (struct gengetopt_args_info *args_info)
 {
   args_info->help_given = 0 ;
   args_info->version_given = 0 ;
-  args_info->foo_given = 0 ;
+  args_info->foo_bar_given = 0 ;
+  args_info->foo_foo_given = 0 ;
+  args_info->my_group_group_counter = 0 ;
+  args_info->my_group2_group_counter = 0 ;
+  args_info->my_group3_group_counter = 0 ;
 }
 
 static
 void clear_args (struct gengetopt_args_info *args_info)
 {
   FIX_UNUSED (args_info);
-  args_info->foo_orig = NULL;
+  args_info->foo_bar_orig = NULL;
+  args_info->foo_foo_orig = NULL;
   
 }
 
@@ -80,7 +86,8 @@ void init_args_info(struct gengetopt_args_info *args_info)
 
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
-  args_info->foo_help = gengetopt_args_info_help[2] ;
+  args_info->foo_bar_help = gengetopt_args_info_help[2] ;
+  args_info->foo_foo_help = gengetopt_args_info_help[3] ;
   
 }
 
@@ -164,7 +171,8 @@ static void
 canonize_names_cmd_parser_release (struct gengetopt_args_info *args_info)
 {
 
-  free_string_field (&(args_info->foo_orig));
+  free_string_field (&(args_info->foo_bar_orig));
+  free_string_field (&(args_info->foo_foo_orig));
   
   
 
@@ -199,8 +207,10 @@ canonize_names_cmd_parser_dump(FILE *outfile, struct gengetopt_args_info *args_i
     write_into_file(outfile, "help", 0, 0 );
   if (args_info->version_given)
     write_into_file(outfile, "version", 0, 0 );
-  if (args_info->foo_given)
-    write_into_file(outfile, "foo", args_info->foo_orig, 0);
+  if (args_info->foo_bar_given)
+    write_into_file(outfile, "foo-bar", args_info->foo_bar_orig, 0);
+  if (args_info->foo_foo_given)
+    write_into_file(outfile, "foo.foo", args_info->foo_foo_orig, 0);
   
 
   i = EXIT_SUCCESS;
@@ -444,11 +454,12 @@ canonize_names_cmd_parser_internal (
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
         { "version",	0, NULL, 'V' },
-        { "foo",	1, NULL, 'i' },
+        { "foo-bar",	1, NULL, 'i' },
+        { "foo.foo",	1, NULL, 'j' },
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVi:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVi:j:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -464,14 +475,26 @@ canonize_names_cmd_parser_internal (
           canonize_names_cmd_parser_free (&local_args_info);
           exit (EXIT_SUCCESS);
 
-        case 'i':	/* foo option.  */
+        case 'i':	/* foo-bar option.  */
         
         
-          if (update_arg( (void *)&(args_info->foo_arg), 
-               &(args_info->foo_orig), &(args_info->foo_given),
-              &(local_args_info.foo_given), optarg, 0, 0, ARG_INT,
+          if (update_arg( (void *)&(args_info->foo_bar_arg), 
+               &(args_info->foo_bar_orig), &(args_info->foo_bar_given),
+              &(local_args_info.foo_bar_given), optarg, 0, 0, ARG_INT,
               check_ambiguity, override, 0, 0,
-              "foo", 'i',
+              "foo-bar", 'i',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'j':	/* foo.foo option.  */
+        
+        
+          if (update_arg( (void *)&(args_info->foo_foo_arg), 
+               &(args_info->foo_foo_orig), &(args_info->foo_foo_given),
+              &(local_args_info.foo_foo_given), optarg, 0, 0, ARG_INT,
+              check_ambiguity, override, 0, 0,
+              "foo.foo", 'j',
               additional_error))
             goto failure;
         
@@ -488,6 +511,24 @@ canonize_names_cmd_parser_internal (
         } /* switch */
     } /* while */
 
+  if (args_info->my_group_group_counter > 1)
+    {
+      fprintf (stderr, "%s: %d options of group my-group were given. At most one is required%s.\n", argv[0], args_info->my_group_group_counter, (additional_error ? additional_error : ""));
+      error_occurred = 1;
+    }
+  
+  if (args_info->my_group2_group_counter > 1)
+    {
+      fprintf (stderr, "%s: %d options of group my.group2 were given. At most one is required%s.\n", argv[0], args_info->my_group2_group_counter, (additional_error ? additional_error : ""));
+      error_occurred = 1;
+    }
+  
+  if (args_info->my_group3_group_counter > 1)
+    {
+      fprintf (stderr, "%s: %d options of group my/group3 were given. At most one is required%s.\n", argv[0], args_info->my_group3_group_counter, (additional_error ? additional_error : ""));
+      error_occurred = 1;
+    }
+  
 
 
 
