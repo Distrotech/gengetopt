@@ -91,7 +91,6 @@ extern char * gengetopt_purpose;
 extern char * gengetopt_versiontext;
 extern char * gengetopt_description;
 extern char * gengetopt_usage;
-extern char * gengetopt_input_filename;
 
 extern groups_collection_t gengetopt_groups;
 extern modes_collection_t gengetopt_modes;
@@ -199,9 +198,9 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   set_header_file_name (stripped_header_file_name);
   header_gen_class::set_header_file_ext (header_ext);
   c_source_gen_class::set_header_file_ext (header_ext);
-  if (gen_gengetopt_version)
-    header_gen_class::set_generator_version
-      ("version " VERSION);
+  if (gen_gengetopt_version) {
+    header_gen_class::set_generator_version("version " VERSION);
+  }
   const string my_ifndefname =
     to_upper (strip_path (stripped_header_file_name));
   set_ifndefname (canonize_names (my_ifndefname.c_str ()));
@@ -1347,7 +1346,6 @@ CmdlineParserCreator::generate_reset_groups(ostream &stream, unsigned int indent
     {
       body.str ("");
       bool found_option = false;
-      bool multiple_arg = false;
 
       foropt
       {
@@ -1356,8 +1354,6 @@ CmdlineParserCreator::generate_reset_groups(ostream &stream, unsigned int indent
             /* now we reset "given" fields */
             stream << indent_str;
             clear_given.set_var_arg(opt->var_arg);
-            if (opt->multiple && opt->group_value)
-              multiple_arg = true;
             clear_given.set_group(opt->multiple && opt->group_value);
             clear_given.generate_clear_given(body);
 
