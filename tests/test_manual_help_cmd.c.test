@@ -468,7 +468,7 @@ test_manual_help_cmd_parser_internal (
 {
   int c;	/* Character of the parsed option.  */
 
-  int error = 0;
+  int error_occurred = 0;
   struct gengetopt_args_info local_args_info;
   
   int override;
@@ -595,7 +595,7 @@ test_manual_help_cmd_parser_internal (
 
   test_manual_help_cmd_parser_release (&local_args_info);
 
-  if ( error )
+  if ( error_occurred )
     return (EXIT_FAILURE);
 
   if (optind < argc)

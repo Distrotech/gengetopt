@@ -279,7 +279,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
 int
 check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc)
 {
-  int error = 0;
+  int error_occurred = 0;
 
   if (option_given && (min > 0 || max > 0))
     {
@@ -292,7 +292,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
                 {
                   fprintf (stderr, "%s: %s option occurrences must be %d\n",
                     prog_name, option_desc, min);
-                  error = 1;
+                  error_occurred = 1;
                 }
             }
           else if (option_given < (unsigned int) min
@@ -301,7 +301,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               /* range occurrences */
               fprintf (stderr, "%s: %s option occurrences must be between %d and %d\n",
                 prog_name, option_desc, min, max);
-              error = 1;
+              error_occurred = 1;
             }
         }
       else if (min > 0)
@@ -311,7 +311,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
             {
               fprintf (stderr, "%s: %s option occurrences must be at least %d\n",
                 prog_name, option_desc, min);
-              error = 1;
+              error_occurred = 1;
             }
         }
       else if (max > 0)
@@ -321,12 +321,12 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
             {
               fprintf (stderr, "%s: %s option occurrences must be at most %d\n",
                 prog_name, option_desc, max);
-              error = 1;
+              error_occurred = 1;
             }
         }
     }
     
-  return error;
+  return error_occurred;
 }
 int
 no_multi_types_cmd_parser (int argc, char **argv, struct gengetopt_args_info *args_info)
@@ -393,17 +393,17 @@ no_multi_types_cmd_parser_required (struct gengetopt_args_info *args_info, const
 int
 no_multi_types_cmd_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error)
 {
-  int error = 0;
+  int error_occurred = 0;
   FIX_UNUSED (additional_error);
 
   /* checks for required options */
   if (check_multiple_option_occurrences(prog_name, args_info->multi_given, args_info->multi_min, args_info->multi_max, "'--multi'"))
-     error = 1;
+     error_occurred = 1;
   
   
   /* checks for dependences among options */
 
-  return error;
+  return error_occurred;
 }
 
 
@@ -517,7 +517,7 @@ no_multi_types_cmd_parser_internal (
 {
   int c;	/* Character of the parsed option.  */
 
-  int error = 0;
+  int error_occurred = 0;
   struct gengetopt_args_info local_args_info;
   
   int override;
@@ -610,12 +610,12 @@ no_multi_types_cmd_parser_internal (
   
   if (check_required)
     {
-      error += no_multi_types_cmd_parser_required2 (args_info, argv[0], additional_error);
+      error_occurred += no_multi_types_cmd_parser_required2 (args_info, argv[0], additional_error);
     }
 
   no_multi_types_cmd_parser_release (&local_args_info);
 
-  if ( error )
+  if ( error_occurred )
     return (EXIT_FAILURE);
 
   if (optind < argc)

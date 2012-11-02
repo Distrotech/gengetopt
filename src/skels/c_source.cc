@@ -1875,7 +1875,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "{";
       stream << "\n";
       stream << indent_str;
-      stream << "  int error = 0;";
+      stream << "  int error_occurred = 0;";
       stream << "\n";
       stream << indent_str;
       stream << "\n";
@@ -1913,7 +1913,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "                    prog_name, option_desc, min);";
       stream << "\n";
       stream << indent_str;
-      stream << "                  error = 1;";
+      stream << "                  error_occurred = 1;";
       stream << "\n";
       stream << indent_str;
       stream << "                }";
@@ -1940,7 +1940,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "                prog_name, option_desc, min, max);";
       stream << "\n";
       stream << indent_str;
-      stream << "              error = 1;";
+      stream << "              error_occurred = 1;";
       stream << "\n";
       stream << indent_str;
       stream << "            }";
@@ -1970,7 +1970,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "                prog_name, option_desc, min);";
       stream << "\n";
       stream << indent_str;
-      stream << "              error = 1;";
+      stream << "              error_occurred = 1;";
       stream << "\n";
       stream << indent_str;
       stream << "            }";
@@ -2000,7 +2000,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "                prog_name, option_desc, max);";
       stream << "\n";
       stream << indent_str;
-      stream << "              error = 1;";
+      stream << "              error_occurred = 1;";
       stream << "\n";
       stream << indent_str;
       stream << "            }";
@@ -2017,7 +2017,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       indent = 0;
       stream << "\n";
       stream << indent_str;
-      stream << "  return error;";
+      stream << "  return error_occurred;";
       stream << "\n";
       stream << indent_str;
       stream << "}";
@@ -2216,7 +2216,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "{";
       stream << "\n";
       stream << indent_str;
-      stream << "  int error = 0;";
+      stream << "  int error_occurred = 0;";
       stream << "\n";
       stream << indent_str;
       stream << "  FIX_UNUSED (additional_error);";
@@ -2248,7 +2248,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << indent_str;
       stream << "\n";
       stream << indent_str;
-      stream << "  return error;";
+      stream << "  return error_occurred;";
       stream << "\n";
       stream << indent_str;
       stream << "}";
@@ -3692,7 +3692,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
     generate_list_def (stream, indent + indent_str.length ());
   indent = 0;
   stream << indent_str;
-  stream << "  int error = 0;";
+  stream << "  int error_occurred = 0;";
   stream << "\n";
   stream << indent_str;
   stream << "  struct ";
@@ -3972,7 +3972,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "    {";
       stream << "\n";
       stream << indent_str;
-      stream << "      error += ";
+      stream << "      error_occurred += ";
       generate_string (parser_name, stream, indent + indent_str.length ());
       stream << "_required2 (args_info, argv[0], additional_error);";
       stream << "\n";
@@ -3992,7 +3992,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << indent_str;
   stream << "\n";
   stream << indent_str;
-  stream << "  if ( error )";
+  stream << "  if ( error_occurred )";
   stream << "\n";
   stream << indent_str;
   stream << "    return (EXIT_FAILURE);";

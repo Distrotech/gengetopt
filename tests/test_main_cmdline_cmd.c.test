@@ -407,7 +407,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
 int
 check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc)
 {
-  int error = 0;
+  int error_occurred = 0;
 
   if (option_given && (min > 0 || max > 0))
     {
@@ -420,7 +420,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
                 {
                   fprintf (stderr, "%s: %s option occurrences must be %d\n",
                     prog_name, option_desc, min);
-                  error = 1;
+                  error_occurred = 1;
                 }
             }
           else if (option_given < (unsigned int) min
@@ -429,7 +429,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               /* range occurrences */
               fprintf (stderr, "%s: %s option occurrences must be between %d and %d\n",
                 prog_name, option_desc, min, max);
-              error = 1;
+              error_occurred = 1;
             }
         }
       else if (min > 0)
@@ -439,7 +439,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
             {
               fprintf (stderr, "%s: %s option occurrences must be at least %d\n",
                 prog_name, option_desc, min);
-              error = 1;
+              error_occurred = 1;
             }
         }
       else if (max > 0)
@@ -449,12 +449,12 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
             {
               fprintf (stderr, "%s: %s option occurrences must be at most %d\n",
                 prog_name, option_desc, max);
-              error = 1;
+              error_occurred = 1;
             }
         }
     }
     
-  return error;
+  return error_occurred;
 }
 int
 test_main_cmdline_cmd_parser (int argc, char **argv, struct gengetopt_args_info *args_info)
@@ -521,32 +521,32 @@ test_main_cmdline_cmd_parser_required (struct gengetopt_args_info *args_info, co
 int
 test_main_cmdline_cmd_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error)
 {
-  int error = 0;
+  int error_occurred = 0;
   FIX_UNUSED (additional_error);
 
   /* checks for required options */
   if (! args_info->first_cmd_given)
     {
       fprintf (stderr, "%s: '--first-cmd' ('-F') option required%s\n", prog_name, (additional_error ? additional_error : ""));
-      error = 1;
+      error_occurred = 1;
     }
   
   if (check_multiple_option_occurrences(prog_name, args_info->first_cmd_given, args_info->first_cmd_min, args_info->first_cmd_max, "'--first-cmd' ('-F')"))
-     error = 1;
+     error_occurred = 1;
   
   if (! args_info->second_cmd_given)
     {
       fprintf (stderr, "%s: '--second-cmd' ('-S') option required%s\n", prog_name, (additional_error ? additional_error : ""));
-      error = 1;
+      error_occurred = 1;
     }
   
   if (check_multiple_option_occurrences(prog_name, args_info->second_cmd_given, args_info->second_cmd_min, args_info->second_cmd_max, "'--second-cmd' ('-S')"))
-     error = 1;
+     error_occurred = 1;
   
   
   /* checks for dependences among options */
 
-  return error;
+  return error_occurred;
 }
 
 
@@ -778,7 +778,7 @@ test_main_cmdline_cmd_parser_internal (
 
   struct generic_list * first_cmd_list = NULL;
   struct generic_list * second_cmd_list = NULL;
-  int error = 0;
+  int error_occurred = 0;
   struct gengetopt_args_info local_args_info;
   
   int override;
@@ -878,12 +878,12 @@ test_main_cmdline_cmd_parser_internal (
   
   if (check_required)
     {
-      error += test_main_cmdline_cmd_parser_required2 (args_info, argv[0], additional_error);
+      error_occurred += test_main_cmdline_cmd_parser_required2 (args_info, argv[0], additional_error);
     }
 
   test_main_cmdline_cmd_parser_release (&local_args_info);
 
-  if ( error )
+  if ( error_occurred )
     return (EXIT_FAILURE);
 
   if (optind < argc)

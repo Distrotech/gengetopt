@@ -411,20 +411,20 @@ test_sections_cmd_parser_required (struct gengetopt_args_info *args_info, const 
 int
 test_sections_cmd_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error)
 {
-  int error = 0;
+  int error_occurred = 0;
   FIX_UNUSED (additional_error);
 
   /* checks for required options */
   if (! args_info->required_given)
     {
       fprintf (stderr, "%s: '--required' ('-r') option required%s\n", prog_name, (additional_error ? additional_error : ""));
-      error = 1;
+      error_occurred = 1;
     }
   
   
   /* checks for dependences among options */
 
-  return error;
+  return error_occurred;
 }
 
 
@@ -579,7 +579,7 @@ test_sections_cmd_parser_internal (
 {
   int c;	/* Character of the parsed option.  */
 
-  int error = 0;
+  int error_occurred = 0;
   struct gengetopt_args_info local_args_info;
   
   int override;
@@ -804,12 +804,12 @@ test_sections_cmd_parser_internal (
 
   if (check_required)
     {
-      error += test_sections_cmd_parser_required2 (args_info, argv[0], additional_error);
+      error_occurred += test_sections_cmd_parser_required2 (args_info, argv[0], additional_error);
     }
 
   test_sections_cmd_parser_release (&local_args_info);
 
-  if ( error )
+  if ( error_occurred )
     return (EXIT_FAILURE);
 
   if (optind < argc)

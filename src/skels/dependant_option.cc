@@ -31,7 +31,7 @@ dependant_option_gen_class::generate_dependant_option(ostream &stream, unsigned 
   stream << ", (additional_error ? additional_error : \"\"));";
   stream << "\n";
   stream << indent_str;
-  stream << "    error = 1;";
+  stream << "    error_occurred = 1;";
   stream << "\n";
   stream << indent_str;
   stream << "  }";
