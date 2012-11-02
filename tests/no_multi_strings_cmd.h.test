@@ -71,6 +71,8 @@ struct no_multi_strings_cmd_parser_params
 extern const char *gengetopt_args_info_purpose;
 /** @brief the usage string of the program */
 extern const char *gengetopt_args_info_usage;
+/** @brief the description string of the program */
+extern const char *gengetopt_args_info_description;
 /** @brief all the lines making the help output */
 extern const char *gengetopt_args_info_help[];
 
