@@ -97,8 +97,8 @@ This file documents GNU Gengetopt version @value{VERSION}.
 * Invoking gengetopt::          gengetopt command line options
 * Terminology::                 Definitions of options, values, and so forth.
 * Options with enumerated values::  Options accepting only a list of values
-* Group options::               Groups of mutual exclusive options
-* Mode options::                Mutual exclusive group of options
+* Group options::               Groups of mutually exclusive options
+* Mode options::                Mutually exclusive group of options
 * Parser function additional parameters::  
 * Configuration files::         Parsing a configuration file
 * Multiple Options::            Multiple options
@@ -682,7 +682,7 @@ section "section name" @{sectiondesc="optional section description"@}
 
 @noindent
 Notice that the separation in sections is stronger than separation in
-groups of mutual exclusive options (see @ref{Group options}).
+groups of mutually exclusive options (see @ref{Group options}).
 Furthermore, sections should not be inserted among group options (but
 only externally).  A section makes sense only if it is followed by some
 options.  If you don't specify any option after a section, that section
@@ -1414,7 +1414,7 @@ considered @emph{in mutual exclusion}.  In order to use this feature, first the
 @code{group} has to be defined, and then a @code{groupoption} can be defined.  A
 groupoption has basically the same syntax of a standard option, apart
 that the required flag must not be specified (it would not make sense,
-since the options of the same group are mutual exclusive) and the group
+since the options of the same group are mutually exclusive) and the group
 to which the option belongs has to be specified.
 
 @example

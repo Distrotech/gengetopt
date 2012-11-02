@@ -1880,7 +1880,7 @@ CmdlineParserCreator::generate_handle_required(ostream &stream,
           opt_gen.generate_required_option (stream, indent);
         }
 
-        // notice that the above ifs are not mutual exclusive:
+        // notice that the above ifs are not mutually exclusive:
         // a multiple option can have a range check without being
         // required.
       }
