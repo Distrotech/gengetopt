@@ -291,42 +291,6 @@ header_gen_class::generate_header(ostream &stream, unsigned int indent)
   stream << "_usage;";
   stream << "\n";
   stream << indent_str;
-  stream << "/** ";
-  stream << "@";
-  stream << "brief all the lines making the help output */";
-  stream << "\n";
-  stream << indent_str;
-  stream << "extern const char *";
-  generate_string (args_info, stream, indent + indent_str.length ());
-  stream << "_help[];";
-  stream << "\n";
-  stream << indent_str;
-  if (has_hidden)
-    {
-      stream << "/** ";
-      stream << "@";
-      stream << "brief all the lines making the full help output (including hidden options) */";
-      stream << "\n";
-      stream << indent_str;
-      stream << "extern const char *";
-      generate_string (args_info, stream, indent + indent_str.length ());
-      stream << "_full_help[];";
-      stream << "\n";
-      stream << indent_str;
-    }
-  if (has_details)
-    {
-      stream << "/** ";
-      stream << "@";
-      stream << "brief all the lines making the detailed help output (including hidden options and details) */";
-      stream << "\n";
-      stream << indent_str;
-      stream << "extern const char *";
-      generate_string (args_info, stream, indent + indent_str.length ());
-      stream << "_detailed_help[];";
-      stream << "\n";
-      stream << indent_str;
-    }
   stream << "\n";
   stream << indent_str;
   stream << "/**";

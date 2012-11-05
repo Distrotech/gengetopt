@@ -143,7 +143,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
     {
       if (has_details)
         {
-          stream << "const char *";
+          stream << "static const char *";
           generate_string (args_info, stream, indent + indent_str.length ());
           stream << "_detailed_help[] = {";
           stream << "\n";
@@ -163,6 +163,17 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
           stream << indent_str;
           if (has_hidden)
             {
+              stream << "\n";
+              stream << indent_str;
+              stream << "static const char *";
+              generate_string (args_info, stream, indent + indent_str.length ());
+              stream << "_full_help[";
+              generate_string (help_string_num, stream, indent + indent_str.length ());
+              stream << "];";
+              stream << "\n";
+              stream << indent_str;
+              stream << "\n";
+              stream << indent_str;
               stream << "static void";
               stream << "\n";
               stream << indent_str;
@@ -184,22 +195,13 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
               stream << "}";
               stream << "\n";
               stream << indent_str;
-              stream << "\n";
-              stream << indent_str;
-              stream << "const char *";
-              generate_string (args_info, stream, indent + indent_str.length ());
-              stream << "_full_help[";
-              generate_string (help_string_num, stream, indent + indent_str.length ());
-              stream << "];";
-              stream << "\n";
-              stream << indent_str;
             }
         }
       else
         {
           if (has_hidden)
             {
-              stream << "const char *";
+              stream << "static const char *";
               generate_string (args_info, stream, indent + indent_str.length ());
               stream << "_full_help[] = {";
               stream << "\n";
@@ -219,6 +221,15 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
               stream << indent_str;
             }
         }
+      stream << "\n";
+      stream << indent_str;
+      stream << "static const char *";
+      generate_string (args_info, stream, indent + indent_str.length ());
+      stream << "_help[";
+      generate_string (help_string_num, stream, indent + indent_str.length ());
+      stream << "];";
+      stream << "\n";
+      stream << indent_str;
       stream << "\n";
       stream << indent_str;
       stream << "static void";
@@ -242,19 +253,10 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "}";
       stream << "\n";
       stream << indent_str;
-      stream << "\n";
-      stream << indent_str;
-      stream << "const char *";
-      generate_string (args_info, stream, indent + indent_str.length ());
-      stream << "_help[";
-      generate_string (help_string_num, stream, indent + indent_str.length ());
-      stream << "];";
-      stream << "\n";
-      stream << indent_str;
     }
   else
     {
-      stream << "const char *";
+      stream << "static const char *";
       generate_string (args_info, stream, indent + indent_str.length ());
       stream << "_help[] = {";
       stream << "\n";

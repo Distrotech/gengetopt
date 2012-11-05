@@ -1,3 +1,10 @@
+2012-10-31  Tim Marston  <tim@ed.am>
+
+	* src/skels/header.h_skel: removed extern declarations of help,
+	full_help and detailed_help arrays.
+	* src/skels/c_source.h_skel: defined help arrays differently,
+	since they are no longer declared in the headers.
+
 2012-07-18  Tim Marston  <tim@ed.am>
 
 	* src/cmdline.ggo: added --strict-hidden option

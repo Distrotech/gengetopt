@@ -37,33 +37,34 @@ const char *@args_info@_description = "@description@";
 
 @IF@ has_hidden or has_details @THEN@
 @IF@ has_details @THEN@
-const char *@args_info@_detailed_help[] = {
+static const char *@args_info@_detailed_help[] = {
   @detailed_help_option_print:method@  0
 };
 @IF@ has_hidden @THEN@
+
+static const char *@args_info@_full_help[@help_string_num@];
+
 static void
 init_full_help_array(void)
 {
   @full_help_option_print:method@
 }
-
-const char *@args_info@_full_help[@help_string_num@];
 @ENDIF@
 @ELSEIF@ has_hidden @THEN@
-const char *@args_info@_full_help[] = {
+static const char *@args_info@_full_help[] = {
   @full_help_option_print:method@  0
 };
 @ENDIF@
+
+static const char *@args_info@_help[@help_string_num@];
 
 static void
 init_help_array(void)
 {
   @help_option_print:method@
 }
-
-const char *@args_info@_help[@help_string_num@];
 @ELSE@
-const char *@args_info@_help[] = {
+static const char *@args_info@_help[] = {
   @help_option_print:method@  0
 };
 @ENDIF@
