@@ -74,3 +74,4 @@ Probably we should avoid to check whether the option after a section is hidden:
 does a section with only hidden options make sense?
 Yes probably it's better to keep this feature.
 
+We do not need libtool
