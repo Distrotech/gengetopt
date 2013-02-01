@@ -184,6 +184,15 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
           const std::string &source_array);
   
   /**
+   * generate the non-shared initialisation strings for a list of help strings
+   *
+   * @param target_array the name of the array to initialise
+   */
+  void generate_help_option_print_from_list(ostream &stream,
+          unsigned int indent, OptionHelpList *option_list,
+          const std::string &target_array);
+
+  /**
    * Sets the has_arg_XXX by inspecting all the options types
    */
   void set_has_arg_types();

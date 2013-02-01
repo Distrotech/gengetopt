@@ -818,12 +818,52 @@ CmdlineParserCreator::generate_help_option_print_from_lists(ostream &stream,
     print_gen.set_index(converted_int.str());
     print_gen.generate_print_help_string(stream, indent);
 
-    // we increment it to store the final 0
+    // we store the number of strings in this array
     converted_int.str("");
     converted_int << ++help_num;
-
     set_help_string_num(converted_int.str());
+}
 
+void
+CmdlineParserCreator::generate_help_option_print_from_list(ostream &stream,
+		unsigned int indent, OptionHelpList *option_list,
+		const std::string &target_array) {
+	print_help_string_gen_class print_gen;
+
+    // the index into the help array
+    int i = 0;
+
+    print_gen.set_target(target_array);
+    print_gen.set_last(false);
+	print_gen.set_shared(false);
+
+	// simple help generation
+	for (OptionHelpList::const_iterator it = option_list->begin();
+		 it != option_list->end(); ++it)
+	{
+		ostringstream converted_int;
+		converted_int << i;
+
+		// the index into the help array
+		print_gen.set_index(converted_int.str());
+		print_gen.set_helpstring(*it);
+		print_gen.generate_print_help_string(stream, indent);
+
+		i++;
+	}
+
+    ostringstream converted_int;
+    converted_int << i;
+
+    // the final 0
+    print_gen.set_last(true);
+    print_gen.set_index(converted_int.str());
+    print_gen.generate_print_help_string(stream, indent);
+
+    // we store the number of strings in this array
+    converted_int.str("");
+    converted_int << ++i;
+    set_help_string_num(converted_int.str());
 }
 
 void
@@ -833,20 +873,13 @@ CmdlineParserCreator::generate_help_option_print(ostream &stream,
     OptionHelpList *option_list = generate_help_option_list();
 
     if (!c_source_gen_class::has_hidden && !c_source_gen_class::has_details) {
-        print_help_string_gen_class print_gen;
-        print_gen.set_shared(false);
-
-        // simple help generation
-        for (OptionHelpList::const_iterator it = option_list->begin();
-        it != option_list->end(); ++it)
-        {
-            print_gen.set_helpstring(*it);
-            print_gen.generate_print_help_string(stream, indent);
-        }
+		generate_help_option_print_from_list
+			(stream, indent, option_list,
+			 c_source_gen_class::args_info + "_help");
     } else {
         // in order to avoid generating the same help string twice, and thus
         // to save memory, in case of hidden options (or details), we try to share most
-        // of the strings with the full help array
+        // of the strings with the full or detailed help array
         OptionHelpList *full_option_list = generate_help_option_list(true, true);
 
         generate_help_option_print_from_lists
@@ -870,15 +903,9 @@ CmdlineParserCreator::generate_full_help_option_print(ostream &stream,
     OptionHelpList *option_list = generate_help_option_list(true);
 
     if (!c_source_gen_class::has_details) {
-        print_help_string_gen_class print_gen;
-        print_gen.set_shared(false);
-
-        for (OptionHelpList::const_iterator it = option_list->begin();
-        it != option_list->end(); ++it)
-        {
-            print_gen.set_helpstring(*it);
-            print_gen.generate_print_help_string(stream, indent);
-        }
+		generate_help_option_print_from_list
+			(stream, indent, option_list,
+			 c_source_gen_class::args_info + "_full_help");
     } else {
         // in order to avoid generating the same help string twice, and thus
         // to save memory, in case of options with details, we try to share most
@@ -903,15 +930,9 @@ CmdlineParserCreator::generate_detailed_help_option_print(ostream &stream,
     // generate also hidden options and details
     OptionHelpList *option_list = generate_help_option_list(true, true);
 
-    print_help_string_gen_class print_gen;
-    print_gen.set_shared(false);
-
-    for (OptionHelpList::const_iterator it = option_list->begin();
-         it != option_list->end(); ++it)
-    {
-        print_gen.set_helpstring(*it);
-        print_gen.generate_print_help_string(stream, indent);
-    }
+	generate_help_option_print_from_list
+		(stream, indent, option_list,
+		 c_source_gen_class::args_info + "_detailed_help");
 
     delete option_list;
 }

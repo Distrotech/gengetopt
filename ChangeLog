@@ -1,3 +1,9 @@
+2012-11-01  Tim Marston  <tim@ed.am>
+
+	* src/gm.cc, src/skels/c_source.h_skel: the three generated help
+	string arrays are now always initialised by a function (rather
+	than with static strings).
+
 2012-10-31  Tim Marston  <tim@ed.am>
 
 	* src/skels/header.h_skel: removed extern declarations of help,

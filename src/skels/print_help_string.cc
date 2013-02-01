@@ -34,9 +34,20 @@ print_help_string_gen_class::generate_print_help_string(ostream &stream, unsigne
     }
   else
     {
-      stream << "\"";
-      generate_string (helpstring, stream, indent + indent_str.length ());
-      stream << "\",";
+      generate_string (target, stream, indent + indent_str.length ());
+      stream << "[";
+      generate_string (index, stream, indent + indent_str.length ());
+      stream << "] = ";
+      if (last)
+        {
+          stream << "0; ";
+        }
+      else
+        {
+          stream << "\"";
+          generate_string (helpstring, stream, indent + indent_str.length ());
+          stream << "\",";
+        }
       stream << "\n";
       stream << indent_str;
     }

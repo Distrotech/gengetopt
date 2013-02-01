@@ -139,95 +139,11 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << indent_str;
   stream << "\n";
   stream << indent_str;
-  if (( has_hidden || has_details ))
+  if (has_details)
     {
-      if (has_details)
-        {
-          stream << "static const char *";
-          generate_string (args_info, stream, indent + indent_str.length ());
-          stream << "_detailed_help[] = {";
-          stream << "\n";
-          stream << indent_str;
-          indent = 2;
-          stream << "  ";
-          if (detailed_help_option_print.size () > 0)
-            generate_string (detailed_help_option_print, stream, indent + indent_str.length ());
-          else
-            generate_detailed_help_option_print (stream, indent + indent_str.length ());
-          stream << "  0";
-          indent = 0;
-          stream << "\n";
-          stream << indent_str;
-          stream << "};";
-          stream << "\n";
-          stream << indent_str;
-          if (has_hidden)
-            {
-              stream << "\n";
-              stream << indent_str;
-              stream << "static const char *";
-              generate_string (args_info, stream, indent + indent_str.length ());
-              stream << "_full_help[";
-              generate_string (help_string_num, stream, indent + indent_str.length ());
-              stream << "];";
-              stream << "\n";
-              stream << indent_str;
-              stream << "\n";
-              stream << indent_str;
-              stream << "static void";
-              stream << "\n";
-              stream << indent_str;
-              stream << "init_full_help_array(void)";
-              stream << "\n";
-              stream << indent_str;
-              stream << "{";
-              stream << "\n";
-              stream << indent_str;
-              indent = 2;
-              stream << "  ";
-              if (full_help_option_print.size () > 0)
-                generate_string (full_help_option_print, stream, indent + indent_str.length ());
-              else
-                generate_full_help_option_print (stream, indent + indent_str.length ());
-              indent = 0;
-              stream << "\n";
-              stream << indent_str;
-              stream << "}";
-              stream << "\n";
-              stream << indent_str;
-            }
-        }
-      else
-        {
-          if (has_hidden)
-            {
-              stream << "static const char *";
-              generate_string (args_info, stream, indent + indent_str.length ());
-              stream << "_full_help[] = {";
-              stream << "\n";
-              stream << indent_str;
-              indent = 2;
-              stream << "  ";
-              if (full_help_option_print.size () > 0)
-                generate_string (full_help_option_print, stream, indent + indent_str.length ());
-              else
-                generate_full_help_option_print (stream, indent + indent_str.length ());
-              stream << "  0";
-              indent = 0;
-              stream << "\n";
-              stream << indent_str;
-              stream << "};";
-              stream << "\n";
-              stream << indent_str;
-            }
-        }
-      stream << "\n";
-      stream << indent_str;
       stream << "static const char *";
       generate_string (args_info, stream, indent + indent_str.length ());
-      stream << "_help[";
-      generate_string (help_string_num, stream, indent + indent_str.length ());
-      stream << "];";
+      stream << "_detailed_help[];";
       stream << "\n";
       stream << indent_str;
       stream << "\n";
@@ -235,7 +151,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "static void";
       stream << "\n";
       stream << indent_str;
-      stream << "init_help_array(void)";
+      stream << "init_detailed_help_array(void)";
       stream << "\n";
       stream << indent_str;
       stream << "{";
@@ -243,38 +159,107 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << indent_str;
       indent = 2;
       stream << "  ";
-      if (help_option_print.size () > 0)
-        generate_string (help_option_print, stream, indent + indent_str.length ());
+      if (detailed_help_option_print.size () > 0)
+        generate_string (detailed_help_option_print, stream, indent + indent_str.length ());
       else
-        generate_help_option_print (stream, indent + indent_str.length ());
+        generate_detailed_help_option_print (stream, indent + indent_str.length ());
       indent = 0;
       stream << "\n";
       stream << indent_str;
       stream << "}";
       stream << "\n";
       stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "static const char *";
+      generate_string (args_info, stream, indent + indent_str.length ());
+      stream << "_detailed_help[";
+      generate_string (help_string_num, stream, indent + indent_str.length ());
+      stream << "] = { 0 };";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
     }
-  else
+  if (has_hidden)
     {
       stream << "static const char *";
       generate_string (args_info, stream, indent + indent_str.length ());
-      stream << "_help[] = {";
+      stream << "_full_help[];";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "static void";
+      stream << "\n";
+      stream << indent_str;
+      stream << "init_full_help_array(void)";
+      stream << "\n";
+      stream << indent_str;
+      stream << "{";
       stream << "\n";
       stream << indent_str;
       indent = 2;
       stream << "  ";
-      if (help_option_print.size () > 0)
-        generate_string (help_option_print, stream, indent + indent_str.length ());
+      if (full_help_option_print.size () > 0)
+        generate_string (full_help_option_print, stream, indent + indent_str.length ());
       else
-        generate_help_option_print (stream, indent + indent_str.length ());
-      stream << "  0";
+        generate_full_help_option_print (stream, indent + indent_str.length ());
       indent = 0;
       stream << "\n";
       stream << indent_str;
-      stream << "};";
+      stream << "}";
+      stream << "\n";
+      stream << indent_str;
+      stream << "\n";
+      stream << indent_str;
+      stream << "static const char *";
+      generate_string (args_info, stream, indent + indent_str.length ());
+      stream << "_full_help[";
+      generate_string (help_string_num, stream, indent + indent_str.length ());
+      stream << "] = { 0 };";
+      stream << "\n";
+      stream << indent_str;
       stream << "\n";
       stream << indent_str;
     }
+  stream << "static const char *";
+  generate_string (args_info, stream, indent + indent_str.length ());
+  stream << "_help[];";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  stream << "static void";
+  stream << "\n";
+  stream << indent_str;
+  stream << "init_help_array(void)";
+  stream << "\n";
+  stream << indent_str;
+  stream << "{";
+  stream << "\n";
+  stream << indent_str;
+  indent = 2;
+  stream << "  ";
+  if (help_option_print.size () > 0)
+    generate_string (help_option_print, stream, indent + indent_str.length ());
+  else
+    generate_help_option_print (stream, indent + indent_str.length ());
+  indent = 0;
+  stream << "\n";
+  stream << indent_str;
+  stream << "}";
+  stream << "\n";
+  stream << indent_str;
+  stream << "\n";
+  stream << indent_str;
+  stream << "static const char *";
+  generate_string (args_info, stream, indent + indent_str.length ());
+  stream << "_help[";
+  generate_string (help_string_num, stream, indent + indent_str.length ());
+  stream << "] = { 0 };";
+  stream << "\n";
+  stream << indent_str;
   stream << "\n";
   stream << indent_str;
   stream << "typedef enum {ARG_NO";
@@ -545,16 +530,19 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "{";
   stream << "\n";
   stream << indent_str;
-  if (( has_hidden && has_details ))
+  if (has_details)
     {
-      stream << "  init_full_help_array(); ";
+      stream << "  init_detailed_help_array();";
     }
   stream << "\n";
   stream << indent_str;
-  if (( has_hidden || has_details ))
+  if (has_hidden)
     {
-      stream << "  init_help_array(); ";
+      stream << "  init_full_help_array();";
     }
+  stream << "\n";
+  stream << indent_str;
+  stream << "  init_help_array();";
   stream << "\n";
   stream << indent_str;
   indent = 2;
