@@ -24,6 +24,8 @@
 #include "skels/header.h"
 #include "skels/c_source.h"
 
+#include "string_builder.h"
+
 #include <list>
 #include <string>
 
@@ -31,7 +33,21 @@
 
 struct gengetopt_option;
 
-typedef std::list<std::string> OptionHelpList;
+typedef struct {
+  string_builder header;
+  string_builder text;
+  string_builder extra;
+} OptionHelpListElement;
+
+inline bool
+operator ==( const OptionHelpListElement &lhs,
+			 const OptionHelpListElement &rhs )
+{
+  return lhs.header == rhs.header && lhs.text == rhs.text &&
+    lhs.extra == rhs.extra;
+}
+
+typedef std::list<OptionHelpListElement> OptionHelpList;
 
 class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
 {

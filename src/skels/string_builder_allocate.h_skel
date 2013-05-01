@@ -1,0 +1,10 @@
+@IF@ num_parts:int = 0 @THEN@
+
+@target@@if@ is_target_array @then@[@target_index@]@endif@ = "";
+@ELSEIF@ num_parts:int = 1 @THEN@
+@target@@if@ is_target_array @then@[@target_index@]@endif@ = (char *)malloc( strlen( string_builder_parts[ 0 ] ) + 1 );
+@ELSE@
+for( string_builder_size = string_builder_i = 0; string_builder_i < @num_parts:int@; string_builder_i++ )
+     string_builder_size += strlen( string_builder_parts[ string_builder_i ] );
+@target@@if@ is_target_array @then@[@target_index@]@endif@ = (char *)malloc( string_builder_size + 1 );
+@ENDIF@

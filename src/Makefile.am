@@ -31,7 +31,7 @@ noinst_LTLIBRARIES = libgengetopt.la
 
 libgengetopt_la_SOURCES = parser.cc scanner.cc \
 globals.cpp \
-argsdef.c cmdline.ggo gm.cc \
+argsdef.c cmdline.ggo gm.cc string_builder.cc \
 yyerror.cc gm_utils.cpp fileutils.cpp acceptedvalues.cpp ggos.cpp
 
 gengetopt_SOURCES = gengetopt.cc

@@ -76,6 +76,7 @@ static void set_default_required_properties(void);
 static void print_copyright();
 static void print_reportbugs();
 
+static void output_option_help_list_element(const OptionHelpListElement &);
 static void output_formatted_string(const string &);
 
 static bool check_dependencies();
@@ -322,7 +323,7 @@ main (int argc, char **argv)
           cmdline_parser_creator.generate_help_option_list(args_info.show_full_help_given, args_info.show_detailed_help_given);
 
       std::for_each(option_list->begin(), option_list->end(),
-              output_formatted_string);
+              output_option_help_list_element);
 
       delete option_list;
     }
@@ -335,6 +336,12 @@ main (int argc, char **argv)
   gengetopt_free ();
 
   return 0;
+}
+
+void
+output_option_help_list_element(const OptionHelpListElement &element)
+{
+    // TODO
 }
 
 void

@@ -1,6 +1,6 @@
-#line 2 "./scanner.cc"
+#line 2 "../../src/scanner.cc"
 
-#line 4 "./scanner.cc"
+#line 4 "../../src/scanner.cc"
 
 #define  YY_INT_ALIGNED short int
 
@@ -629,7 +629,7 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "./scanner.ll"
+#line 1 "../../src/scanner.ll"
 /**
  * Copyright (C) 1999-2007  Free Software Foundation, Inc.
  *
@@ -649,7 +649,7 @@ char *yytext;
  * with gengetopt; see the file COPYING. If not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-#line 23 "./scanner.ll"
+#line 23 "../../src/scanner.ll"
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -689,7 +689,7 @@ char linebuf[LINEBUF_LEN] ; /* current line */
 #endif
 
 
-#line 693 "./scanner.cc"
+#line 693 "../../src/scanner.cc"
 
 #define INITIAL 0
 #define SIZE_STATE 1
@@ -886,11 +886,11 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 70 "./scanner.ll"
+#line 70 "../../src/scanner.ll"
 
 
 
-#line 894 "./scanner.cc"
+#line 894 "../../src/scanner.cc"
 
 	if ( !(yy_init) )
 		{
@@ -985,325 +985,325 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 73 "./scanner.ll"
+#line 73 "../../src/scanner.ll"
 updateTokenInfo (-1); yylval.argtype = ARG_STRING; return TOK_ARGTYPE;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 74 "./scanner.ll"
+#line 74 "../../src/scanner.ll"
 updateTokenInfo (-1); yylval.argtype = ARG_INT; return TOK_ARGTYPE;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 75 "./scanner.ll"
+#line 75 "../../src/scanner.ll"
 updateTokenInfo (-1); yylval.argtype = ARG_SHORT; return TOK_ARGTYPE;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 76 "./scanner.ll"
+#line 76 "../../src/scanner.ll"
 updateTokenInfo (-1); yylval.argtype = ARG_LONG; return TOK_ARGTYPE;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 77 "./scanner.ll"
+#line 77 "../../src/scanner.ll"
 updateTokenInfo (-1); yylval.argtype = ARG_FLOAT; return TOK_ARGTYPE;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 78 "./scanner.ll"
+#line 78 "../../src/scanner.ll"
 updateTokenInfo (-1); yylval.argtype = ARG_DOUBLE; return TOK_ARGTYPE;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 79 "./scanner.ll"
+#line 79 "../../src/scanner.ll"
 updateTokenInfo (-1); yylval.argtype = ARG_LONGDOUBLE; return TOK_ARGTYPE;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 80 "./scanner.ll"
+#line 80 "../../src/scanner.ll"
 updateTokenInfo (-1); yylval.argtype = ARG_LONGLONG; return TOK_ARGTYPE;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 81 "./scanner.ll"
+#line 81 "../../src/scanner.ll"
 updateTokenInfo (-1); yylval.argtype = ARG_ENUM; return TOK_ARGTYPE;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 83 "./scanner.ll"
+#line 83 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_PACKAGE;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 84 "./scanner.ll"
+#line 84 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_VERSION;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 85 "./scanner.ll"
+#line 85 "../../src/scanner.ll"
 updateTokenInfo (-1); yylloc.first_line = gengetopt_count_line; return TOK_GROUPOPTION;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 86 "./scanner.ll"
+#line 86 "../../src/scanner.ll"
 updateTokenInfo (-1); yylloc.first_line = gengetopt_count_line; return TOK_MODEOPTION;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 87 "./scanner.ll"
+#line 87 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_YES;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 88 "./scanner.ll"
+#line 88 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_NO;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 89 "./scanner.ll"
+#line 89 "../../src/scanner.ll"
 updateTokenInfo (-1); yylloc.first_line = gengetopt_count_line; return TOK_OPTION;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 90 "./scanner.ll"
+#line 90 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_FLAG;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 91 "./scanner.ll"
+#line 91 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_ON;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 92 "./scanner.ll"
+#line 92 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_OFF;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 93 "./scanner.ll"
+#line 93 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_PURPOSE;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 94 "./scanner.ll"
+#line 94 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_DESCRIPTION;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 95 "./scanner.ll"
+#line 95 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_USAGE;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 96 "./scanner.ll"
+#line 96 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_DEFAULT;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 97 "./scanner.ll"
+#line 97 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_TYPESTR;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 98 "./scanner.ll"
+#line 98 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_GROUP;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 99 "./scanner.ll"
+#line 99 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_GROUPDESC;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 100 "./scanner.ll"
+#line 100 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_DEFGROUP;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 101 "./scanner.ll"
+#line 101 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_MODE;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 102 "./scanner.ll"
+#line 102 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_MODEDESC;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 103 "./scanner.ll"
+#line 103 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_DEFMODE;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 104 "./scanner.ll"
+#line 104 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_MULTIPLE;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 105 "./scanner.ll"
+#line 105 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_ARGOPTIONAL;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 106 "./scanner.ll"
+#line 106 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_SECTIONDESC;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 107 "./scanner.ll"
+#line 107 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_SECTION;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 108 "./scanner.ll"
+#line 108 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_VALUES;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 109 "./scanner.ll"
+#line 109 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_HIDDEN;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 110 "./scanner.ll"
+#line 110 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_DEPENDON;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 111 "./scanner.ll"
+#line 111 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_DETAILS;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 112 "./scanner.ll"
+#line 112 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_TEXT;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 113 "./scanner.ll"
+#line 113 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_VERSIONTEXT;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 114 "./scanner.ll"
+#line 114 "../../src/scanner.ll"
 updateTokenInfo (-1); return TOK_ARGS;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 116 "./scanner.ll"
+#line 116 "../../src/scanner.ll"
 { updateTokenInfo (-1); return '='; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 117 "./scanner.ll"
+#line 117 "../../src/scanner.ll"
 { updateTokenInfo (-1); return ','; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 119 "./scanner.ll"
+#line 119 "../../src/scanner.ll"
 { PUSH(SIZE_STATE); updateTokenInfo (-1); return '('; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 120 "./scanner.ll"
+#line 120 "../../src/scanner.ll"
 { updateTokenInfo (-1); return '-'; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 121 "./scanner.ll"
+#line 121 "../../src/scanner.ll"
 { updateTokenInfo (-1); yylval.str = strdup(yytext); return TOK_SIZE; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 122 "./scanner.ll"
+#line 122 "../../src/scanner.ll"
 { POP(); updateTokenInfo (-1); return ')'; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 124 "./scanner.ll"
+#line 124 "../../src/scanner.ll"
 updateTokenInfo (-1); yylval.chr = yytext[0]; return TOK_CHAR;
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 126 "./scanner.ll"
+#line 126 "../../src/scanner.ll"
 { updateTokenInfo (-1); DEB("start string"); PUSH(STRING_STATE) ; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 127 "./scanner.ll"
+#line 127 "../../src/scanner.ll"
 { updateTokenInfo (2); buffer("\\\\n"); }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 128 "./scanner.ll"
-{ updateTokenInfo (1); buffer("\n"); }
+#line 128 "../../src/scanner.ll"
+{ updateTokenInfo (1); buffer("\\n"); }
 	YY_BREAK
 case 52:
 /* rule 52 can match eol */
 YY_RULE_SETUP
-#line 129 "./scanner.ll"
+#line 129 "../../src/scanner.ll"
 {  update_count_line (yytext); buffer( yytext ) ; }
 	YY_BREAK
 case 53:
 /* rule 53 can match eol */
 YY_RULE_SETUP
-#line 130 "./scanner.ll"
+#line 130 "../../src/scanner.ll"
 { update_count_line (yytext); /* a line break */ }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 131 "./scanner.ll"
+#line 131 "../../src/scanner.ll"
 { updateTokenInfo (-1); buffer(yytext); }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 132 "./scanner.ll"
+#line 132 "../../src/scanner.ll"
 { updateTokenInfo (-1); DEB("end string"); POP() ; yylval.str = flush_buffer(); return TOK_STRING; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 133 "./scanner.ll"
+#line 133 "../../src/scanner.ll"
 {  updateTokenInfo (-1); buffer( yytext ) ; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 135 "./scanner.ll"
+#line 135 "../../src/scanner.ll"
 updateTokenInfo (-1);
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 136 "./scanner.ll"
+#line 136 "../../src/scanner.ll"
 updateTokenInfo (8*yyleng);
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 138 "./scanner.ll"
+#line 138 "../../src/scanner.ll"
 /* comments begin with # in any place (but strings) */
 	YY_BREAK
 case 60:
 /* rule 60 can match eol */
 YY_RULE_SETUP
-#line 139 "./scanner.ll"
+#line 139 "../../src/scanner.ll"
 update_count_line (0); yyless(1) ; /* give back all but the \n to rescan */
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 141 "./scanner.ll"
+#line 141 "../../src/scanner.ll"
 {}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 143 "./scanner.ll"
+#line 143 "../../src/scanner.ll"
 {
   return 1000; /* little hack to produce a parse error too. */
 }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 147 "./scanner.ll"
+#line 147 "../../src/scanner.ll"
 ECHO;
 	YY_BREAK
-#line 1307 "./scanner.cc"
+#line 1307 "../../src/scanner.cc"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(SIZE_STATE):
 case YY_STATE_EOF(STRING_STATE):
@@ -2319,7 +2319,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 147 "./scanner.ll"
+#line 147 "../../src/scanner.ll"
 
 
 

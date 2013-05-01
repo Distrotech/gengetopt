@@ -1,5 +1,7 @@
-@IF@ shared @THEN@
-@target@[@index@] = @IF@ last @THEN@ 0; @ELSE@ @from@[@full_index@];@endif@
+@IF@ last @THEN@
+@target@[@index@] = 0;
+@ELSEIF@ shared @THEN@
+@target@[@index@] = @from@[@full_index@];
 @ELSE@
-@target@[@index@] = @IF@ last @THEN@ 0; @ELSE@ "@helpstring@",@endif@
+@target@[@index@] = "@helpstring@";
 @ENDIF@

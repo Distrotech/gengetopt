@@ -1,0 +1,2 @@
+char *string_builder_parts[@num_string_builder_parts:int@];
+unsigned int string_builder_size, string_builder_i;

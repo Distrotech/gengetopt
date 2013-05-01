@@ -25,6 +25,15 @@
 #include <getopt.h>
 @ENDIF@
 
+#ifdef HAVE_GETTEXT
+#include <libintl.h>
+#define _( STR ) gettext( STR )
+#define _G( STR ) dgettext( "gengetopt", STR )
+#else
+#define _( STR ) STR
+#define _G( STR ) STR
+#endif
+
 #include "@source_name@.@header_file_ext@"
 
 const char *@args_info@_purpose = "@purpose@";
@@ -36,7 +45,7 @@ const char *@args_info@_versiontext = "@versiontext@";
 const char *@args_info@_description = "@description@";
 
 @IF@ has_details @THEN@
-static const char *@args_info@_detailed_help[];
+static char *@args_info@_detailed_help[];
 
 static void
 init_detailed_help_array(void)
@@ -44,11 +53,11 @@ init_detailed_help_array(void)
   @detailed_help_option_print:method@
 }
 
-static const char *@args_info@_detailed_help[@help_string_num@] = { 0 };
+static char *@args_info@_detailed_help[@help_string_num@] = { 0 };
 
 @ENDIF@
 @IF@ has_hidden @THEN@
-static const char *@args_info@_full_help[];
+static char *@args_info@_full_help[];
 
 static void
 init_full_help_array(void)
@@ -56,10 +65,10 @@ init_full_help_array(void)
   @full_help_option_print:method@
 }
 
-static const char *@args_info@_full_help[@help_string_num@] = { 0 };
+static char *@args_info@_full_help[@help_string_num@] = { 0 };
 
 @ENDIF@
-static const char *@args_info@_help[];
+static char *@args_info@_help[];
 
 static void
 init_help_array(void)
@@ -67,7 +76,7 @@ init_help_array(void)
   @help_option_print:method@
 }
 
-static const char *@args_info@_help[@help_string_num@] = { 0 };
+static char *@args_info@_help[@help_string_num@] = { 0 };
 
 typedef enum {ARG_NO
 @IF@ has_arg_flag @THEN@

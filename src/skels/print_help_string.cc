@@ -12,43 +12,40 @@ print_help_string_gen_class::generate_print_help_string(ostream &stream, unsigne
   string indent_str (indent, ' ');
   indent = 0;
 
-  if (shared)
+  if (last)
     {
       generate_string (target, stream, indent + indent_str.length ());
       stream << "[";
       generate_string (index, stream, indent + indent_str.length ());
-      stream << "] = ";
-      if (last)
-        {
-          stream << "0; ";
-        }
-      else
-        {
-          generate_string (from, stream, indent + indent_str.length ());
-          stream << "[";
-          generate_string (full_index, stream, indent + indent_str.length ());
-          stream << "];";
-        }
+      stream << "] = 0;";
       stream << "\n";
       stream << indent_str;
     }
   else
     {
-      generate_string (target, stream, indent + indent_str.length ());
-      stream << "[";
-      generate_string (index, stream, indent + indent_str.length ());
-      stream << "] = ";
-      if (last)
+      if (shared)
         {
-          stream << "0; ";
+          generate_string (target, stream, indent + indent_str.length ());
+          stream << "[";
+          generate_string (index, stream, indent + indent_str.length ());
+          stream << "] = ";
+          generate_string (from, stream, indent + indent_str.length ());
+          stream << "[";
+          generate_string (full_index, stream, indent + indent_str.length ());
+          stream << "];";
+          stream << "\n";
+          stream << indent_str;
         }
       else
         {
-          stream << "\"";
+          generate_string (target, stream, indent + indent_str.length ());
+          stream << "[";
+          generate_string (index, stream, indent + indent_str.length ());
+          stream << "] = \"";
           generate_string (helpstring, stream, indent + indent_str.length ());
-          stream << "\",";
+          stream << "\";";
+          stream << "\n";
+          stream << indent_str;
         }
-      stream << "\n";
-      stream << indent_str;
     }
 }

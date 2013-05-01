@@ -66,7 +66,7 @@
 /* Copy the first part of user declarations.  */
 
 /* Line 268 of yacc.c  */
-#line 22 "./parser.yy"
+#line 22 "../../src/parser.yy"
 
 
 #ifdef HAVE_CONFIG_H
@@ -196,7 +196,7 @@ struct multiple_size
 
 
 /* Line 268 of yacc.c  */
-#line 200 "./parser.cc"
+#line 200 "../../src/parser.cc"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -307,7 +307,7 @@ typedef union YYSTYPE
 {
 
 /* Line 293 of yacc.c  */
-#line 150 "./parser.yy"
+#line 150 "../../src/parser.yy"
 
     char   *str;
     char    chr;
@@ -320,7 +320,7 @@ typedef union YYSTYPE
 
 
 /* Line 293 of yacc.c  */
-#line 324 "./parser.cc"
+#line 324 "../../src/parser.cc"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -345,7 +345,7 @@ typedef struct YYLTYPE
 
 
 /* Line 343 of yacc.c  */
-#line 349 "./parser.cc"
+#line 349 "../../src/parser.cc"
 
 #ifdef short
 # undef short
@@ -1720,7 +1720,7 @@ yyreduce:
         case 18:
 
 /* Line 1806 of yacc.c  */
-#line 238 "./parser.yy"
+#line 238 "../../src/parser.yy"
     {
 	      if (gengetopt_package_given)
 		{
@@ -1742,7 +1742,7 @@ yyreduce:
   case 19:
 
 /* Line 1806 of yacc.c  */
-#line 258 "./parser.yy"
+#line 258 "../../src/parser.yy"
     {
 	      if (gengetopt_version_given)
 		{
@@ -1764,7 +1764,7 @@ yyreduce:
   case 20:
 
 /* Line 1806 of yacc.c  */
-#line 278 "./parser.yy"
+#line 278 "../../src/parser.yy"
     {
 	      if (gengetopt_purpose_given)
 		{
@@ -1786,7 +1786,7 @@ yyreduce:
   case 21:
 
 /* Line 1806 of yacc.c  */
-#line 298 "./parser.yy"
+#line 298 "../../src/parser.yy"
     {
 	      if (gengetopt_description_given)
 		{
@@ -1808,7 +1808,7 @@ yyreduce:
   case 22:
 
 /* Line 1806 of yacc.c  */
-#line 318 "./parser.yy"
+#line 318 "../../src/parser.yy"
     {
       if (gengetopt_usage_given)
       {
@@ -1830,7 +1830,7 @@ yyreduce:
   case 23:
 
 /* Line 1806 of yacc.c  */
-#line 339 "./parser.yy"
+#line 339 "../../src/parser.yy"
     {
                 gengetopt_set_section ((yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].str));
               }
@@ -1839,7 +1839,7 @@ yyreduce:
   case 24:
 
 /* Line 1806 of yacc.c  */
-#line 346 "./parser.yy"
+#line 346 "../../src/parser.yy"
     {
             	if (current_option) {
             		std::string current_option_text;
@@ -1858,7 +1858,7 @@ yyreduce:
   case 25:
 
 /* Line 1806 of yacc.c  */
-#line 363 "./parser.yy"
+#line 363 "../../src/parser.yy"
     {
 	    	if (gengetopt_versiontext_given)
 	        {
@@ -1880,7 +1880,7 @@ yyreduce:
   case 26:
 
 /* Line 1806 of yacc.c  */
-#line 383 "./parser.yy"
+#line 383 "../../src/parser.yy"
     {
   gengetopt_set_args((yyvsp[(2) - (2)].str));
             }
@@ -1889,7 +1889,7 @@ yyreduce:
   case 27:
 
 /* Line 1806 of yacc.c  */
-#line 390 "./parser.yy"
+#line 390 "../../src/parser.yy"
     {
               if (gengetopt_add_group ((yyvsp[(2) - (4)].str), (yyvsp[(3) - (4)].str), (yyvsp[(4) - (4)].boolean)))
                 {
@@ -1902,7 +1902,7 @@ yyreduce:
   case 28:
 
 /* Line 1806 of yacc.c  */
-#line 401 "./parser.yy"
+#line 401 "../../src/parser.yy"
     {
               if (gengetopt_add_mode ((yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].str)))
                 {
@@ -1915,7 +1915,7 @@ yyreduce:
   case 29:
 
 /* Line 1806 of yacc.c  */
-#line 413 "./parser.yy"
+#line 413 "../../src/parser.yy"
     {
           (yyvsp[(5) - (5)].gengetopt_option)->filename = gengetopt_input_filename;
           (yyvsp[(5) - (5)].gengetopt_option)->linenum = (yylsp[(1) - (5)]).first_line;
@@ -1936,7 +1936,7 @@ yyreduce:
   case 30:
 
 /* Line 1806 of yacc.c  */
-#line 433 "./parser.yy"
+#line 433 "../../src/parser.yy"
     {
           (yyvsp[(5) - (5)].gengetopt_option)->filename = gengetopt_input_filename;
           (yyvsp[(5) - (5)].gengetopt_option)->linenum = (yylsp[(1) - (5)]).first_line;
@@ -1956,7 +1956,7 @@ yyreduce:
   case 31:
 
 /* Line 1806 of yacc.c  */
-#line 452 "./parser.yy"
+#line 452 "../../src/parser.yy"
     {
           (yyvsp[(5) - (5)].gengetopt_option)->filename = gengetopt_input_filename;
           (yyvsp[(5) - (5)].gengetopt_option)->linenum = (yylsp[(1) - (5)]).first_line;
@@ -1976,7 +1976,7 @@ yyreduce:
   case 33:
 
 /* Line 1806 of yacc.c  */
-#line 476 "./parser.yy"
+#line 476 "../../src/parser.yy"
     {
 			  	(yyval.gengetopt_option) = (yyvsp[(1) - (2)].gengetopt_option);
 			  	(yyval.gengetopt_option)->required = (yyvsp[(2) - (2)].boolean);
@@ -1987,7 +1987,7 @@ yyreduce:
   case 34:
 
 /* Line 1806 of yacc.c  */
-#line 482 "./parser.yy"
+#line 482 "../../src/parser.yy"
     {
 			  	(yyval.gengetopt_option) = (yyvsp[(1) - (2)].gengetopt_option);
 			  	(yyval.gengetopt_option)->type = (yyvsp[(2) - (2)].argtype);
@@ -1997,7 +1997,7 @@ yyreduce:
   case 35:
 
 /* Line 1806 of yacc.c  */
-#line 487 "./parser.yy"
+#line 487 "../../src/parser.yy"
     {
 			  	(yyval.gengetopt_option) = (yyvsp[(1) - (4)].gengetopt_option);
 			  	(yyval.gengetopt_option)->type_str = strdup((yyvsp[(4) - (4)].str));
@@ -2007,7 +2007,7 @@ yyreduce:
   case 36:
 
 /* Line 1806 of yacc.c  */
-#line 492 "./parser.yy"
+#line 492 "../../src/parser.yy"
     {
 			  	(yyval.gengetopt_option) = (yyvsp[(1) - (4)].gengetopt_option);
 			  	(yyval.gengetopt_option)->details = strdup((yyvsp[(4) - (4)].str));
@@ -2017,7 +2017,7 @@ yyreduce:
   case 37:
 
 /* Line 1806 of yacc.c  */
-#line 497 "./parser.yy"
+#line 497 "../../src/parser.yy"
     {
 			  	(yyval.gengetopt_option) = (yyvsp[(1) - (4)].gengetopt_option);
 			  	(yyval.gengetopt_option)->acceptedvalues = (yyvsp[(4) - (4)].ValueList);
@@ -2027,7 +2027,7 @@ yyreduce:
   case 38:
 
 /* Line 1806 of yacc.c  */
-#line 502 "./parser.yy"
+#line 502 "../../src/parser.yy"
     {
 			  	(yyval.gengetopt_option) = (yyvsp[(1) - (4)].gengetopt_option);
 			  	(yyval.gengetopt_option)->default_string = strdup((yyvsp[(4) - (4)].str));
@@ -2037,7 +2037,7 @@ yyreduce:
   case 39:
 
 /* Line 1806 of yacc.c  */
-#line 507 "./parser.yy"
+#line 507 "../../src/parser.yy"
     {
                 (yyval.gengetopt_option) = (yyvsp[(1) - (4)].gengetopt_option);
                 (yyval.gengetopt_option)->group_value = strdup((yyvsp[(4) - (4)].str));
@@ -2047,7 +2047,7 @@ yyreduce:
   case 40:
 
 /* Line 1806 of yacc.c  */
-#line 512 "./parser.yy"
+#line 512 "../../src/parser.yy"
     {
                 (yyval.gengetopt_option) = (yyvsp[(1) - (4)].gengetopt_option);
                 (yyval.gengetopt_option)->mode_value = strdup((yyvsp[(4) - (4)].str));
@@ -2057,7 +2057,7 @@ yyreduce:
   case 41:
 
 /* Line 1806 of yacc.c  */
-#line 517 "./parser.yy"
+#line 517 "../../src/parser.yy"
     {
                 (yyval.gengetopt_option) = (yyvsp[(1) - (4)].gengetopt_option);
                 (yyval.gengetopt_option)->dependon = strdup((yyvsp[(4) - (4)].str));
@@ -2067,7 +2067,7 @@ yyreduce:
   case 42:
 
 /* Line 1806 of yacc.c  */
-#line 522 "./parser.yy"
+#line 522 "../../src/parser.yy"
     {
 			  	(yyval.gengetopt_option) = (yyvsp[(1) - (2)].gengetopt_option);
 			  	(yyval.gengetopt_option)->arg_is_optional = true;
@@ -2077,7 +2077,7 @@ yyreduce:
   case 43:
 
 /* Line 1806 of yacc.c  */
-#line 527 "./parser.yy"
+#line 527 "../../src/parser.yy"
     {
 			  	(yyval.gengetopt_option) = (yyvsp[(1) - (3)].gengetopt_option);
 			  	(yyval.gengetopt_option)->multiple = true;
@@ -2090,7 +2090,7 @@ yyreduce:
   case 44:
 
 /* Line 1806 of yacc.c  */
-#line 535 "./parser.yy"
+#line 535 "../../src/parser.yy"
     {
           (yyval.gengetopt_option) = (yyvsp[(1) - (2)].gengetopt_option);
           (yyval.gengetopt_option)->type = ARG_FLAG;
@@ -2100,7 +2100,7 @@ yyreduce:
   case 45:
 
 /* Line 1806 of yacc.c  */
-#line 540 "./parser.yy"
+#line 540 "../../src/parser.yy"
     {
           (yyval.gengetopt_option) = (yyvsp[(1) - (2)].gengetopt_option);
           (yyval.gengetopt_option)->hidden = true;
@@ -2110,7 +2110,7 @@ yyreduce:
   case 46:
 
 /* Line 1806 of yacc.c  */
-#line 545 "./parser.yy"
+#line 545 "../../src/parser.yy"
     {
           (yyval.gengetopt_option) = (yyvsp[(1) - (2)].gengetopt_option);
           (yyval.gengetopt_option)->flagstat = (yyvsp[(2) - (2)].boolean);
@@ -2120,161 +2120,161 @@ yyreduce:
   case 47:
 
 /* Line 1806 of yacc.c  */
-#line 549 "./parser.yy"
+#line 549 "../../src/parser.yy"
     { (yyval.gengetopt_option) = new gengetopt_option; }
     break;
 
   case 48:
 
 /* Line 1806 of yacc.c  */
-#line 553 "./parser.yy"
+#line 553 "../../src/parser.yy"
     { (yyval.boolean) = 1; }
     break;
 
   case 49:
 
 /* Line 1806 of yacc.c  */
-#line 554 "./parser.yy"
+#line 554 "../../src/parser.yy"
     { (yyval.boolean) = 0; }
     break;
 
   case 50:
 
 /* Line 1806 of yacc.c  */
-#line 558 "./parser.yy"
+#line 558 "../../src/parser.yy"
     { (yyval.boolean) = 0; }
     break;
 
   case 51:
 
 /* Line 1806 of yacc.c  */
-#line 559 "./parser.yy"
+#line 559 "../../src/parser.yy"
     { (yyval.boolean) = 1; }
     break;
 
   case 52:
 
 /* Line 1806 of yacc.c  */
-#line 560 "./parser.yy"
+#line 560 "../../src/parser.yy"
     { (yyval.boolean) = 0; }
     break;
 
   case 53:
 
 /* Line 1806 of yacc.c  */
-#line 564 "./parser.yy"
+#line 564 "../../src/parser.yy"
     { (yyval.boolean) = 1; }
     break;
 
   case 54:
 
 /* Line 1806 of yacc.c  */
-#line 565 "./parser.yy"
+#line 565 "../../src/parser.yy"
     { (yyval.boolean) = 0; }
     break;
 
   case 55:
 
 /* Line 1806 of yacc.c  */
-#line 569 "./parser.yy"
+#line 569 "../../src/parser.yy"
     { (yyval.str) = 0; }
     break;
 
   case 56:
 
 /* Line 1806 of yacc.c  */
-#line 570 "./parser.yy"
+#line 570 "../../src/parser.yy"
     { (yyval.str) = (yyvsp[(3) - (3)].str); }
     break;
 
   case 57:
 
 /* Line 1806 of yacc.c  */
-#line 574 "./parser.yy"
+#line 574 "../../src/parser.yy"
     { (yyval.str) = 0; }
     break;
 
   case 58:
 
 /* Line 1806 of yacc.c  */
-#line 575 "./parser.yy"
+#line 575 "../../src/parser.yy"
     { (yyval.str) = (yyvsp[(3) - (3)].str); }
     break;
 
   case 59:
 
 /* Line 1806 of yacc.c  */
-#line 579 "./parser.yy"
+#line 579 "../../src/parser.yy"
     { (yyval.str) = 0; }
     break;
 
   case 60:
 
 /* Line 1806 of yacc.c  */
-#line 580 "./parser.yy"
+#line 580 "../../src/parser.yy"
     { (yyval.str) = (yyvsp[(3) - (3)].str); }
     break;
 
   case 61:
 
 /* Line 1806 of yacc.c  */
-#line 584 "./parser.yy"
+#line 584 "../../src/parser.yy"
     { (yyval.ValueList) = new AcceptedValues; (yyval.ValueList)->insert((yyvsp[(1) - (1)].str)); }
     break;
 
   case 62:
 
 /* Line 1806 of yacc.c  */
-#line 585 "./parser.yy"
+#line 585 "../../src/parser.yy"
     { (yyvsp[(1) - (3)].ValueList)->insert((yyvsp[(3) - (3)].str)); (yyval.ValueList) = (yyvsp[(1) - (3)].ValueList); }
     break;
 
   case 63:
 
 /* Line 1806 of yacc.c  */
-#line 589 "./parser.yy"
+#line 589 "../../src/parser.yy"
     { (yyval.str) = (yyvsp[(1) - (1)].str); }
     break;
 
   case 64:
 
 /* Line 1806 of yacc.c  */
-#line 593 "./parser.yy"
+#line 593 "../../src/parser.yy"
     { (yyval.multiple_size) = new multiple_size; }
     break;
 
   case 65:
 
 /* Line 1806 of yacc.c  */
-#line 594 "./parser.yy"
+#line 594 "../../src/parser.yy"
     { (yyval.multiple_size) = new multiple_size((yyvsp[(2) - (3)].str), (yyvsp[(2) - (3)].str)); }
     break;
 
   case 66:
 
 /* Line 1806 of yacc.c  */
-#line 595 "./parser.yy"
+#line 595 "../../src/parser.yy"
     { (yyval.multiple_size) = new multiple_size((yyvsp[(2) - (4)].str), "0"); free((yyvsp[(2) - (4)].str)); }
     break;
 
   case 67:
 
 /* Line 1806 of yacc.c  */
-#line 596 "./parser.yy"
+#line 596 "../../src/parser.yy"
     { (yyval.multiple_size) = new multiple_size("0", (yyvsp[(3) - (4)].str)); free((yyvsp[(3) - (4)].str)); }
     break;
 
   case 68:
 
 /* Line 1806 of yacc.c  */
-#line 597 "./parser.yy"
+#line 597 "../../src/parser.yy"
     { (yyval.multiple_size) = new multiple_size((yyvsp[(2) - (5)].str), (yyvsp[(4) - (5)].str)); free((yyvsp[(2) - (5)].str)); free((yyvsp[(4) - (5)].str)); }
     break;
 
 
 
 /* Line 1806 of yacc.c  */
-#line 2278 "./parser.cc"
+#line 2278 "../../src/parser.cc"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2512,6 +2512,6 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 600 "./parser.yy"
+#line 600 "../../src/parser.yy"
 
 

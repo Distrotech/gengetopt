@@ -1,0 +1,10 @@
+@IF@ part_index:int = 0 @THEN@
+
+@ENDIF@
+@IF@ gengetopt_localised @THEN@
+string_builder_parts[@part_index:int@] = _G( "@value@" );
+@ELSEIF@ localised @THEN@
+string_builder_parts[@part_index:int@] = _( "@value@" );
+@ELSE@
+string_builder_parts[@part_index:int@] = "@value@";
+@ENDIF@

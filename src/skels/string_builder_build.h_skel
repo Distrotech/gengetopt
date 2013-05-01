@@ -1,0 +1,5 @@
+@IF@ part_index:int = 0 @THEN@
+strcpy( @target@@if@ is_target_array @then@[@target_index@]@endif@, string_builder_parts[0] );
+@ELSE@
+strcat( @target@@if@ is_target_array @then@[@target_index@]@endif@, string_builder_parts[@part_index:int@] );
+@ENDIF@
