@@ -1,3 +1,16 @@
+2013-05-01  Tim Marston  <tim@ed.am>
+
+	* src/string_builder.h, src/string_builder.cc: wrote a new string
+	builder class (using gengen) to generate strings at runtime from
+	constituent parts that may be raw, application localised or
+	gengetopt localised.
+	* src/gm.h: OptionHelpList is now a list elements, each consisting
+	of three string_builders.
+	* src/gm.cc: rewrote generate_help_option_list() to create the new
+	OptionHelpListElements.
+	* src/scanner.ll: escape newlines when reading strings (so the
+	strings obtained are now fully escaped)
+
 2012-11-01  Tim Marston  <tim@ed.am>
 
 	* src/gm.cc, src/skels/c_source.h_skel: the three generated help
