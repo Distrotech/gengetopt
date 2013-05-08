@@ -178,12 +178,18 @@ init_args_info(struct @args_info@ *args_info)
   @init_args_info:method@
 }
 
-void
-@parser_name@_print_version (void)
+static void
+print_name_and_version_common(void)
 {
   printf ("%s %s\n",
      (strlen(@package_var_name@_NAME) ? @package_var_name@_NAME : @package_var_name@),
      @version_var_name@);
+}
+
+void
+@parser_name@_print_version (void)
+{
+  print_name_and_version_common();
 
   if (strlen(@args_info@_versiontext) > 0)
     printf("\n%s\n", @args_info@_versiontext);
@@ -192,7 +198,7 @@ void
 static void
 print_help_common(void)
 {
-  @parser_name@_print_version ();
+  print_name_and_version_common();
 
   if (strlen(@args_info@_purpose) > 0)
     printf("\n%s\n", @args_info@_purpose);
