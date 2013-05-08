@@ -1,3 +1,8 @@
+2013-05-08  Tim Marston  <tim@ed.am>
+
+	* c_source.h_skel: fixed bug that caused versiontext also be
+	displayed in --help (et al.) output
+
 2013-05-06  Tim Marston  <tim@ed.am>
 
 	* gm.c, gm.h: generate code that calculates necessary position of
