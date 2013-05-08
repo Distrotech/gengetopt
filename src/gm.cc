@@ -69,6 +69,7 @@ extern "C"
 #include "skels/custom_getopt_gen.h"
 #include "skels/check_modes.h"
 #include "skels/enum_decl.h"
+#include "skels/calculate_desc_column.h"
 #include "gm_utils.h"
 #include "fileutils.h"
 
@@ -76,7 +77,8 @@ extern "C"
 #define FIX_UNUSED(X) (void) (X)
 #endif // FIX_UNUSED
 
-#define MAX_STARTING_COLUMN 32
+#define MAX_DESC_COLUMN 32
+#define PARAM_PADDING 2
 
 #define EXE_NAME "argv[0]"
 
@@ -1039,15 +1041,15 @@ CmdlineParserCreator::generate_description()
 OptionHelpList *
 CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool generate_details)
 {
-  OptionHelpList *option_list = new OptionHelpList;
-  struct gengetopt_option * opt;
+    OptionHelpList *option_list = new OptionHelpList;
+    struct gengetopt_option * opt;
 
-  // hidden options: if we are being strict about them being hidden, ensure we
-  // dont generate them; else if we want to generate details, ensure we do
-  if (strict_hidden)
-      generate_hidden = false;
-  else if (generate_details)
-      generate_hidden = true;
+    // hidden options: if we are being strict about them being hidden, ensure
+    // we dont generate them; else if we want to generate details, ensure we do
+    if (strict_hidden)
+	generate_hidden = false;
+    else if (generate_details)
+	generate_hidden = true;
 
   /* calculate columns */
 /*  desc_col = 0;
@@ -1088,178 +1090,210 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
   if (desc_col > MAX_STARTING_COLUMN)
     desc_col = MAX_STARTING_COLUMN;
 */
-  /* print justified options */
-  char *prev_group = 0;
-  char *prev_mode = 0;
-  char *curr_section = 0;
-  bool first_option = true;
+    // print justified options
+    char *prev_group = 0;
+    char *prev_mode = 0;
+    char *curr_section = 0;
+    bool first_option = true;
 
-  foropt
-  {
-      // if the option is hidden and has no text, avoid printing a section
-      // containing only hidden options
-      if( opt->section &&
-	  ( !curr_section || strcmp( curr_section, opt->section ) ) &&
-	  ( !opt->hidden || generate_hidden ||
-	    opt->text_before || opt->text_after ) )
-      {
-	  string_builder header;
-	  if( first_option )
-	      header << "\\n";
-	  header << string_builder::LOCALISE << opt->section
-		 << string_builder::NONE << ":";
+    foropt
+    {
+	// if the option is hidden and has no text, avoid printing a section
+	// containing only hidden options
+	if( opt->section &&
+	    ( !curr_section || strcmp( curr_section, opt->section ) ) &&
+	    ( !opt->hidden || generate_hidden ||
+	      opt->text_before || opt->text_after ) )
+	{
+	    string_builder header;
+	    if( first_option )
+		header << "\\n";
+	    header << string_builder::LOCALISE << opt->section
+		   << string_builder::NONE << ":";
 
-	  string_builder text;
-	  if( opt->section_desc )
-	      text << string_builder::LOCALISE << opt->section_desc;
+	    string_builder text;
+	    if( opt->section_desc )
+		text << string_builder::LOCALISE << opt->section_desc;
 
-	  OptionHelpListElement element = { header, text, string_builder() };
-	  option_list->push_back( element );
+	    option_list->push_back( OptionHelpListElement( header, text ) );
 
-	  curr_section = opt->section;
-      }
+	    curr_section = opt->section;
+	}
 
-      // group
-      if( opt->group_value &&
-	  ( !prev_group || strcmp( opt->group_value, prev_group ) ) )
-      {
-	  string_builder header;
-	  header << "\\n " << string_builder::GENGETOPT << "Group"
-		 << string_builder::NONE << ": " << string_builder::LOCALISE
-		 << opt->group_value;
+	// group
+	if( opt->group_value &&
+	    ( !prev_group || strcmp( opt->group_value, prev_group ) ) )
+	{
+	    string_builder header;
+	    header << "\\n " << string_builder::GENGETOPT << "Group"
+		   << string_builder::NONE << ": " << string_builder::LOCALISE
+		   << opt->group_value;
 
-	  string_builder text;
-	  if( opt->group_desc )
-	      text << string_builder::LOCALISE << opt->group_desc;
+	    string_builder text;
+	    if( opt->group_desc )
+		text << string_builder::LOCALISE << opt->group_desc;
 
-	  OptionHelpListElement element = { header, text, string_builder() };
-	  option_list->push_back( element );
+	    option_list->push_back( OptionHelpListElement( header, text ) );
 
-	  prev_group = opt->group_value;
-      }
+	    prev_group = opt->group_value;
+	}
 
-      // mode
-      if( opt->mode_value &&
-	  ( !prev_mode || strcmp( opt->mode_value, prev_mode ) ) )
-      {
-	  string_builder header;
-	  header << "\\n " << string_builder::GENGETOPT << "Mode"
-		 << string_builder::NONE << ": " << string_builder::LOCALISE
-		 << opt->mode_value;
+	// mode
+	if( opt->mode_value &&
+	    ( !prev_mode || strcmp( opt->mode_value, prev_mode ) ) )
+	{
+	    string_builder header;
+	    header << "\\n " << string_builder::GENGETOPT << "Mode"
+		   << string_builder::NONE << ": " << string_builder::LOCALISE
+		   << opt->mode_value;
 
-	  string_builder text;
-	  if( opt->mode_desc )
-	      text << string_builder::LOCALISE << opt->mode_desc;
+	    string_builder text;
+	    if( opt->mode_desc )
+		text << string_builder::LOCALISE << opt->mode_desc;
 
-	  OptionHelpListElement element = { header, text, string_builder() };
-	  option_list->push_back( element );
+	    option_list->push_back( OptionHelpListElement( header, text ) );
 
-	  prev_mode = opt->mode_value;
-      }
+	    prev_mode = opt->mode_value;
+	}
 
-      // a possible description to be printed before this option
-      if( opt->text_before )
-      {
-	  string_builder header;
-	  header << string_builder::LOCALISE << opt->text_before;
+	// a possible description to be printed before this option
+	if( opt->text_before )
+	{
+	    string_builder header;
+	    header << string_builder::LOCALISE << opt->text_before;
 
-	  OptionHelpListElement element =
-	      { header, string_builder(), string_builder() };
-	  option_list->push_back( element );
-      }
+	    option_list->push_back( OptionHelpListElement( header ) );
+	}
 
-      // the option it's self
-      string_builder text;
-      if( !opt->hidden || generate_hidden )
-      {
-	  bool has_def_val = false;
-	  string def_val;
+	// the option it's self
+	string_builder text;
+	if( !opt->hidden || generate_hidden )
+	{
+	    bool has_def_val = false;
+	    string def_val;
 
-	  if( opt->short_opt )
-	      text << "-" << std::string( 1, opt->short_opt ) << ", ";
-	  else
-	      text << "    ";
-	  text << "--" << opt->long_opt;
+	    if( opt->short_opt )
+		text << "-" << std::string( 1, opt->short_opt ) << ", ";
+	    else
+		text << "    ";
+	    text << "--" << opt->long_opt;
 
-          if( opt->type == ARG_FLAG || opt->type == ARG_NO )
-          {
-              if( opt->type == ARG_FLAG ) {
-		  has_def_val = true;
-		  def_val = opt->flagstat? "on" : "off";
-	      }
-          }
-          else
-          {
-	      text << ( opt->arg_is_optional? "[" : "" ) << "=";
-	      if( opt->type_str )
-		  text << string_builder::LOCALISE << opt->type_str;
-	      else
-		  text << string_builder::GENGETOPT << arg_names[ opt->type ];
-	      text << string_builder::NONE
-		   << ( opt->arg_is_optional? "]" : "" );
+	    if( opt->type == ARG_FLAG || opt->type == ARG_NO )
+	    {
+		if( opt->type == ARG_FLAG ) {
+		    has_def_val = true;
+		    def_val = opt->flagstat? "on" : "off";
+		}
+	    }
+	    else
+	    {
+		text << ( opt->arg_is_optional? "[" : "" ) << "=";
+		if( opt->type_str )
+		    text << string_builder::LOCALISE << opt->type_str;
+		else
+		    text << string_builder::GENGETOPT << arg_names[ opt->type ];
+		text << string_builder::NONE
+		     << ( opt->arg_is_optional? "]" : "" );
 
-	      if (opt->default_string)
-	      {
-		  has_def_val = true;
-		  def_val = "`" + std::string( opt->default_string ) + "'";
-	      }
-	  }
+		if (opt->default_string)
+		{
+		    has_def_val = true;
+		    def_val = "`" + std::string( opt->default_string ) + "'";
+		}
+	    }
 
-	  // description
-	  string_builder extra;
-	  extra << string_builder::LOCALISE << opt->desc << string_builder::NONE;
-	  std::string values = opt->acceptedvalues ? opt->acceptedvalues->toString() : "";
-	  if( has_def_val || values.size() ) {
-	      extra << ( extra.get_num_parts()? "  " : "" ) << "(";
+	    // description
+	    string_builder extra;
+	    extra << string_builder::LOCALISE << opt->desc << string_builder::NONE;
+	    std::string values = opt->acceptedvalues ? opt->acceptedvalues->toString() : "";
+	    if( has_def_val || values.size() ) {
+		extra << ( extra.get_num_parts()? "  " : "" ) << "(";
 
-	      if( values.size() ) {
-		  extra << string_builder::GENGETOPT << "possible values"
-			<< string_builder::NONE << "=" << values;
-	      }
+		if( values.size() ) {
+		    extra << string_builder::GENGETOPT << "possible values"
+			  << string_builder::NONE << "=" << values;
+		}
 
-	      if( has_def_val ) {
-		  extra << ( values.size()? " " : "" )
-			<< string_builder::GENGETOPT << "default"
-			<< string_builder::NONE << "=" << def_val;
-	      }
+		if( has_def_val ) {
+		    extra << ( values.size()? " " : "" )
+			  << string_builder::GENGETOPT << "default"
+			  << string_builder::NONE << "=" << def_val;
+		}
 
-	      extra << ")";
-	  }
-	  std::string required_string = opt->required? show_required_string : "";
-	  if( required_string.size() ) {
-	      extra << " " << string_builder::GENGETOPT << required_string
-		    << string_builder::NONE;
-	  }
+		extra << ")";
+	    }
+	    std::string required_string = opt->required? show_required_string : "";
+	    if( required_string.size() ) {
+		extra << " " << string_builder::GENGETOPT << required_string
+		      << string_builder::NONE;
+	    }
 
-	  OptionHelpListElement element = { string_builder(), text, extra };
-	  option_list->push_back( element );
-      }
+	    option_list->push_back(
+		OptionHelpListElement( string_builder(), text, extra, true ) );
+	}
 
-      // before the text, we generate details if we need to and the option isn't hidden
-      if( opt->details && generate_details &&
-	  ( !opt->hidden || generate_hidden ) )
-      {
-	  string_builder text;
-	  text << string_builder::LOCALISE << opt->details;
+	// before the text, we generate details if we need to and the option isn't hidden
+	if( opt->details && generate_details &&
+	    ( !opt->hidden || generate_hidden ) )
+	{
+	    string_builder text;
+	    text << string_builder::LOCALISE << opt->details;
 
-	  OptionHelpListElement element =
-	      { string_builder(), text, string_builder() };
-	  option_list->push_back( element );
-      }
+	    option_list->push_back(
+		OptionHelpListElement( string_builder(), text ) );
+	}
 
-      // a possible description to be printed after this option
-      if( opt->text_after )
-      {
-	  string_builder header;
-	  header << string_builder::LOCALISE << opt->text_after;
+	// a possible description to be printed after this option
+	if( opt->text_after )
+	{
+	    string_builder header;
+	    header << string_builder::LOCALISE << opt->text_after;
 
-	  OptionHelpListElement element =
-	      { header, string_builder(), string_builder() };
-	  option_list->push_back( element );
-      }
-  }
+	    option_list->push_back( OptionHelpListElement( header ) );
+	}
+    }
 
-  return option_list;
+    return option_list;
+}
+
+void
+CmdlineParserCreator::generate_calculate_desc_column( ostream &stream, unsigned int indent )
+{
+    calculate_desc_column_gen_class generator;
+    generator.set_epilogue( false );
+
+    // which target array should we use?
+    std::string array = c_source_gen_class::args_info;
+    if( c_source_gen_class::has_details )
+	array += "_detailed_help";
+    else if( c_source_gen_class::has_hidden )
+	array += "_hidden_help";
+    else
+	array += "_help";
+    generator.set_array( array );
+
+    // get a complete list of options
+    OptionHelpList *option_list = generate_help_option_list( true, true );
+
+    // loop through, keeping track of their indexes
+    int index = 0;
+    for( OptionHelpList::iterator i = option_list->begin();
+	 i != option_list->end(); i++ )
+    {
+	// if this element contains a parameter, it will need to be checked
+	if( i->is_parameter ) {
+	    generator.set_index( index + 1 );
+	    generator.generate_calculate_desc_column( stream, indent );
+	}
+
+	index += 3;
+    }
+
+    // write epilogue
+    generator.set_epilogue( true );
+    generator.set_max_desc_column( MAX_DESC_COLUMN );
+    generator.set_param_padding( PARAM_PADDING );
+    generator.generate_calculate_desc_column( stream, indent );
 }
 
 template <typename Collection>

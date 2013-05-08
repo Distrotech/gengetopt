@@ -63,7 +63,8 @@ enum_decl.cc enum_decl.h \
 string_builder_allocate.cc string_builder_allocate.h \
 string_builder_build.cc string_builder_build.h \
 string_builder_declare.cc string_builder_declare.h \
-string_builder_prepare.cc string_builder_prepare.h
+string_builder_prepare.cc string_builder_prepare.h \
+calculate_desc_column.cc calculate_desc_column.h
 
 EXTRA_DIST = header.h_skel c_source.h_skel handle_help.h_skel \
 handle_version.h_skel generic_option.h_skel \
@@ -92,6 +93,7 @@ string_builder_allocate.h_skel \
 string_builder_build.h_skel \
 string_builder_declare.h_skel \
 string_builder_prepare.h_skel \
+calculate_desc_column.h_skel \
 $(BUILT_SOURCES)
 
 built-clean:

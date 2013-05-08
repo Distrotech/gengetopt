@@ -33,11 +33,22 @@
 
 struct gengetopt_option;
 
-typedef struct {
-  string_builder header;
-  string_builder text;
-  string_builder extra;
-} OptionHelpListElement;
+struct OptionHelpListElement
+{
+    OptionHelpListElement(
+	const string_builder &header_,
+	const string_builder &text_ = string_builder(),
+	const string_builder &extra_ = string_builder(),
+	bool is_parameter_ = false )
+    : header( header_ ), text( text_ ), extra( extra_ ),
+	is_parameter( is_parameter_ )
+    { }
+
+    string_builder header;
+    string_builder text;
+    string_builder extra;
+    bool is_parameter;
+};
 
 inline bool
 operator ==( const OptionHelpListElement &lhs,
@@ -111,6 +122,7 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   virtual void generate_option_values_decl(ostream &stream, unsigned int indent);
 
   // to be implemented in c_source_gen_class
+  virtual void generate_calculate_desc_column(ostream &stream, unsigned int indent);
   virtual void generate_clear_arg(ostream &stream, unsigned int indent);
   virtual void generate_given_init(ostream &stream, unsigned int indent);
   virtual void generate_option_values(ostream &stream, unsigned int indent);

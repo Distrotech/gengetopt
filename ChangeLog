@@ -1,3 +1,14 @@
+2013-05-06  Tim Marston  <tim@ed.am>
+
+	* gm.c, gm.h: generate code that calculates necessary position of
+	description column at runtime with calculate_desc_column.h_skel;
+	added a constructor for OptionHelpListElement
+	* c_source.h_skel: added runtime code to wrap strings and to
+	calculate the necessary position of the description column;
+	renamed gengetopt's gettext macro to GENGETOPT_(), which should be
+	more standards compliant
+	* calculate_desc_column.h_skel: added
+
 2013-05-01  Tim Marston  <tim@ed.am>
 
 	* src/string_builder.h, src/string_builder.cc: wrote a new string

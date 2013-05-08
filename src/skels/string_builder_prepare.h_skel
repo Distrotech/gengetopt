@@ -2,7 +2,7 @@
 
 @ENDIF@
 @IF@ gengetopt_localised @THEN@
-string_builder_parts[@part_index:int@] = _G( "@value@" );
+string_builder_parts[@part_index:int@] = GENGETOPT_( "@value@" );
 @ELSEIF@ localised @THEN@
 string_builder_parts[@part_index:int@] = _( "@value@" );
 @ELSE@

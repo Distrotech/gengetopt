@@ -21,7 +21,7 @@ string_builder_prepare_gen_class::generate_string_builder_prepare(ostream &strea
     {
       stream << "string_builder_parts[";
       stream << part_index;
-      stream << "] = _G( \"";
+      stream << "] = GENGETOPT_( \"";
       generate_string (value, stream, indent + indent_str.length ());
       stream << "\" );";
       stream << "\n";
