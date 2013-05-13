@@ -191,3 +191,11 @@ string_builder &string_builder::operator <<(
     _current_escape = escape;
     return *this;
 }
+
+std::string string_builder::generate_unlocalised_string() const
+{
+    std::ostringstream oss;
+    for( unsigned int i = 0; i < _parts.size(); i++ )
+	oss << _parts[ i ];
+    return oss.str();
+}

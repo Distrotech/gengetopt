@@ -1,3 +1,11 @@
+2013-05-12  Tim Marston  <tim@ed.am>
+
+	* gengetopt.cc: re-wrote code, called when --show-help is given,
+	that draws the generated code's help output, so that it uses the
+	new OptionHelpListElements
+	* string_builder.cc: added method to generate an unlocalised
+	concatination of its parts
+
 2013-05-08  Tim Marston  <tim@ed.am>
 
 	* c_source.h_skel: fixed bug that caused versiontext also be

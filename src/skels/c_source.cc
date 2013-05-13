@@ -862,7 +862,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << "      /* deal with newlines */";
   stream << "\n";
   stream << indent_str;
-  stream << "      if( skip = count_initial_newlines( str, &count ) )";
+  stream << "      if( ( skip = count_initial_newlines( str, &count ) ) )";
   stream << "\n";
   stream << indent_str;
   stream << "        {";

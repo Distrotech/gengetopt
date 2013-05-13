@@ -77,9 +77,6 @@ extern "C"
 #define FIX_UNUSED(X) (void) (X)
 #endif // FIX_UNUSED
 
-#define MAX_DESC_COLUMN 32
-#define PARAM_PADDING 2
-
 #define EXE_NAME "argv[0]"
 
 #define PARSER_NAME_PREFIX (c_source_gen_class::parser_name + "_")
@@ -1051,45 +1048,6 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
     else if (generate_details)
 	generate_hidden = true;
 
-  /* calculate columns */
-/*  desc_col = 0;
-  foropt {
-    // if (opt->hidden && !generate_hidden)
-    //    continue;
-    // when computing columns, we also consider hidden_options, so that
-    // the --help and --full-help will be aligned just the same
-    // IMPORTANT: this is also crucial due to how the help string array
-    // is built starting from the full-help string array:
-    // we iterate over the two lists of options and check whether the
-    // corresponding strings are the same; thus, the help strings must
-    // have the same space alignments, otherwise they're not equal
-
-    unsigned int width = 2 + 4 + 2;  // ws + "-a, " + ws
-
-    width += strlen (opt->long_opt) + 2;  // "--"
-
-    if ((opt->type != ARG_FLAG) &&
-        (opt->type != ARG_NO))
-      {
-        if (opt->type_str)
-          type_str = opt->type_str;
-        else
-          type_str = arg_names[opt->type];
-        type_len = strlen(type_str);
-
-        width += type_len + 1;        // "="
-
-        if (opt->arg_is_optional)
-          width += 2; // "[" and "]"
-      }
-
-    if (width > desc_col)
-      desc_col = width;
-  }
-
-  if (desc_col > MAX_STARTING_COLUMN)
-    desc_col = MAX_STARTING_COLUMN;
-*/
     // print justified options
     char *prev_group = 0;
     char *prev_mode = 0;

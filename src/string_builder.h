@@ -131,6 +131,14 @@ public:
     string_builder &operator <<(
 	EscapeSetting escape );
 
+    /**
+     * Get a string which is a concatination of the string builder's parts.
+     * This does not take in to consideration any localisation of the parts.
+     *
+     * @return an un-localised string
+     */
+    std::string generate_unlocalised_string() const;
+
 protected:
 
     /**

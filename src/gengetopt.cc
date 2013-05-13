@@ -70,14 +70,18 @@ char *current_args = 0;
 /// whether, if not specified, an option is considered optional
 bool default_to_optional = false;
 
+// calculated description column position
+int precalculated_desc_column = 0;
+
 int canonize_vars (void);
 static void set_default_required_properties(void);
 
 static void print_copyright();
 static void print_reportbugs();
 
+static void update_desc_column(const OptionHelpListElement &);
 static void output_option_help_list_element(const OptionHelpListElement &);
-static void output_formatted_string(const string &);
+static string unescape_string( const string & );
 
 static bool check_dependencies();
 
@@ -305,26 +309,31 @@ main (int argc, char **argv)
     {
       cout << gengetopt_package << " " << gengetopt_version << "\n" << endl;
 
-      if (gengetopt_purpose) {
-        output_formatted_string(cmdline_parser_creator.generate_purpose());
-        cout << endl;
-      }
+      if (gengetopt_purpose)
+	cout << unescape_string( cmdline_parser_creator.generate_purpose() )
+	     << endl << endl;
 
-      output_formatted_string("Usage: " +
-        cmdline_parser_creator.generate_usage_string(false) + "\n");
+      cout << "Usage: "
+	   << unescape_string(
+	       cmdline_parser_creator.generate_usage_string(false) )
+	   << endl << endl;
 
-      if (gengetopt_description) {
-        output_formatted_string(cmdline_parser_creator.generate_description());
-        cout << endl;
-      }
+      if (gengetopt_description)
+	cout << unescape_string( cmdline_parser_creator.generate_description() )
+	     << endl << endl;
 
-      // if --show-full-help is specified we have to generate also hidden options
+      // precalculate the description column (based on all the options)
       OptionHelpList *option_list =
-          cmdline_parser_creator.generate_help_option_list(args_info.show_full_help_given, args_info.show_detailed_help_given);
-
+	  cmdline_parser_creator.generate_help_option_list( true, true );
       std::for_each(option_list->begin(), option_list->end(),
-              output_option_help_list_element);
+                    update_desc_column);
+      delete option_list;
 
+      // generate the option list with correct hidden/detailed options and output it
+      option_list = cmdline_parser_creator.generate_help_option_list(
+	  args_info.show_full_help_given, args_info.show_detailed_help_given );
+      std::for_each(option_list->begin(), option_list->end(),
+		    output_option_help_list_element);
       delete option_list;
     }
   else if (cmdline_parser_creator.generate ())
@@ -339,27 +348,159 @@ main (int argc, char **argv)
 }
 
 void
-output_option_help_list_element(const OptionHelpListElement &element)
+update_desc_column(const OptionHelpListElement &element)
 {
-    // TODO
+    if( !element.is_parameter )
+	return;
+
+    std::string str = unescape_string(
+	element.text.generate_unlocalised_string() );
+    precalculated_desc_column = std::min(
+	MAX_DESC_COLUMN, std::max(
+	    precalculated_desc_column, (int)str.size() + PARAM_PADDING * 2 ) );
 }
 
-void
-output_formatted_string(const string &s)
+// immitate these functions with macros
+#define print_spaces( len ) cout << std::string( len, ' ' )
+#define print_chars( str, len ) cout << std::string( str, len );
+#define calculate_desc_column() precalculated_desc_column
+
+static int
+count_initial_newlines( const char *str, int *count )
 {
+  int skip;
+  *count = 0;
+  for( skip = 0; str[ skip ]; skip++ ) {
+    if( str[ skip ] == '\r' )
+      continue;
+    if( str[ skip ] != '\n' )
+      break;
+    ( *count )++;
+  }
+  return skip;
+}
+
+static void
+print_wrapped_string( const char *str, int start_column, int indent )
+{
+  int i, skip, count, column = start_column;
+  const char *word = NULL;
+  int word_len = 0;
+  char in_word;
+
+  while( *str )
+    {
+      /* deal with newlines */
+      if( ( skip = count_initial_newlines( str, &count ) ) )
+        {
+	  str += skip;
+	  for( i = 0; i < count; i++ )
+	    printf( "\n" );
+
+	  if( !*str )
+	    break;
+
+	  column = start_column + indent;
+	  print_spaces( column );
+	  continue;
+	}
+
+      /* find next word (including preceeding spaces) */
+      in_word = 0;
+      word = str;
+      word_len = 0;
+      while( *str && ( *str != ' ' || !in_word ) && *str != '\r' && *str != '\n' )
+        {
+	  in_word = *str != ' '? 1 : 0;
+	  word_len++;
+	  column++;
+	  str++;
+        }
+      if( word_len )
+        {
+          /* wrapping required? */
+	  if( column > 79 )
+	    {
+	      while( word_len && *word == ' ' )
+	        {
+		  word_len--;
+		  word++;
+		}
+	      if( word_len )
+	        {
+		  printf( "\n" );
+		  print_spaces( start_column + indent );
+		  print_chars( word, word_len );
+
+		  column = start_column + indent + word_len;
+		}
+	    }
+	  else
+	    print_chars( word, word_len );
+	}
+    }
+}
+
+static void
+print_help_list_element( const char *header, const char *text,
+			 const char *extra )
+{
+  const int param_padding = 2;
+  const int desc_column = calculate_desc_column();
+  int column = 0;
+  if( *header )
+    {
+      print_wrapped_string( header, 0, 0 );
+      printf( "\n" );
+    }
+  if( *text )
+    {
+      print_spaces( param_padding );
+      print_wrapped_string( text, param_padding, 0 );
+      if( *extra )
+        column = param_padding + strlen( text );
+      if( !*extra || column > desc_column - param_padding )
+        {
+	  printf( "\n" );
+	  column = 0;
+	}
+    }
+  if( *extra )
+    {
+      if( column < desc_column )
+	print_spaces( desc_column - column );
+      print_wrapped_string( extra, desc_column, 2 );
+      printf( "\n" );
+    }
+}
+
+
+void
+output_option_help_list_element(const OptionHelpListElement &element)
+{
+    print_help_list_element(
+	unescape_string( element.header.generate_unlocalised_string() ).c_str(),
+	unescape_string( element.text.generate_unlocalised_string() ).c_str(),
+	unescape_string( element.extra.generate_unlocalised_string() ).c_str()
+	);
+}
+
+string
+unescape_string( const string &s )
+{
+  std::ostringstream oss;
   for (string::const_iterator it = s.begin(); it != s.end(); ++it)
     {
       if (*it == '\\' && ((it+1) != s.end()) && *(it+1) == 'n') {
-        cout << "\n";
+        oss << "\n";
         ++it;
       } else if (*it == '\\' && ((it+1) != s.end()) && *(it+1) == '"') {
-        cout << "\"";
+        oss << "\"";
         ++it;
       } else
-        cout << *it;
+        oss << *it;
     }
-
-  cout << endl;
+  return oss.str();
 }
 
 /* ************* */

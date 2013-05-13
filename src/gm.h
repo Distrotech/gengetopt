@@ -30,6 +30,8 @@
 #include <string>
 
 #define TAB_LEN 2
+#define MAX_DESC_COLUMN 32
+#define PARAM_PADDING 2
 
 struct gengetopt_option;
 
