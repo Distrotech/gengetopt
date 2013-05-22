@@ -80,8 +80,13 @@ static void print_copyright();
 static void print_reportbugs();
 
 static void update_desc_column(const OptionHelpListElement &);
+
+static int count_initial_newlines(const char *, int *);
+static void print_wrapped_string(const char *, int, int);
+static void print_help_list_element(const char *, const char *, const char *);
 static void output_option_help_list_element(const OptionHelpListElement &);
-static string unescape_string( const string & );
+
+static string unescape_string(const string &);
 
 static bool check_dependencies();
 
@@ -309,18 +314,26 @@ main (int argc, char **argv)
     {
       cout << gengetopt_package << " " << gengetopt_version << "\n" << endl;
 
-      if (gengetopt_purpose)
-	cout << unescape_string( cmdline_parser_creator.generate_purpose() )
-	     << endl << endl;
+      string_builder purpose = cmdline_parser_creator.generate_purpose();
+      if( purpose.get_num_parts() ) {
+	  std::string purpose_string = unescape_string(
+	      purpose.generate_unlocalised_string() );
+	  print_wrapped_string( purpose_string.c_str(), 0, 0 );
+	  cout << endl << endl;
+      }
 
-      cout << "Usage: "
-	   << unescape_string(
-	       cmdline_parser_creator.generate_usage_string(false) )
-	   << endl << endl;
+      string_builder usage = cmdline_parser_creator.generate_usage();
+      std::string usage_string = usage.generate_unlocalised_string();
+      print_wrapped_string( usage_string.c_str(), 0, USAGE_WRAP_COLUMN );
+      cout << endl << endl;
 
-      if (gengetopt_description)
-	cout << unescape_string( cmdline_parser_creator.generate_description() )
-	     << endl << endl;
+      string_builder desc = cmdline_parser_creator.generate_description();
+      if( desc.get_num_parts() ) {
+	  std::string desc_string = unescape_string(
+	      desc.generate_unlocalised_string() );
+	  print_wrapped_string(desc_string.c_str(), 0, 0 );
+	  cout << endl << endl;
+      }
 
       // precalculate the description column (based on all the options)
       OptionHelpList *option_list =

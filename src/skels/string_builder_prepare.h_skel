@@ -5,6 +5,8 @@
 string_builder_parts[@part_index:int@] = GENGETOPT_( "@value@" );
 @ELSEIF@ localised @THEN@
 string_builder_parts[@part_index:int@] = _( "@value@" );
+@ELSEIF@ raw_c @THEN@
+string_builder_parts[@part_index:int@] = @value@;
 @ELSE@
 string_builder_parts[@part_index:int@] = "@value@";
 @ENDIF@

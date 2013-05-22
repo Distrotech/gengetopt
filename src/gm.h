@@ -32,6 +32,7 @@
 #define TAB_LEN 2
 #define MAX_DESC_COLUMN 32
 #define PARAM_PADDING 2
+#define USAGE_WRAP_COLUMN 9
 
 struct gengetopt_option;
 
@@ -151,6 +152,7 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   virtual void generate_list_free(ostream &stream, unsigned int indent);
 
   virtual void generate_file_save_loop(ostream &stream, unsigned int indent);
+  virtual void generate_init_strings(ostream &stream, unsigned int indent);
   virtual void generate_init_args_info(ostream &stream, unsigned int indent);
 
   virtual void generate_custom_getopt(ostream &stream, unsigned int indent);
@@ -183,10 +185,10 @@ class CmdlineParserCreator : public header_gen_class, public c_source_gen_class
   virtual void generate_update_multiple_given(ostream &stream, unsigned int indent);
   virtual void generate_check_modes(ostream &stream, unsigned int indent);
 
-  const string generate_purpose();
-  const string generate_versiontext();
-  const string generate_description();
-  const string generate_usage_string(bool use_config_package = true);
+  string_builder generate_purpose();
+  string_builder generate_versiontext();
+  string_builder generate_description();
+  string_builder generate_usage();
 
   /**
    * generate a list of option descriptions that will be printed in the

@@ -49,7 +49,7 @@ string_builder_allocate_gen_class::generate_string_builder_allocate(ostream &str
           stream << "; string_builder_i++ )";
           stream << "\n";
           stream << indent_str;
-          stream << "     string_builder_size += strlen( string_builder_parts[ string_builder_i ] );";
+          stream << "  string_builder_size += strlen( string_builder_parts[ string_builder_i ] );";
           stream << "\n";
           stream << indent_str;
           generate_string (target, stream, indent + indent_str.length ());

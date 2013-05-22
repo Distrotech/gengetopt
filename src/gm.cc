@@ -275,14 +275,11 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   set_has_modes(has_options_with_mode());
   set_handle_unamed(unamed_options);
   set_check_required_options(has_required() || has_dependencies() || has_multiple_options());
-  set_purpose(generate_purpose());
-  set_description(generate_description());
-  set_versiontext(generate_versiontext());
-  set_no_package((gengetopt_package == 0));
   c_source_gen_class::set_has_hidden(!strict_hidden && has_hidden_options());
   header_gen_class::set_has_hidden(c_source_gen_class::has_hidden);
   c_source_gen_class::set_has_details(has_options_with_details(strict_hidden));
   header_gen_class::set_has_details(c_source_gen_class::has_details);
+  set_usage_wrap_column( USAGE_WRAP_COLUMN );
 
   set_has_arg_types();
 }
@@ -604,9 +601,9 @@ CmdlineParserCreator::generate_option_values(ostream &stream,
     stream << "\n";
 }
 
-static void generate_option_usage_string(gengetopt_option * opt, ostream &usage) {
-    const char   *type_str;
-
+static void
+generate_option_usage_string( gengetopt_option *opt, string_builder &usage )
+{
     usage << " ";
 
     if (!opt->required)
@@ -616,7 +613,7 @@ static void generate_option_usage_string(gengetopt_option * opt, ostream &usage)
     case ARG_NO:
     case ARG_FLAG:
         if (opt->short_opt)
-            usage << "-" << opt->short_opt << "|";
+            usage << "-" << std::string( 1, opt->short_opt ) << "|";
         usage << "--" << opt->long_opt;
         break;
     case ARG_INT:
@@ -628,15 +625,20 @@ static void generate_option_usage_string(gengetopt_option * opt, ostream &usage)
     case ARG_LONGLONG:
     case ARG_STRING:
     case ARG_ENUM:
-        if (opt->type_str)
-            type_str = opt->type_str;
-        else
-            type_str = arg_names[opt->type];
-
-        if (opt->short_opt)
-            usage << "-" << opt->short_opt << type_str << "|";
-        usage << "--" << opt->long_opt << "=" << type_str;
-
+	if( opt->short_opt ) {
+	    usage << "-" << std::string( 1, opt->short_opt );
+	    if( opt->type_str )
+		usage << string_builder::LOCALISE << opt->type_str;
+	    else
+		usage << string_builder::GENGETOPT << arg_names[opt->type];
+	    usage << string_builder::NONE << "|";
+	}
+	usage << "--" << opt->long_opt << "=";
+	if( opt->type_str )
+	    usage << string_builder::LOCALISE << opt->type_str;
+	else
+	    usage << string_builder::GENGETOPT << arg_names[opt->type];
+	usage << string_builder::NONE;
         break;
     default: fprintf (stderr, "gengetopt: bug found in %s:%d!!\n",
             __FILE__, __LINE__);
@@ -647,79 +649,88 @@ static void generate_option_usage_string(gengetopt_option * opt, ostream &usage)
         usage << "]";
 }
 
-const string
-CmdlineParserCreator::generate_usage_string(bool use_config_package)
+string_builder
+CmdlineParserCreator::generate_usage()
 {
-  FIX_UNUSED (use_config_package);
-  // if specified by the programmer, the usage string has the precedence
-  if (gengetopt_usage) {
-      string wrapped_usage;
-      wrap_cstr(wrapped_usage, 0, 0, gengetopt_usage);
-      return wrapped_usage;
-  }
+    // This was the original line in c_source.h_skel that we're building manually...
+    // const char *@args_info@_usage = "Usage: @if@ no_package @then@" @package_var_name@ "@endif@@usage_string@";
+    string_builder usage;
 
-  struct gengetopt_option * opt;
-  ostringstream usage;
+    usage << string_builder::GENGETOPT << "Usage:"
+	  << string_builder::NONE << " ";
 
-  // otherwise the config.h package constant will be used
-  if (gengetopt_package)
-    usage << gengetopt_package;
+    // if specified by the programmer, their usage string has precedence
+    if (gengetopt_usage) {
+	usage << string_builder::LOCALISE << gengetopt_usage;
+	return usage;
+    }
 
-  if ( long_help ) {
-      // we first generate usage strings of required options
-      // handle mode options separately
-      foropt
-          if (opt->required && !opt->hidden && !opt->mode_value) {
-              generate_option_usage_string(opt, usage);
-          }
+    // the specified package name, or the config.h package constant
+    if (gengetopt_package)
+	usage << gengetopt_package;
+    else
+	usage << string_builder::RAW_C << c_source_gen_class::package_var_name
+	      << string_builder::NONE;
 
-      foropt
-          if (!opt->required && !opt->hidden && !opt->mode_value) {
-              generate_option_usage_string(opt, usage);
-          }
-  } else { /* if not long help we generate it as GNU standards */
-      usage << " [OPTIONS]...";
-  }
+    struct gengetopt_option * opt;
+    if ( long_help ) {
+	// we first generate usage strings of required options (we'll handle
+	// mode options separately)
+	foropt
+	    if (opt->required && !opt->hidden && !opt->mode_value)
+		generate_option_usage_string(opt, usage);
+	foropt
+	    if (!opt->required && !opt->hidden && !opt->mode_value)
+		generate_option_usage_string(opt, usage);
+    } else
+	// if not long help, we generate it as per GNU standards
+	usage << " [" << string_builder::GENGETOPT << "OPTIONS"
+	      << string_builder::NONE << "]...";
 
-  string wrapped;
+    if ( unamed_options )
+	usage << " [" << string_builder::LOCALISE << unamed_options
+	      << string_builder::NONE << "]...";
 
-  if ( unamed_options )
-      usage << " [" << unamed_options << "]...";
+    // now deal with modes
+    if (has_modes && long_help)
+    {
+	const ModeOptMap &modeOptMap = getModeOptMap();
 
-  wrap_cstr ( wrapped, strlen("Usage: "), 2, usage.str() );
+	for( ModeOptMap::const_iterator map_it = modeOptMap.begin();
+	     map_it != modeOptMap.end(); ++map_it )
+	{
+	    string mode_line; // a mode alternative in the usage string
+	    gengetopt_option_list::const_iterator opt_it;
 
-  // now deal with modes
-  if (has_modes && long_help) {
-      const ModeOptMap &modeOptMap = getModeOptMap();
+	    // next line
+	    usage << "\\n  " << string_builder::GENGETOPT << "or:"
+		  << string_builder::NONE << " ";
 
-      for (ModeOptMap::const_iterator map_it = modeOptMap.begin(); map_it != modeOptMap.end(); ++map_it) {
-          string mode_line; // a mode alternative in the usage string
-          gengetopt_option_list::const_iterator opt_it;
-          usage.str(""); // reset the usage string buffer
+	    // the specified package name, or the config.h package constant
+	    if (gengetopt_package)
+		usage << gengetopt_package;
+	    else
+		usage << string_builder::RAW_C
+		      << c_source_gen_class::package_var_name
+		      << string_builder::NONE;
 
-		  // otherwise the config.h package constant will be used
-		  if (gengetopt_package)
-			  usage << gengetopt_package;
+	    for (opt_it = map_it->second.begin();
+		 opt_it != map_it->second.end(); ++opt_it)
+	    {
+		if (((*opt_it)->required) && !((*opt_it)->hidden))
+		    generate_option_usage_string(*opt_it, usage);
+	    }
 
-          for (opt_it = map_it->second.begin(); opt_it != map_it->second.end(); ++opt_it) {
-              if (((*opt_it)->required) && !((*opt_it)->hidden)) {
-                  generate_option_usage_string(*opt_it, usage);
-              }
-          }
+	    for (opt_it = map_it->second.begin();
+		 opt_it != map_it->second.end(); ++opt_it)
+	    {
+		if (!((*opt_it)->required) && !((*opt_it)->hidden))
+		    generate_option_usage_string(*opt_it, usage);
+	    }
+	}
+    }
 
-          for (opt_it = map_it->second.begin(); opt_it != map_it->second.end(); ++opt_it) {
-              if (!((*opt_it)->required) && !((*opt_it)->hidden)) {
-                  generate_option_usage_string(*opt_it, usage);
-              }
-          }
-
-          wrap_cstr ( mode_line, strlen("  or : "), 2, usage.str() );
-          wrapped += "\\n  or : ";
-          wrapped += mode_line;
-      }
-  }
-
-  return wrapped;
+    return usage;
 }
 
 
@@ -906,6 +917,33 @@ CmdlineParserCreator::generate_detailed_help_option_print(ostream &stream,
 }
 
 void
+CmdlineParserCreator::generate_init_strings(ostream &stream, unsigned int indent)
+{
+  string_builder usage = generate_usage();
+  string_builder purpose = generate_purpose();
+  string_builder versiontext = generate_versiontext();
+  string_builder description = generate_description();
+
+  // count number of parts required
+  unsigned int num_parts = std::max(
+      usage.get_num_parts(), std::max(
+	  purpose.get_num_parts(), std::max(
+	      versiontext.get_num_parts(), description.get_num_parts() ) ) );
+
+  // draw strings
+  string_builder::generate_string_builder_declaration(
+      stream, indent, num_parts );
+  usage.generate_string_builder(
+      stream, indent, c_source_gen_class::args_info + "_usage" );
+  purpose.generate_string_builder(
+      stream, indent, c_source_gen_class::args_info + "_purpose" );
+  versiontext.generate_string_builder(
+      stream, indent, c_source_gen_class::args_info + "_versiontext" );
+  description.generate_string_builder(
+      stream, indent, c_source_gen_class::args_info + "_description" );
+}
+
+void
 CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int indent)
 {
     struct gengetopt_option * opt;
@@ -996,43 +1034,31 @@ void CmdlineParserCreator::generate_custom_getopt(ostream &stream, unsigned int 
     custom_getopt.generate_custom_getopt_gen (stream, indent);
 }
 
-const string
+string_builder
 CmdlineParserCreator::generate_purpose()
 {
-  string wrapped_purpose;
-
-  if (gengetopt_purpose != NULL)
-    {
-      wrap_cstr(wrapped_purpose, 0, 0, gengetopt_purpose);
-    }
-
-  return wrapped_purpose;
+    string_builder ret;
+    if( gengetopt_purpose )
+	ret << string_builder::LOCALISE << gengetopt_purpose;
+    return ret;
 }
 
-const string
+string_builder
 CmdlineParserCreator::generate_versiontext()
 {
-  string wrapped_versiontext;
-
-  if (gengetopt_versiontext != NULL)
-    {
-      wrap_cstr(wrapped_versiontext, 0, 0, gengetopt_versiontext);
-    }
-
-  return wrapped_versiontext;
+    string_builder ret;
+    if( gengetopt_versiontext )
+	ret << string_builder::LOCALISE << gengetopt_versiontext;
+    return ret;
 }
 
-const string
+string_builder
 CmdlineParserCreator::generate_description()
 {
-  string wrapped_description;
-
-  if (gengetopt_description != NULL)
-    {
-      wrap_cstr(wrapped_description, 0, 0, gengetopt_description);
-    }
-
-  return wrapped_description;
+    string_builder ret;
+    if( gengetopt_description )
+	ret << string_builder::LOCALISE << gengetopt_description;
+    return ret;
 }
 
 OptionHelpList *
@@ -1942,7 +1968,6 @@ CmdlineParserCreator::generate_source ()
   /* ********************************************** C FILE  */
   /* ****************************************************** */
 
-  set_usage_string (generate_usage_string ());
   set_getopt_string (generate_getopt_string ());
 
   string output_source = c_filename;

@@ -1,10 +1,24 @@
-2013-05-12  Tim Marston  <tim@ed.am>
+2013-05-21  Tim Marston  <tim@ed.am>
 
+	* gm.cc, gm.h: generation functions for usage, purpose,
+	description and versiontext strings now return string_builders,
+	which are used in generate_init_strings
 	* gengetopt.cc: re-wrote code, called when --show-help is given,
 	that draws the generated code's help output, so that it uses the
-	new OptionHelpListElements
-	* string_builder.cc: added method to generate an unlocalised
-	concatination of its parts
+	new OptionHelpListElements string_builders and usage, purpose and
+	description string_builders
+	* c_source.h_skel: initialise usage, purpose, description and
+	versiontext strings dynamically, with init_strings(), and perform
+	line wrapping on them at runtime
+	* header.h_skel: removed extern declaration of @args_info@_usage
+	and @args_info@_purpose, which may break code that used them
+	* gm_utils.cpp, gm_utils.h: removed wrap_cstr() and not_newlines()
+	since all generated line wrapping is now done at runtime (yay!)
+	* string_builder.cc: added method to get a poorman's build of the
+	string (just an un-localised concatenation of its parts); removed
+	"escape settings", which aren't used; added new "localisation
+	type", RAW_C, which is raw, unquoted C code (as opposed to NONE,
+	which is quoted).
 
 2013-05-08  Tim Marston  <tim@ed.am>
 
@@ -13,7 +27,7 @@
 
 2013-05-06  Tim Marston  <tim@ed.am>
 
-	* gm.c, gm.h: generate code that calculates necessary position of
+	* gm.cc, gm.h: generate code that calculates necessary position of
 	description column at runtime with calculate_desc_column.h_skel;
 	added a constructor for OptionHelpListElement
 	* c_source.h_skel: added runtime code to wrap strings and to

@@ -62,11 +62,6 @@ struct @parser_name@_params
   int print_errors; /**< @@brief whether getopt_long should print an error message for a bad option (default 1) */
 } ;
 
-/** @@brief the purpose string of the program */
-extern const char *@args_info@_purpose;
-/** @@brief the usage string of the program */
-extern const char *@args_info@_usage;
-
 /**
  * The command line parser
  * @@param argc the number of command line options

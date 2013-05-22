@@ -90,28 +90,6 @@ bool has_values();
 bool is_numeric(const gengetopt_option *opt);
 
 /**
- * Performs word wrapping on the passed string (and return the result in the first
- * parameter).
- *
- * @param wrapped the output parameter
- * @param from_column the string start from this column
- * @param second_indent an additional indentation for lines after the
- * first one
- * @param orig the original string that must be wrapped
- */
-void wrap_cstr (string &wrapped, unsigned int from_column, unsigned int second_indent, const string &orig);
-
-/**
- * Searches for characters which are not newlines.
- *
- * @param buf where to search for new characters
- * @param num_of_newlines where the number of newlines
- * before the first non newline char will be stored
- * @return the position in the string after the (possible) new line char
- */
-int not_newlines(const string &buf, int &num_of_newlines);
-
-/**
  * Function object to print something into a stream (to be used with for_each)
  */
 template<class T>

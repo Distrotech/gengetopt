@@ -29,8 +29,7 @@
 
 string_builder::string_builder()
     :
-    _current_l10n( NONE ),
-    _current_escape( RAW )
+    _current_l10n( NONE )
 {
 }
 
@@ -38,19 +37,15 @@ string_builder::string_builder()
 string_builder::string_builder(
     const std::string &str, LocalisationType l10n )
     :
-    _current_l10n( NONE ),
-    _current_escape( RAW )
+    _current_l10n( NONE )
 {
     add_part( str, l10n );
 }
 */
 
 void string_builder::add_part(
-    const std::string &str, LocalisationType l10n /*= NONE*/,
-    EscapeSetting escape /*= RAW*/ )
+    const std::string &str, LocalisationType l10n /*= NONE*/ )
 {
-    assert( escape == RAW );
-
     // ignore empty strings
     if( str.size() )
     {
@@ -134,14 +129,22 @@ void string_builder::generate_string_builder(
 	case GENGETOPT:
 	    preparer.set_gengetopt_localised( true );
 	    preparer.set_localised( false );
+	    preparer.set_raw_c( false );
 	    break;
 	case LOCALISE:
 	    preparer.set_gengetopt_localised( false );
 	    preparer.set_localised( true );
+	    preparer.set_raw_c( false );
+	    break;
+	case RAW_C:
+	    preparer.set_gengetopt_localised( false );
+	    preparer.set_localised( false );
+	    preparer.set_raw_c( true );
 	    break;
 	default:
 	    preparer.set_gengetopt_localised( false );
 	    preparer.set_localised( false );
+	    preparer.set_raw_c( false );
 	    break;
 	}
 
@@ -161,10 +164,14 @@ void string_builder::generate_string_builder(
     builder.set_target( target );
     builder.set_is_target_array( !index.empty() );
     builder.set_target_index( index );
-    for( unsigned int a = 0; a < _parts.size(); a++ )
-    {
-	builder.set_part_index( a );
+    if( _parts.size() > 0 ) {
+	builder.set_first( true );
 	builder.generate_string_builder_build( stream, indent );
+	if( _parts.size() > 1 ) {
+	    builder.set_first( false );
+	    builder.set_num_parts( _parts.size() );
+	    builder.generate_string_builder_build( stream, indent );
+	}
     }
 }
 
@@ -172,7 +179,7 @@ void string_builder::generate_string_builder(
 string_builder &string_builder::operator <<(
     const std::string &str )
 {
-    add_part( str, _current_l10n, _current_escape );
+    add_part( str, _current_l10n );
     return *this;
 }
 
@@ -184,13 +191,6 @@ string_builder &string_builder::operator <<(
     return *this;
 }
 
-
-string_builder &string_builder::operator <<(
-    EscapeSetting escape )
-{
-    _current_escape = escape;
-    return *this;
-}
 
 std::string string_builder::generate_unlocalised_string() const
 {

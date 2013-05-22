@@ -1,5 +1,6 @@
-@IF@ part_index:int = 0 @THEN@
+@IF@ first @THEN@
 strcpy( @target@@if@ is_target_array @then@[@target_index@]@endif@, string_builder_parts[0] );
 @ELSE@
-strcat( @target@@if@ is_target_array @then@[@target_index@]@endif@, string_builder_parts[@part_index:int@] );
+for( string_builder_i = 1; string_builder_i < @num_parts:int@; string_builder_i++ )
+  strcat( @target@@if@ is_target_array @then@[@target_index@]@endif@, string_builder_parts[ string_builder_i ] );
 @ENDIF@

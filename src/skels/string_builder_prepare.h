@@ -19,16 +19,17 @@ class string_builder_prepare_gen_class
   bool gengetopt_localised;
   bool localised;
   int part_index;
+  bool raw_c;
   string value;
 
  public:
   string_builder_prepare_gen_class() :
-    gengetopt_localised (false), localised (false), part_index (0)
+    gengetopt_localised (false), localised (false), part_index (0), raw_c (false)
   {
   }
   
-  string_builder_prepare_gen_class(bool _gengetopt_localised, bool _localised, int _part_index, const string &_value) :
-    gengetopt_localised (_gengetopt_localised), localised (_localised), part_index (_part_index), value (_value)
+  string_builder_prepare_gen_class(bool _gengetopt_localised, bool _localised, int _part_index, bool _raw_c, const string &_value) :
+    gengetopt_localised (_gengetopt_localised), localised (_localised), part_index (_part_index), raw_c (_raw_c), value (_value)
   {
   }
 
@@ -68,6 +69,11 @@ class string_builder_prepare_gen_class
   void set_part_index(int _part_index)
   {
     part_index = _part_index;
+  }
+
+  void set_raw_c(bool _raw_c)
+  {
+    raw_c = _raw_c;
   }
 
   void set_value(const string &_value)

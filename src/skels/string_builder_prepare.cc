@@ -41,13 +41,26 @@ string_builder_prepare_gen_class::generate_string_builder_prepare(ostream &strea
         }
       else
         {
-          stream << "string_builder_parts[";
-          stream << part_index;
-          stream << "] = \"";
-          generate_string (value, stream, indent + indent_str.length ());
-          stream << "\";";
-          stream << "\n";
-          stream << indent_str;
+          if (raw_c)
+            {
+              stream << "string_builder_parts[";
+              stream << part_index;
+              stream << "] = ";
+              generate_string (value, stream, indent + indent_str.length ());
+              stream << ";";
+              stream << "\n";
+              stream << indent_str;
+            }
+          else
+            {
+              stream << "string_builder_parts[";
+              stream << part_index;
+              stream << "] = \"";
+              generate_string (value, stream, indent + indent_str.length ());
+              stream << "\";";
+              stream << "\n";
+              stream << indent_str;
+            }
         }
     }
 }

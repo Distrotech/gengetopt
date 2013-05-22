@@ -16,19 +16,20 @@ using std::ostream;
 class string_builder_build_gen_class
 {
  protected:
+  bool first;
   bool is_target_array;
-  int part_index;
+  int num_parts;
   string target;
   string target_index;
 
  public:
   string_builder_build_gen_class() :
-    is_target_array (false), part_index (0)
+    first (false), is_target_array (false), num_parts (0)
   {
   }
   
-  string_builder_build_gen_class(bool _is_target_array, int _part_index, const string &_target, const string &_target_index) :
-    is_target_array (_is_target_array), part_index (_part_index), target (_target), target_index (_target_index)
+  string_builder_build_gen_class(bool _first, bool _is_target_array, int _num_parts, const string &_target, const string &_target_index) :
+    first (_first), is_target_array (_is_target_array), num_parts (_num_parts), target (_target), target_index (_target_index)
   {
   }
 
@@ -55,14 +56,19 @@ class string_builder_build_gen_class
       stream << s.substr (start);
   }
 
+  void set_first(bool _first)
+  {
+    first = _first;
+  }
+
   void set_is_target_array(bool _is_target_array)
   {
     is_target_array = _is_target_array;
   }
 
-  void set_part_index(int _part_index)
+  void set_num_parts(int _num_parts)
   {
-    part_index = _part_index;
+    num_parts = _num_parts;
   }
 
   void set_target(const string &_target)

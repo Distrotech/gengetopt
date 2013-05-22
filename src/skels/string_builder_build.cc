@@ -12,7 +12,7 @@ string_builder_build_gen_class::generate_string_builder_build(ostream &stream, u
   string indent_str (indent, ' ');
   indent = 0;
 
-  if (( part_index == 0 ))
+  if (first)
     {
       stream << "strcpy( ";
       generate_string (target, stream, indent + indent_str.length ());
@@ -28,7 +28,12 @@ string_builder_build_gen_class::generate_string_builder_build(ostream &stream, u
     }
   else
     {
-      stream << "strcat( ";
+      stream << "for( string_builder_i = 1; string_builder_i < ";
+      stream << num_parts;
+      stream << "; string_builder_i++ )";
+      stream << "\n";
+      stream << indent_str;
+      stream << "  strcat( ";
       generate_string (target, stream, indent + indent_str.length ());
       if (is_target_array)
         {
@@ -36,9 +41,7 @@ string_builder_build_gen_class::generate_string_builder_build(ostream &stream, u
           generate_string (target_index, stream, indent + indent_str.length ());
           stream << "]";
         }
-      stream << ", string_builder_parts[";
-      stream << part_index;
-      stream << "] );";
+      stream << ", string_builder_parts[ string_builder_i ] );";
       stream << "\n";
       stream << indent_str;
     }

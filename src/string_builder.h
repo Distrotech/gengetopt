@@ -33,11 +33,7 @@ public:
 	NONE = 0,
 	LOCALISE,
 	GENGETOPT,
-    };
-
-    enum EscapeSetting {
-	RAW = 0,
-	ESCAPE,
+	RAW_C,
     };
 
     string_builder();
@@ -53,16 +49,13 @@ public:
     /**
      * Add a string part to the string builder.  You can specify whether the
      * string should undergo no localisation, localisation by the end-program,
-     * or localisation by gengetopt.  You can specify whether the string should
-     * be escaped or inserted exactly as provided.
+     * or localisation by gengetopt.
      *
      * @param str the string
      * @param l10n the localisation type
-     * @param escape the escape settings
      */
     void add_part(
-	const std::string &str, LocalisationType l10n = NONE,
-	EscapeSetting escape = RAW );
+	const std::string &str, LocalisationType l10n = NONE );
 
     /**
      * Retrieve the number of parts in this string builder.
@@ -104,8 +97,7 @@ public:
 
     /**
      * Stream operator.  Use to append a string to the string builder with the
-     * current localisation type (which defaults to NONE) and escape setting
-     * (which defaults to RAW).
+     * current localisation type (which defaults to NONE).
      *
      * @param str the string to append to the string builder
      * @return a reference to this object
@@ -123,15 +115,6 @@ public:
 	LocalisationType l10n );
 
     /**
-     * Stream operator.  Use to change the current escape setting.
-     *
-     * @param escape the escape setting
-     * @return a reference to this object
-     */
-    string_builder &operator <<(
-	EscapeSetting escape );
-
-    /**
      * Get a string which is a concatination of the string builder's parts.
      * This does not take in to consideration any localisation of the parts.
      *
@@ -142,7 +125,7 @@ public:
 protected:
 
     /**
-     * Return a string in which newlines are prefixed by a backslash.
+     * Return a string in which newlines are replaced by their escape sequence.
      *
      * @param str the string on which to work
      * @return the same string, with newlines escaped
@@ -167,9 +150,6 @@ protected:
 
     /** current localisation type (for stream operator) */
     LocalisationType _current_l10n;
-
-    /** current escape setting (for stream operator) */
-    EscapeSetting _current_escape;
 };
 
 #endif /* _STRING_BUILDER_H_ */

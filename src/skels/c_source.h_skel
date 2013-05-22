@@ -36,13 +36,10 @@
 
 #include "@source_name@.@header_file_ext@"
 
-const char *@args_info@_purpose = "@purpose@";
-
-const char *@args_info@_usage = "Usage: @if@ no_package @then@" @package_var_name@ "@endif@@usage_string@";
-
-const char *@args_info@_versiontext = "@versiontext@";
-
-const char *@args_info@_description = "@description@";
+char *@args_info@_usage = 0;
+char *@args_info@_purpose = 0;
+char *@args_info@_versiontext = 0;
+char *@args_info@_description = 0;
 
 @IF@ has_details @THEN@
 static char *@args_info@_detailed_help[];
@@ -114,6 +111,10 @@ static
 void clear_given (struct @args_info@ *args_info);
 static
 void clear_args (struct @args_info@ *args_info);
+static void
+print_spaces (int len);
+static void
+print_wrapped_string (const char *str, int start_column, int indent);
 
 static int
 @parser_name@_internal (int argc, char **argv, struct @args_info@ *args_info,
@@ -170,16 +171,30 @@ clear_args (struct @args_info@ *args_info)
 }
 
 static void
-init_args_info(struct @args_info@ *args_info)
+init_strings()
 {
+  static char already_done = 0;
+  if( already_done )
+    return;
+  already_done = 1;
+
 @IF@ has_details @then@  init_detailed_help_array();@endif@
 @IF@ has_hidden @then@  init_full_help_array();@endif@
   init_help_array();
+
+  @init_strings:method@
+}
+
+static void
+init_args_info (struct @args_info@ *args_info)
+{
+  init_strings();
+
   @init_args_info:method@
 }
 
 static void
-print_name_and_version_common(void)
+print_name_and_version_common (void)
 {
   printf ("%s %s\n",
      (strlen(@package_var_name@_NAME) ? @package_var_name@_NAME : @package_var_name@),
@@ -189,31 +204,46 @@ print_name_and_version_common(void)
 void
 @parser_name@_print_version (void)
 {
+  init_strings();
   print_name_and_version_common();
 
   if (strlen(@args_info@_versiontext) > 0)
-    printf("\n%s\n", @args_info@_versiontext);
+    {
+      printf( "\n" );
+      print_wrapped_string( @args_info@_versiontext, 0, 0 );
+      printf( "\n" );
+    }
 }
 
 static void
-print_help_common(void)
+print_help_common (void)
 {
   print_name_and_version_common();
 
-  if (strlen(@args_info@_purpose) > 0)
-    printf("\n%s\n", @args_info@_purpose);
-
-  if (strlen(@args_info@_usage) > 0)
-    printf("\n%s\n", @args_info@_usage);
-
   printf("\n");
 
+  if (strlen(@args_info@_purpose) > 0)
+    {
+      print_wrapped_string( @args_info@_purpose, 0, 0 );
+      printf( "\n\n" );
+    }
+
+  if (strlen(@args_info@_usage) > 0)
+    {
+      print_wrapped_string( @args_info@_usage, 0, @usage_wrap_column:int@ );
+      printf( "\n\n" );
+    }
+
+
   if (strlen(@args_info@_description) > 0)
-    printf("%s\n\n", @args_info@_description);
+    {
+      print_wrapped_string( @args_info@_description, 0, 0 );
+      printf( "\n\n" );
+    }
 }
 
 static int
-calculate_desc_column()
+calculate_desc_column ()
 {
   int len;
   static int column = 0;
@@ -225,7 +255,7 @@ calculate_desc_column()
 }
 
 static int
-count_initial_newlines( const char *str, int *count )
+count_initial_newlines (const char *str, int *count)
 {
   int skip;
   *count = 0;
@@ -240,21 +270,21 @@ count_initial_newlines( const char *str, int *count )
 }
 
 static void
-print_spaces( int len )
+print_spaces (int len)
 {
   for( ; len; len-- )
     putchar( ' ' );
 }
 
 static void
-print_chars( const char *str, int len )
+print_chars (const char *str, int len)
 {
   for( ; len; len-- )
     putchar( *( str++ ) );
 }
 
 static void
-print_wrapped_string( const char *str, int start_column, int indent )
+print_wrapped_string (const char *str, int start_column, int indent)
 {
   int i, skip, count, column = start_column;
   const char *word = NULL;
@@ -315,8 +345,8 @@ print_wrapped_string( const char *str, int start_column, int indent )
 }
 
 static void
-print_help_list_element( const char *header, const char *text,
-			 const char *extra )
+print_help_list_element (const char *header, const char *text,
+			 const char *extra)
 {
   const int param_padding = 2;
   const int desc_column = calculate_desc_column();
@@ -350,8 +380,11 @@ print_help_list_element( const char *header, const char *text,
 void
 @parser_name@_print_help (void)
 {
-  int i = 0;
+  int i;
+
+  init_strings();
   print_help_common();
+
   for( i = 0; @args_info@_help[ i ]; i += 3 )
     print_help_list_element( @args_info@_help[ i ],
         @args_info@_help[ i + 1 ],
@@ -362,8 +395,11 @@ void
 void
 @parser_name@_print_full_help (void)
 {
-  int i = 0;
+  int i;
+
+  init_strings();
   print_help_common();
+
   for( i = 0; @args_info@_full_help[ i ]; i += 3 )
     print_help_list_element( @args_info@_full_help[ i ],
         @args_info@_full_help[ i + 1 ],
@@ -375,8 +411,11 @@ void
 void
 @parser_name@_print_detailed_help (void)
 {
-  int i = 0;
+  int i;
+
+  init_strings();
   print_help_common();
+
   for( i = 0; @args_info@_detailed_help[ i ]; i += 3 )
     print_help_list_element( @args_info@_detailed_help[ i ],
         @args_info@_detailed_help[ i + 1 ],

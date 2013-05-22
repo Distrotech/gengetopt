@@ -12,7 +12,7 @@ string_builder_declare_gen_class::generate_string_builder_declare(ostream &strea
   string indent_str (indent, ' ');
   indent = 0;
 
-  stream << "char *string_builder_parts[";
+  stream << "const char *string_builder_parts[";
   stream << num_string_builder_parts;
   stream << "];";
   stream << "\n";
