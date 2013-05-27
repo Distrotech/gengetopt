@@ -25,3 +25,6 @@ build_mingw
 build
 *.orig
 /build-eclipse
+/po-client/Makevars.template
+/po-client/*.gmo
+ABOUT-NLS

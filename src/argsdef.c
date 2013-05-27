@@ -24,8 +24,14 @@
 
 #include "argsdef.h"
 
-const char * arg_names [] = { (const char*)0, (const char*)0, "STRING", "INT",
-        "SHORT", "LONG", "FLOAT", "DOUBLE", "LONGDOUBLE", "LONGLONG", "ENUM" };
+// gettext_noop() for strings in the gengetopt-client domain
+#define CLIENT_N_(S) S
+
+const char * arg_names [] = { (const char*)0, (const char*)0,
+	CLIENT_N_( "STRING" ), CLIENT_N_( "INT" ), CLIENT_N_( "SHORT" ),
+	CLIENT_N_( "LONG" ), CLIENT_N_( "FLOAT" ), CLIENT_N_( "DOUBLE" ),
+	CLIENT_N_( "LONGDOUBLE" ), CLIENT_N_( "LONGLONG" ),
+	CLIENT_N_( "ENUM" ) };
 
 const char * arg_type_constants [] = { "ARG_NO", "ARG_FLAG", "ARG_STRING",
         "ARG_INT", "ARG_SHORT", "ARG_LONG", "ARG_FLOAT", "ARG_DOUBLE",

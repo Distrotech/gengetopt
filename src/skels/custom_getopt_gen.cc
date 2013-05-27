@@ -966,7 +966,7 @@ custom_getopt_gen_gen_class::generate_custom_getopt_gen(ostream &stream, unsigne
   stream << "			fprintf(stderr,";
   stream << "\n";
   stream << indent_str;
-  stream << "				\"%s: option `%s' is ambiguous\\n\",";
+  stream << "				GENGETOPT_(\"%s: option `%s' is ambiguous\\n\"),";
   stream << "\n";
   stream << indent_str;
   stream << "				argv[0], argv[d->custom_optind]);";
@@ -1020,7 +1020,7 @@ custom_getopt_gen_gen_class::generate_custom_getopt_gen(ostream &stream, unsigne
   stream << "						/* --option */";
   stream << "\n";
   stream << indent_str;
-  stream << "						fprintf(stderr, \"%s: option `--%s' doesn't allow an argument\\n\",";
+  stream << "						fprintf(stderr, GENGETOPT_(\"%s: option `--%s' doesn't allow an argument\\n\"),";
   stream << "\n";
   stream << indent_str;
   stream << "							argv[0], pfound->name);";
@@ -1032,7 +1032,7 @@ custom_getopt_gen_gen_class::generate_custom_getopt_gen(ostream &stream, unsigne
   stream << "						/* +option or -option */";
   stream << "\n";
   stream << indent_str;
-  stream << "						fprintf(stderr, \"%s: option `%c%s' doesn't allow an argument\\n\",";
+  stream << "						fprintf(stderr, GENGETOPT_(\"%s: option `%c%s' doesn't allow an argument\\n\"),";
   stream << "\n";
   stream << indent_str;
   stream << "							argv[0], argv[d->custom_optind - 1][0], pfound->name);";
@@ -1076,7 +1076,7 @@ custom_getopt_gen_gen_class::generate_custom_getopt_gen(ostream &stream, unsigne
   stream << "					fprintf(stderr,";
   stream << "\n";
   stream << indent_str;
-  stream << "						\"%s: option `%s' requires an argument\\n\",";
+  stream << "						GENGETOPT_(\"%s: option `%s' requires an argument\\n\"),";
   stream << "\n";
   stream << indent_str;
   stream << "						argv[0],";
@@ -1157,7 +1157,7 @@ custom_getopt_gen_gen_class::generate_custom_getopt_gen(ostream &stream, unsigne
   stream << "			fprintf(stderr,";
   stream << "\n";
   stream << indent_str;
-  stream << "				\"%s: unrecognized option `--%s'\\n\",";
+  stream << "				GENGETOPT_(\"%s: unrecognized option `--%s'\\n\"),";
   stream << "\n";
   stream << indent_str;
   stream << "				argv[0], d->nextchar);";
@@ -1172,7 +1172,7 @@ custom_getopt_gen_gen_class::generate_custom_getopt_gen(ostream &stream, unsigne
   stream << "			fprintf(stderr,";
   stream << "\n";
   stream << indent_str;
-  stream << "				\"%s: unrecognized option `%c%s'\\n\",";
+  stream << "				GENGETOPT_(\"%s: unrecognized option `%c%s'\\n\"),";
   stream << "\n";
   stream << indent_str;
   stream << "				argv[0], argv[d->custom_optind][0],";
@@ -1236,7 +1236,7 @@ custom_getopt_gen_gen_class::generate_custom_getopt_gen(ostream &stream, unsigne
   stream << "		if (print_errors)";
   stream << "\n";
   stream << indent_str;
-  stream << "			fprintf(stderr, \"%s: invalid option -- %c\\n\", argv[0], c);";
+  stream << "			fprintf(stderr, GENGETOPT_(\"%s: invalid option -- %c\\n\"), argv[0], c);";
   stream << "\n";
   stream << indent_str;
   stream << "\n";
@@ -1316,7 +1316,7 @@ custom_getopt_gen_gen_class::generate_custom_getopt_gen(ostream &stream, unsigne
   stream << "					fprintf(stderr,";
   stream << "\n";
   stream << indent_str;
-  stream << "						\"%s: option requires an argument -- %c\\n\",";
+  stream << "						GENGETOPT_(\"%s: option requires an argument -- %c\\n\"),";
   stream << "\n";
   stream << indent_str;
   stream << "						argv[0], c);";

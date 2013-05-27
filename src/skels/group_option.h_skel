@@ -1,5 +1,13 @@
 if (args_info->@group_var_name@_group_counter @Comparison_rule@)
   {
-    fprintf (stderr, "%s: %d options of group @group_name@ were given. @number_required@ is required%s.\n", @package_var_name@, args_info->@group_var_name@_group_counter, (additional_error ? additional_error : ""));
+    fprintf (stderr, dngettext (gengetopt_client_domain (),
+	"%s%s: one option of group %$3s was given.  The number required is "
+	  "%$4d.\n",
+	"%s%s: %$5d options of group %$3s were given.  The number required "
+	  "is %$4d.\n",
+	args_info->@group_var_name@_group_counter),
+      @package_var_name@, error_location,
+      "@group_name@", @number_required@,
+      args_info->@group_var_name@_group_counter);
     error = 1;
   }

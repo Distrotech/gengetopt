@@ -325,7 +325,7 @@ static int check_long_opt(int argc, char *const *argv, const char *optstring,
 	if (ambig && !exact) {
 		if (print_errors) {
 			fprintf(stderr,
-				"%s: option `%s' is ambiguous\n",
+				GENGETOPT_("%s: option `%s' is ambiguous\n"),
 				argv[0], argv[d->custom_optind]);
 		}
 		d->nextchar += strlen(d->nextchar);
@@ -343,11 +343,11 @@ static int check_long_opt(int argc, char *const *argv, const char *optstring,
 				if (print_errors) {
 					if (argv[d->custom_optind - 1][1] == '-') {
 						/* --option */
-						fprintf(stderr, "%s: option `--%s' doesn't allow an argument\n",
+						fprintf(stderr, GENGETOPT_("%s: option `--%s' doesn't allow an argument\n"),
 							argv[0], pfound->name);
 					} else {
 						/* +option or -option */
-						fprintf(stderr, "%s: option `%c%s' doesn't allow an argument\n",
+						fprintf(stderr, GENGETOPT_("%s: option `%c%s' doesn't allow an argument\n"),
 							argv[0], argv[d->custom_optind - 1][0], pfound->name);
 					}
 
@@ -362,7 +362,7 @@ static int check_long_opt(int argc, char *const *argv, const char *optstring,
 			else {
 				if (print_errors) {
 					fprintf(stderr,
-						"%s: option `%s' requires an argument\n",
+						GENGETOPT_("%s: option `%s' requires an argument\n"),
 						argv[0],
 						argv[d->custom_optind - 1]);
 				}
@@ -389,12 +389,12 @@ static int check_long_opt(int argc, char *const *argv, const char *optstring,
 		if (argv[d->custom_optind][1] == '-') {
 			/* --option */
 			fprintf(stderr,
-				"%s: unrecognized option `--%s'\n",
+				GENGETOPT_("%s: unrecognized option `--%s'\n"),
 				argv[0], d->nextchar);
 		} else {
 			/* +option or -option */
 			fprintf(stderr,
-				"%s: unrecognized option `%c%s'\n",
+				GENGETOPT_("%s: unrecognized option `%c%s'\n"),
 				argv[0], argv[d->custom_optind][0],
 				d->nextchar);
 		}
@@ -416,7 +416,7 @@ static int check_short_opt(int argc, char *const *argv, const char *optstring,
 		++d->custom_optind;
 	if (!temp || c == ':') {
 		if (print_errors)
-			fprintf(stderr, "%s: invalid option -- %c\n", argv[0], c);
+			fprintf(stderr, GENGETOPT_("%s: invalid option -- %c\n"), argv[0], c);
 
 		d->custom_optopt = c;
 		return '?';
@@ -443,7 +443,7 @@ static int check_short_opt(int argc, char *const *argv, const char *optstring,
 			} else if (d->custom_optind == argc) {
 				if (print_errors) {
 					fprintf(stderr,
-						"%s: option requires an argument -- %c\n",
+						GENGETOPT_("%s: option requires an argument -- %c\n"),
 						argv[0], c);
 				}
 				d->custom_optopt = c;

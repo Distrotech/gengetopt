@@ -87,7 +87,7 @@ generic_option_gen_class::generate_generic_option(ostream &stream, unsigned int 
           stream << "',";
           stream << "\n";
           stream << indent_str;
-          stream << "      additional_error))";
+          stream << "      error_location))";
           stream << "\n";
           stream << indent_str;
           stream << "    goto failure;";
@@ -172,7 +172,7 @@ generic_option_gen_class::generate_generic_option(ostream &stream, unsigned int 
           stream << "',";
           stream << "\n";
           stream << indent_str;
-          stream << "      additional_error))";
+          stream << "      error_location))";
           stream << "\n";
           stream << indent_str;
           stream << "    goto failure;";
@@ -234,7 +234,7 @@ generic_option_gen_class::generate_generic_option(ostream &stream, unsigned int 
           stream << "',";
           stream << "\n";
           stream << indent_str;
-          stream << "      additional_error))";
+          stream << "      error_location))";
           stream << "\n";
           stream << indent_str;
           stream << "    goto failure;";

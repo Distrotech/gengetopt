@@ -1,0 +1,261 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: GNU gengetopt 2.22.6\n"
+"Report-Msgid-Bugs-To: http://savannah.gnu.org/bugs/?group=gengetopt\n"
+"POT-Creation-Date: 2013-05-27 17:06+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: src/skels/c_source.h_skel:687
+#, c-format
+msgid "%s: cannot dump options to stream\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:707
+#, c-format
+msgid "%s: cannot open file for writing: %s\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:841
+#, c-format
+msgid "%s: %s option must occur once\n"
+msgid_plural "%s: %s option must occur %d times\n"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/skels/c_source.h_skel:852
+#, c-format
+msgid "%s: %s option must occur between %d and %d times\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:863
+#, c-format
+msgid "%s: %s option must occur at least once\n"
+msgid_plural "%s: %s option must occur at least %d times\n"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/skels/c_source.h_skel:875
+#, c-format
+msgid "%s: %s option must occur at most once\n"
+msgid_plural "%s: %s option must occur at most %d times\n"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/skels/c_source.h_skel:1003
+#, c-format
+msgid "%s%s: `--%s' (`-%c') option given more than once\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:1007
+#, c-format
+msgid "%s%s: `--%s' option given more than once\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:1018
+#, c-format
+msgid "%s%s: ambiguous argument, \"%s\", for option `--%s' (`-%c')\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:1022
+#, c-format
+msgid "%s%s: ambiguous argument, \"%s\", for option `--%s'\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:1027
+#, c-format
+msgid "%s%s: invalid argument, \"%s\", for option `--%s' (`-%c')\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:1031
+#, c-format
+msgid "%s%s: invalid argument, \"%s\", for option `--%s'\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:1140
+#, c-format
+msgid "%s: invalid numeric value: %s\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:1456
+#, c-format
+msgid "%s: option %s conflicts with option %s\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:1552
+#, c-format
+msgid "%s%s: option unknown: %c\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:1641
+#, c-format
+msgid "%s: Error opening configuration file '%s'\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:1659
+#, c-format
+msgid "%s%s: Line too long in configuration file\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:1710
+#, c-format
+msgid "%s%s: unterminated string in configuration file\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:1733
+#, c-format
+msgid "%s%s: malformed string in configuration file\n"
+msgstr ""
+
+#: src/skels/c_source.h_skel:1747
+#, c-format
+msgid "%s%s: include requires a filename argument.\n"
+msgstr ""
+
+#: src/skels/custom_getopt_gen.h_skel:328
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr ""
+
+#: src/skels/custom_getopt_gen.h_skel:346
+#, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr ""
+
+#: src/skels/custom_getopt_gen.h_skel:350
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr ""
+
+#: src/skels/custom_getopt_gen.h_skel:365
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr ""
+
+#: src/skels/custom_getopt_gen.h_skel:392
+#, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr ""
+
+#: src/skels/custom_getopt_gen.h_skel:397
+#, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr ""
+
+#: src/skels/custom_getopt_gen.h_skel:419
+#, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr ""
+
+#: src/skels/custom_getopt_gen.h_skel:446
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr ""
+
+#: src/skels/dependant_option.h_skel:3
+#, c-format
+msgid "%s%s: %s option depends on option '%s'\n"
+msgstr ""
+
+#: src/skels/group_option.h_skel:4
+msgid ""
+"%s%s: one option of group %$3s was given.  The number required is %$4d.\n"
+msgid_plural ""
+"%s%s: %$5d options of group %$3s were given.  The number required is %$4d.\n"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/skels/required_option.h_skel:8
+#, c-format
+msgid "%s%s: %s option required\n"
+msgstr ""
+
+#: src/gm.cc:662
+msgid "Usage: "
+msgstr ""
+
+#. TRANSLATORS: used in "Usage: program [OPTIONS]"
+#: src/gm.cc:691
+msgid "OPTIONS"
+msgstr ""
+
+#. TRANSLATORS: used on the line after "Usage:"
+#: src/gm.cc:712
+msgid "or: "
+msgstr ""
+
+#. TRANSLATORS: used on a line, such as "Group: GROUP"
+#: src/gm.cc:1122
+msgid "Group: "
+msgstr ""
+
+#. TRANSLATORS: used on a line, such as "Mode: MODE"
+#: src/gm.cc:1141
+msgid "Mode: "
+msgstr ""
+
+#. TRANSLATORS: used in "(default=on)"
+#: src/gm.cc:1183
+msgid "on"
+msgstr ""
+
+#. TRANSLATORS: used in "(default=off)"
+#: src/gm.cc:1185
+msgid "off"
+msgstr ""
+
+#: src/gm.cc:1216
+msgid "possible values="
+msgstr ""
+
+#: src/gm.cc:1223
+msgid "default="
+msgstr ""
+
+#: src/argsdef.c:31
+msgid "STRING"
+msgstr ""
+
+#: src/argsdef.c:31
+msgid "INT"
+msgstr ""
+
+#: src/argsdef.c:31
+msgid "SHORT"
+msgstr ""
+
+#: src/argsdef.c:32
+msgid "LONG"
+msgstr ""
+
+#: src/argsdef.c:32
+msgid "FLOAT"
+msgstr ""
+
+#: src/argsdef.c:32
+msgid "DOUBLE"
+msgstr ""
+
+#: src/argsdef.c:33
+msgid "LONGDOUBLE"
+msgstr ""
+
+#: src/argsdef.c:33
+msgid "LONGLONG"
+msgstr ""
+
+#: src/argsdef.c:34
+msgid "ENUM"
+msgstr ""

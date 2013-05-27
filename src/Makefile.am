@@ -113,3 +113,6 @@ MAINTAINERCLEANFILES = scanner.cc parser.h parser.cc
 noinst_HEADERS = acceptedvalues.h errorcodes.h fileutils.h \
 	gm_utils.h yyerror.h
 
+# locale directory
+localedir = $(datadir)/locale
+DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@

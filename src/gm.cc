@@ -73,6 +73,9 @@ extern "C"
 #include "gm_utils.h"
 #include "fileutils.h"
 
+// gettext_noop() for strings in the gengetopt-client domain
+#define CLIENT_N_(S) S
+
 #ifndef FIX_UNUSED
 #define FIX_UNUSED(X) (void) (X)
 #endif // FIX_UNUSED
@@ -240,6 +243,7 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
       ("version " VERSION);
   c_source_gen_class::set_parser_name (parser_function_name);
   set_source_name (filename);
+  set_locale_dir (LOCALEDIR);
 
   ostringstream exit_failure_str;
   exit_failure_gen_class exit_gen;
@@ -274,7 +278,8 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   set_has_typed_options(has_options_with_type());
   set_has_modes(has_options_with_mode());
   set_handle_unamed(unamed_options);
-  set_check_required_options(has_required() || has_dependencies() || has_multiple_options());
+  set_check_required_options(
+      has_required() || has_dependencies() || has_multiple_options());
   c_source_gen_class::set_has_hidden(!strict_hidden && has_hidden_options());
   header_gen_class::set_has_hidden(c_source_gen_class::has_hidden);
   c_source_gen_class::set_has_details(has_options_with_details(strict_hidden));
@@ -652,12 +657,9 @@ generate_option_usage_string( gengetopt_option *opt, string_builder &usage )
 string_builder
 CmdlineParserCreator::generate_usage()
 {
-    // This was the original line in c_source.h_skel that we're building manually...
-    // const char *@args_info@_usage = "Usage: @if@ no_package @then@" @package_var_name@ "@endif@@usage_string@";
     string_builder usage;
 
-    usage << string_builder::GENGETOPT << "Usage:"
-	  << string_builder::NONE << " ";
+    usage << string_builder::GENGETOPT << CLIENT_N_( "Usage: " );
 
     // if specified by the programmer, their usage string has precedence
     if (gengetopt_usage) {
@@ -684,7 +686,9 @@ CmdlineParserCreator::generate_usage()
 		generate_option_usage_string(opt, usage);
     } else
 	// if not long help, we generate it as per GNU standards
-	usage << " [" << string_builder::GENGETOPT << "OPTIONS"
+	usage << " [" << string_builder::GENGETOPT
+	    // TRANSLATORS: used in "Usage: program [OPTIONS]"
+	      << CLIENT_N_( "OPTIONS" )
 	      << string_builder::NONE << "]...";
 
     if ( unamed_options )
@@ -703,8 +707,9 @@ CmdlineParserCreator::generate_usage()
 	    gengetopt_option_list::const_iterator opt_it;
 
 	    // next line
-	    usage << "\\n  " << string_builder::GENGETOPT << "or:"
-		  << string_builder::NONE << " ";
+	    usage << "\\n  " << string_builder::GENGETOPT
+		// TRANSLATORS: used on the line after "Usage:"
+		  << CLIENT_N_( "or: " );
 
 	    // the specified package name, or the config.h package constant
 	    if (gengetopt_package)
@@ -856,9 +861,9 @@ CmdlineParserCreator::generate_help_option_print(ostream &stream,
 			(stream, indent, option_list,
 			 c_source_gen_class::args_info + "_help");
     } else {
-        // in order to avoid generating the same help string twice, and thus
-        // to save memory, in case of hidden options (or details), we try to share most
-        // of the strings with the full or detailed help array
+        // in order to avoid generating the same help string twice, and thus to
+        // save memory, in case of hidden options (or details), we try to share
+        // most of the strings with the full or detailed help array
         OptionHelpList *full_option_list = generate_help_option_list(true, true);
 
         generate_help_option_print_from_lists
@@ -944,7 +949,8 @@ CmdlineParserCreator::generate_init_strings(ostream &stream, unsigned int indent
 }
 
 void
-CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int indent)
+CmdlineParserCreator::generate_init_args_info(ostream &stream,
+					      unsigned int indent)
 {
     struct gengetopt_option * opt;
     init_args_info_gen_class init_args_info_gen;
@@ -964,7 +970,8 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int inde
 
     const char *current_section = 0, *current_group = 0, *current_mode = 0;
 
-    // we have to skip section description references (that appear in the help vector)
+    // we have to skip section description references (that appear in the help
+    // vector)
     foropt {
         index.str("");
 
@@ -975,7 +982,8 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream, unsigned int inde
             ++i;
 
             if (opt->section_desc) {
-              // section description takes another line, thus we have to skip this too
+              // section description takes another line, thus we have to skip
+              // this too
               ++i;
             }
           }
@@ -1109,9 +1117,10 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 	    ( !prev_group || strcmp( opt->group_value, prev_group ) ) )
 	{
 	    string_builder header;
-	    header << "\\n " << string_builder::GENGETOPT << "Group"
-		   << string_builder::NONE << ": " << string_builder::LOCALISE
-		   << opt->group_value;
+	    header << "\\n " << string_builder::GENGETOPT
+		// TRANSLATORS: used on a line, such as "Group: GROUP"
+		   << CLIENT_N_( "Group: " )
+		   << string_builder::LOCALISE << opt->group_value;
 
 	    string_builder text;
 	    if( opt->group_desc )
@@ -1127,9 +1136,10 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 	    ( !prev_mode || strcmp( opt->mode_value, prev_mode ) ) )
 	{
 	    string_builder header;
-	    header << "\\n " << string_builder::GENGETOPT << "Mode"
-		   << string_builder::NONE << ": " << string_builder::LOCALISE
-		   << opt->mode_value;
+	    header << "\\n " << string_builder::GENGETOPT
+		// TRANSLATORS: used on a line, such as "Mode: MODE"
+		   << CLIENT_N_( "Mode: " )
+		   << string_builder::LOCALISE << opt->mode_value;
 
 	    string_builder text;
 	    if( opt->mode_desc )
@@ -1154,6 +1164,7 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 	if( !opt->hidden || generate_hidden )
 	{
 	    bool has_def_val = false;
+	    bool client_def_val = true;
 	    string def_val;
 
 	    if( opt->short_opt )
@@ -1166,7 +1177,12 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 	    {
 		if( opt->type == ARG_FLAG ) {
 		    has_def_val = true;
-		    def_val = opt->flagstat? "on" : "off";
+		    client_def_val = false;
+		    def_val = opt->flagstat?
+			// TRANSLATORS: used in "(default=on)"
+			CLIENT_N_( "on" ) :
+			// TRANSLATORS: used in "(default=off)"
+			CLIENT_N_( "off" );
 		}
 	    }
 	    else
@@ -1188,27 +1204,37 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 
 	    // description
 	    string_builder extra;
-	    extra << string_builder::LOCALISE << opt->desc << string_builder::NONE;
-	    std::string values = opt->acceptedvalues ? opt->acceptedvalues->toString() : "";
+	    extra << string_builder::LOCALISE << opt->desc
+		  << string_builder::NONE;
+	    std::string values =
+		opt->acceptedvalues ? opt->acceptedvalues->toString() : "";
 	    if( has_def_val || values.size() ) {
 		extra << ( extra.get_num_parts()? "  " : "" ) << "(";
 
 		if( values.size() ) {
-		    extra << string_builder::GENGETOPT << "possible values"
-			  << string_builder::NONE << "=" << values;
+		    extra << string_builder::GENGETOPT
+			  << CLIENT_N_( "possible values=" )
+			  << string_builder::NONE << values;
 		}
 
 		if( has_def_val ) {
 		    extra << ( values.size()? " " : "" )
-			  << string_builder::GENGETOPT << "default"
-			  << string_builder::NONE << "=" << def_val;
+			  << string_builder::GENGETOPT
+			  << CLIENT_N_( "default=" );
+		    if( client_def_val )
+			extra << string_builder::LOCALISE << def_val
+			      << string_builder::NONE;
+		    else
+			extra << string_builder::GENGETOPT << def_val
+			      << string_builder::NONE;
 		}
 
 		extra << ")";
 	    }
-	    std::string required_string = opt->required? show_required_string : "";
+	    std::string required_string =
+		opt->required? show_required_string : "";
 	    if( required_string.size() ) {
-		extra << " " << string_builder::GENGETOPT << required_string
+		extra << " " << string_builder::LOCALISE << required_string
 		      << string_builder::NONE;
 	    }
 
@@ -1216,7 +1242,8 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 		OptionHelpListElement( string_builder(), text, extra, true ) );
 	}
 
-	// before the text, we generate details if we need to and the option isn't hidden
+	// before the text, we generate details if we need to and the option
+	// isn't hidden
 	if( opt->details && generate_details &&
 	    ( !opt->hidden || generate_hidden ) )
 	{
@@ -1241,7 +1268,8 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 }
 
 void
-CmdlineParserCreator::generate_calculate_desc_column( ostream &stream, unsigned int indent )
+CmdlineParserCreator::generate_calculate_desc_column( ostream &stream,
+						      unsigned int indent )
 {
     calculate_desc_column_gen_class generator;
     generator.set_epilogue( false );

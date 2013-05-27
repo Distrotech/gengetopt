@@ -1,3 +1,22 @@
+2013-05-25  Tim Marston  <tim@ed.am>
+
+	* po-client: added internationalisation for gengetopt's client
+	strings (i.e., gengetopt strings in its generated output)
+	* Makefile.am: Added po-client and intl to SUBDIRS and
+	build-aux/config.rpath to EXTRA_DIST
+	* configure.ac: Added po-client/Makefile.in and intl/Makefile to
+	AC_CONFIG_FILES; added gettext macros.
+	* c_source.h_skel: added gengetopt_client_domain(), which uses
+	initialises location of gengetopt's client strings from the
+	localedir defined at gengetopt configure-time
+	* c_source.h_skel, custom_getopt_gen.h_skel, group_option.h_skel:
+	added gettext markers for gengetopt's client strings; rewrote some
+	code to handle i18n of (non-)pluralised strings.
+	* generic_option.h_skel, c_source.h_skel, group_option.h_skel,
+	required_option.h_skel: renamed additional_error string to
+	error_location (it is now inserted in a localised string and needs
+	to have a more specific purpose).
+
 2013-05-21  Tim Marston  <tim@ed.am>
 
 	* gm.cc, gm.h: generation functions for usage, purpose,

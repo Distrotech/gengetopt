@@ -87,6 +87,10 @@ YFLAGS="$YFLAGS -d -v"
 dnl for lex or flex
 AM_PROG_LEX
 
+dnl for GNU gettext
+AM_GNU_GETTEXT
+AM_GNU_GETTEXT_VERSION([0.18.1])
+
 dnl check for Electric Fence library, but do not link it automatically
 dnl don't use it anymore: use valgrind
 dnl AC_HAVE_LIBRARY(libefence.a, [LIBS="$LIBS"])
@@ -151,6 +155,8 @@ AM_PROG_CC_C_O
 AH_TEMPLATE(HAVE_LONG_LONG)
 
 AC_CONFIG_FILES([Makefile
+           po-client/Makefile.in
+           intl/Makefile
            src/Makefile 
            src/skels/Makefile
            src/tests/Makefile

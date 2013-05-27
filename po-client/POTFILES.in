@@ -1,0 +1,13 @@
+# List of source files which contain translatable strings.
+
+# We only include files here that contain strings wrapped in GENGETOPT_() (for
+# skels) or CLIENT_() (in gengetopt's code) to be translated, at runtime by the
+# generated code (i.e., the client program, not gengetopt).
+
+src/skels/c_source.h_skel
+src/skels/custom_getopt_gen.h_skel
+src/skels/dependant_option.h_skel
+src/skels/group_option.h_skel
+src/skels/required_option.h_skel
+src/gm.cc
+src/argsdef.c
