@@ -95,7 +95,6 @@ extern char * gengetopt_purpose;
 extern char * gengetopt_versiontext;
 extern char * gengetopt_description;
 extern char * gengetopt_usage;
-extern char * gengetopt_input_filename;
 
 extern groups_collection_t gengetopt_groups;
 extern modes_collection_t gengetopt_modes;
@@ -144,7 +143,7 @@ static const ModeOptMap &getModeOptMap() {
 }
 
 static void _generate_option_arg(ostream &stream,
-                                 unsigned int indent,
+                                 unsigned int indentation,
                                  struct gengetopt_option * opt);
 
 CmdlineParserCreator::CmdlineParserCreator (char *function_name,
@@ -196,9 +195,9 @@ CmdlineParserCreator::CmdlineParserCreator (char *function_name,
   set_header_file_name (stripped_header_file_name);
   header_gen_class::set_header_file_ext (header_ext);
   c_source_gen_class::set_header_file_ext (header_ext);
-  if (gen_gengetopt_version)
-    header_gen_class::set_generator_version
-      ("version " VERSION);
+  if (gen_gengetopt_version) {
+    header_gen_class::set_generator_version("version " VERSION);
+  }
   const string my_ifndefname =
     to_upper (strip_path (stripped_header_file_name));
   set_ifndefname (canonize_names (my_ifndefname.c_str ()));
@@ -347,9 +346,9 @@ void CmdlineParserCreator::set_has_arg_types() {
 }
 
 void
-CmdlineParserCreator::generateBreak(ostream &stream, unsigned int indent)
+CmdlineParserCreator::generateBreak(ostream &stream, unsigned int indentation)
 {
-  string indent_str (indent, ' ');
+  string indent_str (indentation, ' ');
 
   stream << endl;
   stream << indent_str;
@@ -408,10 +407,10 @@ static const string from_value_to_enum(const string &name, const string &val) {
 
 void
 CmdlineParserCreator::generate_enum_types(ostream &stream,
-                                          unsigned int indent)
+                                          unsigned int indentation)
 {
   struct gengetopt_option * opt;
-  FIX_UNUSED (indent);
+  FIX_UNUSED (indentation);
 
   if (has_arg_enum)
       stream << endl;
@@ -428,12 +427,12 @@ CmdlineParserCreator::generate_enum_types(ostream &stream,
         ostringstream enum_values;
         enum_decl_gen_class enum_gen;
         enum_gen.set_var_arg(opt->var_arg);
-        for (AcceptedValues::const_iterator it = opt->acceptedvalues->begin();
-            it != opt->acceptedvalues->end(); ++it) {
+        for (AcceptedValues::const_iterator iter = opt->acceptedvalues->begin();
+            iter != opt->acceptedvalues->end(); ++iter) {
             enum_values << ", ";
             // the first enum element is set to 0
-            enum_values << from_value_to_enum(opt->var_arg, *it);
-            if (it == opt->acceptedvalues->begin())
+            enum_values << from_value_to_enum(opt->var_arg, *iter);
+            if (iter == opt->acceptedvalues->begin())
                 enum_values << " = 0";
 
         }
@@ -445,18 +444,18 @@ CmdlineParserCreator::generate_enum_types(ostream &stream,
 
 void
 CmdlineParserCreator::generate_option_arg(ostream &stream,
-                                          unsigned int indent)
+                                          unsigned int indentation)
 {
   struct gengetopt_option * opt;
 
   foropt {
-    _generate_option_arg (stream, indent, opt);
+    _generate_option_arg (stream, indentation, opt);
   }
 }
 
 void
 _generate_option_arg(ostream &stream,
-                     unsigned int indent,
+                     unsigned int indentation,
                      struct gengetopt_option *opt)
 {
   option_arg_gen_class option_arg_gen;
@@ -504,15 +503,15 @@ _generate_option_arg(ostream &stream,
       option_arg_gen.set_longtype(longtype);
     }
 
-  option_arg_gen.generate_option_arg(stream, indent);
+  option_arg_gen.generate_option_arg(stream, indentation);
 }
 
 void
 CmdlineParserCreator::generate_option_given(ostream &stream,
-                                            unsigned int indent)
+                                            unsigned int indentation)
 {
   struct gengetopt_option * opt;
-  string indent_str (indent, ' ');
+  string indent_str (indentation, ' ');
   bool first = true;
   given_field_gen_class given_gen;
 
@@ -559,11 +558,11 @@ CmdlineParserCreator::generate_option_given(ostream &stream,
 
 void
 CmdlineParserCreator::generate_option_values_decl(ostream &stream,
-                                                  unsigned int indent)
+                                                  unsigned int indentation)
 {
   struct gengetopt_option * opt;
   bool first = true;
-  FIX_UNUSED (indent);
+  FIX_UNUSED (indentation);
 
   foropt
     {
@@ -583,11 +582,11 @@ CmdlineParserCreator::generate_option_values_decl(ostream &stream,
 
 void
 CmdlineParserCreator::generate_option_values(ostream &stream,
-                                             unsigned int indent)
+                                             unsigned int indentation)
 {
   struct gengetopt_option * opt;
   bool first = true;
-  FIX_UNUSED (indent);
+  FIX_UNUSED (indentation);
 
   foropt
     {
@@ -698,10 +697,10 @@ CmdlineParserCreator::generate_usage()
     // now deal with modes
     if (has_modes && long_help)
     {
-	const ModeOptMap &modeOptMap = getModeOptMap();
+	const ModeOptMap &modeoptmap = getModeOptMap();
 
-	for( ModeOptMap::const_iterator map_it = modeOptMap.begin();
-	     map_it != modeOptMap.end(); ++map_it )
+	for( ModeOptMap::const_iterator map_it = modeoptmap.begin();
+	     map_it != modeoptmap.end(); ++map_it )
 	{
 	    string mode_line; // a mode alternative in the usage string
 	    gengetopt_option_list::const_iterator opt_it;
@@ -741,7 +740,7 @@ CmdlineParserCreator::generate_usage()
 
 void
 CmdlineParserCreator::generate_help_option_print_from_lists(ostream &stream,
-        unsigned int indent, OptionHelpList *full_option_list,
+        unsigned int indentation, OptionHelpList *full_option_list,
         OptionHelpList *option_list, const std::string &target_array,
         const std::string &source_array) {
     print_help_string_gen_class print_gen;
@@ -776,7 +775,7 @@ CmdlineParserCreator::generate_help_option_print_from_lists(ostream &stream,
 		converted_int << (full_i * NUM_HELP_STRINGS_PER_LINE + a);
 		print_gen.set_full_index(converted_int.str());
 
-		print_gen.generate_print_help_string(stream, indent);
+		print_gen.generate_print_help_string(stream, indentation);
 	    }
             ++i;
             ++it;
@@ -790,7 +789,7 @@ CmdlineParserCreator::generate_help_option_print_from_lists(ostream &stream,
     // the final 0
     print_gen.set_last(true);
     print_gen.set_index(converted_int.str());
-    print_gen.generate_print_help_string(stream, indent);
+    print_gen.generate_print_help_string(stream, indentation);
 
     // we store the number of strings in this array
     converted_int.str("");
@@ -800,7 +799,7 @@ CmdlineParserCreator::generate_help_option_print_from_lists(ostream &stream,
 
 void
 CmdlineParserCreator::generate_help_option_print_from_list(ostream &stream,
-		unsigned int indent, OptionHelpList *option_list,
+		unsigned int indentation, OptionHelpList *option_list,
 		const std::string &target_array) {
 
     // the index into the help array
@@ -817,18 +816,18 @@ CmdlineParserCreator::generate_help_option_print_from_list(ostream &stream,
 	max_parts = std::max( max_parts, ( *it ).extra.get_num_parts() );
     }
     string_builder::generate_string_builder_declaration(
-	stream, indent, max_parts );
+	stream, indentation, max_parts );
 
     // help generation
     for (OptionHelpList::iterator it = option_list->begin();
 	 it != option_list->end(); ++it)
       {
 	( *it ).header.generate_string_builder(
-	    stream, indent, target_array, i * NUM_HELP_STRINGS_PER_LINE );
+	    stream, indentation, target_array, i * NUM_HELP_STRINGS_PER_LINE );
 	( *it ).text.generate_string_builder(
-	    stream, indent, target_array, i * NUM_HELP_STRINGS_PER_LINE + 1 );
+	    stream, indentation, target_array, i * NUM_HELP_STRINGS_PER_LINE + 1 );
 	( *it ).extra.generate_string_builder(
-	    stream, indent, target_array, i * NUM_HELP_STRINGS_PER_LINE + 2 );
+	    stream, indentation, target_array, i * NUM_HELP_STRINGS_PER_LINE + 2 );
 
 	i++;
       }
@@ -842,7 +841,7 @@ CmdlineParserCreator::generate_help_option_print_from_list(ostream &stream,
     print_gen.set_shared(false);
     print_gen.set_last(true);
     print_gen.set_index(converted_int.str());
-    print_gen.generate_print_help_string(stream, indent);
+    print_gen.generate_print_help_string(stream, indentation);
 
     // we store the number of strings in this array
     converted_int.str("");
@@ -852,14 +851,14 @@ CmdlineParserCreator::generate_help_option_print_from_list(ostream &stream,
 
 void
 CmdlineParserCreator::generate_help_option_print(ostream &stream,
-                                                 unsigned int indent)
+                                                 unsigned int indentation)
 {
     OptionHelpList *option_list = generate_help_option_list();
 
     if (!c_source_gen_class::has_hidden && !c_source_gen_class::has_details) {
-		generate_help_option_print_from_list
-			(stream, indent, option_list,
-			 c_source_gen_class::args_info + "_help");
+	generate_help_option_print_from_list
+	    (stream, indentation, option_list,
+	     c_source_gen_class::args_info + "_help");
     } else {
         // in order to avoid generating the same help string twice, and thus to
         // save memory, in case of hidden options (or details), we try to share
@@ -867,7 +866,7 @@ CmdlineParserCreator::generate_help_option_print(ostream &stream,
         OptionHelpList *full_option_list = generate_help_option_list(true, true);
 
         generate_help_option_print_from_lists
-        (stream, indent, full_option_list, option_list,
+        (stream, indentation, full_option_list, option_list,
                 c_source_gen_class::args_info + "_help",
                 (c_source_gen_class::has_details ?
                         c_source_gen_class::args_info + "_detailed_help" :
@@ -881,15 +880,15 @@ CmdlineParserCreator::generate_help_option_print(ostream &stream,
 
 void
 CmdlineParserCreator::generate_full_help_option_print(ostream &stream,
-        unsigned int indent)
+        unsigned int indentation)
 {
     // generate also hidden options
     OptionHelpList *option_list = generate_help_option_list(true);
 
     if (!c_source_gen_class::has_details) {
-		generate_help_option_print_from_list
-			(stream, indent, option_list,
-			 c_source_gen_class::args_info + "_full_help");
+	generate_help_option_print_from_list
+	    (stream, indentation, option_list,
+	     c_source_gen_class::args_info + "_full_help");
     } else {
         // in order to avoid generating the same help string twice, and thus
         // to save memory, in case of options with details, we try to share most
@@ -897,7 +896,7 @@ CmdlineParserCreator::generate_full_help_option_print(ostream &stream,
         OptionHelpList *full_option_list = generate_help_option_list(true, true);
 
         generate_help_option_print_from_lists
-        (stream, indent, full_option_list, option_list,
+        (stream, indentation, full_option_list, option_list,
                 c_source_gen_class::args_info + "_full_help",
                 c_source_gen_class::args_info + "_detailed_help");
 
@@ -909,20 +908,21 @@ CmdlineParserCreator::generate_full_help_option_print(ostream &stream,
 
 void
 CmdlineParserCreator::generate_detailed_help_option_print(ostream &stream,
-        unsigned int indent)
+        unsigned int indentation)
 {
     // generate also hidden options and details
     OptionHelpList *option_list = generate_help_option_list(true, true);
 
-	generate_help_option_print_from_list
-		(stream, indent, option_list,
-		 c_source_gen_class::args_info + "_detailed_help");
+    generate_help_option_print_from_list
+	(stream, indentation, option_list,
+	 c_source_gen_class::args_info + "_detailed_help");
 
     delete option_list;
 }
 
 void
-CmdlineParserCreator::generate_init_strings(ostream &stream, unsigned int indent)
+CmdlineParserCreator::generate_init_strings(ostream &stream,
+					    unsigned int indentation)
 {
   string_builder usage = generate_usage();
   string_builder purpose = generate_purpose();
@@ -937,20 +937,20 @@ CmdlineParserCreator::generate_init_strings(ostream &stream, unsigned int indent
 
   // draw strings
   string_builder::generate_string_builder_declaration(
-      stream, indent, num_parts );
+      stream, indentation, num_parts );
   usage.generate_string_builder(
-      stream, indent, c_source_gen_class::args_info + "_usage" );
+      stream, indentation, c_source_gen_class::args_info + "_usage" );
   purpose.generate_string_builder(
-      stream, indent, c_source_gen_class::args_info + "_purpose" );
+      stream, indentation, c_source_gen_class::args_info + "_purpose" );
   versiontext.generate_string_builder(
-      stream, indent, c_source_gen_class::args_info + "_versiontext" );
+      stream, indentation, c_source_gen_class::args_info + "_versiontext" );
   description.generate_string_builder(
-      stream, indent, c_source_gen_class::args_info + "_description" );
+      stream, indentation, c_source_gen_class::args_info + "_description" );
 }
 
 void
 CmdlineParserCreator::generate_init_args_info(ostream &stream,
-					      unsigned int indent)
+					      unsigned int indentation)
 {
     struct gengetopt_option * opt;
     init_args_info_gen_class init_args_info_gen;
@@ -1022,7 +1022,7 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream,
             init_args_info_gen.set_multiple(false);
         }
 
-        init_args_info_gen.generate_init_args_info(stream, indent);
+        init_args_info_gen.generate_init_args_info(stream, indentation);
 
         // skip the details
         if (opt->details)
@@ -1035,11 +1035,11 @@ CmdlineParserCreator::generate_init_args_info(ostream &stream,
     }
 }
 
-void CmdlineParserCreator::generate_custom_getopt(ostream &stream, unsigned int indent)
+void CmdlineParserCreator::generate_custom_getopt(ostream &stream, unsigned int indentation)
 {
-    custom_getopt_gen_gen_class custom_getopt;
+    custom_getopt_gen_gen_class customgetopt;
 
-    custom_getopt.generate_custom_getopt_gen (stream, indent);
+    customgetopt.generate_custom_getopt_gen (stream, indentation);
 }
 
 string_builder
@@ -1269,7 +1269,7 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 
 void
 CmdlineParserCreator::generate_calculate_desc_column( ostream &stream,
-						      unsigned int indent )
+						      unsigned int indentation )
 {
     calculate_desc_column_gen_class generator;
     generator.set_epilogue( false );
@@ -1295,7 +1295,7 @@ CmdlineParserCreator::generate_calculate_desc_column( ostream &stream,
 	// if this element contains a parameter, it will need to be checked
 	if( i->is_parameter ) {
 	    generator.set_index( index + 1 );
-	    generator.generate_calculate_desc_column( stream, indent );
+	    generator.generate_calculate_desc_column( stream, indentation );
 	}
 
 	index += 3;
@@ -1305,13 +1305,13 @@ CmdlineParserCreator::generate_calculate_desc_column( ostream &stream,
     generator.set_epilogue( true );
     generator.set_max_desc_column( MAX_DESC_COLUMN );
     generator.set_param_padding( PARAM_PADDING );
-    generator.generate_calculate_desc_column( stream, indent );
+    generator.generate_calculate_desc_column( stream, indentation );
 }
 
 template <typename Collection>
-void generate_counter_init(const Collection &collection, const string &name, ostream &stream, unsigned int indent)
+void generate_counter_init(const Collection &collection, const string &name, ostream &stream, unsigned int indentation)
 {
-    string indent_str (indent, ' ');
+    string indent_str (indentation, ' ');
     typename Collection::const_iterator end = collection.end();
 
     for ( typename Collection::const_iterator idx = collection.begin(); idx != end; ++idx)
@@ -1325,10 +1325,10 @@ void generate_counter_init(const Collection &collection, const string &name, ost
 
 void
 CmdlineParserCreator::generate_given_init(ostream &stream,
-                                          unsigned int indent)
+                                          unsigned int indentation)
 {
   struct gengetopt_option * opt;
-  string indent_str (indent, ' ');
+  string indent_str (indentation, ' ');
   clear_given_gen_class clear_given;
   clear_given.set_arg_struct(ARGS_STRUCT);
 
@@ -1342,17 +1342,17 @@ CmdlineParserCreator::generate_given_init(ostream &stream,
     }
 
   // for group counter initialization
-  generate_counter_init(gengetopt_groups, "group", stream, indent);
+  generate_counter_init(gengetopt_groups, "group", stream, indentation);
 
   // for mode counter initialization
-  generate_counter_init(gengetopt_modes, "mode", stream, indent);
+  generate_counter_init(gengetopt_modes, "mode", stream, indentation);
 }
 
 void
-CmdlineParserCreator::generate_reset_groups(ostream &stream, unsigned int indent)
+CmdlineParserCreator::generate_reset_groups(ostream &stream, unsigned int indentation)
 {
   struct gengetopt_option * opt;
-  string indent_str (indent, ' ');
+  string indent_str (indentation, ' ');
   ostringstream body;
   reset_group_gen_class reset_group;
   clear_given_gen_class clear_given;
@@ -1366,7 +1366,6 @@ CmdlineParserCreator::generate_reset_groups(ostream &stream, unsigned int indent
     {
       body.str ("");
       bool found_option = false;
-      bool multiple_arg = false;
 
       foropt
       {
@@ -1375,12 +1374,10 @@ CmdlineParserCreator::generate_reset_groups(ostream &stream, unsigned int indent
             /* now we reset "given" fields */
             stream << indent_str;
             clear_given.set_var_arg(opt->var_arg);
-            if (opt->multiple && opt->group_value)
-              multiple_arg = true;
             clear_given.set_group(opt->multiple && opt->group_value);
             clear_given.generate_clear_given(body);
 
-            free_option (opt, body, indent);
+            free_option (opt, body, indentation);
             found_option = true;
           }
       }
@@ -1396,7 +1393,7 @@ CmdlineParserCreator::generate_reset_groups(ostream &stream, unsigned int indent
 
 void
 CmdlineParserCreator::free_option(struct gengetopt_option *opt,
-                                  ostream &stream, unsigned int indent)
+                                  ostream &stream, unsigned int indentation)
 {
   if (opt->type == ARG_NO)
     return;
@@ -1411,7 +1408,7 @@ CmdlineParserCreator::free_option(struct gengetopt_option *opt,
 
           free_multiple.set_opt_var (opt->var_arg);
           free_multiple.generate_free_multiple
-            (stream, indent);
+            (stream, indentation);
         }
       else
         {
@@ -1420,16 +1417,16 @@ CmdlineParserCreator::free_option(struct gengetopt_option *opt,
           free_string.set_structure (ARGS_STRUCT);
 
           free_string.set_opt_var (opt->var_arg);
-          free_string.generate_free_string (stream, indent);
+          free_string.generate_free_string (stream, indentation);
         }
     }
 }
 
 void
-CmdlineParserCreator::generate_list_def(ostream &stream, unsigned int indent)
+CmdlineParserCreator::generate_list_def(ostream &stream, unsigned int indentation)
 {
   struct gengetopt_option * opt;
-  string indent_str (indent, ' ');
+  string indent_str (indentation, ' ');
   multiple_opt_list_gen_class multiple_opt_list;
 
   /* define linked-list structs for multiple options */
@@ -1441,7 +1438,7 @@ CmdlineParserCreator::generate_list_def(ostream &stream, unsigned int indent)
             {
               stream << indent_str;
               multiple_opt_list.set_arg_name (opt->var_arg);
-              multiple_opt_list.generate_multiple_opt_list (stream, indent);
+              multiple_opt_list.generate_multiple_opt_list (stream, indentation);
               stream << endl;
             }
         }
@@ -1449,10 +1446,10 @@ CmdlineParserCreator::generate_list_def(ostream &stream, unsigned int indent)
 }
 
 void
-CmdlineParserCreator::generate_multiple_fill_array(ostream &stream, unsigned int indent)
+CmdlineParserCreator::generate_multiple_fill_array(ostream &stream, unsigned int indentation)
 {
   struct gengetopt_option * opt;
-  string indent_str (indent, ' ');
+  string indent_str (indentation, ' ');
   multiple_fill_array_gen_class filler;
 
   /* copy linked list into the array */
@@ -1475,7 +1472,7 @@ CmdlineParserCreator::generate_multiple_fill_array(ostream &stream, unsigned int
           }
           filler.set_default_value (default_string);
 
-          filler.generate_multiple_fill_array (stream, indent);
+          filler.generate_multiple_fill_array (stream, indentation);
 
           stream << endl;
         }
@@ -1483,12 +1480,12 @@ CmdlineParserCreator::generate_multiple_fill_array(ostream &stream, unsigned int
 }
 
 void
-CmdlineParserCreator::generate_update_multiple_given(ostream &stream, unsigned int indent)
+CmdlineParserCreator::generate_update_multiple_given(ostream &stream, unsigned int indentation)
 {
   if (! has_multiple_options())
     return;
 
-  string indent_str (indent, ' ');
+  string indent_str (indentation, ' ');
 
   stream << endl;
   stream << indent_str;
@@ -1501,36 +1498,36 @@ CmdlineParserCreator::generate_update_multiple_given(ostream &stream, unsigned i
       if (opt->multiple)
         {
           update_given_gen.set_option_var_name (opt->var_arg);
-          update_given_gen.generate_update_given (stream, indent);
+          update_given_gen.generate_update_given (stream, indentation);
         }
     }
 }
 
 void
-CmdlineParserCreator::generate_check_modes(ostream &stream, unsigned int indent)
+CmdlineParserCreator::generate_check_modes(ostream &stream, unsigned int indentation)
 {
     // no need to check for conflict if there's only one mode
     if (gengetopt_modes.size() < 2)
         return;
 
-    string indent_str (indent, ' ');
+    string indent_str (indentation, ' ');
 
     stream << endl;
     stream << indent_str;
 
-    const ModeOptionMap &modeOptionMap = getModeOptionMap();
+    const ModeOptionMap &modeoptionmap = getModeOptionMap();
 
     check_modes_gen_class check_modes_gen;
 
     // now we check each mode options against every other mode options:
     // the first one with the other n-1, the second one with the other n-2, etc.
     ModeOptionMap::const_iterator map_it1, map_it2;
-    for (ModeOptionMap::const_iterator map_it = modeOptionMap.begin(); map_it != modeOptionMap.end(); ++map_it) {
+    for (ModeOptionMap::const_iterator map_it = modeoptionmap.begin(); map_it != modeoptionmap.end(); ++map_it) {
         map_it1 = map_it;
         ++map_it;
-        if (map_it == modeOptionMap.end())
+        if (map_it == modeoptionmap.end())
             break;
-        for (map_it2 = map_it; map_it2 != modeOptionMap.end(); ++map_it2) {
+        for (map_it2 = map_it; map_it2 != modeoptionmap.end(); ++map_it2) {
             const string mode1 = canonize_name(map_it1->first);
             const string mode2 = canonize_name(map_it2->first);
 
@@ -1547,17 +1544,17 @@ CmdlineParserCreator::generate_check_modes(ostream &stream, unsigned int indent)
             check_modes_gen.set_mode2_given_fields(mode2_given.str());
             check_modes_gen.set_mode2_options(mode2_options.str());
 
-            check_modes_gen.generate_check_modes(stream, indent);
+            check_modes_gen.generate_check_modes(stream, indentation);
         }
         map_it = map_it1;
     }
 }
 
 void
-CmdlineParserCreator::generate_clear_arg(ostream &stream, unsigned int indent)
+CmdlineParserCreator::generate_clear_arg(ostream &stream, unsigned int indentation)
 {
   struct gengetopt_option * opt;
-  clear_arg_gen_class clear_arg;
+  clear_arg_gen_class cleararg;
 
   /* now we initialize value fields */
   foropt
@@ -1565,54 +1562,54 @@ CmdlineParserCreator::generate_clear_arg(ostream &stream, unsigned int indent)
       if (opt->type == ARG_NO)
         continue;
 
-      clear_arg.set_name(opt->var_arg);
-      clear_arg.set_suffix("arg");
-      clear_arg.set_value("NULL");
-      clear_arg.set_has_orig(opt->type != ARG_FLAG);
-      clear_arg.set_has_arg(false);
+      cleararg.set_name(opt->var_arg);
+      cleararg.set_suffix("arg");
+      cleararg.set_value("NULL");
+      cleararg.set_has_orig(opt->type != ARG_FLAG);
+      cleararg.set_has_arg(false);
 
       if (opt->multiple && opt->type)
         {
-          clear_arg.set_has_arg(true);
+          cleararg.set_has_arg(true);
         }
       else if (opt->type == ARG_STRING)
         {
-          clear_arg.set_has_arg(true);
+          cleararg.set_has_arg(true);
           if (opt->default_given)
-            clear_arg.set_value
+            cleararg.set_value
                 ("gengetopt_strdup (\"" + string(opt->default_string) +
                 "\")");
         }
       else if (opt->type == ARG_FLAG)
         {
-          clear_arg.set_has_arg(true);
-          clear_arg.set_suffix("flag");
-          clear_arg.set_value(opt->flagstat ? "1" : "0");
+          cleararg.set_has_arg(true);
+          cleararg.set_suffix("flag");
+          cleararg.set_value(opt->flagstat ? "1" : "0");
         }
       else if (opt->type == ARG_ENUM)
       {
         // initialize enum arguments to -1 (unless they have a default)
-        clear_arg.set_has_arg(true);
+        cleararg.set_has_arg(true);
         if (opt->default_given)
-            clear_arg.set_value(from_value_to_enum(opt->var_arg, opt->default_string));
+            cleararg.set_value(from_value_to_enum(opt->var_arg, opt->default_string));
         else
-            clear_arg.set_value(string(opt->var_arg) + "__NULL");
+            cleararg.set_value(string(opt->var_arg) + "__NULL");
       }
       else if (opt->default_given)
         {
-          clear_arg.set_has_arg(true);
-          clear_arg.set_value(opt->default_string);
+          cleararg.set_has_arg(true);
+          cleararg.set_value(opt->default_string);
         }
 
-      clear_arg.generate_clear_arg(stream, indent);
+      cleararg.generate_clear_arg(stream, indentation);
     }
 }
 
 void
 CmdlineParserCreator::generate_long_option_struct(ostream &stream,
-                                                  unsigned int indent)
+                                                  unsigned int indentation)
 {
-  string indent_str (indent, ' ');
+  string indent_str (indentation, ' ');
   struct gengetopt_option * opt;
 
   foropt
@@ -1653,24 +1650,24 @@ CmdlineParserCreator::generate_getopt_string()
 
 void
 CmdlineParserCreator::generate_handle_no_short_option(ostream &stream,
-                                                      unsigned int indent)
+                                                      unsigned int indentation)
 {
-  handle_options(stream, indent, false);
+  handle_options(stream, indentation, false);
 }
 
 void
 CmdlineParserCreator::generate_handle_option(ostream &stream,
-                                             unsigned int indent)
+                                             unsigned int indentation)
 {
-  handle_options(stream, indent, true);
+  handle_options(stream, indentation, true);
 }
 
 void
-CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool has_short)
+CmdlineParserCreator::handle_options(ostream &stream, unsigned int indentation, bool has_short)
 {
   struct gengetopt_option * opt;
   generic_option_gen_class option_gen;
-  string indent_str (indent, ' ');
+  string indent_str (indentation, ' ');
   bool first = true;
 
   option_gen.set_has_short_option (has_short);
@@ -1729,7 +1726,7 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
                   help_gen.set_full_help(full_help);
                   help_gen.set_detailed_help(detailed_help);
                   help_gen.set_short_opt(opt->short_opt == HELP_SHORT_OPT);
-                  help_gen.generate_handle_help (stream, indent);
+                  help_gen.generate_handle_help (stream, indentation);
                   stream << endl;
                   stream << endl;
                   continue;
@@ -1755,7 +1752,7 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
                   handle_version_gen_class version_gen;
                   version_gen.set_parser_name (parser_function_name);
                   version_gen.set_short_opt (opt->short_opt == VERSION_SHORT_OPT);
-                  version_gen.generate_handle_version (stream, indent);
+                  version_gen.generate_handle_version (stream, indentation);
                   stream << endl;
                   stream << endl;
                   continue;
@@ -1797,7 +1794,7 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
               option_gen.set_structure (ARGS_STRUCT);
           }
 
-          option_gen.generate_generic_option (stream, indent);
+          option_gen.generate_generic_option (stream, indentation);
 
           if (has_short)
             {
@@ -1814,7 +1811,7 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
 
   if (! first && !has_short) // something has been generated
     {
-      generateBreak(stream, indent);
+      generateBreak(stream, indentation);
       stream << endl;
     }
 }
@@ -1826,10 +1823,10 @@ CmdlineParserCreator::handle_options(ostream &stream, unsigned int indent, bool 
 
 void
 CmdlineParserCreator::generate_handle_group(ostream &stream,
-                                            unsigned int indent)
+                                            unsigned int indentation)
 {
   group_option_gen_class opt_gen;
-  string indent_str (indent, ' ');
+  string indent_str (indentation, ' ');
   opt_gen.set_package_var_name (EXE_NAME);
 
   opt_gen.set_Comparison_rule(GROUP_NOT_REQUIRED_COMPARISON " 1");
@@ -1850,14 +1847,14 @@ CmdlineParserCreator::generate_handle_group(ostream &stream,
           opt_gen.set_number_required(GROUP_NOT_REQUIRED_MESSAGE);
         }
 
-      opt_gen.generate_group_option (stream, indent);
+      opt_gen.generate_group_option (stream, indentation);
       stream << endl;
     }
 }
 
 void
 CmdlineParserCreator::generate_handle_required(ostream &stream,
-                                               unsigned int indent)
+                                               unsigned int indentation)
 {
   struct gengetopt_option * opt;
   required_option_gen_class opt_gen;
@@ -1888,7 +1885,7 @@ CmdlineParserCreator::generate_handle_required(ostream &stream,
         if (opt->required) {
           opt_gen.set_checkrange(false);
 
-          opt_gen.generate_required_option (stream, indent);
+          opt_gen.generate_required_option (stream, indentation);
         }
 
         // if the option is multiple we generate also the
@@ -1896,10 +1893,10 @@ CmdlineParserCreator::generate_handle_required(ostream &stream,
         if (opt->multiple) {
           opt_gen.set_checkrange(true);
 
-          opt_gen.generate_required_option (stream, indent);
+          opt_gen.generate_required_option (stream, indentation);
         }
 
-        // notice that the above ifs are not mutual exclusive:
+        // notice that the above ifs are not mutually exclusive:
         // a multiple option can have a range check without being
         // required.
       }
@@ -1920,7 +1917,7 @@ CmdlineParserCreator::generate_handle_required(ostream &stream,
       group_opt_gen.set_group_name (idx->first);
       group_opt_gen.set_group_var_name (canonize_name (idx->first));
 
-      group_opt_gen.generate_group_option (stream, indent);
+      group_opt_gen.generate_group_option (stream, indentation);
       stream << endl;
     }
   }
@@ -1928,12 +1925,12 @@ CmdlineParserCreator::generate_handle_required(ostream &stream,
 
 void
 CmdlineParserCreator::generate_handle_dependencies(ostream &stream,
-                                               unsigned int indent)
+                                               unsigned int indentation)
 {
   struct gengetopt_option * opt;
   dependant_option_gen_class opt_gen;
   opt_gen.set_package_var_name ("prog_name");
-  string indent_str (indent, ' ');
+  string indent_str (indentation, ' ');
 
   /* write test for required options */
   foropt
@@ -1951,17 +1948,17 @@ CmdlineParserCreator::generate_handle_dependencies(ostream &stream,
         opt_gen.set_option_descr (req_opt.str ());
         opt_gen.set_dep_option_descr (opt->dependon);
 
-        opt_gen.generate_dependant_option (stream, indent);
+        opt_gen.generate_dependant_option (stream, indentation);
 
         stream << endl;
       }
 }
 
 template <typename Collection>
-void generate_counters(const Collection &collection, const string &name, ostream &stream, unsigned int indent)
+void generate_counters(const Collection &collection, const string &name, ostream &stream, unsigned int indentation)
 {
     group_counter_gen_class counter_gen;
-    string indent_str (indent, ' ');
+    string indent_str (indentation, ' ');
 
     counter_gen.set_name(name);
 
@@ -1969,24 +1966,24 @@ void generate_counters(const Collection &collection, const string &name, ostream
     for ( typename Collection::const_iterator idx = collection.begin(); idx != end; ++idx) {
         stream << indent_str;
         counter_gen.set_group_name (canonize_name (idx->first));
-        counter_gen.generate_group_counter (stream, indent);
+        counter_gen.generate_group_counter (stream, indentation);
         stream << endl;
     }
 }
 
 void
 CmdlineParserCreator::generate_group_counters(ostream &stream,
-                                              unsigned int indent)
+                                              unsigned int indentation)
 {
-    generate_counters(gengetopt_groups, "group", stream, indent);
+    generate_counters(gengetopt_groups, "group", stream, indentation);
 }
 
 void
 CmdlineParserCreator::generate_mode_counters(ostream &stream,
-                                              unsigned int indent)
+                                              unsigned int indentation)
 {
     // we can reuse group counter gen class also for modes
-    generate_counters(gengetopt_modes, "mode", stream, indent);
+    generate_counters(gengetopt_modes, "mode", stream, indentation);
 }
 
 int
@@ -2015,19 +2012,19 @@ CmdlineParserCreator::generate_source ()
 
 void
 CmdlineParserCreator::generate_free(ostream &stream,
-                                    unsigned int indent)
+                                    unsigned int indentation)
 {
   struct gengetopt_option * opt;
 
   foropt
     {
-      free_option (opt, stream, indent);
+      free_option (opt, stream, indentation);
     }
 }
 
 void
 CmdlineParserCreator::generate_list_free(ostream &stream,
-                                         unsigned int indent)
+                                         unsigned int indentation)
 {
   struct gengetopt_option * opt;
 
@@ -2041,13 +2038,13 @@ CmdlineParserCreator::generate_list_free(ostream &stream,
       if (opt->multiple && opt->type) {
         free_list.set_list_name(opt->var_arg);
         free_list.set_string_list(opt->type == ARG_STRING);
-        free_list.generate_free_list(stream, indent);
+        free_list.generate_free_list(stream, indentation);
       }
     }
 }
 
 void
-CmdlineParserCreator::generate_file_save_loop(ostream &stream, unsigned int indent)
+CmdlineParserCreator::generate_file_save_loop(ostream &stream, unsigned int indentation)
 {
   struct gengetopt_option * opt;
 
@@ -2065,7 +2062,7 @@ CmdlineParserCreator::generate_file_save_loop(ostream &stream, unsigned int inde
       file_save_multiple.set_values
           ((opt->acceptedvalues ? OPTION_VALUES_NAME(opt->var_arg) : "0"));
 
-      file_save_multiple.generate_file_save_multiple(stream, indent);
+      file_save_multiple.generate_file_save_multiple(stream, indentation);
     } else {
       file_save.set_opt_name(opt->long_opt);
       file_save.set_given(opt->var_arg + suffix_given);
@@ -2077,7 +2074,7 @@ CmdlineParserCreator::generate_file_save_loop(ostream &stream, unsigned int inde
       } else {
         file_save.set_arg("");
       }
-      file_save.generate_file_save(stream, indent);
+      file_save.generate_file_save(stream, indentation);
     }
   }
 }

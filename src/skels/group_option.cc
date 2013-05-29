@@ -61,7 +61,7 @@ group_option_gen_class::generate_group_option(ostream &stream, unsigned int inde
   stream << "_group_counter);";
   stream << "\n";
   stream << indent_str;
-  stream << "    error = 1;";
+  stream << "    error_occurred = 1;";
   stream << "\n";
   stream << indent_str;
   stream << "  }";

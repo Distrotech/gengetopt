@@ -62,7 +62,7 @@ struct gengetopt_args_info
   long double longdouble_arg;	/**< @brief longdouble option.  */
   char * longdouble_orig;	/**< @brief longdouble option original value given at command line.  */
   const char *longdouble_help; /**< @brief longdouble option help description.  */
-  #ifdef HAVE_LONG_LONG
+  #if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
   long long int longlong_arg;	/**< @brief longlong option.  */
   #else
   long longlong_arg;	/**< @brief longlong option.  */
@@ -138,6 +138,8 @@ struct test_all_opts_cmd_parser_params
 extern const char *gengetopt_args_info_purpose;
 /** @brief the usage string of the program */
 extern const char *gengetopt_args_info_usage;
+/** @brief the description string of the program */
+extern const char *gengetopt_args_info_description;
 /** @brief all the lines making the help output */
 extern const char *gengetopt_args_info_help[];
 /** @brief all the lines making the full help output (including hidden options) */

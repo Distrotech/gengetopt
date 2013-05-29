@@ -87,7 +87,7 @@ struct gengetopt_args_info
   char * show_required_arg;	/**< @brief in the output of help will specify which options are mandatory, by using the optional passed string (default='(mandatory)').  */
   char * show_required_orig;	/**< @brief in the output of help will specify which options are mandatory, by using the optional passed string original value given at command line.  */
   const char *show_required_help; /**< @brief in the output of help will specify which options are mandatory, by using the optional passed string help description.  */
-  const char *strict_hidden_help; /**< @brief really hide hidden options help description.  */
+  const char *strict_hidden_help; /**< @brief completely hide hidden options help description.  */
   int gen_version_flag;	/**< @brief put gengetopt version in the generated file (default=on).  */
   const char *gen_version_help; /**< @brief put gengetopt version in the generated file help description.  */
   char * set_package_arg;	/**< @brief set the package name (override package defined in the .ggo file).  */

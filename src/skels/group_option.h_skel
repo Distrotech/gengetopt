@@ -9,5 +9,5 @@ if (args_info->@group_var_name@_group_counter @Comparison_rule@)
       @package_var_name@, error_location,
       "@group_name@", @number_required@,
       args_info->@group_var_name@_group_counter);
-    error = 1;
+    error_occurred = 1;
   }

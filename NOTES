@@ -124,3 +124,5 @@ man page is also installed (actually that man page should be modified
 once the syntax will be defined).
 
 The directory structure is GNU standard :-)
+
+CXX="ccache g++" CC="ccache gcc" make distcheck

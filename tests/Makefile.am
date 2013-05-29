@@ -174,6 +174,7 @@ test_values_cmd.h: test_values_cmd.c
 test_values_cmd_cc.cc: test_values_cmd.c
 test_redef_help_cmd.h: test_redef_help_cmd.c
 test_manual_help_cmd.h: test_manual_help_cmd.c
+test_manual_help_args_cmd.h: test_manual_help_args_cmd.c
 test_no_handle_help_cmd.h: test_no_handle_help_cmd.c
 test_main_cmdline_cmd.h: test_main_cmdline_cmd.c
 test_first_cmdline_cmd.h: test_first_cmdline_cmd.c
@@ -214,6 +215,7 @@ test_values_SOURCES = test_values_cmd.ggo test_values.c
 test_values_cc_SOURCES = test_values_cmd_cc.cc test_values_cc.cc
 test_redef_help_SOURCES = test_redef_help_cmd.ggo test_redef_help.c
 test_manual_help_SOURCES = test_manual_help_cmd.ggo test_manual_help.c
+test_manual_help_args_SOURCES = test_manual_help_args_cmd.ggo
 test_no_handle_help_SOURCES = test_no_handle_help_cmd.ggo test_no_handle_help.c
 test_multiple_parsers_SOURCES = test_main_cmdline_cmd.ggo test_first_cmdline_cmd.ggostr test_second_cmdline_cmd.ggostr test_multiple_parsers.c
 test_sections_option_help_SOURCES = test_sections_cmd.ggo test_sections_option_help.c
@@ -245,6 +247,7 @@ test_sections_cmd.c \
 test_values_cmd.c test_values_cmd.h \
 test_redef_help_cmd.c test_redef_help_cmd.h \
 test_manual_help_cmd.c test_manual_help_cmd.h \
+test_manual_help_args_cmd.c test_manual_help_args_cmd.h \
 test_no_handle_help_cmd.c test_no_handle_help_cmd.h \
 test_main_cmdline_cmd.c test_main_cmdline_cmd.h \
 test_first_cmdline_cmd.c test_first_cmdline_cmd.h \
@@ -340,6 +343,7 @@ test_conf_err_string.conf test_conf_err_string2.conf \
 test_section_with_all_hidden.ggo \
 test_required_optional_cmd.ggo \
 test_align_cmd.ggo \
+test_manual_help_args_cmd.ggo \
 $(ERRFILES) $(ERRGGOFILES) 
 
 check-am: check-output-dir check-output-dirs

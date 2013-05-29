@@ -843,10 +843,15 @@ gengetopt_check_option (gengetopt_option *n, bool groupoption, bool modeoption)
       (n->desc == NULL))
     return FOUND_BUG;
 
-  if (strcmp(n->long_opt, HELP_LONG_OPT) == 0 && !args_info.no_help_given)
+  bool no_help =
+          (args_info.no_help_given || string_contains(current_args, "--no-help"));
+  bool no_version =
+          (args_info.no_version_given || string_contains(current_args, "--no-version"));
+
+  if (strcmp(n->long_opt, HELP_LONG_OPT) == 0 && !no_help)
       return HELP_REDEFINED;
 
-  if (strcmp(n->long_opt, VERSION_LONG_OPT) == 0 && !args_info.no_version_given)
+  if (strcmp(n->long_opt, VERSION_LONG_OPT) == 0 && !no_version)
       return VERSION_REDEFINED;
 
   n->section = 0;

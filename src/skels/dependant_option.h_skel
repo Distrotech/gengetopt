@@ -3,5 +3,5 @@ if (args_info->@option_var_name@_given && ! args_info->@dep_option@_given)
     fprintf (stderr, GENGETOPT_("%s%s: %s option depends on option '%s'\n"),
 				@package_var_name@, error_location,
 				"@option_descr@", "@dep_option_descr@");
-    error = 1;
+    error_occurred = 1;
   }

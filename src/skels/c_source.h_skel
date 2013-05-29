@@ -512,7 +512,7 @@ union generic_value {
     long double longdouble_arg;
 @ENDIF@
 @IF@ has_arg_longlong @THEN@
-#ifdef HAVE_LONG_LONG
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
     long long int longlong_arg;
 #else
     long longlong_arg;
@@ -826,7 +826,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
 int
 check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc)
 {
-  int error = 0;
+  int error_occurred = 0;
 
   if (option_given && (min > 0 || max > 0))
     {
@@ -841,7 +841,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
 		      "%s: %s option must occur once\n",
 		      "%s: %s option must occur %d times\n", min),
 		    prog_name, option_desc, min);
-                  error = 1;
+                  error_occurred = 1;
                 }
             }
           else if (option_given < (unsigned int) min
@@ -851,7 +851,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
 	      fprintf (stderr, GENGETOPT_(
 		  "%s: %s option must occur between %d and %d times\n"),
                 prog_name, option_desc, min, max);
-              error = 1;
+              error_occurred = 1;
             }
         }
       else if (min > 0)
@@ -863,7 +863,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
 	          "%s: %s option must occur at least once\n",
 		  "%s: %s option must occur at least %d times\n", min),
                 prog_name, option_desc, min);
-              error = 1;
+              error_occurred = 1;
             }
         }
       else if (max > 0)
@@ -875,12 +875,12 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
 	          "%s: %s option must occur at most once\n",
 		  "%s: %s option must occur at most %d times\n", max),
                 prog_name, option_desc, max);
-              error = 1;
+              error_occurred = 1;
             }
         }
     }
     
-  return error;
+  return error_occurred;
 }
 @ENDIF@
 @reset_groups:method{iteration=true}@
@@ -938,7 +938,7 @@ int
 int
 @parser_name@_required2 (struct @args_info@ *args_info, const char *prog_name, const char *error_location)
 {
-  int error = 0;
+  int error_occurred = 0;
   FIX_UNUSED (error_location);
 
   /* checks for required options */
@@ -946,7 +946,7 @@ int
   /* checks for dependences among options */
   @handle_dependencies:method{iteration=true}@
 
-  return error;
+  return error_occurred;
 }
 
 @ENDIF@
@@ -1084,8 +1084,8 @@ int update_arg(void *field, char **orig_field,
 @ENDIF@
 @IF@ has_arg_longlong @THEN@
   case ARG_LONGLONG:
-#ifdef HAVE_LONG_LONG
-    if (val) *((long long int*)field) = (long long int) strtol (val, &stop_char, 0);
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
+    if (val) *((long long int*)field) = (long long int) strtoll (val, &stop_char, 0);
 #else
     if (val) *((long *)field) = (long)strtol (val, &stop_char, 0);
 #endif
@@ -1285,7 +1285,7 @@ void update_multiple_arg(void *field, char ***orig_field,
 @ENDIF@
 @IF@ has_arg_longlong @THEN@
     case ARG_LONGLONG:
-#ifdef HAVE_LONG_LONG
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
       *((long long int **)field) = (long long int *)realloc (*((long long int **)field), (field_given + prev_given) * sizeof (long long int)); break;
 #else
       *((long **)field) = (long *)realloc (*((long **)field), (field_given + prev_given) * sizeof (long)); break;
@@ -1330,7 +1330,7 @@ void update_multiple_arg(void *field, char ***orig_field,
 @ENDIF@
 @IF@ has_arg_longlong @THEN@
         case ARG_LONGLONG:
-#ifdef HAVE_LONG_LONG
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
           (*((long long int **)field))[i + field_given] = tmp->arg.longlong_arg; break;
 #else
           (*((long **)field))[i + field_given] = tmp->arg.longlong_arg; break;
@@ -1409,7 +1409,7 @@ void update_multiple_arg(void *field, char ***orig_field,
 @ENDIF@
 @IF@ has_arg_longlong @THEN@
       case ARG_LONGLONG:
-#ifdef HAVE_LONG_LONG
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
         if (! *((long long int **)field)) {
           *((long long int **)field) = (long long int *)malloc (sizeof (long long int));
           (*((long long int **)field))[0] = default_value->longlong_arg;
@@ -1477,7 +1477,7 @@ int
   union generic_value multiple_default_value;
 @endif@
   @list_def:method{iteration=true}@
-  int error = 0;
+  int error_occurred = 0;
   struct @args_info@ local_args_info;
   
   int override;
@@ -1564,13 +1564,13 @@ int
 @IF@ check_required_options @THEN@
   if (check_required)
     {
-      error += @parser_name@_required2 (args_info, argv[0], error_location);
+      error_occurred += @parser_name@_required2 (args_info, argv[0], error_location);
     }
 @ENDIF@
 
   @parser_name@_release (&local_args_info);
 
-  if ( error )
+  if ( error_occurred )
     return (EXIT_FAILURE);
 
 @IF@ handle_unamed @THEN@

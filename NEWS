@@ -10,6 +10,9 @@ http://tronprog.blogspot.com/search/label/gengetopt
 Version 2.22.6
 
    * Fixed a compilation problem in Mac OS X
+   * Added versiontext directive
+   * Added --strict-hidden command line option
+   * Fixed many bugs
 
 Version 2.22.5
 

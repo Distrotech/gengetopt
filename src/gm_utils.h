@@ -89,6 +89,8 @@ bool has_values();
  */
 bool is_numeric(const gengetopt_option *opt);
 
+bool string_contains(const char *s, const char *tofind);
+
 /**
  * Function object to print something into a stream (to be used with for_each)
  */

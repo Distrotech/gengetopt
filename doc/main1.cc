@@ -2,6 +2,10 @@
 /* we try to use gengetopt generated file in a C++ program */
 /* we don't use autoconf and automake vars */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <iostream>
 #include "stdlib.h"
 

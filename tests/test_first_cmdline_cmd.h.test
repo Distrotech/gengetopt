@@ -75,6 +75,8 @@ struct test_first_cmdline_cmd_parser_params
 extern const char *test_first_cmdline_cmd_struct_purpose;
 /** @brief the usage string of the program */
 extern const char *test_first_cmdline_cmd_struct_usage;
+/** @brief the description string of the program */
+extern const char *test_first_cmdline_cmd_struct_description;
 /** @brief all the lines making the help output */
 extern const char *test_first_cmdline_cmd_struct_help[];
 

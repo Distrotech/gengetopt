@@ -672,9 +672,10 @@ canonize_names 1.0
 
 Usage: canonize_names [OPTIONS]...
 
-  -h, --help     Print help and exit
-  -V, --version  Print version and exit
-  -i, --foo=INT  foo option
+  -h, --help         Print help and exit
+  -V, --version      Print version and exit
+  -i, --foo-bar=INT  foo-bar option
+  -j, --foo.foo=INT  foo.foo option
 *** default_values -h
 default_values 1.0
 

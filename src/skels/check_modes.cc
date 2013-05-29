@@ -47,7 +47,7 @@ check_modes_gen_class::generate_check_modes(ostream &stream, unsigned int indent
   stream << " 0};";
   stream << "\n";
   stream << indent_str;
-  stream << "  error += check_modes(";
+  stream << "  error_occurred += check_modes(";
   generate_string (mode1_name, stream, indent + indent_str.length ());
   stream << "_given, ";
   generate_string (mode1_name, stream, indent + indent_str.length ());

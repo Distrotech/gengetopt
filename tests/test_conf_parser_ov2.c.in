@@ -4,6 +4,10 @@
 /* differently from test_conf_parser_ov.c, first scan the conf file and
    then the command line */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 

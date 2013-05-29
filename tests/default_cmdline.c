@@ -2,13 +2,14 @@
 
 /* the cmdline parser is generated with default names */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "cmdline.h"
-
-void
-print_args (void);
 
 static struct gengetopt_args_info args_info;
 

@@ -284,7 +284,7 @@ union generic_value {
     short short_arg;
     long long_arg;
     float float_arg;
-#ifdef HAVE_LONG_LONG
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
     long long int longlong_arg;
 #else
     long longlong_arg;
@@ -573,7 +573,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
 int
 check_multiple_option_occurrences(const char *prog_name, unsigned int option_given, unsigned int min, unsigned int max, const char *option_desc)
 {
-  int error = 0;
+  int error_occurred = 0;
 
   if (option_given && (min > 0 || max > 0))
     {
@@ -586,7 +586,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
                 {
                   fprintf (stderr, "%s: %s option occurrences must be %d\n",
                     prog_name, option_desc, min);
-                  error = 1;
+                  error_occurred = 1;
                 }
             }
           else if (option_given < (unsigned int) min
@@ -595,7 +595,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
               /* range occurrences */
               fprintf (stderr, "%s: %s option occurrences must be between %d and %d\n",
                 prog_name, option_desc, min, max);
-              error = 1;
+              error_occurred = 1;
             }
         }
       else if (min > 0)
@@ -605,7 +605,7 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
             {
               fprintf (stderr, "%s: %s option occurrences must be at least %d\n",
                 prog_name, option_desc, min);
-              error = 1;
+              error_occurred = 1;
             }
         }
       else if (max > 0)
@@ -615,12 +615,12 @@ check_multiple_option_occurrences(const char *prog_name, unsigned int option_giv
             {
               fprintf (stderr, "%s: %s option occurrences must be at most %d\n",
                 prog_name, option_desc, max);
-              error = 1;
+              error_occurred = 1;
             }
         }
     }
     
-  return error;
+  return error_occurred;
 }
 int
 test_multiple_cmd_parser (int argc, char **argv, struct gengetopt_args_info *args_info)
@@ -687,68 +687,68 @@ test_multiple_cmd_parser_required (struct gengetopt_args_info *args_info, const 
 int
 test_multiple_cmd_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error)
 {
-  int error = 0;
+  int error_occurred = 0;
   FIX_UNUSED (additional_error);
 
   /* checks for required options */
   if (check_multiple_option_occurrences(prog_name, args_info->string_given, args_info->string_min, args_info->string_max, "'--string' ('-s')"))
-     error = 1;
+     error_occurred = 1;
   
   if (! args_info->int_given)
     {
       fprintf (stderr, "%s: '--int' ('-i') option required%s\n", prog_name, (additional_error ? additional_error : ""));
-      error = 1;
+      error_occurred = 1;
     }
   
   if (check_multiple_option_occurrences(prog_name, args_info->int_given, args_info->int_min, args_info->int_max, "'--int' ('-i')"))
-     error = 1;
+     error_occurred = 1;
   
   if (check_multiple_option_occurrences(prog_name, args_info->short_given, args_info->short_min, args_info->short_max, "'--short' ('-S')"))
-     error = 1;
+     error_occurred = 1;
   
   if (check_multiple_option_occurrences(prog_name, args_info->long_given, args_info->long_min, args_info->long_max, "'--long' ('-l')"))
-     error = 1;
+     error_occurred = 1;
   
   if (check_multiple_option_occurrences(prog_name, args_info->longlong_given, args_info->longlong_min, args_info->longlong_max, "'--longlong'"))
-     error = 1;
+     error_occurred = 1;
   
   if (check_multiple_option_occurrences(prog_name, args_info->limited_given, args_info->limited_min, args_info->limited_max, "'--limited' ('-L')"))
-     error = 1;
+     error_occurred = 1;
   
   if (check_multiple_option_occurrences(prog_name, args_info->limited_interval_given, args_info->limited_interval_min, args_info->limited_interval_max, "'--limited-interval'"))
-     error = 1;
+     error_occurred = 1;
   
   if (check_multiple_option_occurrences(prog_name, args_info->big_limited_interval_given, args_info->big_limited_interval_min, args_info->big_limited_interval_max, "'--big-limited-interval'"))
-     error = 1;
+     error_occurred = 1;
   
   if (check_multiple_option_occurrences(prog_name, args_info->limited_open_right_given, args_info->limited_open_right_min, args_info->limited_open_right_max, "'--limited-open-right'"))
-     error = 1;
+     error_occurred = 1;
   
   if (check_multiple_option_occurrences(prog_name, args_info->limited_open_left_given, args_info->limited_open_left_min, args_info->limited_open_left_max, "'--limited-open-left'"))
-     error = 1;
+     error_occurred = 1;
   
   if (check_multiple_option_occurrences(prog_name, args_info->float_given, args_info->float_min, args_info->float_max, "'--float' ('-f')"))
-     error = 1;
+     error_occurred = 1;
   
   if (check_multiple_option_occurrences(prog_name, args_info->no_short_opt_given, args_info->no_short_opt_min, args_info->no_short_opt_max, "'--no-short-opt'"))
-     error = 1;
+     error_occurred = 1;
   
   if (check_multiple_option_occurrences(prog_name, args_info->noarg_given, args_info->noarg_min, args_info->noarg_max, "'--noarg' ('-n')"))
-     error = 1;
+     error_occurred = 1;
   
   if (check_multiple_option_occurrences(prog_name, args_info->noarg_noshort_given, args_info->noarg_noshort_min, args_info->noarg_noshort_max, "'--noarg-noshort'"))
-     error = 1;
+     error_occurred = 1;
   
   if (check_multiple_option_occurrences(prog_name, args_info->optarg_given, args_info->optarg_min, args_info->optarg_max, "'--optarg' ('-M')"))
-     error = 1;
+     error_occurred = 1;
   
   if (check_multiple_option_occurrences(prog_name, args_info->optarg_noshort_given, args_info->optarg_noshort_min, args_info->optarg_noshort_max, "'--optarg-noshort'"))
-     error = 1;
+     error_occurred = 1;
   
   
   /* checks for dependences among options */
 
-  return error;
+  return error_occurred;
 }
 
 
@@ -830,8 +830,8 @@ int update_arg(void *field, char **orig_field,
     if (val) *((float *)field) = (float)strtod (val, &stop_char);
     break;
   case ARG_LONGLONG:
-#ifdef HAVE_LONG_LONG
-    if (val) *((long long int*)field) = (long long int) strtol (val, &stop_char, 0);
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
+    if (val) *((long long int*)field) = (long long int) strtoll (val, &stop_char, 0);
 #else
     if (val) *((long *)field) = (long)strtol (val, &stop_char, 0);
 #endif
@@ -975,7 +975,7 @@ void update_multiple_arg(void *field, char ***orig_field,
     case ARG_FLOAT:
       *((float **)field) = (float *)realloc (*((float **)field), (field_given + prev_given) * sizeof (float)); break;
     case ARG_LONGLONG:
-#ifdef HAVE_LONG_LONG
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
       *((long long int **)field) = (long long int *)realloc (*((long long int **)field), (field_given + prev_given) * sizeof (long long int)); break;
 #else
       *((long **)field) = (long *)realloc (*((long **)field), (field_given + prev_given) * sizeof (long)); break;
@@ -1000,7 +1000,7 @@ void update_multiple_arg(void *field, char ***orig_field,
         case ARG_FLOAT:
           (*((float **)field))[i + field_given] = tmp->arg.float_arg; break;
         case ARG_LONGLONG:
-#ifdef HAVE_LONG_LONG
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
           (*((long long int **)field))[i + field_given] = tmp->arg.longlong_arg; break;
 #else
           (*((long **)field))[i + field_given] = tmp->arg.longlong_arg; break;
@@ -1042,7 +1042,7 @@ void update_multiple_arg(void *field, char ***orig_field,
         }
         break;
       case ARG_LONGLONG:
-#ifdef HAVE_LONG_LONG
+#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)
         if (! *((long long int **)field)) {
           *((long long int **)field) = (long long int *)malloc (sizeof (long long int));
           (*((long long int **)field))[0] = default_value->longlong_arg;
@@ -1092,7 +1092,7 @@ test_multiple_cmd_parser_internal (
   struct generic_list * no_short_opt_list = NULL;
   struct generic_list * optarg_list = NULL;
   struct generic_list * optarg_noshort_list = NULL;
-  int error = 0;
+  int error_occurred = 0;
   struct gengetopt_args_info local_args_info;
   
   int override;
@@ -1435,12 +1435,12 @@ test_multiple_cmd_parser_internal (
   
   if (check_required)
     {
-      error += test_multiple_cmd_parser_required2 (args_info, argv[0], additional_error);
+      error_occurred += test_multiple_cmd_parser_required2 (args_info, argv[0], additional_error);
     }
 
   test_multiple_cmd_parser_release (&local_args_info);
 
-  if ( error )
+  if ( error_occurred )
     return (EXIT_FAILURE);
 
   if (optind < argc)

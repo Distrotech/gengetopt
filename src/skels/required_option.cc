@@ -29,7 +29,7 @@ required_option_gen_class::generate_required_option(ostream &stream, unsigned in
       stream << "\"))";
       stream << "\n";
       stream << indent_str;
-      stream << "   error = 1;";
+      stream << "   error_occurred = 1;";
       stream << "\n";
       stream << indent_str;
       stream << "\n";
@@ -60,7 +60,7 @@ required_option_gen_class::generate_required_option(ostream &stream, unsigned in
       stream << "\");";
       stream << "\n";
       stream << indent_str;
-      stream << "    error = 1;";
+      stream << "    error_occurred = 1;";
       stream << "\n";
       stream << indent_str;
       stream << "  }";

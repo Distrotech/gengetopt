@@ -4,6 +4,10 @@
 /* differently from test_conf_parser.c, the conf file does not
    override command line options */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 

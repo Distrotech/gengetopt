@@ -34,7 +34,7 @@ canonize_names(const char *name) {
     pvar = strdup(name);
 
     for (p = pvar; *p; ++p)
-        if (*p == '.' || *p == '-')
+        if (*p == '.' || *p == '-' || *p == '/')
             *p = '_';
 
     return pvar;
@@ -67,7 +67,7 @@ const string canonize_name(const string &old) {
     string canonized = old;
 
     for (string::iterator s = canonized.begin(); s != canonized.end(); ++s)
-        if (*s == '.' || *s == '-' || *s == ' ')
+        if (*s == '.' || *s == '-' || *s == ' ' || *s == '/')
             *s = '_';
 
     return canonized;
@@ -263,4 +263,11 @@ bool is_numeric(const gengetopt_option *opt) {
     default:
         return false;
     }
+}
+
+bool string_contains(const char *s, const char *tofind) {
+    if (!s)
+        return false;
+
+    return (strstr(s, tofind) != 0);
 }

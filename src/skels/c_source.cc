@@ -1605,7 +1605,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
         }
       if (has_arg_longlong)
         {
-          stream << "#ifdef HAVE_LONG_LONG";
+          stream << "#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)";
           stream << "\n";
           stream << indent_str;
           stream << "    long long int longlong_arg;";
@@ -2513,7 +2513,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "{";
       stream << "\n";
       stream << indent_str;
-      stream << "  int error = 0;";
+      stream << "  int error_occurred = 0;";
       stream << "\n";
       stream << indent_str;
       stream << "\n";
@@ -2557,7 +2557,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "		    prog_name, option_desc, min);";
       stream << "\n";
       stream << indent_str;
-      stream << "                  error = 1;";
+      stream << "                  error_occurred = 1;";
       stream << "\n";
       stream << indent_str;
       stream << "                }";
@@ -2587,7 +2587,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "                prog_name, option_desc, min, max);";
       stream << "\n";
       stream << indent_str;
-      stream << "              error = 1;";
+      stream << "              error_occurred = 1;";
       stream << "\n";
       stream << indent_str;
       stream << "            }";
@@ -2623,7 +2623,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "                prog_name, option_desc, min);";
       stream << "\n";
       stream << indent_str;
-      stream << "              error = 1;";
+      stream << "              error_occurred = 1;";
       stream << "\n";
       stream << indent_str;
       stream << "            }";
@@ -2659,7 +2659,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "                prog_name, option_desc, max);";
       stream << "\n";
       stream << indent_str;
-      stream << "              error = 1;";
+      stream << "              error_occurred = 1;";
       stream << "\n";
       stream << indent_str;
       stream << "            }";
@@ -2676,7 +2676,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       indent = 0;
       stream << "\n";
       stream << indent_str;
-      stream << "  return error;";
+      stream << "  return error_occurred;";
       stream << "\n";
       stream << indent_str;
       stream << "}";
@@ -2875,7 +2875,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "{";
       stream << "\n";
       stream << indent_str;
-      stream << "  int error = 0;";
+      stream << "  int error_occurred = 0;";
       stream << "\n";
       stream << indent_str;
       stream << "  FIX_UNUSED (error_location);";
@@ -2907,7 +2907,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << indent_str;
       stream << "\n";
       stream << indent_str;
-      stream << "  return error;";
+      stream << "  return error_occurred;";
       stream << "\n";
       stream << indent_str;
       stream << "}";
@@ -3327,10 +3327,10 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
           stream << "  case ARG_LONGLONG:";
           stream << "\n";
           stream << indent_str;
-          stream << "#ifdef HAVE_LONG_LONG";
+          stream << "#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)";
           stream << "\n";
           stream << indent_str;
-          stream << "    if (val) *((long long int*)field) = (long long int) strtol (val, &stop_char, 0);";
+          stream << "    if (val) *((long long int*)field) = (long long int) strtoll (val, &stop_char, 0);";
           stream << "\n";
           stream << indent_str;
           stream << "#else";
@@ -3864,7 +3864,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
           stream << "    case ARG_LONGLONG:";
           stream << "\n";
           stream << indent_str;
-          stream << "#ifdef HAVE_LONG_LONG";
+          stream << "#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)";
           stream << "\n";
           stream << indent_str;
           stream << "      *((long long int **)field) = (long long int *)realloc (*((long long int **)field), (field_given + prev_given) * sizeof (long long int)); break;";
@@ -3979,7 +3979,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
           stream << "        case ARG_LONGLONG:";
           stream << "\n";
           stream << indent_str;
-          stream << "#ifdef HAVE_LONG_LONG";
+          stream << "#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)";
           stream << "\n";
           stream << indent_str;
           stream << "          (*((long long int **)field))[i + field_given] = tmp->arg.longlong_arg; break;";
@@ -4183,7 +4183,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
           stream << "      case ARG_LONGLONG:";
           stream << "\n";
           stream << indent_str;
-          stream << "#ifdef HAVE_LONG_LONG";
+          stream << "#if defined(HAVE_LONG_LONG) || defined(HAVE_LONG_LONG_INT)";
           stream << "\n";
           stream << indent_str;
           stream << "        if (! *((long long int **)field)) {";
@@ -4387,7 +4387,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
     generate_list_def (stream, indent + indent_str.length ());
   indent = 0;
   stream << indent_str;
-  stream << "  int error = 0;";
+  stream << "  int error_occurred = 0;";
   stream << "\n";
   stream << indent_str;
   stream << "  struct ";
@@ -4670,7 +4670,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "    {";
       stream << "\n";
       stream << indent_str;
-      stream << "      error += ";
+      stream << "      error_occurred += ";
       generate_string (parser_name, stream, indent + indent_str.length ());
       stream << "_required2 (args_info, argv[0], error_location);";
       stream << "\n";
@@ -4690,7 +4690,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
   stream << indent_str;
   stream << "\n";
   stream << indent_str;
-  stream << "  if ( error )";
+  stream << "  if ( error_occurred )";
   stream << "\n";
   stream << indent_str;
   stream << "    return (EXIT_FAILURE);";

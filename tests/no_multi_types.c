@@ -3,6 +3,10 @@
    contains multiple options none of which has type
 */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include "no_multi_types_cmd.h"
 
