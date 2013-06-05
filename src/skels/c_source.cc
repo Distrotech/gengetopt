@@ -4878,7 +4878,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "  char delimiter;";
       stream << "\n";
       stream << indent_str;
-      stream << "  char *location, *localtion_lineno;";
+      stream << "  char *location, *location_lineno;";
       stream << "\n";
       stream << indent_str;
       stream << "\n";
@@ -4916,7 +4916,7 @@ c_source_gen_class::generate_c_source(ostream &stream, unsigned int indent)
       stream << "  sprintf (location, \":%s:\", filename);";
       stream << "\n";
       stream << indent_str;
-      stream << "  location_lineno = filename + strlen (filename);";
+      stream << "  location_lineno = location + strlen (location);";
       stream << "\n";
       stream << indent_str;
       stream << "\n";

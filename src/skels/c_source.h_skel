@@ -1634,7 +1634,7 @@ _@parser_name@_configfile (const char *filename, int *my_argc)
   char *str_index;
   size_t len, next_token;
   char delimiter;
-  char *location, *localtion_lineno;
+  char *location, *location_lineno;
 
   if ((file = fopen(filename, "r")) == 0)
     {
@@ -1646,7 +1646,7 @@ _@parser_name@_configfile (const char *filename, int *my_argc)
 
   location = (char *) malloc (strlen (filename) + 42);
   sprintf (location, ":%s:", filename);
-  location_lineno = filename + strlen (filename);
+  location_lineno = location + strlen (location);
 
   while ((fgets(linebuf, CONFIG_FILE_LINE_SIZE, file)) != 0)
     {
