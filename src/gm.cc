@@ -1120,9 +1120,9 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 	}
 
 	// the option it's self
-	string_builder text;
 	if( !opt->hidden || generate_hidden )
 	{
+	    string_builder text;
 	    bool has_def_val = false;
 	    bool client_def_val = true;
 	    string def_val;
