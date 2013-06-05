@@ -16,7 +16,7 @@ enum enum_@name@ @if@ multiple @THEN@ *@ENDIF@@name@_arg;	/**< @@brief @desc@@if
 @origtype@ @name@_orig;	/**< @@brief @desc@ original value given at command line.  */
 @ENDIF@
 @IF@ multiple @THEN@
-unsigned int @name@_min; /**< @@brief @desc@'s minimum occurreces */
-unsigned int @name@_max; /**< @@brief @desc@'s maximum occurreces */
+unsigned int @name@_min; /**< @@brief @desc@'s minimum occurreces.  */
+unsigned int @name@_max; /**< @@brief @desc@'s maximum occurreces.  */
 @ENDIF@
 const char *@name@_help; /**< @@brief @desc@ help description.  */
