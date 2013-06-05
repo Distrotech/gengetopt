@@ -14,11 +14,20 @@ init_args_info_gen_class::generate_init_args_info(ostream &stream, unsigned int 
 
   stream << "args_info->";
   generate_string (var_arg, stream, indent + indent_str.length ());
-  stream << "_help = ";
+  stream << "_help_param = ";
   generate_string (help_strings, stream, indent + indent_str.length ());
   stream << "[";
-  generate_string (num, stream, indent + indent_str.length ());
-  stream << "] ;";
+  stream << param_idx;
+  stream << "];";
+  stream << "\n";
+  stream << indent_str;
+  stream << "args_info->";
+  generate_string (var_arg, stream, indent + indent_str.length ());
+  stream << "_help_desc = ";
+  generate_string (help_strings, stream, indent + indent_str.length ());
+  stream << "[";
+  stream << desc_idx;
+  stream << "];";
   stream << "\n";
   stream << indent_str;
   if (multiple)

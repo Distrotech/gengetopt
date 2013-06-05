@@ -363,7 +363,8 @@ main (int argc, char **argv)
 void
 update_desc_column(const OptionHelpListElement &element)
 {
-    if( !element.is_parameter )
+    // element must have an associated option, or it is not a parameter
+    if( !element.opt )
 	return;
 
     std::string str = unescape_string(

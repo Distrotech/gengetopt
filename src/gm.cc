@@ -952,87 +952,47 @@ void
 CmdlineParserCreator::generate_init_args_info(ostream &stream,
 					      unsigned int indentation)
 {
-    struct gengetopt_option * opt;
     init_args_info_gen_class init_args_info_gen;
-    int i = 0;
-    ostringstream index;
 
+    // set the help string array
     string help_string = c_source_gen_class::args_info;
-
-    if (c_source_gen_class::has_details) {
+    if( c_source_gen_class::has_details )
         help_string += "_detailed_help";
-    } else if (c_source_gen_class::has_hidden) {
+    else if( c_source_gen_class::has_hidden )
         help_string += "_full_help";
-    } else {
+    else
         help_string += "_help";
-    }
     init_args_info_gen.set_help_strings(help_string);
 
-    const char *current_section = 0, *current_group = 0, *current_mode = 0;
+    // iterate through help strings
+    int index = 0;
+    OptionHelpList *option_list = generate_help_option_list( true, true );
+    for( OptionHelpList::iterator i = option_list->begin();
+	 i != option_list->end(); i++ )
+    {
+	// generate output for each opion
+	if( i->opt )
+	{
+	    init_args_info_gen.set_param_idx( index + 1 );
+	    init_args_info_gen.set_desc_idx( index + 2 );
 
-    // we have to skip section description references (that appear in the help
-    // vector)
-    foropt {
-        index.str("");
+	    init_args_info_gen.set_var_arg(i->opt->var_arg);
 
-        if (opt->section) {
-          if (!current_section || (strcmp(current_section, opt->section) != 0)) {
-            // a different section reference, skip it
-            current_section = opt->section;
-            ++i;
+	    if (i->opt->multiple) {
+		init_args_info_gen.set_multiple(true);
+		init_args_info_gen.set_min(i->opt->multiple_min);
+		init_args_info_gen.set_max(i->opt->multiple_max);
+	    } else {
+		init_args_info_gen.set_multiple(false);
+	    }
 
-            if (opt->section_desc) {
-              // section description takes another line, thus we have to skip
-              // this too
-              ++i;
-            }
-          }
-        }
+	    init_args_info_gen.generate_init_args_info(stream, indentation);
+	}
 
-        // skip group desc
-        if (opt->group_value) {
-            if (!current_group || strcmp(current_group, opt->group_value) != 0) {
-                current_group = opt->group_value;
-                ++i;
-            }
-        }
-
-        // skip mode desc
-        if (opt->mode_value) {
-            if (!current_mode || strcmp(current_mode, opt->mode_value) != 0) {
-                current_mode = opt->mode_value;
-                ++i;
-            }
-        }
-
-        // also skip the text before
-        if (opt->text_before)
-            ++i;
-
-        index << i++;
-
-        init_args_info_gen.set_var_arg(opt->var_arg);
-        init_args_info_gen.set_num(index.str());
-
-        if (opt->multiple) {
-            init_args_info_gen.set_multiple(true);
-            init_args_info_gen.set_min(opt->multiple_min);
-            init_args_info_gen.set_max(opt->multiple_max);
-        } else {
-            init_args_info_gen.set_multiple(false);
-        }
-
-        init_args_info_gen.generate_init_args_info(stream, indentation);
-
-        // skip the details
-        if (opt->details)
-            ++i;
-
-        // skip the text after
-        if (opt->text_after)
-            ++i;
-
+	// keep track of the index
+	index += NUM_HELP_STRINGS_PER_LINE;
     }
+    delete option_list;
 }
 
 void CmdlineParserCreator::generate_custom_getopt(ostream &stream, unsigned int indentation)
@@ -1239,7 +1199,7 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 	    }
 
 	    option_list->push_back(
-		OptionHelpListElement( string_builder(), text, extra, true ) );
+		OptionHelpListElement( opt, text, extra ) );
 	}
 
 	// before the text, we generate details if we need to and the option
@@ -1284,16 +1244,14 @@ CmdlineParserCreator::generate_calculate_desc_column( ostream &stream,
 	array += "_help";
     generator.set_array( array );
 
-    // get a complete list of options
-    OptionHelpList *option_list = generate_help_option_list( true, true );
-
-    // loop through, keeping track of their indexes
+    // itterate through help strings
     int index = 0;
+    OptionHelpList *option_list = generate_help_option_list( true, true );
     for( OptionHelpList::iterator i = option_list->begin();
 	 i != option_list->end(); i++ )
     {
-	// if this element contains a parameter, it will need to be checked
-	if( i->is_parameter ) {
+	// if this element is an option, its parameter will need to be checked
+	if( i->opt ) {
 	    generator.set_index( index + 1 );
 	    generator.generate_calculate_desc_column( stream, indentation );
 	}

@@ -16,21 +16,22 @@ using std::ostream;
 class init_args_info_gen_class
 {
  protected:
+  int desc_idx;
   string help_strings;
   string max;
   string min;
   bool multiple;
-  string num;
+  int param_idx;
   string var_arg;
 
  public:
   init_args_info_gen_class() :
-    multiple (false)
+    desc_idx (0), multiple (false), param_idx (0)
   {
   }
   
-  init_args_info_gen_class(const string &_help_strings, const string &_max, const string &_min, bool _multiple, const string &_num, const string &_var_arg) :
-    help_strings (_help_strings), max (_max), min (_min), multiple (_multiple), num (_num), var_arg (_var_arg)
+  init_args_info_gen_class(int _desc_idx, const string &_help_strings, const string &_max, const string &_min, bool _multiple, int _param_idx, const string &_var_arg) :
+    desc_idx (_desc_idx), help_strings (_help_strings), max (_max), min (_min), multiple (_multiple), param_idx (_param_idx), var_arg (_var_arg)
   {
   }
 
@@ -57,6 +58,11 @@ class init_args_info_gen_class
       stream << s.substr (start);
   }
 
+  void set_desc_idx(int _desc_idx)
+  {
+    desc_idx = _desc_idx;
+  }
+
   void set_help_strings(const string &_help_strings)
   {
     help_strings = _help_strings;
@@ -77,9 +83,9 @@ class init_args_info_gen_class
     multiple = _multiple;
   }
 
-  void set_num(const string &_num)
+  void set_param_idx(int _param_idx)
   {
-    num = _num;
+    param_idx = _param_idx;
   }
 
   void set_var_arg(const string &_var_arg)

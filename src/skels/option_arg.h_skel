@@ -19,4 +19,5 @@ enum enum_@name@ @if@ multiple @THEN@ *@ENDIF@@name@_arg;	/**< @@brief @desc@@if
 unsigned int @name@_min; /**< @@brief @desc@'s minimum occurreces.  */
 unsigned int @name@_max; /**< @@brief @desc@'s maximum occurreces.  */
 @ENDIF@
-const char *@name@_help; /**< @@brief @desc@ help description.  */
+const char *@name@_help_param;	/**< @@brief @desc@ help parameter.  */
+const char *@name@_help_desc;	/**< @@brief @desc@ help description.  */

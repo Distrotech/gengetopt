@@ -173,7 +173,16 @@ option_arg_gen_class::generate_option_arg(ostream &stream, unsigned int indent)
     }
   stream << "const char *";
   generate_string (name, stream, indent + indent_str.length ());
-  stream << "_help; /**< ";
+  stream << "_help_param;	/**< ";
+  stream << "@";
+  stream << "brief ";
+  generate_string (desc, stream, indent + indent_str.length ());
+  stream << " help parameter.  */";
+  stream << "\n";
+  stream << indent_str;
+  stream << "const char *";
+  generate_string (name, stream, indent + indent_str.length ());
+  stream << "_help_desc;	/**< ";
   stream << "@";
   stream << "brief ";
   generate_string (desc, stream, indent + indent_str.length ());

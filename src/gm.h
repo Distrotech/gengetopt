@@ -41,16 +41,26 @@ struct OptionHelpListElement
     OptionHelpListElement(
 	const string_builder &header_,
 	const string_builder &text_ = string_builder(),
-	const string_builder &extra_ = string_builder(),
-	bool is_parameter_ = false )
-    : header( header_ ), text( text_ ), extra( extra_ ),
-	is_parameter( is_parameter_ )
+	const string_builder &extra_ = string_builder() )
+    : header( header_ ), text( text_ ), extra( extra_ ), opt( NULL )
     { }
 
+    OptionHelpListElement(
+	const gengetopt_option *opt_,
+	const string_builder &text_,
+	const string_builder &extra_ )
+    : header( string_builder() ), text( text_ ), extra( extra_ ), opt( opt_ )
+    { }
+
+    // text elements, alligned to column 0, column 2 and the description column
+    // (which is determined at runtime)
     string_builder header;
     string_builder text;
     string_builder extra;
-    bool is_parameter;
+
+    // if not NULL, this element is associated with an option, it's argument
+    // and description
+    const gengetopt_option *opt;
 };
 
 inline bool

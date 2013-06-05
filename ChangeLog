@@ -1,3 +1,11 @@
+2013-06-05  Tim Marston  <tim@ed.am>
+
+	* c_source.h_skel: fixed bug in displaying location of errors when
+	parsing config file.
+	* gengetopt.cc, gm.cc, gm.h, c_source.h_skel: in generated code,
+	replaced args_info::<option>_help with <option>_help_param and
+	<option>_help_desc.
+
 2013-05-25  Tim Marston  <tim@ed.am>
 
 	* po-client: added internationalisation for gengetopt's client

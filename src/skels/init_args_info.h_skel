@@ -1,4 +1,5 @@
-args_info->@var_arg@_help = @help_strings@[@num@] ;
+args_info->@var_arg@_help_param = @help_strings@[@param_idx:int@];
+args_info->@var_arg@_help_desc = @help_strings@[@desc_idx:int@];
 @IF@ multiple @THEN@
 args_info->@var_arg@_min = @min@;
 args_info->@var_arg@_max = @max@;
