@@ -3,6 +3,6 @@ column += 2 * @param_padding:int@;
 if( column > @max_desc_column:int@ )
   column = @max_desc_column:int@;
 @ELSE@
-len = strlen( @array@[@index:int@] );
+len = mbstowcs (NULL, @array@[@index:int@], 0);
 if( len > column ) column = len;
 @ENDIF@

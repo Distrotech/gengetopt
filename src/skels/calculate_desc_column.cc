@@ -32,11 +32,11 @@ calculate_desc_column_gen_class::generate_calculate_desc_column(ostream &stream,
     }
   else
     {
-      stream << "len = strlen( ";
+      stream << "len = mbstowcs (NULL, ";
       generate_string (array, stream, indent + indent_str.length ());
       stream << "[";
       stream << index;
-      stream << "] );";
+      stream << "], 0);";
       stream << "\n";
       stream << indent_str;
       stream << "if( len > column ) column = len;";

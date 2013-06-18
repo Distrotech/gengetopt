@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
 #ifndef FIX_UNUSED
 #define FIX_UNUSED(X) (void) (X) /* avoid warnings for unused params */
@@ -28,8 +29,8 @@
 #ifdef HAVE_GETTEXT
 #include <libintl.h>
 #define _(S) gettext (S)
-#define GENGETOPT_(S) dgettext (gengetopt_client_domain (), S)
-#define GENGETOPT_N(S1, S2, N) dngettext (gengetopt_client_domain (), S1, S2, N)
+#define GENGETOPT_(S) gengetopt_gettext (S)
+#define GENGETOPT_N(S1, S2, N) gengetopt_ngettext (S1, S2, N)
 #else
 #define _(S) S
 #define GENGETOPT_(S) S
@@ -44,20 +45,35 @@ char *@args_info@_versiontext = 0;
 char *@args_info@_description = 0;
 
 #ifdef HAVE_GETTEXT
-static const char *
-gengetopt_client_domain()
+static const char *gengetopt_gettext_domain = "gengetopt-client";
+
+static void
+gengetopt_ensure_gettext_bound()
 {
   static char bind_done = 0;
-  const char *domain = "gengetopt-client";
 
-  /* before first use, bind gengetopt's client message domain to the path that
-   * gengetopt was configured to use for its l10n strings */
+  /* bind gengetopt's client message domain to the path that gengetopt was
+   * configured to use for its l10n strings; we must always work in utf-8 so
+   * that we can manipulate strings */
   if (!bind_done) {
     bind_done = 1;
-    bindtextdomain (domain, "@locale_dir@");
+    bindtextdomain (gengetopt_gettext_domain, "@locale_dir@");
+    bind_textdomain_codeset (gengetopt_gettext_domain, "UTF-8");
   }
+}
 
-  return domain;
+static const char *
+gengetopt_gettext (const char *str )
+{
+  gengetopt_ensure_gettext_bound ();
+  return dgettext (gengetopt_gettext_domain, str);
+}
+
+static const char *
+gengetopt_ngettext (const char *str1, const char *str2, unsigned long int n)
+{
+  gengetopt_ensure_gettext_bound ();
+  return dngettext (gengetopt_gettext_domain, str1, str2, n);
 }
 #endif
 
@@ -274,10 +290,10 @@ calculate_desc_column ()
   return column;
 }
 
-static int
+static size_t
 count_initial_newlines (const char *str, int *count)
 {
-  int skip;
+  size_t skip;
   *count = 0;
   for( skip = 0; str[ skip ]; skip++ ) {
     if( str[ skip ] == '\r' )
@@ -306,10 +322,15 @@ print_chars (const char *str, int len)
 static void
 print_wrapped_string (const char *str, int start_column, int indent)
 {
-  int i, skip, count, column = start_column;
+  int i, count, column = start_column;
+  size_t skip;
   const char *word = NULL;
-  int word_len = 0;
+  int word_len;
   char in_word;
+  const char *str_end = str + strlen (str);
+  mbstate_t mbstate;
+
+  memset (&mbstate, 0, sizeof (mbstate_t));
 
   while( *str )
     {
@@ -336,30 +357,30 @@ print_wrapped_string (const char *str, int start_column, int indent)
         {
 	  in_word = *str != ' '? 1 : 0;
 	  word_len++;
-	  column++;
-	  str++;
+	  skip = mbrlen (str, str_end - str, &mbstate);
+	  if (skip == (size_t)-1 || skip == (size_t)-2)
+	    break;
+	  str += skip;
         }
       if( word_len )
         {
           /* wrapping required? */
-	  if( column > 79 )
+	  column += word_len;
+	  if( column > 80 )
 	    {
-	      while( word_len && *word == ' ' )
-	        {
-		  word_len--;
-		  word++;
-		}
-	      if( word_len )
+	      while( word < str && *word == ' ' )
+		word++;
+	      if( word < str )
 	        {
 		  printf( "\n" );
 		  print_spaces( start_column + indent );
-		  print_chars( word, word_len );
+		  print_chars( word, str - word );
 
 		  column = start_column + indent + word_len;
 		}
 	    }
 	  else
-	    print_chars( word, word_len );
+	    print_chars( word, str - word );
 	}
     }
 }

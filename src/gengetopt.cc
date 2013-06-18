@@ -28,6 +28,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <cwchar>
 
 void gengetopt_free (void);
 
@@ -81,7 +82,7 @@ static void print_reportbugs();
 
 static void update_desc_column(const OptionHelpListElement &);
 
-static int count_initial_newlines(const char *, int *);
+static size_t count_initial_newlines(const char *, int *);
 static void print_wrapped_string(const char *, int, int);
 static void print_help_list_element(const char *, const char *, const char *);
 static void output_option_help_list_element(const OptionHelpListElement &);
@@ -379,10 +380,10 @@ update_desc_column(const OptionHelpListElement &element)
 #define print_chars( str, len ) cout << std::string( str, len );
 #define calculate_desc_column() precalculated_desc_column
 
-static int
+static size_t
 count_initial_newlines( const char *str, int *count )
 {
-  int skip;
+  size_t skip;
   *count = 0;
   for( skip = 0; str[ skip ]; skip++ ) {
     if( str[ skip ] == '\r' )
@@ -395,12 +396,17 @@ count_initial_newlines( const char *str, int *count )
 }
 
 static void
-print_wrapped_string( const char *str, int start_column, int indent )
+print_wrapped_string (const char *str, int start_column, int indent)
 {
-  int i, skip, count, column = start_column;
+  int i, count, column = start_column;
+  size_t skip;
   const char *word = NULL;
-  int word_len = 0;
+  int word_len;
   char in_word;
+  const char *str_end = str + strlen (str);
+  mbstate_t mbstate;
+
+  memset (&mbstate, 0, sizeof (mbstate_t));
 
   while( *str )
     {
@@ -427,30 +433,30 @@ print_wrapped_string( const char *str, int start_column, int indent )
         {
 	  in_word = *str != ' '? 1 : 0;
 	  word_len++;
-	  column++;
-	  str++;
+	  skip = mbrlen (str, str_end - str, &mbstate);
+	  if (skip == (size_t)-1 || skip == (size_t)-2)
+	    break;
+	  str += skip;
         }
       if( word_len )
         {
           /* wrapping required? */
-	  if( column > 79 )
+	  column += word_len;
+	  if( column > 80 )
 	    {
-	      while( word_len && *word == ' ' )
-	        {
-		  word_len--;
-		  word++;
-		}
-	      if( word_len )
+	      while( word < str && *word == ' ' )
+		word++;
+	      if( word < str )
 	        {
 		  printf( "\n" );
 		  print_spaces( start_column + indent );
-		  print_chars( word, word_len );
+		  print_chars( word, str - word );
 
 		  column = start_column + indent + word_len;
 		}
 	    }
 	  else
-	    print_chars( word, word_len );
+	    print_chars( word, str - word );
 	}
     }
 }
