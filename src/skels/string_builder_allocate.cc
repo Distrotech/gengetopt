@@ -29,7 +29,7 @@ string_builder_allocate_gen_class::generate_string_builder_allocate(ostream &str
     }
   else
     {
-      if (( num_parts == 1 ))
+      if (( num_allocable_parts == 1 ))
         {
           generate_string (target, stream, indent + indent_str.length ());
           if (is_target_array)
@@ -45,7 +45,7 @@ string_builder_allocate_gen_class::generate_string_builder_allocate(ostream &str
       else
         {
           stream << "for( string_builder_size = string_builder_i = 0; string_builder_i < ";
-          stream << num_parts;
+          stream << num_allocable_parts;
           stream << "; string_builder_i++ )";
           stream << "\n";
           stream << indent_str;

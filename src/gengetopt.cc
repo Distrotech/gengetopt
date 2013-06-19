@@ -316,7 +316,7 @@ main (int argc, char **argv)
       cout << gengetopt_package << " " << gengetopt_version << "\n" << endl;
 
       string_builder purpose = cmdline_parser_creator.generate_purpose();
-      if( purpose.get_num_parts() ) {
+      if( !purpose.is_empty() ) {
 	  std::string purpose_string = unescape_string(
 	      purpose.generate_unlocalised_string() );
 	  print_wrapped_string( purpose_string.c_str(), 0, 0 );
@@ -329,7 +329,7 @@ main (int argc, char **argv)
       cout << endl << endl;
 
       string_builder desc = cmdline_parser_creator.generate_description();
-      if( desc.get_num_parts() ) {
+      if( !desc.is_empty() ) {
 	  std::string desc_string = unescape_string(
 	      desc.generate_unlocalised_string() );
 	  print_wrapped_string(desc_string.c_str(), 0, 0 );

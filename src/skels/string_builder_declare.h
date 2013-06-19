@@ -16,22 +16,22 @@ using std::ostream;
 class string_builder_declare_gen_class
 {
  protected:
-  int num_string_builder_parts;
+  int num_allocable_parts;
 
  public:
   string_builder_declare_gen_class() :
-    num_string_builder_parts (0)
+    num_allocable_parts (0)
   {
   }
   
-  string_builder_declare_gen_class(int _num_string_builder_parts) :
-    num_string_builder_parts (_num_string_builder_parts)
+  string_builder_declare_gen_class(int _num_allocable_parts) :
+    num_allocable_parts (_num_allocable_parts)
   {
   }
 
-  void set_num_string_builder_parts(int _num_string_builder_parts)
+  void set_num_allocable_parts(int _num_allocable_parts)
   {
-    num_string_builder_parts = _num_string_builder_parts;
+    num_allocable_parts = _num_allocable_parts;
   }
 
   void generate_string_builder_declare(ostream &stream, unsigned int indent = 0);

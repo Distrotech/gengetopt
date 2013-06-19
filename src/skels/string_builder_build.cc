@@ -29,7 +29,7 @@ string_builder_build_gen_class::generate_string_builder_build(ostream &stream, u
   else
     {
       stream << "for( string_builder_i = 1; string_builder_i < ";
-      stream << num_parts;
+      stream << num_allocable_parts;
       stream << "; string_builder_i++ )";
       stream << "\n";
       stream << indent_str;

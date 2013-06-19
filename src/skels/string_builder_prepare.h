@@ -16,20 +16,22 @@ using std::ostream;
 class string_builder_prepare_gen_class
 {
  protected:
+  int allocable_part_index;
+  bool first_part;
   bool gengetopt_localised;
   bool localised;
-  int part_index;
   bool raw_c;
+  bool translator_notes;
   string value;
 
  public:
   string_builder_prepare_gen_class() :
-    gengetopt_localised (false), localised (false), part_index (0), raw_c (false)
+    allocable_part_index (0), first_part (false), gengetopt_localised (false), localised (false), raw_c (false), translator_notes (false)
   {
   }
   
-  string_builder_prepare_gen_class(bool _gengetopt_localised, bool _localised, int _part_index, bool _raw_c, const string &_value) :
-    gengetopt_localised (_gengetopt_localised), localised (_localised), part_index (_part_index), raw_c (_raw_c), value (_value)
+  string_builder_prepare_gen_class(int _allocable_part_index, bool _first_part, bool _gengetopt_localised, bool _localised, bool _raw_c, bool _translator_notes, const string &_value) :
+    allocable_part_index (_allocable_part_index), first_part (_first_part), gengetopt_localised (_gengetopt_localised), localised (_localised), raw_c (_raw_c), translator_notes (_translator_notes), value (_value)
   {
   }
 
@@ -56,6 +58,16 @@ class string_builder_prepare_gen_class
       stream << s.substr (start);
   }
 
+  void set_allocable_part_index(int _allocable_part_index)
+  {
+    allocable_part_index = _allocable_part_index;
+  }
+
+  void set_first_part(bool _first_part)
+  {
+    first_part = _first_part;
+  }
+
   void set_gengetopt_localised(bool _gengetopt_localised)
   {
     gengetopt_localised = _gengetopt_localised;
@@ -66,14 +78,14 @@ class string_builder_prepare_gen_class
     localised = _localised;
   }
 
-  void set_part_index(int _part_index)
-  {
-    part_index = _part_index;
-  }
-
   void set_raw_c(bool _raw_c)
   {
     raw_c = _raw_c;
+  }
+
+  void set_translator_notes(bool _translator_notes)
+  {
+    translator_notes = _translator_notes;
   }
 
   void set_value(const string &_value)

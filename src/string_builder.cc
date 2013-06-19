@@ -29,7 +29,8 @@
 
 string_builder::string_builder()
     :
-    _current_l10n( NONE )
+    _current_l10n( NONE ),
+    _num_allocable_parts( 0 )
 {
 }
 
@@ -49,32 +50,34 @@ void string_builder::add_part(
     // ignore empty strings
     if( str.size() )
     {
-	// can we append a non-localised string to the end of a previous
-	// non-localised string?
+	// can we append this to the end of the previous string?
 	std::vector< std::string >::size_type num_parts = _parts.size();
-	if( l10n == NONE && num_parts && _l10n_types[ num_parts - 1 ] == NONE )
+	if( num_parts && _l10n_types[ num_parts - 1 ] == l10n &&
+	    ( l10n == NONE || l10n == TRANSLATOR_NOTES ) )
+	{
+	    // append to end of previous string
 	    _parts[ num_parts - 1 ] += str;
+	}
 	else
 	{
 	    // no, add new part
 	    _parts.push_back( str );
 	    _l10n_types.push_back( l10n );
+
+	    // unless this part is translator notes, it is an allocable
+	    // component of the string
+	    if( l10n != TRANSLATOR_NOTES )
+		_num_allocable_parts++;
 	}
     }
 }
 
 
-unsigned int string_builder::get_num_parts()
-{
-    return _parts.size();
-}
-
-
 void string_builder::generate_string_builder_declaration(
-    ostream &stream, unsigned int indent, unsigned int max_num_parts )
+    ostream &stream, unsigned int indent, unsigned int num_allocable_parts )
 {
     string_builder_declare_gen_class declarer;
-    declarer.set_num_string_builder_parts( max_num_parts );
+    declarer.set_num_allocable_parts( num_allocable_parts );
     declarer.generate_string_builder_declare( stream, indent );
 }
 
@@ -121,39 +124,40 @@ void string_builder::generate_string_builder(
 {
     // preparation of strings
     string_builder_prepare_gen_class preparer;
-    for( unsigned int a = 0; a < _parts.size(); a++ )
+    for( unsigned int a = 0, idx = 0; a < _parts.size(); a++ )
     {
-	preparer.set_part_index( a );
-	preparer.set_value( escape_newlines( _parts[ a ] ) );
+	preparer.set_first_part( a == 0 );
+	preparer.set_gengetopt_localised( false );
+	preparer.set_localised( false );
+	preparer.set_raw_c( false );
+	preparer.set_translator_notes( false );
 	switch( _l10n_types[ a ] ) {
 	case GENGETOPT:
 	    preparer.set_gengetopt_localised( true );
-	    preparer.set_localised( false );
-	    preparer.set_raw_c( false );
+	    preparer.set_allocable_part_index( idx++ );
 	    break;
 	case LOCALISE:
-	    preparer.set_gengetopt_localised( false );
-	    preparer.set_localised( true );
-	    preparer.set_raw_c( false );
+	    preparer.set_localised( true );	
+	    preparer.set_allocable_part_index( idx++ );
 	    break;
 	case RAW_C:
-	    preparer.set_gengetopt_localised( false );
-	    preparer.set_localised( false );
 	    preparer.set_raw_c( true );
+	    preparer.set_allocable_part_index( idx++ );
+	    break;
+	case TRANSLATOR_NOTES:
+	    preparer.set_translator_notes( true );
 	    break;
 	default:
-	    preparer.set_gengetopt_localised( false );
-	    preparer.set_localised( false );
-	    preparer.set_raw_c( false );
+	    preparer.set_allocable_part_index( idx++ );
 	    break;
 	}
-
+	preparer.set_value( escape_newlines( _parts[ a ] ) );
 	preparer.generate_string_builder_prepare( stream, indent );
     }
 
     // allocation of target string
     string_builder_allocate_gen_class allocator;
-    allocator.set_num_parts( _parts.size() );
+    allocator.set_num_allocable_parts( _num_allocable_parts );
     allocator.set_target( target );
     allocator.set_is_target_array( !index.empty() );
     allocator.set_target_index( index );
@@ -164,12 +168,12 @@ void string_builder::generate_string_builder(
     builder.set_target( target );
     builder.set_is_target_array( !index.empty() );
     builder.set_target_index( index );
-    if( _parts.size() > 0 ) {
+    if( _num_allocable_parts > 0 ) {
 	builder.set_first( true );
 	builder.generate_string_builder_build( stream, indent );
-	if( _parts.size() > 1 ) {
+	if( _num_allocable_parts > 1 ) {
 	    builder.set_first( false );
-	    builder.set_num_parts( _parts.size() );
+	    builder.set_num_allocable_parts( _num_allocable_parts );
 	    builder.generate_string_builder_build( stream, indent );
 	}
     }
@@ -196,6 +200,7 @@ std::string string_builder::generate_unlocalised_string() const
 {
     std::ostringstream oss;
     for( unsigned int i = 0; i < _parts.size(); i++ )
-	oss << _parts[ i ];
+	if( _l10n_types[ i ] != TRANSLATOR_NOTES )
+	    oss << _parts[ i ];
     return oss.str();
 }

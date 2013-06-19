@@ -1,2 +1,2 @@
-const char *string_builder_parts[@num_string_builder_parts:int@];
+const char *string_builder_parts[@num_allocable_parts:int@];
 unsigned int string_builder_size, string_builder_i;

@@ -12,28 +12,26 @@ string_builder_prepare_gen_class::generate_string_builder_prepare(ostream &strea
   string indent_str (indent, ' ');
   indent = 0;
 
-  if (( part_index == 0 ))
+  if (first_part)
     {
       stream << "\n";
       stream << indent_str;
     }
-  if (gengetopt_localised)
+  if (translator_notes)
     {
-      stream << "string_builder_parts[";
-      stream << part_index;
-      stream << "] = GENGETOPT_( \"";
+      stream << "/* TRANSLATORS: ";
       generate_string (value, stream, indent + indent_str.length ());
-      stream << "\" );";
+      stream << " */";
       stream << "\n";
       stream << indent_str;
     }
   else
     {
-      if (localised)
+      if (gengetopt_localised)
         {
           stream << "string_builder_parts[";
-          stream << part_index;
-          stream << "] = _( \"";
+          stream << allocable_part_index;
+          stream << "] = GENGETOPT_( \"";
           generate_string (value, stream, indent + indent_str.length ());
           stream << "\" );";
           stream << "\n";
@@ -41,25 +39,38 @@ string_builder_prepare_gen_class::generate_string_builder_prepare(ostream &strea
         }
       else
         {
-          if (raw_c)
+          if (localised)
             {
               stream << "string_builder_parts[";
-              stream << part_index;
-              stream << "] = ";
+              stream << allocable_part_index;
+              stream << "] = _( \"";
               generate_string (value, stream, indent + indent_str.length ());
-              stream << ";";
+              stream << "\" );";
               stream << "\n";
               stream << indent_str;
             }
           else
             {
-              stream << "string_builder_parts[";
-              stream << part_index;
-              stream << "] = \"";
-              generate_string (value, stream, indent + indent_str.length ());
-              stream << "\";";
-              stream << "\n";
-              stream << indent_str;
+              if (raw_c)
+                {
+                  stream << "string_builder_parts[";
+                  stream << allocable_part_index;
+                  stream << "] = ";
+                  generate_string (value, stream, indent + indent_str.length ());
+                  stream << ";";
+                  stream << "\n";
+                  stream << indent_str;
+                }
+              else
+                {
+                  stream << "string_builder_parts[";
+                  stream << allocable_part_index;
+                  stream << "] = \"";
+                  generate_string (value, stream, indent + indent_str.length ());
+                  stream << "\";";
+                  stream << "\n";
+                  stream << indent_str;
+                }
             }
         }
     }

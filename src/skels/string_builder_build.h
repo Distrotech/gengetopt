@@ -18,18 +18,18 @@ class string_builder_build_gen_class
  protected:
   bool first;
   bool is_target_array;
-  int num_parts;
+  int num_allocable_parts;
   string target;
   string target_index;
 
  public:
   string_builder_build_gen_class() :
-    first (false), is_target_array (false), num_parts (0)
+    first (false), is_target_array (false), num_allocable_parts (0)
   {
   }
   
-  string_builder_build_gen_class(bool _first, bool _is_target_array, int _num_parts, const string &_target, const string &_target_index) :
-    first (_first), is_target_array (_is_target_array), num_parts (_num_parts), target (_target), target_index (_target_index)
+  string_builder_build_gen_class(bool _first, bool _is_target_array, int _num_allocable_parts, const string &_target, const string &_target_index) :
+    first (_first), is_target_array (_is_target_array), num_allocable_parts (_num_allocable_parts), target (_target), target_index (_target_index)
   {
   }
 
@@ -66,9 +66,9 @@ class string_builder_build_gen_class
     is_target_array = _is_target_array;
   }
 
-  void set_num_parts(int _num_parts)
+  void set_num_allocable_parts(int _num_allocable_parts)
   {
-    num_parts = _num_parts;
+    num_allocable_parts = _num_allocable_parts;
   }
 
   void set_target(const string &_target)

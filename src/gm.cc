@@ -631,15 +631,19 @@ generate_option_usage_string( gengetopt_option *opt, string_builder &usage )
     case ARG_ENUM:
 	if( opt->short_opt ) {
 	    usage << "-" << std::string( 1, opt->short_opt );
-	    if( opt->type_str )
-		usage << string_builder::LOCALISE << opt->type_str;
+	    if( opt->type_str ) 
+		usage << string_builder::TRANSLATOR_NOTES
+		      << "The type of the parameter for --" << opt->long_opt
+		      << string_builder::LOCALISE << opt->type_str;
 	    else
 		usage << string_builder::GENGETOPT << arg_names[opt->type];
 	    usage << string_builder::NONE << "|";
 	}
 	usage << "--" << opt->long_opt << "=";
 	if( opt->type_str )
-	    usage << string_builder::LOCALISE << opt->type_str;
+	    usage << string_builder::TRANSLATOR_NOTES
+		  << "The type of the parameter for --" << opt->long_opt
+		  << string_builder::LOCALISE << opt->type_str;
 	else
 	    usage << string_builder::GENGETOPT << arg_names[opt->type];
 	usage << string_builder::NONE;
@@ -691,7 +695,10 @@ CmdlineParserCreator::generate_usage()
 	      << string_builder::NONE << "]...";
 
     if ( unamed_options )
-	usage << " [" << string_builder::LOCALISE << unamed_options
+	usage << " [" << string_builder::TRANSLATOR_NOTES
+	      << "The name of the final command line argument, in --help "
+	      << "output, that is the rest of the command line options"
+	      << string_builder::LOCALISE << unamed_options
 	      << string_builder::NONE << "]...";
 
     // now deal with modes
@@ -811,9 +818,10 @@ CmdlineParserCreator::generate_help_option_print_from_list(ostream &stream,
     for( OptionHelpList::iterator it = option_list->begin();
          it != option_list->end(); ++it )
     {
-	max_parts = std::max( max_parts, ( *it ).header.get_num_parts() );
-	max_parts = std::max( max_parts, ( *it ).text.get_num_parts() );
-	max_parts = std::max( max_parts, ( *it ).extra.get_num_parts() );
+	max_parts = std::max( max_parts, std::max(
+	    ( *it ).header.get_num_allocable_parts(), std::max(
+		( *it ).text.get_num_allocable_parts(),
+		( *it ).extra.get_num_allocable_parts() ) ) );
     }
     string_builder::generate_string_builder_declaration(
 	stream, indentation, max_parts );
@@ -931,9 +939,10 @@ CmdlineParserCreator::generate_init_strings(ostream &stream,
 
   // count number of parts required
   unsigned int num_parts = std::max(
-      usage.get_num_parts(), std::max(
-	  purpose.get_num_parts(), std::max(
-	      versiontext.get_num_parts(), description.get_num_parts() ) ) );
+      usage.get_num_allocable_parts(), std::max(
+	  purpose.get_num_allocable_parts(), std::max(
+	      versiontext.get_num_allocable_parts(),
+	      description.get_num_allocable_parts() ) ) );
 
   // draw strings
   string_builder::generate_string_builder_declaration(
@@ -1060,7 +1069,9 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 	    string_builder header;
 	    if( first_option )
 		header << "\\n";
-	    header << string_builder::LOCALISE << opt->section
+	    header << string_builder::TRANSLATOR_NOTES
+		   << "Name of a Section in --help output"
+		   << string_builder::LOCALISE << opt->section
 		   << string_builder::NONE << ":";
 
 	    string_builder text;
@@ -1080,6 +1091,8 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 	    header << "\\n " << string_builder::GENGETOPT
 		// TRANSLATORS: used on a line, such as "Group: GROUP"
 		   << CLIENT_N_( "Group: " )
+		   << string_builder::TRANSLATOR_NOTES
+		   << "Name of a Group in --help output"
 		   << string_builder::LOCALISE << opt->group_value;
 
 	    string_builder text;
@@ -1099,6 +1112,8 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 	    header << "\\n " << string_builder::GENGETOPT
 		// TRANSLATORS: used on a line, such as "Mode: MODE"
 		   << CLIENT_N_( "Mode: " )
+		   << string_builder::TRANSLATOR_NOTES
+		   << "Name of a Mode in --help output"
 		   << string_builder::LOCALISE << opt->mode_value;
 
 	    string_builder text;
@@ -1149,7 +1164,9 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 	    {
 		text << ( opt->arg_is_optional? "[" : "" ) << "=";
 		if( opt->type_str )
-		    text << string_builder::LOCALISE << opt->type_str;
+		    text << string_builder::TRANSLATOR_NOTES
+			 << "The type of the parameter for --" << opt->long_opt
+			 << string_builder::LOCALISE << opt->type_str;
 		else
 		    text << string_builder::GENGETOPT << arg_names[ opt->type ];
 		text << string_builder::NONE
@@ -1164,12 +1181,14 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 
 	    // description
 	    string_builder extra;
-	    extra << string_builder::LOCALISE << opt->desc
+	    extra << string_builder::TRANSLATOR_NOTES
+		  << "Descrition of --" << opt->long_opt
+		  << string_builder::LOCALISE << opt->desc
 		  << string_builder::NONE;
 	    std::string values =
 		opt->acceptedvalues ? opt->acceptedvalues->toString() : "";
 	    if( has_def_val || values.size() ) {
-		extra << ( extra.get_num_parts()? "  " : "" ) << "(";
+		extra << ( extra.is_empty()? "" : "  " ) << "(";
 
 		if( values.size() ) {
 		    extra << string_builder::GENGETOPT
@@ -1182,7 +1201,10 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 			  << string_builder::GENGETOPT
 			  << CLIENT_N_( "default=" );
 		    if( client_def_val )
-			extra << string_builder::LOCALISE << def_val
+			extra << string_builder::TRANSLATOR_NOTES
+			      << "The default parameter value for --"
+			      << opt->long_opt
+			      << string_builder::LOCALISE << def_val
 			      << string_builder::NONE;
 		    else
 			extra << string_builder::GENGETOPT << def_val
@@ -1194,7 +1216,10 @@ CmdlineParserCreator::generate_help_option_list(bool generate_hidden, bool gener
 	    std::string required_string =
 		opt->required? show_required_string : "";
 	    if( required_string.size() ) {
-		extra << " " << string_builder::LOCALISE << required_string
+		extra << " " << string_builder::TRANSLATOR_NOTES
+		      << "String that indicates an option is requried, used in "
+		      << "--help output"
+		      << string_builder::LOCALISE << required_string
 		      << string_builder::NONE;
 	    }
 

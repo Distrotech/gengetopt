@@ -1,12 +1,14 @@
-@IF@ part_index:int = 0 @THEN@
+@IF@ first_part @THEN@
 
 @ENDIF@
-@IF@ gengetopt_localised @THEN@
-string_builder_parts[@part_index:int@] = GENGETOPT_( "@value@" );
+@IF@ translator_notes @THEN@
+/* TRANSLATORS: @value@ */
+@ELSEIF@ gengetopt_localised @THEN@
+string_builder_parts[@allocable_part_index:int@] = GENGETOPT_( "@value@" );
 @ELSEIF@ localised @THEN@
-string_builder_parts[@part_index:int@] = _( "@value@" );
+string_builder_parts[@allocable_part_index:int@] = _( "@value@" );
 @ELSEIF@ raw_c @THEN@
-string_builder_parts[@part_index:int@] = @value@;
+string_builder_parts[@allocable_part_index:int@] = @value@;
 @ELSE@
-string_builder_parts[@part_index:int@] = "@value@";
+string_builder_parts[@allocable_part_index:int@] = "@value@";
 @ENDIF@

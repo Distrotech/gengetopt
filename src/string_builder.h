@@ -34,6 +34,7 @@ public:
 	LOCALISE,
 	GENGETOPT,
 	RAW_C,
+	TRANSLATOR_NOTES,
     };
 
     string_builder();
@@ -58,22 +59,38 @@ public:
 	const std::string &str, LocalisationType l10n = NONE );
 
     /**
-     * Retrieve the number of parts in this string builder.
+     * Retrieve the number of allocable parts (i.e., not translator notes) in
+     * this string builder.
      *
-     * @return the number of parts
+     * @return the number of allocable parts
      */
-    unsigned int get_num_parts();
+    unsigned int get_num_allocable_parts()
+    {
+	return _num_allocable_parts;
+    }
+
+    /**
+     * Is this string builder an empty string?
+     *
+     * @return true if empty
+     */
+    bool is_empty()
+    {
+	return _num_allocable_parts? false : true;
+    }
 
     /**
      * Generate the string builder declaration.  This declares an array of
      * pointers to chars that the string builder uses and should be done once
-     * per scope block.  You are required to specify the maximum number of
-     * string parts that you will require.
+     * per scope block.  Where several string builder generations are to reuse
+     * the array, you are required to specify the maximum number of string
+     * parts that require allocation.
      *
-     * @param max_num_parts maximum required numbee of string parts
+     * @param num_allocable_parts required number of allocable string parts
      */
     static void generate_string_builder_declaration(
-	std::ostream &stream, unsigned int indent, unsigned int max_num_parts );
+	std::ostream &stream, unsigned int indent,
+	unsigned int num_allocable_parts );
 
     /**
      * Generate the string builder
@@ -150,6 +167,10 @@ protected:
 
     /** current localisation type (for stream operator) */
     LocalisationType _current_l10n;
+
+    /** the number of parts which are components in the string to be built
+     * (i.e., that aren't translator notes) */
+    int _num_allocable_parts;
 };
 
 #endif /* _STRING_BUILDER_H_ */

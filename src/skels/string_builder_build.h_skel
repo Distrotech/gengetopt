@@ -1,6 +1,6 @@
 @IF@ first @THEN@
 strcpy( @target@@if@ is_target_array @then@[@target_index@]@endif@, string_builder_parts[0] );
 @ELSE@
-for( string_builder_i = 1; string_builder_i < @num_parts:int@; string_builder_i++ )
+for( string_builder_i = 1; string_builder_i < @num_allocable_parts:int@; string_builder_i++ )
   strcat( @target@@if@ is_target_array @then@[@target_index@]@endif@, string_builder_parts[ string_builder_i ] );
 @ENDIF@
