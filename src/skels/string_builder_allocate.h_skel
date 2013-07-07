@@ -1,4 +1,4 @@
-@IF@ num_parts:int = 0 @THEN@
+@IF@ num_allocable_parts:int = 0 @THEN@
 
 @target@@if@ is_target_array @then@[@target_index@]@endif@ = "";
 @ELSEIF@ num_allocable_parts:int = 1 @THEN@

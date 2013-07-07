@@ -12,7 +12,7 @@ string_builder_allocate_gen_class::generate_string_builder_allocate(ostream &str
   string indent_str (indent, ' ');
   indent = 0;
 
-  if (( num_parts == 0 ))
+  if (( num_allocable_parts == 0 ))
     {
       stream << "\n";
       stream << indent_str;
